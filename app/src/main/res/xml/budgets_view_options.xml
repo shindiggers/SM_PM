@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="">
+
+    <ListPreference
+        android:defaultValue="@string/kLOC_GENERAL_CATEGORY"
+        android:key="budgetsortonpref"
+        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON" />
+
+    <Preference
+        android:key="budgetStartDatePref"
+        android:summary="@string/kLOC_GENERAL_DEFAULT"
+        android:title="@string/kLOC_BUDGET_STARTDATE" />
+
+</PreferenceScreen>

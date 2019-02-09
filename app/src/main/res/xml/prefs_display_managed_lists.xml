@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:name="">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFERENCES_AUTOADD_TITLE"
+            android:key="prefsmanagedlistsautoadd" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:name="">
+
+        <Preference
+            android:title="@string/kLOC_GENERAL_PAYEE_TITLE"
+            android:key="PayeeManagedListsPref" />
+
+        <Preference
+            android:title="@string/kLOC_GENERAL_CATEGORY_TITLE"
+            android:key="CategoryManagedListsPref" />
+
+        <Preference
+            android:title="@string/kLOC_GENERAL_CLASSES"
+            android:key="ClassManagedListsPref" />
+
+        <Preference
+            android:title="@string/kLOC_GENERAL_ID_TITLE"
+            android:key="IDManagedListsPref" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

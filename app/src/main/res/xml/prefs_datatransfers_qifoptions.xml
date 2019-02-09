@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_QIFOPTIONS_TITLE"
+    android:key="DataTransferPrefs">
+
+    <PreferenceCategory
+        android:title="@string/kLOC_QIFOPTIONS_FILEFORMAT">
+
+        <ListPreference
+            android:title="@string/kLOC_QIFOPTIONS_DATEFORMAT"
+            android:key="datatransferqifdateformat"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+
+        <ListPreference
+            android:title="@string/kLOC_QIFOPTIONS_DATESEPARATOR"
+            android:key="datatransferqifdateseparator"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+
+        <ListPreference
+            android:title="@string/kLOC_QIFOPTIONS_NUMBERFORMAT"
+            android:key="datatransfernumberformat"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/kLOC_QIFOPTIONS_IMPORTOPTIONS">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_QIFOPTIONS_MARKALLCLEARED"
+            android:key="datatransferqifmarkallclear"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFERENCES_ALLOWQIFDUPS"
+            android:key="datatransferqifimportdups"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_QIF_WIPETRANSACTIONS"
+            android:key="datatransferqifwipeonlyonrestore"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_BUDGETS"
+            android:key="datatransferqifbudgets"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/kLOC_QIFOPTIONS_EXPORTOPTIONS">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_QIFOPTIONS_MSMONEYEXPORT"
+            android:key="datatransferqiffileforeachaccount"
+            android:defaultValue="false" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

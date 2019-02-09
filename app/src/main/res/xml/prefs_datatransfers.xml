@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_PREFS_DATATRANFER"
+    android:key="DataTransferPrefs">
+
+    <ListPreference
+        android:title="@string/kLOC_FILETRANSFERS_MODE"
+        android:key="prefsdatatransferstransfermode"
+        android:summary="SDCard"
+        android:defaultValue="0" />
+
+    <ListPreference
+        android:title="Storage Device"
+        android:key="prefsdatatransferssdcard"
+        android:summary=""
+        android:defaultValue="0" />
+
+    <PreferenceCategory
+        android:title="">
+
+        <ListPreference
+            android:title="@string/kLOC_PREFERENCES_ENCODING"
+            android:key="prefsdatatransfersfileencoding"
+            android:summary="Western (ISO Latin 1)"
+            android:defaultValue="ISO-8859-1" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="">
+
+        <Preference
+            android:title="@string/kLOC_QIFOPTIONS_TITLE"
+            android:key="prefsdatatransfersqifoptions" />
+
+        <Preference
+            android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE"
+            android:key="datatransferemailprefs" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

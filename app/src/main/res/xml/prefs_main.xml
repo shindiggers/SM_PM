@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <Preference
+        android:title="@string/kLOC_PREFERENCES_ABOUT_TITLE"
+        android:key="prefsabout" />
+
+    <Preference
+        android:title="@string/kLOC_PREFERENCES_HELP_TITLE"
+        android:key="prefshelpbutton" />
+
+    <PreferenceCategory
+        android:title="">
+
+        <Preference
+            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
+            android:key="CurrencyPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_PREFS_SECURITY"
+            android:key="SecurityPrefs" />
+
+        <Preference
+            android:icon="@drawable/gold"
+            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
+            android:key="CurrencyPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_PREFS_DATATRANFER"
+            android:key="DataTransfersPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_PREFS_VIEWOPTIONS"
+            android:key="DisplayOptionsPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_PREFS_MANAGEDLISTS"
+            android:key="ManagedListsPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_REPEATING_TRANSACTIONS"
+            android:key="RepeatingTransactionsPrefs" />
+
+        <Preference
+            android:title="@string/kLOC_TOOLS_RECONCILE_CATEGORY"
+            android:key="MiscellaneousPrefs" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

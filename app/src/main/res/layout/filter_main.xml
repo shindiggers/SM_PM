@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="TITLE"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:id="@+id/filterreset"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/list_selector_bg_blue_alt">
+
+            <TextView
+                android:id="@+id/reset_filter_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="10dp"
+                android:text="@string/kLOC_FILTERS_RESET" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:id="@+id/filtercurrent"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@drawable/list_selector_bg_blue_alt">
+
+            <TextView
+                android:id="@+id/current_filter_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start|center_vertical"
+                android:layout_marginStart="10dp"
+                android:text="@string/kLOC_FILTERS_CURRENT" />
+
+            <ImageView
+                android:id="@+id/filtercurrentedit"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="10dp"
+                android:clickable="true"
+                android:focusable="true"
+                android:src="@drawable/ic_dialog_menu_generic" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:background="@color/blue_theme_background_color">
+
+            <TextView
+                android:id="@+id/user_defined_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_marginStart="10dp"
+                android:text="@string/kLOC_FILTERS_USERDEFINED" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/filterlist"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="120dp" />
+
+</FrameLayout>

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER">
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_GENERAL_ID"
+        android:key="prefsdisplayregisterid"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_GENERAL_CATEGORY"
+        android:key="prefsdisplayregistercategory"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_GENERAL_DATE"
+        android:key="prefsdisplayregisterdate"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_GENERAL_NOTE"
+        android:key="prefsdisplayregistermemo"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_GENERAL_CLASS"
+        android:key="prefsdisplayregisterclass"
+        android:defaultValue="false" />
+
+    <PreferenceCategory
+        android:title="">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_SHOW_BALANCES_CURRENT"
+            android:key="prefsdisplayregistercurrentbalance"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_TRUNCATE_ID"
+            android:key="prefsdisplayregistertruncateid"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
+            android:key="prefsdisplayregisterforeignamount" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

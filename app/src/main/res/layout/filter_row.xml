@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@drawable/list_selector_bg_blue_alt">
+
+    <TextView
+        android:id="@+id/filterfiltername"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        tools:text="Test tool data"
+        android:layout_marginStart="10dp" />
+
+    <ImageView
+        android:id="@+id/filterroweditimage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|center_vertical"
+        android:layout_marginEnd="10dp"
+        android:src="@drawable/ic_dialog_menu_generic"
+        android:contentDescription="@string/open_filter_edit_dialogue" />
+
+</FrameLayout>

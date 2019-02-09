@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="">
+
+    <ListPreference
+        android:title="Chart Type"
+        android:key="chartreportsoptions"
+        android:defaultValue="None" />
+
+    <ListPreference
+        android:title="Sort On"
+        android:key="sortonreportsoptions"
+        android:defaultValue="@string/kLOC_REPORTDISPLAY_ITEM" />
+
+    <ListPreference
+        android:title="Sort Direction"
+        android:key="directionreportsoptions"
+        android:defaultValue="@string/kLOC_TRANSACTIONS_OPTIONS_ASCENDING" />
+
+</PreferenceScreen>

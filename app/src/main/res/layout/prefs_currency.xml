@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
+    android:key="CurrencyPrefs"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ListPreference
+        android:title="@string/kLOC_PREFERENCES_HOME_CURRENCY_TITLE"
+        android:key="prefscurrencyhomecurrency" android:defaultValue="USD"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <PreferenceCategory
+        android:title=""
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFERENCES_MULTIPLE_CURRENCIES_TITLE"
+            android:key="prefscurrencymultiplecurrencies"
+            android:defaultValue="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFS_UPDATEEXCHANGERATES"
+            android:key="prefscurrencyupdatexrates"
+            android:defaultValue="true"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

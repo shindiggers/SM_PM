@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_EDIT_TRANSACTION_TITLE">
+
+    <ListPreference
+        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_STARTEDIT"
+        android:key="prefsdisplayeditstartediting"
+        android:defaultValue="@string/kLOC_GENERAL_NONE" />
+
+    <PreferenceCategory>
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFERENCES_AUTOFILL"
+            android:key="prefsmanagedlistsautofill" />
+        <CheckBoxPreference
+            android:title="@string/kLOC_PREFERENCES_AUTOSUGGEST"
+            android:key="prefsautosuggest" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SHOW">
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_TIME"
+            android:key="prefsdisplayedittime"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_TRANSACTIONS_OPTIONS_TRANSTOANDTO"
+            android:key="prefsdisplayedittransferandpayee"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_CATEGORY"
+            android:key="prefsdisplayeditcategory"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="Category above Payee"
+            android:key="prefsdispplayeditcatposition"
+            android:defaultValue="false" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_ID"
+            android:key="prefsdisplayeditid"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_CLEARED"
+            android:key="prefsdisplayeditcleared"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_NOTE"
+            android:key="prefsdisplayeditmemo"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_GENERAL_CLASS"
+            android:key="prefsdisplayeditclass"
+            android:defaultValue="true" />
+
+        <CheckBoxPreference
+            android:title="@string/kLOC_TRANSACTIONS_OPTIONS_UNLINKID"
+            android:key="prefsdisplayeditunlink"
+            android:defaultValue="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

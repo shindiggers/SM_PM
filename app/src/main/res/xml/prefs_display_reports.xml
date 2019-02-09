@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_GENERAL_REPORTS">
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_REPORTS_GROUP_SUBCATEGORIES"
+        android:key="prefsdisplayreportsgrouponsubcategories"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_SHOW_CHARTS"
+        android:key="showSummaryCharts" />
+
+</PreferenceScreen>

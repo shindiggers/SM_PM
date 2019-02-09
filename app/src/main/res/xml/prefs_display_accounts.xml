@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_GENERAL_ACCOUNTS">
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_SHOW_SECTIONS"
+        android:key="prefsdisplayaccountgroupbyaccounttype"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_ALL_TRANSACTIONS"
+        android:key="prefsdisplayaccountalltransactions"
+        android:defaultValue="true" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_TOOLS_FILTERS"
+        android:key="prefsdisplayaccountfilters"
+        android:defaultValue="false" />
+
+    <CheckBoxPreference
+        android:title="@string/kLOC_REPEATING_TRANSACTIONS"
+        android:key="prefsdisplayaccountrepeatingtransactions"
+        android:defaultValue="true" />
+
+</PreferenceScreen>

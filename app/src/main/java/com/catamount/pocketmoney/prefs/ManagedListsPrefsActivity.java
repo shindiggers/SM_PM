@@ -1,0 +1,48 @@
+package com.catamount.pocketmoney.prefs;
+
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.preference.Preference;
+import android.preference.Preference.OnPreferenceClickListener;
+import com.catamount.pocketmoney.R;
+import com.catamount.pocketmoney.misc.Locales;
+import com.catamount.pocketmoney.misc.PocketMoneyThemes;
+import com.catamount.pocketmoney.views.PocketMoneyPreferenceActivity;
+import com.catamount.pocketmoney.views.lookups.LookupsListActivity;
+
+public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
+    Context context;
+
+    protected void onCreate(Bundle savedInstanceState) {
+        setTheme(PocketMoneyThemes.preferenceScreenTheme());
+        super.onCreate(savedInstanceState);
+        setTitle(Locales.kLOC_PREFS_MANAGEDLISTS);
+        addPreferencesFromResource(R.xml.prefs_display_managed_lists);
+        getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
+        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
+        this.context = this;
+        setupPrefs();
+    }
+
+    public void setupPrefs() {
+        findPreference("PayeeManagedListsPref").setOnPreferenceClickListener(getListenerForID(4));
+        findPreference("CategoryManagedListsPref").setOnPreferenceClickListener(getListenerForID(5));
+        findPreference("ClassManagedListsPref").setOnPreferenceClickListener(getListenerForID(6));
+        findPreference("IDManagedListsPref").setOnPreferenceClickListener(getListenerForID(7));
+    }
+
+    public OnPreferenceClickListener getListenerForID(int id) {
+        final int theID = id;
+        return new OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent i = new Intent(ManagedListsPrefsActivity.this.getBaseContext(), LookupsListActivity.class);
+                i.putExtra("type", theID);
+                i.putExtra("dontShowPass", new String());
+                ManagedListsPrefsActivity.this.context.startActivity(i);
+                return true;
+            }
+        };
+    }
+}

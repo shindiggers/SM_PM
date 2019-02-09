@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/add_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_marginEnd="15dp"
+            android:background="@color/blue_theme_background_color"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            android:text="+"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:id="@+id/searchlayout"
+        android:layout_width="match_parent"
+        android:layout_height="80dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <EditText
+            android:id="@+id/searcheditext"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:hint="@string/kLOC_TOOLS_SEARCH"
+            android:maxLines="1" />
+
+        <com.catamount.makeramen.segmented.SegmentedRadioGroup
+            android:id="@+id/radiogroup"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/pendingbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:minHeight="40dp"
+                android:minWidth="40dp"
+                android:text="@string/kLOC_GENERAL_CLEARED_PENDING"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/radio_colors" />
+
+            <RadioButton
+                android:id="@+id/clearedbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:minHeight="40dp"
+                android:minWidth="40dp"
+                android:text="@string/kLOC_GENERAL_CLEARED"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/radio_colors" />
+
+            <RadioButton
+                android:id="@+id/allbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:checked="true"
+                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:minHeight="40dp"
+                android:minWidth="40dp"
+                android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/radio_colors" />
+
+        </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/the_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="2.0"
+        android:drawSelectorOnTop="true"
+        android:fadingEdge="vertical"
+        android:fastScrollEnabled="true"
+        android:minHeight="30dp" />
+
+    <com.catamount.pocketmoney.views.BalanceBar
+        android:id="@+id/balancebar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+
+</LinearLayout>

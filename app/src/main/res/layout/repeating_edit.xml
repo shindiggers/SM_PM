@@ -1,0 +1,426 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="@string/title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="40dp"
+        android:orientation="vertical"
+        android:scrollbarStyle="insideOverlay">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+            android:fadingEdge="vertical"
+            android:orientation="vertical">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/frequency_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/kLOC_EDIT_REPEATING_FREQUENCY" />
+
+                <TextView
+                    android:id="@+id/frequencytextview"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="100dp"
+                    tools:text="Daily"
+                    android:singleLine="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_calendar_today"
+                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+
+            </FrameLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black_theme_text_alt" />
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/every_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/kLOC_EDIT_REPEATING_EVERY" />
+
+                <EditText
+                    android:id="@+id/everytextview"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="100dp"
+                    tools:text="1"
+                    android:hint="@string/_0_hint"
+                    android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
+                    android:singleLine="true"
+                    android:importantForAutofill="no" />
+
+                <TextView
+                    android:id="@+id/suffixtextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/everytextview"
+                    android:text="@string/day_s" />
+
+            </RelativeLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/end_on_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/kLOC_EDIT_REPEATING_ENDON" />
+
+                <TextView
+                    android:id="@+id/endontextview"
+                    android:layout_width="190dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    tools:text="1 Mar 2019"
+                    android:layout_marginStart="100dp"
+                    android:singleLine="true" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/ic_calendar_today"
+                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/notifylabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/display_notifcation_on_post_date" />
+
+                <CheckBox
+                    android:id="@+id/notifycheckbox"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp" />
+
+            </FrameLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/daysinadvancelabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/post" />
+
+                <EditText
+                    android:id="@+id/daysinadvancetextview"
+                    android:layout_width="50dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="100dp"
+                    android:hint="@string/_0_hint"
+                    android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt"
+                    android:importantForAutofill="no" />
+
+                <TextView
+                    android:id="@+id/daysinadvancesuffixtextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_toEndOf="@+id/daysinadvancetextview"
+                    android:singleLine="true"
+                    android:text="@string/day_s_in_advance" />
+
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/black_theme_background_color" />
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/repeatontextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/kLOC_REPEATING_TRANSACTIONS_WEEKLY" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/sundaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/sunday" />
+
+                <ImageView
+                    android:id="@+id/sundaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    tools:visibility="visible"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_sunday" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/mondaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/monday" />
+
+                <ImageView
+                    android:id="@+id/mondaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/tuesdaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/tuesday" />
+
+                <ImageView
+                    android:id="@+id/tuesdaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_tuesday" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/wednesdaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/wednesday" />
+
+                <ImageView
+                    android:id="@+id/wednesdaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_wednesday" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/thursdaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/thursday" />
+
+                <ImageView
+                    android:id="@+id/thursdaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_thursday" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/fridaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/friday" />
+
+                <ImageView
+                    android:id="@+id/fridaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_friday" />
+
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/saturdaytextview"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start|center_vertical"
+                    android:layout_marginStart="10dp"
+                    android:text="@string/saturday" />
+
+                <ImageView
+                    android:id="@+id/saturdaycheck"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_marginEnd="10dp"
+                    tools:visibility="visible"
+                    android:src="@drawable/btn_check_buttonless_on"
+                    android:visibility="gone"
+                    android:contentDescription="@string/repeat_on_saturday" />
+
+            </FrameLayout>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+</FrameLayout>

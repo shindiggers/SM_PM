@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/outter"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <com.catamount.makeramen.segmented.SegmentedRadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/the_tool_bar"
+        android:layout_centerHorizontal="true"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/clientbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:checked="true"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:minHeight="40dp"
+            android:minWidth="40dp"
+            android:text="@string/kLOC_DESKTOPSYNC_CLIENT"
+            android:textColor="@color/radio_colors" />
+
+        <RadioButton
+            android:id="@+id/serverbutton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:minHeight="40dp"
+            android:minWidth="40dp"
+            android:text="@string/kLOC_DESKTOPSYNC_SERVER"
+            android:textColor="@color/radio_colors" />
+
+    </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+
+    <RelativeLayout
+        android:id="@+id/addressview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/radiogroup"
+        android:layout_centerHorizontal="true">
+
+        <EditText
+            android:id="@+id/ipaddress"
+            android:layout_width="165dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
+            android:layout_marginStart="10dp"
+            android:hint="xxx.xxx.xxx.xxx"
+            android:inputType="numberDecimal"
+            android:singleLine="true"
+            android:textColorHint="@color/black_theme_text_alt" />
+
+        <TextView
+            android:id="@+id/iplabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ipaddress"
+            android:layout_toStartOf="@+id/ipaddress"
+            android:text="@string/kLOC_FILETRANSFERS_SERVERIP" />
+
+        <TextView
+            android:id="@+id/ipaddresstextview"
+            android:layout_width="165dp"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/ipaddress"
+            android:layout_marginStart="20dp"
+            android:layout_toEndOf="@+id/iplabel"
+            android:singleLine="true"
+            android:text="xxx.xxx.xxx.xxx"
+            android:visibility="gone" />
+
+        <EditText
+            android:id="@+id/port"
+            android:layout_width="165dp"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/ipaddress"
+            android:layout_below="@+id/ipaddress"
+            android:hint="@string/kLOC_FILETRANSFERS_PORT"
+            android:singleLine="true"
+            android:textColorHint="@color/black_theme_text_alt" />
+
+        <TextView
+            android:id="@+id/portlabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/port"
+            android:layout_alignEnd="@+id/iplabel"
+            android:text="@string/kLOC_FILETRANSFERS_PORT" />
+
+        <TextView
+            android:id="@+id/instructions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/port"
+            android:layout_centerHorizontal="true"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="@string/kLOC_DESKTOPSYNC_DIRECTIONS" />
+
+        <Button
+            android:id="@+id/syncbutton"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/instructions"
+            android:layout_centerHorizontal="true"
+            android:text="@string/kLOC_DESKTOPSYNC_SYNC" />
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/syncbutton"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="@string/kLOC_DESKTOPSYNC_WAITINGSERVERID" />
+
+        <ProgressBar
+            android:id="@+id/progressbar"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_below="@+id/status"
+            android:max="100" />
+
+        <ProgressBar
+            android:id="@+id/spinningwheel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/progressbar"
+            android:layout_centerHorizontal="true" />
+
+        <CheckBox
+            android:id="@+id/restorecheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignStart="@+id/ipaddress"
+            android:layout_below="@+id/spinningwheel" />
+
+        <TextView
+            android:id="@+id/restorelabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/restorecheckbox"
+            android:layout_alignEnd="@+id/iplabel"
+            android:text="@string/kLOC_DESKTOPSYNC_RESTOREFROMSERVER" />
+
+    </RelativeLayout>
+
+</RelativeLayout>

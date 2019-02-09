@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Keyboard
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:keyWidth="20%p"
+    android:keyHeight="11%p"
+    android:horizontalGap="0px"
+    android:verticalGap="0px">
+
+    <Row>
+        <Key android:codes="81" android:keyEdgeFlags="left" android:keyLabel="+" />
+        <Key android:codes="14" android:keyLabel="7" />
+        <Key android:codes="15" android:keyLabel="8" />
+        <Key android:codes="16" android:keyLabel="9" />
+        <Key android:codes="70" android:keyEdgeFlags="right" android:keyLabel="=" />
+    </Row>
+    <Row>
+        <Key android:codes="69" android:keyEdgeFlags="left" android:keyLabel="-" />
+        <Key android:codes="11" android:keyLabel="4" />
+        <Key android:codes="12" android:keyLabel="5" />
+        <Key android:codes="13" android:keyLabel="6" />
+        <Key android:codes="28" android:keyEdgeFlags="right" android:keyLabel="C" />
+    </Row>
+    <Row>
+        <Key android:codes="76" android:keyEdgeFlags="left" android:keyLabel="/" />
+        <Key android:codes="8" android:keyLabel="1" />
+        <Key android:codes="9" android:keyLabel="2" />
+        <Key android:codes="10" android:keyLabel="3" />
+        <Key android:codes="67" android:keyEdgeFlags="right" android:keyLabel="del" />
+    </Row>
+    <Row android:rowEdgeFlags="bottom">
+        <Key android:codes="17" android:keyEdgeFlags="left" android:keyLabel="*" />
+        <Key android:codes="7" android:keyLabel="0" />
+        <Key android:codes="56" android:keyLabel="." />
+        <Key android:codes="55" android:keyLabel="00" />
+        <Key android:codes="66" android:keyEdgeFlags="right" android:keyLabel="@string/kLOC_GENERAL_NEXT" />
+    </Row>
+</Keyboard>

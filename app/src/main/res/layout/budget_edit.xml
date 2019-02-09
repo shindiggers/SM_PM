@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:id="@+id/parent_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <TextView
+            android:textAppearance="@color/black_theme_text"
+            android:textStyle="bold"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/cancel_button"
+            android:background="@color/blue_theme_background_color"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:focusable="true"
+            android:nextFocusRight="@+id/save_button"
+            android:nextFocusDown="@+id/categoryedittext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
+            android:text="Cancel" />
+
+        <TextView
+            android:textAppearance="@color/black_theme_text"
+            android:textStyle="bold"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/kLOC_BUDGETS_EDIT_TITLE" />
+
+        <TextView
+            android:textAppearance="@color/black_theme_text"
+            android:textStyle="bold"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/save_button"
+            android:background="@color/blue_theme_background_color"
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/cancel_button"
+            android:nextFocusDown="@+id/categoryedittext"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="15dp"
+            android:layout_marginEnd="15dp"
+            android:text="Save" />
+
+    </FrameLayout>
+
+    <ScrollView
+        android:scrollbarStyle="insideOverlay"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:orientation="vertical"
+        android:id="@+id/scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1.0">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:id="@+id/outter_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <LinearLayout
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:id="@+id/categorybutton"
+                android:background="@drawable/list_selector_bg_black"
+                android:padding="0dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false">
+
+                <TextView
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:id="@+id/category_label"
+                    android:layout_width="70dp"
+                    android:layout_height="58dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/kLOC_GENERAL_CATEGORY" />
+
+                <TextView
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:id="@+id/categorytextview"
+                    android:visibility="gone"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1.0" />
+
+                <AutoCompleteTextView
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:id="@+id/categoryedittext"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:nextFocusUp="@+id/save_button"
+                    android:nextFocusDown="@+id/budgettypebutton"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:hint="@string/kLOC_GENERAL_CATEGORY"
+                    android:singleLine="true"
+                    android:capitalize="words"
+                    android:layout_weight="1.0"
+                    android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:id="@+id/budgettypebutton"
+                android:background="@drawable/list_selector_bg_black"
+                android:padding="0dp"
+                android:focusable="true"
+                android:nextFocusUp="@+id/categoryedittext"
+                android:nextFocusDown="@+id/periodbutton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:baselineAligned="false">
+
+                <TextView
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:id="@+id/budgettypelabel"
+                    android:layout_width="70dp"
+                    android:layout_height="58dp"
+                    android:layout_marginLeft="6dp"
+                    android:layout_marginStart="6dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:text="@string/kLOC_BUDGETS_TYPE" />
+
+                <TextView
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:id="@+id/budgettexttextview"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"
+                    android:singleLine="true"
+                    android:layout_weight="1.0" />
+
+                <ImageButton
+                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:clickable="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginRight="4dp"
+                    android:layout_marginEnd="4dp"/>
+
+            </LinearLayout>
+
+    <LinearLayout
+        android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:orientation="horizontal"
+        android:id="@+id/periodbutton"
+        android:background="@drawable/list_selector_bg_black"
+        android:padding="0dp"
+        android:focusable="true"
+        android:nextFocusUp="@+id/budgettypebutton"
+        android:nextFocusDown="@+id/budgetedittext"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <TextView
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/periodlabel"
+            android:layout_width="70dp"
+            android:layout_height="58dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/kLOC_BUDGETS_PERIOD" />
+
+        <TextView
+            android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+            android:id="@+id/periodtextview"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:text="The Payee"
+            android:singleLine="true"
+            android:layout_weight="1.0" />
+
+        <ImageButton
+            android:background="@drawable/ic_dialog_menu_generic"
+            android:clickable="false"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:orientation="horizontal"
+        android:background="@drawable/list_selector_bg_black"
+        android:padding="0dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:baselineAligned="false">
+
+        <TextView
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/budgetlabel"
+            android:layout_width="70dp"
+            android:layout_height="58dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/kLOC_BUDGETS_AMOUNT" />
+
+        <EditText
+            android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+            android:id="@+id/budgetedittext"
+            android:nextFocusUp="@+id/budgetperiodbutton"
+            android:nextFocusDown="@+id/rollovercheckbox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="4dp"
+            android:layout_marginEnd="4dp"
+            android:hint="Amount"
+            android:singleLine="true"
+            android:layout_weight="1.0"
+            android:inputType="numberDecimal" />
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/rolloverlabel"
+            android:layout_width="200dp"
+            android:layout_height="58dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/kLOC_BUDGETS_ROLLOVERS" />
+
+        <CheckBox
+            android:id="@+id/rollovercheckbox"
+            android:nextFocusUp="@+id/budgetedittext"
+            android:nextFocusDown="@+id/includesubcategoriescheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/includesubcategorieslabel"
+            android:layout_width="200dp"
+            android:layout_height="58dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
+            android:text="@string/kLOC_BUDGETS_TOTALSUBCATEGORY" />
+
+        <CheckBox
+            android:id="@+id/includesubcategoriescheckbox"
+            android:nextFocusUp="@+id/rollovercheckbox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerVertical="true" />
+
+    </RelativeLayout>
+
+    <View
+        android:background="@color/black_theme_text"
+        android:layout_width="match_parent"
+        android:layout_height="1dp" />
+
+    <Button
+        android:id="@+id/enablevariablebutton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enable Variable Budgets" />
+
+    <FrameLayout
+        android:id="@+id/originalhistorycell"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/originalhistorydate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginStart="50dp"
+            android:text="date" />
+
+        <TextView
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/originalhistorybudget"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="50dp"
+            android:layout_marginEnd="50dp"
+            android:text="budget" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/addbudgetcell"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:id="@+id/addnewbudgettextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Budget" />
+
+        <ImageView
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/circleplus" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/keyboard_spacer_view"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="400dp" />
+
+</LinearLayout>
+
+    </ScrollView>
+
+<com.catamount.pocketmoney.views.CurrencyKeyboard
+android:id="@+id/keyboardView"
+android:focusable="false"
+android:focusableInTouchMode="false"
+android:visibility="gone"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content"
+android:layout_below="@+id/keyboard_toolbar" />
+
+    </LinearLayout>

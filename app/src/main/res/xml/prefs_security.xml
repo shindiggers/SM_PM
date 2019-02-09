@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="@string/kLOC_PREFS_SECURITY"
+    android:key="SecurityPrefs">
+
+    <EditTextPreference
+        android:name="@string/kLOC_PREFERENCES_PASSWORD_TITLE"
+        android:password="true"
+        android:title="@string/kLOC_PREFERENCES_PASSWORD_TITLE"
+        android:key="prefssecuritypassword" />
+
+    <EditTextPreference
+        android:name="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM"
+        android:password="true"
+        android:title="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM"
+        android:key="prefssecurityconfirm" />
+
+    <PreferenceCategory
+        android:title="">
+
+        <ListPreference
+            android:title="@string/kLOC_PASSWORDDELAY"
+            android:key="prefssecuritydelay"
+            android:defaultValue="@string/kLOC_GENERAL_NONE" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

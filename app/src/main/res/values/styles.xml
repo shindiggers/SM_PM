@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--<style name="Theme.IAPTheme">-->
+        <!--<item name= "colorPrimary">@color/black_theme_text</item>-->
+        <!--<item>true</item>-->
+        <!--<item>true</item>-->
+        <!--<item>true</item>-->
+        <!--<item>?unknown_ref: 0</item>-->
+        <!--<item>false</item>-->
+    <!--</style>-->
+    <!--<style name="Theme.Transparent">-->
+        <!--<item>?unknown_ref: 106000d</item>-->
+        <!--<item>true</item>-->
+        <!--<item>true</item>-->
+        <!--<item>true</item>-->
+        <!--<item>?unknown_ref: 0</item>-->
+        <!--<item>false</item>-->
+    <!--</style>-->
+    <style name="CategoryStyle">
+        <item name="android:textSize">14sp</item>
+        <item name="android:layout_weight">1</item>
+        <!--<item>?unknown_attr_ref: 1010212</item>-->
+        <!--<item>10</item>-->
+        <!--<item>?unknown_attr_ref: 1010030</item>-->
+        <item name="android:padding">5sp</item>
+        <!--<item>-1</item>-->
+        <!--<item>25dp</item>-->
+    </style>
+    <style name="Category">
+        <!--<item>@layout/pref_category</item>-->
+        <!--<item>false</item>-->
+        <!--<item>false</item>-->
+    </style>
+    <style name="MyTheme">
+        <!--<item>true</item>-->
+        <!--<item>@style/Category</item>-->
+    </style>
+    <style name="MyTheme.Black">
+        <!--<item>@color/black_theme_tint_color</item>-->
+        <!--<item>@color/black_theme_field_label_color</item>-->
+        <item name="android:textColor">@color/black_theme_text</item>
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.White">
+        <!--<item>@color/white_theme_tint_color</item>-->
+        <!--<item>@color/white_theme_field_label_color</item>-->
+        <!--<item>@color/white_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Blue">
+        <!--<item>@color/blue_theme_tint_color</item>-->
+        <!--<item>@color/blue_theme_field_label_color</item>-->
+        <!--<item>@color/blue_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Green">
+        <!--<item>@color/green_theme_tint_color</item>-->
+        <!--<item name="green_theme_field_label_color">@color/green_theme_field_label_color</item>-->
+        <item name="android:textColor">@color/green_theme_text</item>
+        <!--<item name="android:textColor">#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Purple">
+        <!--<item>@color/purple_theme_tint_color</item>-->
+        <!--<item>@color/purple_theme_field_label_color</item>-->
+        <!--<item>@color/purple_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Coffee">
+        <!--<item>@color/coffee_theme_tint_color</item>-->
+        <!--<item>@color/coffee_theme_field_label_color</item>-->
+        <!--<item>@color/coffee_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Ruby">
+        <!--<item>@color/ruby_theme_tint_color</item>-->
+        <!--<item>@color/ruby_theme_field_label_color</item>-->
+        <!--<item>@color/ruby_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+    <style name="MyTheme.Gray">
+        <!--<item>@color/gray_theme_tint_color</item>-->
+        <!--<item>@color/gray_theme_field_label_color</item>-->
+        <!--<item>@color/gray_theme_text</item>-->
+        <!--<item>#ffffff</item>-->
+    </style>
+</resources>

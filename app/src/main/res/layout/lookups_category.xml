@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|center_vertical"
+            android:text="@string/title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/listView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginBottom="30dp"
+        android:layout_marginTop="40dp" />
+
+    <com.catamount.makeramen.segmented.SegmentedRadioGroup
+        android:id="@+id/radiogroup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center_horizontal"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/payeebutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:checked="true"
+            android:gravity="center_horizontal|fill_vertical"
+            android:minHeight="30dp"
+            android:minWidth="100dp"
+            android:text="@string/kLOC_GENERAL_ACCOUNTS"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/black_theme_text" />
+
+        <RadioButton
+            android:id="@+id/allbutton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.0"
+            android:gravity="fill_vertical|center_horizontal"
+            android:minHeight="30dp"
+            android:minWidth="100dp"
+            android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textColor="@color/black_theme_text" />
+
+    </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+
+</FrameLayout>

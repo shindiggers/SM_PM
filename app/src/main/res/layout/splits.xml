@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="@string/title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/the_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginBottom="90dp"
+        android:layout_marginTop="40dp"
+        android:drawSelectorOnTop="true"
+        android:fadingEdge="vertical" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom"
+        android:orientation="vertical">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="20dp">
+
+            <TextView
+                android:id="@+id/splitssplitstotaltitle"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="75dp"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_EDIT_SPLITS_SPLITOTAL" />
+
+            <TextView
+                android:id="@+id/splitssplitstotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="10dp"
+                tools:text="£75.00"
+                android:text="$0.00" />
+
+        </FrameLayout>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:id="@+id/splitsremaindertitle"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="75dp"
+                android:layout_gravity="end|center_vertical"
+                android:gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:text="@string/kLOC_EDIT_SPLITS_REMAINDER" />
+
+            <TextView
+                android:id="@+id/splitsremainder"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                tools:text="£25.00"
+                android:layout_marginEnd="10dp"
+                android:text="$0.00" />
+
+        </FrameLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginEnd="8dp"
+            android:background="@color/black_theme_background_color" />
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp">
+
+            <TextView
+                android:id="@+id/splitstotaltitle"
+                android:layout_width="100dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="75dp"
+                android:gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:text="@string/kLOC_EDIT_SPLITS_TOTAL" />
+
+            <TextView
+                android:id="@+id/splitstotal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|end"
+                tools:text="£100.00"
+                android:layout_marginEnd="10dp"
+                android:text="$0.00" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

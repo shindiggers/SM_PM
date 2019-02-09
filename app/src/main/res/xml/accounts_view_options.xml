@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:title="">
+
+    <ListPreference
+        android:title="@string/kLOC_PREFERENCES_SHOW_ACCOUNTS_TITLE"
+        android:key="viewaccountslistpreference"
+        android:defaultValue="@string/kLOC_PREFERENCES_SHOW_ALL" />
+
+    <PreferenceCategory
+        android:title="@string/kLOC_SHOW_BALANCES_OVERALL">
+
+        <Preference
+            android:title="@string/kLOC_GENERAL_ASOFDATE"
+            android:key="prefsaccountsviewoptionsasofdate"
+            android:summary="@string/kLOC_EDIT_REPEATING_ENDONNONE" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

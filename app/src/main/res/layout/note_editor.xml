@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?><!-- need to resolve 'class' attribute for final??? -->
+<!--class="com.catamount.pocketmoney.misc.NoteEditor.LinedEditText"-->
+<view xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/note"
+
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue_theme_background_color"
+    android:fadingEdge="vertical"
+    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+    android:padding="5dp"
+    android:scrollbars="vertical"
+    android:textSize="22sp" />

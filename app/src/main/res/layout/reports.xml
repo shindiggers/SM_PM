@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/therow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true"
+    android:orientation="vertical">
+
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:text="@string/title"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="bold" />
+
+    </FrameLayout>
+
+    <com.catamount.pocketmoney.views.charts.views.ChartPieView
+        android:id="@+id/piechartview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        tools:visibility="gone"
+        android:visibility="gone" />
+
+    <com.catamount.pocketmoney.views.charts.views.ChartBarView
+        android:id="@+id/barchartview"
+        android:layout_width="match_parent"
+        android:layout_height="200dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:fadingEdge="vertical">
+
+        <ImageView
+            android:id="@+id/lefttarrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:src="@drawable/leftarrow"
+            android:contentDescription="@string/earlier_period" />
+
+        <Button
+            android:id="@+id/periodbutton"
+            android:layout_width="220dp"
+            android:layout_height="wrap_content"
+            tools:text="mmmm yyyy"
+            android:layout_gravity="center" />
+
+        <ImageView
+            android:id="@+id/rightarrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/rightarrow"
+            android:contentDescription="@string/later_period" />
+
+    </FrameLayout>
+
+    <ListView
+        android:id="@+id/thelist"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_weight="1.0" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/balance_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/kLOC_REPORT_EXPENSETOTAL"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/balance_amount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:text="@string/_0_0_report_balance_placeholder"
+                tools:text="-£2,000.00"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
+    </FrameLayout>
+
+</LinearLayout>
