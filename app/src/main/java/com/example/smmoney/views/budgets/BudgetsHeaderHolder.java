@@ -9,6 +9,7 @@ import android.graphics.Paint.Align;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
@@ -50,15 +51,16 @@ public class BudgetsHeaderHolder extends View {
         canvas.drawBitmap(collapseBitmap, (float) ((width - 5) - collapseBitmap.getWidth()), (float) ((height / 2) - (collapseBitmap.getHeight() / 2)), p);
         p.setTextAlign(Align.CENTER);
         try {
-            p.setTextSize((float) getDPFromPixels(20.0d));
+            p.setTextSize((float) getDPFromPixels(25.0d));
         } catch (Exception e) {
-            p.setTextSize(20.0f);
+            p.setTextSize(25.0f);
         }
         p.setColor(-16777216);
+        p.setTypeface(Typeface.SANS_SERIF);
         p.setAntiAlias(true);
         float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);
         float text_w = p.measureText(this.label);
-        float totalTextWidth = ((float) getWidth()) * 0.15f;
+        float totalTextWidth = ((float) getWidth()) * 0.45f;
         float xscale = 1.0f;
         if (totalTextWidth < text_w) {
             xscale = totalTextWidth / text_w;
