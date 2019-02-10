@@ -84,7 +84,7 @@
                 android:orientation="vertical"
                 android:padding="0dp">
 
-                <com.catamount.makeramen.segmented.SegmentedRadioGroup
+                <com.example.makeramen.segmented.SegmentedRadioGroup
                     android:id="@+id/radiogroup"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -131,7 +131,7 @@
                         android:text="@string/kLOC_GENERAL_TRANSFER"
                         android:textColor="@color/radio_colors" />
 
-                </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+                </com.example.makeramen.segmented.SegmentedRadioGroup>
 
             </FrameLayout>
 
@@ -187,11 +187,11 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_calendar_today"
+                    android:background="@drawable/ic_date_range"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_gravity="center"
-                    tools:background="@drawable/ic_calendar_today"
+                    tools:background="@drawable/ic_date_range"
                     android:nextFocusLeft="@+id/datebutton"
                     android:contentDescription="@string/transaction_edit_open_repeating_transaction_dialogue" />
 
@@ -232,7 +232,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/content_description_open_account_pick_list" />
 
@@ -283,7 +283,7 @@
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
                     android:contentDescription="@string/content_description_open_payee_pick_list"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
             </LinearLayout>
@@ -341,7 +341,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
 
@@ -396,7 +396,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue" />
 
@@ -452,7 +452,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_id_pick_list" />
 
@@ -477,6 +477,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
+                    android:paddingEnd="8dp"
                     android:nextFocusDown="@+id/classedittext"
                     android:nextFocusUp="@+id/idedittext" />
 
@@ -543,7 +544,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_class_pick_list" />
 
@@ -581,7 +582,7 @@
 
             </LinearLayout>
 
-            <com.catamount.pocketmoney.views.transactions.PhotoReceiptsCell
+            <com.example.smmoney.views.transactions.PhotoReceiptsCell
                 android:id="@+id/photocell"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
@@ -604,7 +605,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <com.catamount.pocketmoney.views.BalanceBar
+        <com.example.smmoney.views.BalanceBar
             android:id="@+id/balancebar"
             android:layout_width="match_parent"
             android:layout_height="50dp"
@@ -687,7 +688,7 @@
 
         </FrameLayout>
 
-        <com.catamount.pocketmoney.views.CurrencyKeyboard
+        <com.example.smmoney.views.CurrencyKeyboard
             android:id="@+id/keyboardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

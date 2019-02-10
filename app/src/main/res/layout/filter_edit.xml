@@ -126,7 +126,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -157,7 +157,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -188,7 +188,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -221,7 +221,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -254,7 +254,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -285,7 +285,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -316,7 +316,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -347,7 +347,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 

@@ -23,7 +23,7 @@
 
     </FrameLayout>
 
-    <com.catamount.makeramen.segmented.SegmentedRadioGroup
+    <com.example.makeramen.segmented.SegmentedRadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             android:text="@string/kLOC_DESKTOPSYNC_SERVER"
             android:textColor="@color/radio_colors" />
 
-    </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+    </com.example.makeramen.segmented.SegmentedRadioGroup>
 
     <RelativeLayout
         android:id="@+id/addressview"

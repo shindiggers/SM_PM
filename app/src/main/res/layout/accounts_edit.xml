@@ -160,7 +160,7 @@
                     android:layout_weight="1.0" />
 
                 <ImageButton
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
@@ -203,7 +203,7 @@
                     android:contentDescription="@string/accounts_edit_open_icon_chooser" />
 
                 <ImageButton
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
@@ -570,7 +570,7 @@
                     android:layout_weight="1.0" />
 
                 <ImageButton
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -658,7 +658,7 @@
                     android:layout_weight="1.0" />
 
                 <ImageButton
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:layout_gravity="center_vertical"
                     android:clickable="false"
                     android:layout_width="wrap_content"

@@ -24,7 +24,7 @@
                 android:id="@+id/image"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                tools:background="@drawable/ic_calendar_today"
+                tools:background="@drawable/ic_date_range"
                 android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
                 android:layout_weight="1.0" />
 

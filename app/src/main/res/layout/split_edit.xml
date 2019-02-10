@@ -78,7 +78,7 @@
                 android:orientation="vertical"
                 android:padding="0dp">
 
-                <com.catamount.makeramen.segmented.SegmentedRadioGroup
+                <com.example.makeramen.segmented.SegmentedRadioGroup
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
@@ -121,7 +121,7 @@
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_colors" />
 
-                </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+                </com.example.makeramen.segmented.SegmentedRadioGroup>
 
             </FrameLayout>
 
@@ -165,7 +165,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
             </LinearLayout>
@@ -206,7 +206,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
 
@@ -254,7 +254,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
             </LinearLayout>
@@ -300,7 +300,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
             </LinearLayout>
@@ -358,7 +358,7 @@
             android:background="#000000"
             android:visibility="gone" />
 
-        <com.catamount.pocketmoney.views.CurrencyKeyboard
+        <com.example.smmoney.views.CurrencyKeyboard
             android:id="@+id/keyboardView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

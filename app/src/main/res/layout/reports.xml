@@ -26,7 +26,7 @@
 
     </FrameLayout>
 
-    <com.catamount.pocketmoney.views.charts.views.ChartPieView
+    <com.example.smmoney.views.charts.views.ChartPieView
         android:id="@+id/piechartview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
@@ -34,7 +34,7 @@
         tools:visibility="gone"
         android:visibility="gone" />
 
-    <com.catamount.pocketmoney.views.charts.views.ChartBarView
+    <com.example.smmoney.views.charts.views.ChartBarView
         android:id="@+id/barchartview"
         android:layout_width="match_parent"
         android:layout_height="200dp"

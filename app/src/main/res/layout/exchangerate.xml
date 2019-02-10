@@ -75,7 +75,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:src="@drawable/ic_dialog_menu_generic" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
 
@@ -145,7 +145,7 @@
 
             </FrameLayout>
 
-            <com.catamount.makeramen.segmented.SegmentedRadioGroup
+            <com.example.makeramen.segmented.SegmentedRadioGroup
                 android:id="@+id/radioGroup1"
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
@@ -190,13 +190,13 @@
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textColor="@color/black_theme_text" />
 
-            </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+            </com.example.makeramen.segmented.SegmentedRadioGroup>
 
         </LinearLayout>
 
     </LinearLayout>
 
-    <com.catamount.pocketmoney.views.CurrencyKeyboard
+    <com.example.smmoney.views.CurrencyKeyboard
         android:id="@+id/keyboardView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

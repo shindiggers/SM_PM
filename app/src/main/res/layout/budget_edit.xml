@@ -162,7 +162,7 @@
                     android:layout_weight="1.0" />
 
                 <ImageButton
-                    android:background="@drawable/ic_dialog_menu_generic"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -207,7 +207,7 @@
             android:layout_weight="1.0" />
 
         <ImageButton
-            android:background="@drawable/ic_dialog_menu_generic"
+            android:background="@drawable/ic_arrow_drop_down_circle"
             android:clickable="false"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -373,7 +373,7 @@
 
     </ScrollView>
 
-<com.catamount.pocketmoney.views.CurrencyKeyboard
+<com.example.smmoney.views.CurrencyKeyboard
 android:id="@+id/keyboardView"
 android:focusable="false"
 android:focusableInTouchMode="false"

@@ -31,7 +31,7 @@
         android:layout_marginTop="40dp"
         android:fadingEdge="vertical" />
 
-    <com.catamount.pocketmoney.views.BalanceBar
+    <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
         android:layout_height="50dp"

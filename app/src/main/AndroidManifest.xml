@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 
-    package="com.catamount.pocketmoney"
+    package="com.example.smmoney"
     >
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -15,23 +15,23 @@
         android:theme="@android:style/Theme.Holo.Light"
         android:label="@string/app_name"
         android:icon="@drawable/icon"
-        android:name="com.catamount.pocketmoney.PocketMoney">
+        android:name="com.example.smmoney.SMMoney">
         <activity
             android:label="@string/app_name"
-            android:name="com.catamount.pocketmoney.views.LaunchActivity">
+            android:name="com.example.smmoney.views.LaunchActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.catamount.pocketmoney.views.PasswordActivity" android:configChanges="orientation" />
-        <activity android:label="@string/account_info" android:name="com.catamount.pocketmoney.views.accounts.AccountsEditActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.lookups.LookupsListActivity" android:finishOnTaskLaunch="true" />
-        <activity android:name="com.catamount.pocketmoney.views.lookups.CategoryLookupListActivity" android:finishOnTaskLaunch="true" />
-        <activity android:name="com.catamount.pocketmoney.views.accounts.AccountTypeIconGridActivity" android:finishOnTaskLaunch="true" />
-        <activity android:name="com.catamount.pocketmoney.views.transactions.TransactionsActivity" />
-        <activity android:name="com.catamount.pocketmoney.views.transactions.PhotoReceiptOptionsActivity" />
-        <activity android:name="com.catamount.pocketmoney.views.transactions.TransactionEditActivity" android:configChanges="orientation">
+        <activity android:name="com.example.smmoney.views.PasswordActivity" android:configChanges="orientation" />
+        <activity android:label="@string/account_info" android:name="com.example.smmoney.views.accounts.AccountsEditActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.lookups.LookupsListActivity" android:finishOnTaskLaunch="true" />
+        <activity android:name="com.example.smmoney.views.lookups.CategoryLookupListActivity" android:finishOnTaskLaunch="true" />
+        <activity android:name="com.example.smmoney.views.accounts.AccountTypeIconGridActivity" android:finishOnTaskLaunch="true" />
+        <activity android:name="com.example.smmoney.views.transactions.TransactionsActivity" />
+        <activity android:name="com.example.smmoney.views.transactions.PhotoReceiptOptionsActivity" />
+        <activity android:name="com.example.smmoney.views.transactions.TransactionEditActivity" android:configChanges="orientation">
             <intent-filter>
                 <data android:scheme="ireceipt" android:host="hostlocation" />
                 <action android:name="android.intent.action.VIEW" />
@@ -39,43 +39,43 @@
                 <category android:name="android.intent.category.BROWSABLE" />
             </intent-filter>
         </activity>
-        <activity android:name="com.catamount.pocketmoney.misc.NoteEditor" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.CurrencyPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.DataTransfersPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.DataTransfersEmailPrefActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.DisplayOptionsPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.MainPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.ManagedListsPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.MiscellaneousPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.RepeatingTransactionPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.SecurityPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.misc.NoteEditor" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.CurrencyPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.DataTransfersPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.DataTransfersEmailPrefActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.DisplayOptionsPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.MainPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.ManagedListsPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.MiscellaneousPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.RepeatingTransactionPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.SecurityPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
         <!--<activity android:name="com.catamount.pocketmoney.prefs.InAppPurchasesActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />-->
-        <activity android:name="com.catamount.pocketmoney.prefs.AccountDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.TransactionRegisterDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.EditTransactionDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.ReportsDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.prefs.BudgetsDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.AccountDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.TransactionRegisterDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.EditTransactionDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.ReportsDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.prefs.BudgetsDisplayPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
         <!--<activity android:name="com.catamount.pocketmoney.prefs.DatabasePrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />-->
-        <activity android:name="com.catamount.pocketmoney.prefs.QIFDataTransferPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.accounts.AccountsActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.filters.FilterEditActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.filters.FiltersMainActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.transactions.TransactionViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.accounts.AccountsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.EndOnDateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.FromToDateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.splits.SplitsActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.splits.SplitsEditActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.repeating.RepeatingEditActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.reports.ReportsActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.reports.ReportsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.repeating.RepeatingActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.desktopsync.PocketMoneySyncActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.exchangerates.ExchangeRateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.budgets.BudgetsActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.budgets.BudgetsEditActivity" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.budgets.BudgetsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <activity android:name="com.catamount.pocketmoney.views.repeating.LocalNotificationAlertActivitiy" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
-        <receiver android:name="com.catamount.pocketmoney.views.repeating.LocalNotificationRepeatingReciever" />
+        <activity android:name="com.example.smmoney.prefs.QIFDataTransferPrefsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.accounts.AccountsActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.filters.FilterEditActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.filters.FiltersMainActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.transactions.TransactionViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.accounts.AccountsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.EndOnDateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.FromToDateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.splits.SplitsActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.splits.SplitsEditActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.repeating.RepeatingEditActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.reports.ReportsActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.reports.ReportsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.repeating.RepeatingActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.desktopsync.PocketMoneySyncActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.exchangerates.ExchangeRateActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.budgets.BudgetsActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.budgets.BudgetsEditActivity" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.budgets.BudgetsViewOptionsActivity" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <activity android:name="com.example.smmoney.views.repeating.LocalNotificationAlertActivitiy" android:finishOnTaskLaunch="true" android:configChanges="orientation" />
+        <receiver android:name="com.example.smmoney.views.repeating.LocalNotificationRepeatingReciever" />
     </application>
 </manifest>

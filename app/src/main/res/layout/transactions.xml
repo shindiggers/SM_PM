@@ -42,7 +42,7 @@
             android:hint="@string/kLOC_TOOLS_SEARCH"
             android:maxLines="1" />
 
-        <com.catamount.makeramen.segmented.SegmentedRadioGroup
+        <com.example.makeramen.segmented.SegmentedRadioGroup
             android:id="@+id/radiogroup"
             android:layout_width="match_parent"
             android:layout_height="40dp"
@@ -86,7 +86,7 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/radio_colors" />
 
-        </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+        </com.example.makeramen.segmented.SegmentedRadioGroup>
 
     </LinearLayout>
 
@@ -100,7 +100,7 @@
         android:fastScrollEnabled="true"
         android:minHeight="30dp" />
 
-    <com.catamount.pocketmoney.views.BalanceBar
+    <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
         android:layout_height="50dp"

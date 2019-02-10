@@ -50,7 +50,7 @@
                 android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
-                <com.catamount.pocketmoney.views.charts.views.ChartBarView
+                <com.example.smmoney.views.charts.views.ChartBarView
                     android:id="@+id/networthbarchart"
                     android:visibility="gone"
                     android:layout_width="match_parent"
@@ -58,7 +58,7 @@
                     android:layout_marginLeft="30dp"
                     android:layout_marginRight="30dp" />
 
-                <com.catamount.pocketmoney.views.charts.views.ChartBarView
+                <com.example.smmoney.views.charts.views.ChartBarView
                     android:id="@+id/cashflowbarchart"
                     android:visibility="gone"
                     android:layout_width="match_parent"
@@ -162,7 +162,7 @@
         ads:adSize="BANNER"
         ads:adUnitId="@string/banner_ad_unit_id" />-->
 
-    <com.catamount.pocketmoney.views.BalanceBar
+    <com.example.smmoney.views.BalanceBar
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
@@ -179,7 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
 
-        <com.catamount.makeramen.segmented.SegmentedRadioGroup
+        <com.example.makeramen.segmented.SegmentedRadioGroup
             android:layout_gravity="center_horizontal"
             android:orientation="horizontal"
             android:id="@+id/radiogroup"
@@ -211,7 +211,7 @@
                 android:text="@string/kLOC_GENERAL_BUDGETS"
                 android:layout_weight="1.0" />
 
-        </com.catamount.makeramen.segmented.SegmentedRadioGroup>
+        </com.example.makeramen.segmented.SegmentedRadioGroup>
 
     </FrameLayout>
 </LinearLayout>
