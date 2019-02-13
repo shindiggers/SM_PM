@@ -4,11 +4,16 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Paint.Style;
 import android.graphics.Rect;
+import android.os.Build;
 import android.os.Bundle;
+import android.text.InputType;
+import android.text.method.KeyListener;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +39,7 @@ public class NoteEditor extends Activity {
 
         protected void onDraw(Canvas canvas) {
             int count = getLineCount();
+            Log.d("NOTEEDITOR","getlinecount() returns " + count);
             Rect r = this.mRect;
             Paint paint = this.mPaint;
             for (int i = 0; i < count; i += NoteEditor.DELETE_ID) {
@@ -53,6 +59,11 @@ public class NoteEditor extends Activity {
         setContentView(R.layout.note_editor);
         this.mText = findViewById(R.id.note);
         this.mText.setTextColor(-16777216);
+//        this.mText.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
+        this.mText.setFocusable(true);
+        this.mText.setEnabled(true);
+        if(Build.VERSION.SDK_INT>26){
+        this.mText.setFocusedByDefault(true);}
         if (savedInstanceState != null) {
             this.mOriginalContent = savedInstanceState.getString(ORIGINAL_CONTENT);
         }
@@ -73,8 +84,11 @@ public class NoteEditor extends Activity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        menu.add(0, SAVE_ID, 0, "save").setShortcut('0', 's').setIcon(R.drawable.savings);
-        menu.add(0, DELETE_ID, 0, "cancel").setShortcut('0', 'd').setIcon(R.drawable.abouticon);
+
+        MenuItem menuItem = menu.add(0, SAVE_ID, 0, "Save");
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, DELETE_ID, 0, "Cancel");
+
         return true;
     }
 

@@ -7,7 +7,11 @@
     android:layout_height="match_parent"
     android:background="@color/blue_theme_background_color"
     android:fadingEdge="vertical"
-    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+    android:gravity="top|start"
     android:padding="5dp"
     android:scrollbars="vertical"
-    android:textSize="22sp" />
+    android:hint="Enter your note here"
+    android:focusable="true"
+    android:editable="true"
+    android:textSize="22sp"
+    class="com.example.smmoney.misc.NoteEditor$LinedEditText"/>
