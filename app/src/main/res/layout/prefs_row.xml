@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
-        tools:src="@drawable/ic_date_range"
+        tools:src="@drawable/repeatingicon"
         android:layout_marginStart="10dp"/>
 
     <TextView

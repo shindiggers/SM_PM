@@ -169,7 +169,7 @@ public class MainPrefsRowAdapter extends BaseAdapter {
         atemp[4] = R.drawable.filetransfersicon;
         atemp[5] = R.drawable.viewprefs;
         atemp[6] = R.drawable.managedlistsicon;
-        atemp[7] = R.drawable.ic_date_range;
+        atemp[7] = R.drawable.repeatingicon;
         this.imageList = atemp;
     }
 
