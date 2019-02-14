@@ -42,9 +42,10 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
         this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
         for (String loc : codeList) {
             try {
-                nameList.add(new StringBuilder(String.valueOf(Currency.getInstance(loc).getCurrencyCode())).append(" \ufffd ").append(Currency.getInstance(loc).getSymbol()).toString());
+                nameList.add(String.valueOf(Currency.getInstance(loc).getCurrencyCode()) + " - " + Currency.getInstance(loc).getSymbol());
                 codeNameList.add(Currency.getInstance(loc).getCurrencyCode());
             } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         }
         this.listPref.setEntries(nameList.toArray(new String[1]));

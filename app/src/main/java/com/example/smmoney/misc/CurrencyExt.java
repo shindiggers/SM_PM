@@ -133,16 +133,18 @@ public class CurrencyExt {
         for (String loc : otherCodes) {
             try {
                 String loc2 = "";
-                nameList.add(new StringBuilder(String.valueOf(Currency.getInstance(loc2).getCurrencyCode())).append(" \ufffd ").append(Currency.getInstance(loc2).getSymbol()).toString());
+                nameList.add(String.valueOf(Currency.getInstance(loc2).getCurrencyCode()) + " - " + Currency.getInstance(loc2).getSymbol());
             } catch (Exception e) {
+                e.printStackTrace();
             }
         }
         int length = codes.length;
         while (i < length) {
             String loc2 = codes[i];
             try {
-                nameList.add(new StringBuilder(String.valueOf(Currency.getInstance(loc2).getCurrencyCode())).append(" \ufffd ").append(Currency.getInstance(loc2).getSymbol()).toString());
+                nameList.add(String.valueOf(Currency.getInstance(loc2).getCurrencyCode()) + " - " + Currency.getInstance(loc2).getSymbol());
             } catch (Exception e2) {
+                e2.printStackTrace();
             }
             i++;
         }
