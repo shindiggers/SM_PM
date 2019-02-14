@@ -3,21 +3,14 @@ package com.example.smmoney.misc;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Paint.Style;
-import android.graphics.Rect;
-import android.os.Build;
 import android.os.Bundle;
-import android.text.InputType;
-import android.text.method.KeyListener;
-import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 import com.example.smmoney.R;
 
 public class NoteEditor extends Activity {
@@ -27,43 +20,16 @@ public class NoteEditor extends Activity {
     private String mOriginalContent;
     private EditText mText;
 
-    public static class LinedEditText extends android.support.v7.widget.AppCompatEditText {
-        private Paint mPaint = new Paint();
-        private Rect mRect = new Rect();
-
-        public LinedEditText(Context context, AttributeSet attrs) {
-            super(context, attrs);
-            this.mPaint.setStyle(Style.STROKE);
-            this.mPaint.setColor(-2147483393);
-        }
-
-        protected void onDraw(Canvas canvas) {
-            int count = getLineCount();
-            Log.d("NOTEEDITOR","getlinecount() returns " + count);
-            Rect r = this.mRect;
-            Paint paint = this.mPaint;
-            for (int i = 0; i < count; i += NoteEditor.DELETE_ID) {
-                int baseline = getLineBounds(i, r);
-                canvas.drawLine((float) r.left, (float) (baseline + NoteEditor.DELETE_ID), (float) r.right, (float) (baseline + NoteEditor.DELETE_ID), paint);
-            }
-            super.onDraw(canvas);
-        }
-    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.mOriginalContent = getIntent().getStringExtra("note");
-        if (this.mOriginalContent == null) {
-            this.mOriginalContent = "";
+        mOriginalContent = getIntent().getStringExtra("note");
+        if (mOriginalContent == null) {
+            mOriginalContent = "";
         }
         setContentView(R.layout.note_editor);
-        this.mText = findViewById(R.id.note);
-        this.mText.setTextColor(-16777216);
-//        this.mText.setInputType(InputType.TYPE_TEXT_VARIATION_NORMAL);
-        this.mText.setFocusable(true);
-        this.mText.setEnabled(true);
-        if(Build.VERSION.SDK_INT>26){
-        this.mText.setFocusedByDefault(true);}
+        mText = findViewById(R.id.note_editor_edittext);
+        mText.setTextColor(-16777216);
         if (savedInstanceState != null) {
             this.mOriginalContent = savedInstanceState.getString(ORIGINAL_CONTENT);
         }
@@ -71,11 +37,12 @@ public class NoteEditor extends Activity {
 
     protected void onResume() {
         super.onResume();
-        this.mText.setTextKeepState(this.mOriginalContent);
+        mText.setTextKeepState(mOriginalContent); // Populate mText with savedInstanceState text
+        mText.postDelayed(new ShowKeyboard(), 300); // focus mText and show keyboard
     }
 
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(ORIGINAL_CONTENT, this.mOriginalContent);
+        outState.putString(ORIGINAL_CONTENT, mOriginalContent);
     }
 
     protected void onPause() {
@@ -87,7 +54,8 @@ public class NoteEditor extends Activity {
 
         MenuItem menuItem = menu.add(0, SAVE_ID, 0, "Save");
         menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
-        menu.add(0, DELETE_ID, 0, "Cancel");
+        menuItem = menu.add(0, DELETE_ID, 0, "Cancel");
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
 
         return true;
     }
@@ -119,5 +87,16 @@ public class NoteEditor extends Activity {
         doneEditing();
         finish();
         return true;
+    }
+
+    private class ShowKeyboard implements Runnable {
+        @Override
+        // runnable to show keyboard automatically when NoteEditor opens in UI
+        public void run() {
+            mText.setFocusableInTouchMode(true);
+            mText.requestFocus();
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(mText, 0);
+        }
     }
 }

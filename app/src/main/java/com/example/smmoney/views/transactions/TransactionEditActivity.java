@@ -1060,16 +1060,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void setNotesText(String note) {
-        int i = 25;
         if (note == null || note.length() <= 0) {
             this.memoTextView.setText("");
             return;
         }
         TextView textView = this.memoTextView;
-        if (25 > note.length()) {
-            i = note.length();
-        }
-        textView.setText(note.substring(0, i));
+        textView.setText(note);
     }
 
     private void setType() {
