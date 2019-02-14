@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
     android:background="@color/blue_theme_background_color"
     android:focusable="true"
@@ -12,11 +12,12 @@
     android:layout_height="60dp">
 
     <ImageView
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_gravity="center_vertical|center_horizontal|start"
         android:id="@+id/prefsrowimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="10dp"
+        tools:src="@drawable/ic_date_range"
         android:layout_marginStart="10dp"/>
 
     <TextView
@@ -26,6 +27,7 @@
         android:id="@+id/prefsrowtext"
         android:paddingTop="15dp"
         android:paddingBottom="15dp"
+        tools:text="Preference 1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="60dp"
