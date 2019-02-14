@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/the_parent"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -20,46 +21,38 @@
                 android:id="@+id/post_repeating_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
+                android:layout_gravity="start|end|center_vertical|center_horizontal|fill_horizontal|center|start|end"
+                android:layout_marginStart="40dp"
+                android:layout_marginLeft="40dp"
                 android:text="@string/kLOC_PREFERENCES_SCHEDULEDON_TITLE" />
 
             <CheckBox
                 android:id="@+id/postcheckbox"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_gravity="start|end|center_vertical|center_horizontal|fill_horizontal|center|start|end"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp" />
 
         </FrameLayout>
 
         <RelativeLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:visibility="invisible">
+            android:visibility="invisible"
+            tools:visibility="visible">
 
             <TextView
                 android:id="@+id/post_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentLeft="true"
                 android:layout_centerVertical="true"
-                android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
+                android:layout_marginLeft="10dp"
                 android:text="@string/kLOC_PREFERENCES_RECUR_TITLE" />
-
-            <TextView
-                android:id="@+id/daysinadvance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_centerVertical="true"
-                android:layout_marginEnd="10dp"
-                android:layout_marginRight="10dp"
-                android:text="@string/kLOC_PREFERENCES_DAYS" />
 
             <EditText
                 android:id="@+id/postedittext"
@@ -67,12 +60,24 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="10dp"
                 android:layout_marginRight="10dp"
-                android:layout_toLeftOf="@+id/daysinadvance"
-                android:layout_toStartOf="@+id/daysinadvance"
-                android:layout_toRightOf="@+id/post_label"
                 android:layout_toEndOf="@+id/post_label"
+                android:layout_toRightOf="@+id/post_label"
+                android:gravity="center_horizontal"
                 android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
-                android:singleLine="true" />
+                android:singleLine="true"
+                tools:text="0" />
+
+            <TextView
+                android:id="@+id/daysinadvance"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_marginEnd="10dp"
+                android:layout_marginRight="10dp"
+                android:layout_toEndOf="@id/postedittext"
+                android:layout_toRightOf="@id/postedittext"
+                android:text="@string/kLOC_PREFERENCES_DAYS" />
+
 
         </RelativeLayout>
 
