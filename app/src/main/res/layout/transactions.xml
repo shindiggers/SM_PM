@@ -33,6 +33,7 @@
         android:layout_height="80dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:orientation="vertical"
+        tools:visibility="visible"
         android:visibility="gone">
 
         <EditText
@@ -46,44 +47,50 @@
             android:id="@+id/radiogroup"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:gravity="fill"
             android:orientation="horizontal">
 
             <RadioButton
                 android:id="@+id/pendingbutton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="58dp"
                 android:layout_weight="1.0"
-                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|center_horizontal"
                 android:minHeight="40dp"
+                android:button="@null"
                 android:minWidth="40dp"
                 android:text="@string/kLOC_GENERAL_CLEARED_PENDING"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_colors" />
 
             <RadioButton
                 android:id="@+id/clearedbutton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="58dp"
                 android:layout_weight="1.0"
-                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|center_horizontal"
+                android:button="@null"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:text="@string/kLOC_GENERAL_CLEARED"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_colors" />
 
             <RadioButton
                 android:id="@+id/allbutton"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="58dp"
                 android:layout_weight="1.0"
                 android:checked="true"
-                android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:button="@null"
+                android:layout_gravity="center_vertical"
+                android:gravity="center_vertical|center_horizontal"
                 android:minHeight="40dp"
                 android:minWidth="40dp"
                 android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
-                android:textAppearance="?android:textAppearanceMedium"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_colors" />
 
         </com.example.makeramen.segmented.SegmentedRadioGroup>

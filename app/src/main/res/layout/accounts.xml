@@ -175,24 +175,24 @@
         android:layout_width="match_parent"
         android:layout_height="40dp">
 
-        <RadioButton
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent" />
 
         <com.example.makeramen.segmented.SegmentedRadioGroup
-            android:layout_gravity="center_horizontal"
+            android:layout_gravity="center_vertical|center_horizontal"
             android:orientation="horizontal"
             android:id="@+id/radiogroup"
-            android:layout_width="300dp"
+            android:checkedButton="@null"
+            android:layout_width="200dp"
             android:layout_height="wrap_content">
 
             <RadioButton
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/black_theme_text"
+                android:textColor="@color/radio_colors"
                 android:gravity="center"
+                android:layout_gravity="center_vertical"
                 android:id="@+id/accountsbutton"
+                android:button="@null"
                 android:checked="true"
                 android:minWidth="40dp"
                 android:minHeight="30dp"
@@ -203,8 +203,10 @@
                 android:layout_height="wrap_content"
                 android:layout_width="0dp"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/black_theme_text"
+                android:textColor="@color/radio_colors"
                 android:gravity="center"
+                android:layout_gravity="center_vertical"
+                android:button="@null"
                 android:id="@+id/budgetsbutton"
                 android:minWidth="40dp"
                 android:minHeight="30dp"

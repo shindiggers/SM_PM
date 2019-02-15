@@ -147,9 +147,9 @@
 
             <com.example.makeramen.segmented.SegmentedRadioGroup
                 android:id="@+id/radioGroup1"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_gravity="center_horizontal"
                 android:layout_weight="1.0"
                 android:orientation="horizontal">
 
@@ -158,24 +158,26 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:button="@null"
+                    android:gravity="center"
                     android:minHeight="40dp"
-                    android:minWidth="40dp"
+                    android:minWidth="70dp"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/black_theme_text" />
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/radio_colors" />
 
                 <RadioButton
                     android:id="@+id/exchange_rate_segmented"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:button="@null"
+                    android:gravity="center"
                     android:minHeight="40dp"
-                    android:minWidth="40dp"
+                    android:minWidth="70dp"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/black_theme_text" />
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/radio_colors" />
 
                 <RadioButton
                     android:id="@+id/account_amount_segmented"
@@ -183,12 +185,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
                     android:checked="true"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:button="@null"
+                    android:gravity="center"
                     android:minHeight="40dp"
-                    android:minWidth="40dp"
+                    android:minWidth="70dp"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textColor="@color/black_theme_text" />
+                    android:textAppearance="?android:textAppearanceSmall"
+                    android:textColor="@color/radio_colors" />
 
             </com.example.makeramen.segmented.SegmentedRadioGroup>
 
