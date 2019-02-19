@@ -276,7 +276,7 @@
                     android:gravity="center_vertical"
                     android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_PAYEE"
-                    android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious"
+                    android:imeOptions="actionNext"
                     android:nextFocusDown="@+id/amountedittext"
                     android:nextFocusRight="@+id/payeebutton"
                     android:nextFocusUp="@+id/categoryedittext"
@@ -325,6 +325,7 @@
                     android:clickable="false"
                     android:focusable="false"
                     android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    tools:visibility="visible"
                     android:visibility="gone" />
 
                 <AutoCompleteTextView

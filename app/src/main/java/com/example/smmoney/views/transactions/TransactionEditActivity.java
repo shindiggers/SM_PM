@@ -417,6 +417,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         ((TextView) outterView.findViewById(R.id.account_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         View cView = outterView.findViewById(R.id.categorybutton);
+
         cView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         cView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View view) {
@@ -430,11 +431,14 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 TransactionEditActivity.this.currentActivity.startActivityForResult(i, 5);
             }
         });
-        this.categoryEditText = cView.findViewById(R.id.categoryedittext);
+        this.categoryEditText = cView.findViewById(R.id.categoryedittext); // categoryEditText is an AutoCompleteTextView
         this.categoryEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.categoryEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.categoryEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
+            Log.d("TransactionEditAct", "before setAdapter()");
+            //this.categoryEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
+            // TODO Customise the simple_list_item_1 so that it looks how it should. Just used here to make code work as original code above does not point to a TextView and therefore crashes!!
+            this.categoryEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1,CategoryClass.allCategoryNamesInDatabase()));
         }
         this.categoryTextView = cView.findViewById(R.id.categorytextview);
         this.categoryTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -466,7 +470,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.payeeEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.payeeEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.payeeEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, PayeeClass.allPayeesInDatabase()));
+//            this.payeeEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, PayeeClass.allPayeesInDatabase()));
+           // TODO Customise as for category class above
+            this.payeeEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, PayeeClass.allPayeesInDatabase()));
         }
         this.payeeLabelTextView = pView.findViewById(R.id.payeelabeltextview);
         this.payeeLabelTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -537,7 +543,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.idEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.idEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.idEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, IDClass.allCategoriesInDatabase()));
+//            this.idEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, IDClass.allCategoriesInDatabase()));
+            // TODO Customise as for above category class adapter
+            this.idEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, IDClass.allCategoriesInDatabase()));
         }
         if (Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_ID_FIELD)) {
             aView.setVisibility(View.VISIBLE);
