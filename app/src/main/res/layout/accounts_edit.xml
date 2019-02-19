@@ -493,7 +493,7 @@
                     android:hint="@string/accounts_edit_limit_hint"
                     android:singleLine="true"
                     android:layout_weight="1.0"
-                    android:inputType="numberDecimal"
+                    android:inputType="numberSigned|numberDecimal"
                     android:importantForAutofill="no" />
 
             </LinearLayout>
