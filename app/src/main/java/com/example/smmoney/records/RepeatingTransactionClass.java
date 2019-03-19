@@ -198,18 +198,18 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public String typeEveryAsString() {
         if (2 == this.type && 2 == this.frequency) {
-            return Locales.kLOC_BUDGETS_BIWEEKLY;
+            return Locales.kLOC_BUDGETS_BIWEEKLY; // type 2 = weekly therefore if frequency = 2 this returns "Bi-weekly"
         }
         if (2 == this.type && 2 < this.frequency) {
-            return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
+            return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY; // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
         }
         if (3 == this.type && 2 == this.frequency) {
-            return Locales.kLOC_BUDGETS_BIMONTHLY;
+            return Locales.kLOC_BUDGETS_BIMONTHLY; // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
         }
-        if (3 != this.type || 2 >= this.frequency) {
-            return types()[this.type];
+        if (3 != this.type || 2 >= this.frequency) { //TODO repeating view always shows none SO: type must ALWAYS by 0. Code elsewhere must not be writing '0' as the type. Figure where this is happening and fix
+            return types()[this.type]; // type 3 = weekly thereofore if type is not monthly OR frequency > 2 this returns whatever 'type' is. That could be type = 0 = "None"; type = 1 = "Daily"; type = 4 = "Yearly"
         }
-        return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
+        return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY; // default if none of other conditions are met = "Monthly"
     }
 
     public void setSendLocalNotifications(boolean send) {
@@ -765,20 +765,20 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             }
             boolean wasDirty = this.dirty;
             curs.moveToFirst();
-            int col = 0 + 1;
+            int col = 0 + 1; // col = 1
             this.deleted = curs.getInt(0) == 1;
             this.timestamp = new GregorianCalendar();
-            int col2 = col + 1;
+            int col2 = col + 1; // col2 = 2
             this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);
             GregorianCalendar cal = new GregorianCalendar();
-            col = col2 + 1;
+            col = col2 + 1; // col = 3
             cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000);
             setLastProcessedDate(cal);
-            col2 = col + 1;
+            col2 = col + 1; // col2 = 4
             this.transactionID = curs.getInt(col);
-            col = col2 + 1;
+            col = col2 + 1; // col = 5
             setType(curs.getInt(col2));
-            col2 = col + 1;
+            col2 = col + 1;  // col 2 = 6
             double tempDate = curs.getDouble(col);
             cal = new GregorianCalendar();
             cal.setTimeInMillis(((long) tempDate) * 1000);
@@ -786,17 +786,17 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 cal = null;
             }
             setEndDate(cal);
-            col = col2 + 1;
+            col = col2 + 1; // col = 7
             setFrequency(curs.getInt(col2));
-            col2 = col + 1;
+            col2 = col + 1; // col2 = 8
             setRepeatOn(curs.getInt(col));
-            col = col2 + 1;
+            col = col2 + 1; // col = 9
             setStartOfWeek(curs.getInt(col2));
-            col2 = col + 1;
+            col2 = col + 1; // col2 = 10
             setNotifyDaysInAdvance(curs.getInt(col));
-            col = col2 + 1;
+            col = col2 + 1; // col = 11
             setSendLocalNotifications(curs.getInt(col2) == 1);
-            col2 = col + 1;
+            col2 = col + 1; // col2 = 12
             String str = curs.getString(col);
             if (str == null) {
                 str = "";
@@ -817,7 +817,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public void dehydrateTransaction() {
         if (this.transaction != null) {
             if (this.transaction.getType() != 5) {
-                this.transaction.setType(5);
+                this.transaction.setType(5); // Transaction object of type 5 = repeating transaction
                 this.transaction.dirty = true;
             }
             this.transaction.saveToDatabase();

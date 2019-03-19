@@ -27,14 +27,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginBottom="50dp"
         android:layout_marginTop="40dp"
+        android:layout_marginBottom="50dp"
         android:fadingEdge="vertical" />
 
     <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
 
 </FrameLayout>

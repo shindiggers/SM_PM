@@ -40,8 +40,6 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -65,7 +63,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case MSG_PROGRESS_FINISH /*0*/:
                     if (msg.obj.getClass().equals(String.class)) {
                         Toast.makeText(RepeatingActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
                     }
@@ -81,9 +79,9 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     }
                     RepeatingActivity.this.reloadData();
                     return;
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case MSG_PROGRESS_UPDATE /*1*/:
                     if (RepeatingActivity.this.progressDialog == null || !RepeatingActivity.this.progressDialog.isShowing()) {
-                        RepeatingActivity.this.showDialog(2);
+                        RepeatingActivity.this.showDialog(IMPORT_PROGRESS_DIALOG);
                         try {
                             RepeatingActivity.this.wakeLock.acquire();
                         } catch (Exception e2) {
@@ -108,7 +106,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(26, "RepeatingActivity:DoNotDimScreen");
         this.filter = new FilterClass();
-        this.filter.setType(5);
+        this.filter.setType(5); // 5 = repeating in 'transactions' DB table
         setContentView(R.layout.repeating);
         setupView();
         setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
@@ -126,11 +124,11 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        this.theList = findViewById(R.id.thelist);
+        this.theList = findViewById(R.id.thelist); // ListView from repeating.xml
         this.theList.setItemsCanFocus(true);
         ListView listView = this.theList;
-        ListAdapter repeatingRowAdapter = new RepeatingRowAdapter(this);
-        this.adapter = (RepeatingRowAdapter) repeatingRowAdapter;
+        RepeatingRowAdapter repeatingRowAdapter = new RepeatingRowAdapter(this);
+        this.adapter = repeatingRowAdapter;
         listView.setAdapter(repeatingRowAdapter);
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -210,14 +208,14 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        menu.add(0, 2, 0, Locales.kLOC_REPEATING_PROCESSTODATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_PROCESS, 0, Locales.kLOC_REPEATING_PROCESSTODATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case MENU_NEW /*1*/:
                 if (!AccountsActivity.isLite(this) || this.adapter.getElements().size() < 2) {
                     Intent i = new Intent(this, TransactionEditActivity.class);
                     TransactionClass trans = new TransactionClass();
@@ -228,8 +226,8 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 }
                 AccountsActivity.displayLiteDialog(this);
                 return true;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                showDialog(1);
+            case MENU_PROCESS /*2*/:
+                showDialog(DATE_DIALOG_ID);
                 return true;
             default:
                 return false;
@@ -241,19 +239,19 @@ public class RepeatingActivity extends PocketMoneyActivity {
         RepeatingRowHolder aHolder = (RepeatingRowHolder) v.getTag();
         Intent i = new Intent();
         i.putExtra("Transaction", aHolder.transaction);
-        menu.add(0, 1, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, 3, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
+        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, TransactionEditActivity.class);
                 anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
                 startActivity(anIntent);
                 return true;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case CMENU_DELETE /*3*/:
                 TransactionClass transaction = (TransactionClass) b.get("Transaction");
                 new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
                 transaction.deleteFromDatabase();
@@ -266,7 +264,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case MENU_NEW /*1*/:
                 GregorianCalendar theDate = new GregorianCalendar();
                 return new DatePickerDialog(this, new OnDateSetListener() {
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
@@ -286,7 +284,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         }
                     }
                 }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case MENU_PROCESS /*2*/:
                 this.progressDialog = new ProgressDialog(this);
                 this.progressDialog.setProgressStyle(1);
                 this.progressDialog.setMessage("Processing...\n\nWarning: This may take several minutes");

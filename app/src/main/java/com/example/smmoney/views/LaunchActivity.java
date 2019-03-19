@@ -14,7 +14,7 @@ import java.io.File;
 public class LaunchActivity extends Activity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("LAUNCH ACTIVITY", "onCreate() - restoring previous state" );
+        Log.d("LAUNCHACTIVITY", "onCreate() - restoring previous state" );
         Prefs.setPref(Prefs.SHUTTINGDOWN, false);
         Database.currentDB();
         Log.d("LAUNCHACTIVITY","Database.currentDB() has just been called");
@@ -25,20 +25,21 @@ public class LaunchActivity extends Activity {
         try {
             new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PocketMoneyBackup").mkdirs();
         } catch (Exception e) {
+            Log.d("LAUNCHACTIVITY","Exception: Failed to getExternalStorage ");
         }
     }
 
     public void onResume() {
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
-            Log.d("LAUNCH ACTIVITY","onResume - !Prefs.getBooleanPref(Prefs.SHUTTINGDOWN) = FALSE");
+            Log.d("LAUNCHACTIVITY","onResume - !Prefs.getBooleanPref(Prefs.SHUTTINGDOWN) = FALSE");
             boolean z;
             Intent i = new Intent(this, AccountsActivity.class);
             String pass = Prefs.getStringPref(Prefs.PASSWORD);
             Log.d("LAUNCHACTIVITY","String pass = "+pass);
             String str = "showPasswordScreen";
             z = pass != null && pass.length() > 0;
-            Log.d("LAUNCH ACTIVITY","Show passowrd screen var 'z' = "+z);
+            Log.d("LAUNCHACTIVITY","Show passowrd screen var 'z' = "+z);
             i.putExtra(str, z);
             startActivityForResult(i, 0);
         }
