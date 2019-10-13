@@ -12,7 +12,7 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 
 public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
-    Context context;
+    private Context context;
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
@@ -26,20 +26,20 @@ public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
         setupPrefs();
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         findPreference("PayeeManagedListsPref").setOnPreferenceClickListener(getListenerForID(4));
         findPreference("CategoryManagedListsPref").setOnPreferenceClickListener(getListenerForID(5));
         findPreference("ClassManagedListsPref").setOnPreferenceClickListener(getListenerForID(6));
         findPreference("IDManagedListsPref").setOnPreferenceClickListener(getListenerForID(7));
     }
 
-    public OnPreferenceClickListener getListenerForID(int id) {
+    private OnPreferenceClickListener getListenerForID(int id) {
         final int theID = id;
         return new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 Intent i = new Intent(ManagedListsPrefsActivity.this.getBaseContext(), LookupsListActivity.class);
                 i.putExtra("type", theID);
-                i.putExtra("dontShowPass", new String());
+                i.putExtra("dontShowPass", "");
                 ManagedListsPrefsActivity.this.context.startActivity(i);
                 return true;
             }

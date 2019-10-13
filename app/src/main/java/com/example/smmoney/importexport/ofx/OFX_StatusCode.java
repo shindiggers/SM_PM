@@ -1,6 +1,6 @@
 package com.example.smmoney.importexport.ofx;
 
-public class OFX_StatusCode {
+class OFX_StatusCode {
     int code;
     String severity;
     OFX_Tags tags;
@@ -9,6 +9,6 @@ public class OFX_StatusCode {
         this.parse(var1);
     }
 
-    public void parse(String var1) {
+    private void parse(String var1) {
     }
 }

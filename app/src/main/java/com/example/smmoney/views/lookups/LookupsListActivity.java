@@ -40,15 +40,15 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 
 public class LookupsListActivity extends PocketMoneyActivity {
     public static final int ACCOUNT_ICON_LOOKUP = 2;
-    public static final int ACCOUNT_LOOKUP = 3;
+    private static final int ACCOUNT_LOOKUP = 3;
     public static final int ACCOUNT_LOOKUP_TRANS = 17;
     public static final int ACCOUNT_LOOKUP_WITH_NONE = 18;
-    public static final int ACCOUNT_TYPE_LOOKUP = 1;
+    private static final int ACCOUNT_TYPE_LOOKUP = 1;
     public static final int BUDGET_PERIOD = 20;
     public static final int BUDGET_TYPE = 19;
     public static final int CATEGORY_LOOKUP = 5;
@@ -64,12 +64,10 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public static final int ID_LOOKUP = 7;
     public static final int PAYEE_LOOKUP = 4;
     public static final int REPEAT_TYPE = 16;
-    private final int CMENU_DELETE = ACCOUNT_LOOKUP;
-    private final int CMENU_EDIT = ACCOUNT_TYPE_LOOKUP;
-    private final int CMENU_SUBCATEGORY = PAYEE_LOOKUP;
-    private final int MENU_ADD = ACCOUNT_TYPE_LOOKUP;
-    private ListAdapter adapter;
-    public int currentType;
+    private final int CMENU_DELETE = 3;
+    private final int CMENU_EDIT = 1;
+    private final int CMENU_SUBCATEGORY = 4;
+    private int currentType;
     private ListView theList;
     private ArrayList<String> theStrings = null;
     private TextView titleTextView;
@@ -79,7 +77,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         List<T> items;
         int layoutResId;
 
-        public LookupRowAdapter(int layoutResId, List<T> items) {
+        LookupRowAdapter(int layoutResId, List<T> items) {
             this.items = items;
             this.inflator = LayoutInflater.from(LookupsListActivity.this);
             this.layoutResId = layoutResId;
@@ -109,11 +107,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     class MyIndexerAdapter<T> extends LookupRowAdapter<T> implements SectionIndexer {
-        HashMap<String, Integer> alphaIndexer = new HashMap();
+        HashMap<String, Integer> alphaIndexer = new HashMap<>();
         ArrayList<String> myElements;
         String[] sections;
 
-        public MyIndexerAdapter(Context context, int textViewResourceId, List<T> objects) {
+        MyIndexerAdapter(Context context, int textViewResourceId, List<T> objects) {
             super(textViewResourceId, objects);
             this.myElements = (ArrayList) objects;
             int size = LookupsListActivity.this.theStrings.size();
@@ -129,10 +127,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 }
                 i--;
             }
-            ArrayList<String> keyList = new ArrayList();
-            for (String key : this.alphaIndexer.keySet()) {
-                keyList.add(key);
-            }
+            ArrayList<String> keyList = new ArrayList<>(this.alphaIndexer.keySet());
             Collections.sort(keyList);
             this.sections = new String[keyList.size()];
             keyList.toArray(this.sections);
@@ -155,7 +150,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lookups);
-        this.currentType = getIntent().getExtras().getInt("type");
+        this.currentType = Objects.requireNonNull(getIntent().getExtras()).getInt("type");
         setupView();
         setupList();
     }
@@ -189,7 +184,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         this.theList.setFastScrollEnabled(true);
         this.theList.setOnItemClickListener(new OnItemClickListener() {
             public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2, long arg3) {
-                LookupsListActivity.this.onListItemClick(null, arg1, arg2, arg3);
+                LookupsListActivity.this.onListItemClick(arg2);
             }
         });
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -200,7 +195,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         this.titleTextView.setText(title);
     }
 
-    public void setupList() {
+    private void setupList() {
         int i = 0;
         boolean alphabetList = false;
         switch (this.currentType) {
@@ -228,6 +223,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 this.theStrings = ClassNameClass.allClassNamesInDatabase();
                 break;
             case ID_LOOKUP /*7*/:
+            case FILTER_IDS /*12*/:
                 setTitle(Locales.kLOC_GENERAL_ID_TITLE);
                 this.theStrings = IDClass.allCategoriesInDatabase();
                 break;
@@ -245,15 +241,13 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 setTitle(Locales.kLOC_FILTER_DATES);
                 Bundle bundle = getIntent().getExtras();
                 this.theStrings = FilterClass.dateRanges();
-                this.theStrings.add(ACCOUNT_TYPE_LOOKUP, new StringBuilder(String.valueOf(this.theStrings.remove(ACCOUNT_TYPE_LOOKUP))).append("\n").append(bundle.getString("FromDate")).append("<->").append(bundle.getString("ToDate")).toString());
+                if (bundle != null) {
+                    this.theStrings.add(ACCOUNT_TYPE_LOOKUP, this.theStrings.remove(ACCOUNT_TYPE_LOOKUP) + "\n" + bundle.getString("FromDate") + "<->" + bundle.getString("ToDate"));
+                }
                 break;
             case FILTER_PAYEES /*11*/:
                 setTitle(Locales.kLOC_GENERAL_PAYEE_TITLE);
                 this.theStrings = PayeeClass.allPayeesInDatabase();
-                break;
-            case FILTER_IDS /*12*/:
-                setTitle(Locales.kLOC_GENERAL_ID_TITLE);
-                this.theStrings = IDClass.allCategoriesInDatabase();
                 break;
             case FILTER_CLEARED /*13*/:
                 setTitle(Locales.kLOC_GENERAL_CLEARED);
@@ -273,7 +267,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 break;
             case REPEAT_TYPE /*16*/:
                 setTitle(Locales.kLOC_ACCOUNT_TYPE_LABEL);
-                this.theStrings = new ArrayList();
+                this.theStrings = new ArrayList<>();
                 String[] types = RepeatingTransactionClass.types();
                 int length = types.length;
                 while (i < length) {
@@ -295,7 +289,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 this.theStrings = CategoryClass.periods();
                 break;
             default:
-                this.theStrings = new ArrayList();
+                this.theStrings = new ArrayList<>();
                 this.theStrings.add("Invalid Type Passed to LookupList");
                 break;
         }
@@ -315,26 +309,25 @@ public class LookupsListActivity extends PocketMoneyActivity {
         } else {
             ListView listView = this.theList;
             ListAdapter lookupRowAdapter = new LookupRowAdapter(PocketMoneyThemes.simpleListItem(), this.theStrings);
-            this.adapter = lookupRowAdapter;
+            ListAdapter adapter = lookupRowAdapter;
             listView.setAdapter(lookupRowAdapter);
         }
         registerForContextMenu(this.theList);
     }
 
-    public void reloadData() {
+    private void reloadData() {
         setupList();
     }
 
-    public ArrayList<String> queryForAccounts() {
-        ArrayList<String> names = new ArrayList();
-        Iterator it = AccountDB.queryOnViewType(0).iterator();
-        while (it.hasNext()) {
-            names.add(((AccountClass) it.next()).getAccount());
+    private ArrayList<String> queryForAccounts() {
+        ArrayList<String> names = new ArrayList<>();
+        for (AccountClass accountClass : AccountDB.queryOnViewType(0)) {
+            names.add((accountClass).getAccount());
         }
         return names;
     }
 
-    protected void onListItemClick(ListView l, View v, int position, long id) {
+    private void onListItemClick(int position) {
         Intent i = new Intent();
         i.putExtra("selection", (String) this.theList.getItemAtPosition(position));
         setResult(this.currentType, i);
@@ -360,7 +353,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
         if (this.currentType != PAYEE_LOOKUP && this.currentType != CATEGORY_LOOKUP && this.currentType != CLASS_LOOKUP && this.currentType != ID_LOOKUP) {
             return false;
         }
-        menu.add(0, ACCOUNT_TYPE_LOOKUP, 0, "").setIcon(R.drawable.ic_arrow_drop_down_circle);
+        int MENU_ADD = 1;
+        menu.add(0, MENU_ADD, 0, "").setIcon(R.drawable.ic_arrow_drop_down_circle);
         return true;
     }
 
@@ -402,10 +396,10 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         if (this.currentType == PAYEE_LOOKUP || this.currentType == CATEGORY_LOOKUP || this.currentType == CLASS_LOOKUP || this.currentType == ID_LOOKUP) {
-            menu.add(0, ACCOUNT_LOOKUP, 0, Locales.kLOC_GENERAL_DELETE);
-            menu.add(0, ACCOUNT_TYPE_LOOKUP, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
+            menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
+            menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
             if (this.currentType == CATEGORY_LOOKUP) {
-                menu.add(0, PAYEE_LOOKUP, 0, Locales.kLOC_ADDSUBCATEGORY);
+                menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
             }
         }
     }
@@ -416,7 +410,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         Builder alert;
         final EditText input;
         switch (item.getItemId()) {
-            case ACCOUNT_TYPE_LOOKUP /*1*/:
+            case CMENU_EDIT /*1*/:
                 final int theItem = this.currentType;
                 originalString = this.theStrings.get(info.position);
                 alert = new Builder(this);
@@ -430,24 +424,21 @@ public class LookupsListActivity extends PocketMoneyActivity {
                         b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                         b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
                         CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
-                        final EditText editText = input;
-                        final int i = theItem;
-                        final String str = originalString;
                         b.setPositiveButton(charSequence, new OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                String value = editText.getText().toString().trim();
-                                switch (i) {
+                                String value = input.getText().toString().trim();
+                                switch (theItem) {
                                     case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                        PayeeClass.renameFromToInDatabase(str, value, false);
+                                        PayeeClass.renameFromToInDatabase(originalString, value, false);
                                         break;
                                     case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                        CategoryClass.renameFromToInDatabase(str, value, false);
+                                        CategoryClass.renameFromToInDatabase(originalString, value, false);
                                         break;
                                     case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                        ClassNameClass.renameFromToInDatabase(str, value, false);
+                                        ClassNameClass.renameFromToInDatabase(originalString, value, false);
                                         break;
                                     case LookupsListActivity.ID_LOOKUP /*7*/:
-                                        IDClass.renameFromToInDatabase(str, value, false);
+                                        IDClass.renameFromToInDatabase(originalString, value, false);
                                         break;
                                 }
                                 LookupsListActivity.this.reloadData();
@@ -459,19 +450,19 @@ public class LookupsListActivity extends PocketMoneyActivity {
                         //str = originalString;
                         b.setNegativeButton(charSequence, new OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
-                                String value = editText.getText().toString().trim();
-                                switch (i) {
+                                String value = input.getText().toString().trim();
+                                switch (theItem) {
                                     case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                        PayeeClass.renameFromToInDatabase(str, value, true);
+                                        PayeeClass.renameFromToInDatabase(originalString, value, true);
                                         break;
                                     case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                        CategoryClass.renameFromToInDatabase(str, value, true);
+                                        CategoryClass.renameFromToInDatabase(originalString, value, true);
                                         break;
                                     case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                        ClassNameClass.renameFromToInDatabase(str, value, true);
+                                        ClassNameClass.renameFromToInDatabase(originalString, value, true);
                                         break;
                                     case LookupsListActivity.ID_LOOKUP /*7*/:
-                                        IDClass.renameFromToInDatabase(str, value, true);
+                                        IDClass.renameFromToInDatabase(originalString, value, true);
                                         break;
                                 }
                                 LookupsListActivity.this.reloadData();
@@ -486,9 +477,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
                     }
                 });
                 alert.show();
-                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
                 return true;
-            case ACCOUNT_LOOKUP /*3*/:
+            case CMENU_DELETE /*3*/:
                 String value = this.theStrings.get(info.position);
                 switch (this.currentType) {
                     case PAYEE_LOOKUP /*4*/:
@@ -506,7 +497,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 }
                 reloadData();
                 return true;
-            case PAYEE_LOOKUP /*4*/:
+            case CMENU_SUBCATEGORY /*4*/:
                 originalString = this.theStrings.get(info.position);
                 alert = new Builder(this);
                 input = new EditText(this);
@@ -524,7 +515,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                     }
                 });
                 alert.show();
-                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
                 return true;
             default:
                 return super.onContextItemSelected(item);

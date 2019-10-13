@@ -11,23 +11,22 @@ import com.example.smmoney.views.charts.views.ChartView;
 import com.example.smmoney.views.splits.SplitsActivity;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 
 public class NetWorthDataSource implements ChartViewDataSource {
     ArrayList<ChartItem> chartAssets;
     ArrayList<ChartItem> chartLiabilities;
     ArrayList<ChartItem> chartNetworth;
-    AccountRowAdapter datasource;
+    private AccountRowAdapter datasource;
 
-    public NetWorthDataSource(AccountRowAdapter adapter) {
+    NetWorthDataSource(AccountRowAdapter adapter) {
         this.datasource = adapter;
     }
 
     public void reloadData() {
         GregorianCalendar balanceDate = CalExt.endOfDay(CalExt.endOfMonth(new GregorianCalendar()));
-        this.chartAssets = new ArrayList(12);
-        this.chartLiabilities = new ArrayList(12);
-        this.chartNetworth = new ArrayList(12);
+        this.chartAssets = new ArrayList<>(12);
+        this.chartLiabilities = new ArrayList<>(12);
+        this.chartNetworth = new ArrayList<>(12);
         balanceDate = CalExt.endOfDay(CalExt.endOfMonth(CalExt.subtractMonths(balanceDate, 11)));
         int liabilityColor = PocketMoneyThemes.redBarColor();
         int assetColor = PocketMoneyThemes.greenBarColor();
@@ -36,20 +35,18 @@ public class NetWorthDataSource implements ChartViewDataSource {
         for (int index = 0; index < 12; index++) {
             double totalAssets = 0.0d;
             double totalLiabilities = 0.0d;
-            Iterator it = this.datasource.getElements().iterator();
-            while (it.hasNext()) {
+            for (AccountClass accountClass : this.datasource.getElements()) {
                 double xrate;
-                AccountClass account = (AccountClass) it.next();
                 if (multipleCurrencies) {
-                    xrate = account.getExchangeRate();
+                    xrate = accountClass.getExchangeRate();
                 } else {
                     xrate = 1.0d;
                 }
-                if (account.getTotalWorth()) {
-                    if (account.isAsset()) {
-                        totalAssets += account.balanceAsOfDate(balanceDate) / xrate;
+                if (accountClass.getTotalWorth()) {
+                    if (accountClass.isAsset()) {
+                        totalAssets += accountClass.balanceAsOfDate(balanceDate) / xrate;
                     } else {
-                        totalLiabilities += account.balanceAsOfDate(balanceDate) / xrate;
+                        totalLiabilities += accountClass.balanceAsOfDate(balanceDate) / xrate;
                     }
                 }
             }
@@ -99,10 +96,7 @@ public class NetWorthDataSource implements ChartViewDataSource {
             return row;
         }
         row = this.chartNetworth.indexOf(chartItem);
-        if (row != -1) {
-            return row;
-        }
-        return -1;
+        return row;
     }
 
     public int numberOfSeriesInChartView(ChartView chartView) {

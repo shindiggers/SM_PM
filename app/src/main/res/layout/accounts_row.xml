@@ -35,7 +35,8 @@
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/selected"
         tools:src="@drawable/checkbook"
-        android:layout_centerVertical="true" />
+        android:layout_centerVertical="true"
+        android:contentDescription="@string/contentDescription_image_for_account" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -53,7 +54,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
-            android:text="name"
+            android:text="@string/accounts_edit_account_name"
             tools:text="First Direct Current"
             android:singleLine="true"
             android:layout_weight="1.0" />
@@ -73,7 +74,7 @@
                 android:clickable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="totalworth"
+                android:text="@string/kLOC_GENERAL_TOTALWORTH"
                 tools:text="£1,000.00"
                 android:singleLine="true"/>
 
@@ -87,7 +88,7 @@
                 android:clickable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="exchangerate"
+                android:text="@string/kLOC_GENERAL_EXCHANGERATE"
                 tools:text="£1.00 = $1.50"
                 android:singleLine="true"/>
 
@@ -104,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:src="@drawable/account_add_trans_selector"
-            />
+            android:contentDescription="@string/contentDescription_image_for_account" />
 
     </LinearLayout>
 

@@ -126,7 +126,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                 android:layout_marginStart="3dp"
-                android:layout_marginLeft="3dp"
                 android:text="@string/accounts_view_graph_title"
                 android:textColor="#000000"
                 ads:text="Net Worth" />
@@ -137,7 +136,6 @@
                 android:layout_height="match_parent"
                 android:layout_gravity="end"
                 android:layout_marginEnd="3dp"
-                android:layout_marginRight="3dp"
                 android:text="@string/accounts_view_net_worth"
                 android:textColor="#000000"
                 ads:text="£0.00" />

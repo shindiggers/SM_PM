@@ -1,6 +1,7 @@
 package com.example.smmoney.views.reports;
 
 import com.example.smmoney.database.AccountDB;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -37,11 +38,11 @@ public class PayeeReportDataSource extends ReportDataSource {
         TransactionClass[] relaventTransactions = transactionsFromDateToDate(startOfPeriod(), endOfPeriod());
         if (relaventTransactions == null) {
             this.data = null;
-            this.data = new ArrayList();
+            this.data = new ArrayList<>();
             return;
         }
         int oldAccountViewType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
-        Prefs.setPref(Prefs.VIEWACCOUNTS, 0);
+        Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsAll /*0*/);
         this.totalActions = relaventTransactions.length;
         this.currentAction = 0;
         int i = 0;
@@ -73,8 +74,10 @@ public class PayeeReportDataSource extends ReportDataSource {
                         } else {
                             tAmt = split.getAmount();
                         }
-                        reportItem.amount += tAmt;
+                        if (reportItem != null) {
+                            reportItem.amount += tAmt;
                         reportItem.count++;
+                        }
                     }
                 }
                 relaventTransactions[i] = null;
@@ -86,7 +89,7 @@ public class PayeeReportDataSource extends ReportDataSource {
         }
         Prefs.setPref(Prefs.VIEWACCOUNTS, oldAccountViewType);
         this.data = null;
-        this.data = new ArrayList();
+        this.data = new ArrayList<>();
         Enumeration<ReportItem> e = scratchReport.elements();
         while (e.hasMoreElements()) {
             this.data.add(e.nextElement());

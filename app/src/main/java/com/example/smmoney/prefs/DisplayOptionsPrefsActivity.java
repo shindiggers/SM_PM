@@ -18,7 +18,7 @@ import com.example.smmoney.views.LaunchActivity;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
-    Context context;
+    private Context context;
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
@@ -31,7 +31,7 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
         setupPrefs();
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), AccountDisplayPrefsActivity.class));
@@ -70,7 +70,7 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
         themes.setSummary(Prefs.getStringPref(Prefs.THEME_COLOR));
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);

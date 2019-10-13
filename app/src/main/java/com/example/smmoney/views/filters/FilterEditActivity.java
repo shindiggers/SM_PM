@@ -8,6 +8,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
@@ -17,12 +18,12 @@ import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.FromToDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.Objects;
 
 public class FilterEditActivity extends PocketMoneyActivity {
-    private final int REQUEST_CUSTOM_DATE = 30;
     private TextView accountsTextView;
     private EditText categoriesTextView;
     private EditText classesTextView;
@@ -39,16 +40,16 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.filter = (FilterClass) getIntent().getExtras().get("Filter");
+        this.filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
         this.currentActivity = this;
         setContentView(R.layout.filter_edit);
         loadInfo();
         setupButtons();
-        setTitle(Locales.kLOC_TOOLS_FILTER_EDIT);
+        setTitle();
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
+    private void setTitle() {
+        this.titleTextView.setText(Locales.kLOC_TOOLS_FILTER_EDIT);
     }
 
     private void setupButtons() {
@@ -97,7 +98,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) sv.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        ArrayList<View> theViews = new ArrayList();
+        ArrayList<View> theViews = new ArrayList<>();
         TextView tView = findViewById(R.id.filter_name_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.filterNameEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
@@ -135,9 +136,8 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.classesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View theView : theViews) {
+            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         this.titleTextView = findViewById(R.id.title_text_view);
@@ -202,7 +202,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
         GregorianCalendar gregorianCalendar = null;
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
-            String selection = data.getExtras().getString("selection");
+            String selection = Objects.requireNonNull(data.getExtras()).getString("selection");
             switch (requestCode) {
                 case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
                     this.transactionTypeTextView.setText(selection);
@@ -211,11 +211,12 @@ public class FilterEditActivity extends PocketMoneyActivity {
                     this.accountsTextView.setText(selection);
                     return;
                 case LookupsListActivity.FILTER_DATES /*10*/:
-                    if (selection.contains(Locales.kLOC_FILTER_DATES_CUSTOM)) {
+                    if (selection != null && selection.contains(Locales.kLOC_FILTER_DATES_CUSTOM)) {
                         Intent i = new Intent(this, FromToDateActivity.class);
                         i.putExtra("FromDate", this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateFrom()) : "*");
                         i.putExtra("ToDate", this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateTo()) : "*");
-                        startActivityForResult(i, 30);
+                        int REQUEST_CUSTOM_DATE = 30;
+                        startActivityForResult(i, REQUEST_CUSTOM_DATE);
                     }
                     this.datesTextView.setText(selection);
                     this.filter.setDate(selection);
@@ -237,17 +238,18 @@ public class FilterEditActivity extends PocketMoneyActivity {
                     return;
                 case Enums.kDesktopSyncStateSendPhotos /*30*/:
                     String date = data.getExtras().getString("FromDate");
-                    this.filter.setDateFrom(date.equals("*") ? null : CalExt.dateFromDescriptionWithMediumDate(date));
+                    if (date != null) {
+                        this.filter.setDateFrom(date.equals("*") ? null : CalExt.dateFromDescriptionWithMediumDate(date));
+                    }
                     date = data.getExtras().getString("ToDate");
                     FilterClass filterClass = this.filter;
-                    if (!date.equals("*")) {
+                    if (date != null && !date.equals("*")) {
                         gregorianCalendar = CalExt.dateFromDescriptionWithMediumDate(date);
                     }
                     filterClass.setDateTo(gregorianCalendar);
                     this.datesTextView.setText(this.filter.customDateString());
                     return;
                 default:
-                    return;
             }
         }
     }

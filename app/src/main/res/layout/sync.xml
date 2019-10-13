@@ -104,7 +104,8 @@
             android:layout_below="@+id/ipaddress"
             android:hint="@string/kLOC_FILETRANSFERS_PORT"
             android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt" />
+            android:textColorHint="@color/black_theme_text_alt"
+            android:inputType="" />
 
         <TextView
             android:id="@+id/portlabel"

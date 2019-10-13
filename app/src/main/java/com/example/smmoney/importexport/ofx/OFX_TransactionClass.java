@@ -3,21 +3,21 @@ package com.example.smmoney.importexport.ofx;
 import com.example.smmoney.records.TransactionClass;
 import java.util.GregorianCalendar;
 
-public class OFX_TransactionClass {
+class OFX_TransactionClass {
     // $FF: synthetic field
     private static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType;
-    double amount;
-    String checknum;
-    GregorianCalendar dtposted;
-    GregorianCalendar dtuser;
-    String fitID;
-    String memo;
-    String name;
-    OFX_Tags tags;
-    OFX_TransactionType transactionType;
+    private double amount;
+    private String checknum;
+    private GregorianCalendar dtposted;
+    private GregorianCalendar dtuser;
+    private String fitID;
+    private String memo;
+    private String name;
+    private OFX_Tags tags;
+    private OFX_TransactionType transactionType;
 
     // $FF: synthetic method
-    static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType() {
+    private static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType() {
         int[] var0 = $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType;
         if(var0 != null) {
             return var0;
@@ -27,91 +27,109 @@ public class OFX_TransactionClass {
             try {
                 var1[OFX_TransactionType.OFX_ATM.ordinal()] = 8;
             } catch (NoSuchFieldError var37) {
+                var37.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_CASH.ordinal()] = 13;
             } catch (NoSuchFieldError var36) {
+                var36.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_CHECK.ordinal()] = 11;
             } catch (NoSuchFieldError var35) {
+                var35.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_CREDIT.ordinal()] = 1;
             } catch (NoSuchFieldError var34) {
+                var34.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_DEBIT.ordinal()] = 2;
             } catch (NoSuchFieldError var33) {
+                var33.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_DEP.ordinal()] = 7;
             } catch (NoSuchFieldError var32) {
+                var32.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_DIRECTDEBIT.ordinal()] = 15;
             } catch (NoSuchFieldError var31) {
+                var31.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_DIRECTDEP.ordinal()] = 14;
             } catch (NoSuchFieldError var30) {
+                var30.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_DIV.ordinal()] = 4;
             } catch (NoSuchFieldError var29) {
+                var29.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_FEE.ordinal()] = 5;
             } catch (NoSuchFieldError var28) {
+                var28.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_INT.ordinal()] = 3;
             } catch (NoSuchFieldError var27) {
+                var27.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_OTHER.ordinal()] = 17;
             } catch (NoSuchFieldError var26) {
+                var26.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_PAYMENT.ordinal()] = 12;
             } catch (NoSuchFieldError var25) {
+                var25.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_POS.ordinal()] = 9;
             } catch (NoSuchFieldError var24) {
+                var24.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_REPEATPMT.ordinal()] = 16;
             } catch (NoSuchFieldError var23) {
+                var23.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_SRVCHG.ordinal()] = 6;
             } catch (NoSuchFieldError var22) {
+                var22.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_UKNOWN.ordinal()] = 18;
             } catch (NoSuchFieldError var21) {
+                var21.printStackTrace();
             }
 
             try {
                 var1[OFX_TransactionType.OFX_XFER.ordinal()] = 10;
             } catch (NoSuchFieldError var20) {
+                var20.printStackTrace();
             }
 
             $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType = var1;
@@ -119,7 +137,7 @@ public class OFX_TransactionClass {
         }
     }
 
-    public OFX_TransactionClass(TransactionClass var1, OFX_Tags var2) {
+    OFX_TransactionClass(TransactionClass var1, OFX_Tags var2) {
         this.tags = var2;
         this.amount = var1.getAmount();
         this.checknum = var1.getCheckNumber();
@@ -130,7 +148,7 @@ public class OFX_TransactionClass {
         this.setTransactionTypeFromTransaction(var1);
     }
 
-    public OFX_TransactionClass(String var1, OFX_Tags var2) {
+    OFX_TransactionClass(String var1, OFX_Tags var2) {
         this.tags = var2;
         this.parse(var1);
     }
@@ -150,7 +168,7 @@ public class OFX_TransactionClass {
         return "TRANSACTION:\nfitID=" + this.fitID + "\ntransactionType=" + this.transactionType + "\ncheckNum=" + this.checknum + "\namount=" + this.amount + "\nname=" + this.name + "\nmemo=" + this.memo + "\ndtpost=" + this.dtposted + "\ndtuser=" + this.dtuser;
     }
 
-    public void setTransactionTypeFromString(String var1) {
+    private void setTransactionTypeFromString(String var1) {
         if("CREDIT".equalsIgnoreCase(var1)) {
             this.transactionType = OFX_TransactionType.OFX_CREDIT;
         } else if("DEBIT".equalsIgnoreCase(var1)) {
@@ -190,11 +208,10 @@ public class OFX_TransactionClass {
         }
     }
 
-    public void setTransactionTypeFromTransaction(TransactionClass var1) {
+    private void setTransactionTypeFromTransaction(TransactionClass var1) {
         if(var1.getType() != 0 && var1.getType() != 2) {
             if(var1.getType() == 1 || var1.getType() == 3) {
                 this.transactionType = OFX_TransactionType.OFX_CREDIT;
-                return;
             }
         } else {
             this.transactionType = OFX_TransactionType.OFX_DEBIT;
@@ -224,7 +241,7 @@ public class OFX_TransactionClass {
         return var3.append(var4).append(this.tags.transactionFitIDEnd).append("\n").append("\t\t\t\t\t\t").append(this.tags.transactionNameBegin).append(this.name).append(this.tags.transactionNameEnd).append("\n").append(var2).append(var1).append("\t\t\t\t\t</STMTTRN>\n").toString();
     }
 
-    public String transactionTypeAsString() {
+    private String transactionTypeAsString() {
         switch($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType()[this.transactionType.ordinal()]) {
             case 1:
                 return "CREDIT";

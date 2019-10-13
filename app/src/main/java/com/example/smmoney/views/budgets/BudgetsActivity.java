@@ -1,5 +1,6 @@
 package com.example.smmoney.views.budgets;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -31,8 +32,10 @@ import android.widget.ProgressBar;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -41,8 +44,6 @@ import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -92,7 +93,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
 
     public void onResume() {
         super.onResume();
-        this.wakeLock.acquire();
+        this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
         reloadData();
     }
 
@@ -109,7 +110,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
         this.periodButton = layout.findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                BudgetsActivity.this.showDialog(1);
+                BudgetsActivity.this.showDialog(DIALOG_PERIOD /*1*/);
             }
         });
         leftArrow.setOnClickListener(new OnClickListener() {
@@ -140,12 +141,12 @@ public class BudgetsActivity extends PocketMoneyActivity {
         this.budgetDisplay.setTextColor(-1);
         this.budgetDisplay.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                if (2 == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, 0);
-                } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == 0) {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, 3);
+                if (Enums.kBudgetDisplayExpenseBudgeted == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
+                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseAvailable);
+                } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) ==Enums.kBudgetDisplayExpenseAvailable) {
+                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseOver);
                 } else {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, 2);
+                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseBudgeted);
                 }
                 BudgetsActivity.this.budgetProgressBar.setVisibility(View.VISIBLE);
                 BudgetsActivity.this.budgetDisplay.setVisibility(View.INVISIBLE);
@@ -182,7 +183,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
         return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
     }
 
-    public void loadBalanceBar() {
+    private void loadBalanceBar() {
         double savings;
         double budgetedIncome = this.adapter.budgetedIncomes();
         double budgetedExpense = this.adapter.budgetedExpenses();
@@ -223,7 +224,8 @@ public class BudgetsActivity extends PocketMoneyActivity {
         }
     }
 
-    public void reloadData() {
+    @SuppressLint("StaticFieldLeak")
+    private void reloadData() {
         if (this.budgetProgressBar.getVisibility() == View.INVISIBLE) {
             this.reloadProgressBar.setVisibility(View.VISIBLE);
         }
@@ -299,29 +301,29 @@ public class BudgetsActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, Locales.kLOC_BUDGETS_NEW);
-        menu.add(0, 2, 0, Locales.kLOC_GENERAL_PREFERENCES);
-        menu.add(0, 3, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
-        menu.add(0, 4, 0, "View Options");
-        menu.add(0, 5, 0, Locales.kLOC_GENERAL_QUIT);
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_BUDGETS_NEW);
+        menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES);
+        menu.add(0, MENU_GOTODATE, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
+        menu.add(0, MENU_VIEW, 0, "View Options");
+        menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case MENU_NEW /*1*/:
                 newBudget();
                 return true;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case MENU_PREFS /*2*/:
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-                showDialog(2);
+            case MENU_GOTODATE /*3*/:
+                showDialog(DIALOG_GOTODATE /*2*/);
                 return true;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case MENU_VIEW /*4*/:
                 startActivity(new Intent(this, BudgetsViewOptionsActivity.class));
                 return true;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case MENU_QUIT /*5*/:
                 Prefs.setPref(Prefs.SHUTTINGDOWN, true);
                 setResult(1);
                 finish();
@@ -335,19 +337,19 @@ public class BudgetsActivity extends PocketMoneyActivity {
         BudgetsRowHolder aHolder = (BudgetsRowHolder) v;
         Intent i = new Intent();
         i.putExtra("Category", aHolder.category);
-        menu.add(0, 1, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, 3, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
+        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
                 startActivity(anIntent);
                 return true;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case CMENU_DELETE /*3*/:
                 deleteBudget((CategoryClass) b.get("Category"));
                 reloadData();
                 return true;
@@ -358,7 +360,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case DIALOG_PERIOD /*1*/:
                 CharSequence[] items = new CharSequence[]{Locales.kLOC_REPEATING_FREQUENCY_DAILY, Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_BUDGETS_BIWEEKLY, Locales.kLOC_BUDGETS_4WEEKS, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY, Locales.kLOC_BUDGETS_BIMONTHLY, Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY, Locales.kLOC_BUDGETS_HALFYEAR, Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
                 Builder builder = new Builder(this);
                 builder.setTitle(Locales.kLOC_BUDGETS_PERIOD);
@@ -366,32 +368,32 @@ public class BudgetsActivity extends PocketMoneyActivity {
                     public void onClick(DialogInterface dialog, int item) {
                         int periodType = -1;
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
-                                periodType = 0;
+                            case 0 /*0*/:
+                                periodType = Enums.kBudgetPeriodDay;
                                 break;
-                            case SplitsActivity.RESULT_CHANGED /*1*/:
-                                periodType = 1;
+                            case 1 /*1*/:
+                                periodType = Enums.kBudgetPeriodWeek;
                                 break;
-                            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                                periodType = 5;
+                            case 2 /*2*/:
+                                periodType = Enums.kBudgetPeriodBiweekly;
                                 break;
-                            case SplitsActivity.REQUEST_EDIT /*3*/:
-                                periodType = 8;
+                            case 3 /*3*/:
+                                periodType = Enums.kBudgetPeriod4Weeks;
                                 break;
-                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                periodType = 2;
+                            case 4 /*4*/:
+                                periodType = Enums.kBudgetPeriodMonth;
                                 break;
-                            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                periodType = 6;
+                            case 5 /*5*/:
+                                periodType = Enums.kBudgetPeriodBimonthly;
                                 break;
-                            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                periodType = 3;
+                            case 6 /*6*/:
+                                periodType = Enums.kBudgetPeriodQuarter;
                                 break;
-                            case LookupsListActivity.ID_LOOKUP /*7*/:
-                                periodType = 7;
+                            case 7 /*7*/:
+                                periodType = Enums.kBudgetPeriodHalfYear;
                                 break;
-                            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
-                                periodType = 4;
+                            case 8 /*8*/:
+                                periodType = Enums.kBudgetPeriodYear;
                                 break;
                         }
                         Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
@@ -401,7 +403,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case DIALOG_GOTODATE /*2*/:
                 GregorianCalendar theDate = this.adapter.currentDate;
                 return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
             default:

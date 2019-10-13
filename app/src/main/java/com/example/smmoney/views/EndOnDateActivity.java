@@ -26,6 +26,7 @@ import com.example.smmoney.misc.Prefs;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 public class EndOnDateActivity extends PocketMoneyActivity {
     public static int ENDONDATE_RESULT_DATESELECTED = 2;
@@ -41,8 +42,9 @@ public class EndOnDateActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         setContentView(LayoutInflater.from(this).inflate(R.layout.endondate, null));
         setupView();
-        String previousDate = getIntent().getExtras().getString("Date");
+        String previousDate = Objects.requireNonNull(getIntent().getExtras()).getString("Date");
         Log.d("ENDONDATEACTIVITY","String previous date = " + previousDate);
+        assert previousDate != null;
         if (!previousDate.equals(Locales.kLOC_EDIT_REPEATING_ENDONNONE)) { //kLOC_EDIT_REPEATING_ENDONNONE = "No end Date"
             Log.d("ENDONDATEACTIVITY","String previousDate != "+ Locales.kLOC_EDIT_REPEATING_ENDONNONE);
             this.prevDate = CalExt.dateFromDescriptionWithMediumDate(previousDate);
@@ -58,7 +60,7 @@ public class EndOnDateActivity extends PocketMoneyActivity {
         this.titleTextView.setText(title);
     }
 
-    public void setupView() {
+    private void setupView() {
         this.theCheckbox = findViewById(R.id.endondatecheckbox);
         this.theCheckbox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
         this.theDate = findViewById(R.id.endondatedate);
@@ -67,18 +69,18 @@ public class EndOnDateActivity extends PocketMoneyActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 EndOnDateActivity.this.theDateRow.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
                 if (isChecked) {
-                    EndOnDateActivity.this.showDialog(1);
+                    EndOnDateActivity.this.showDialog(DATE_DIALOG_ID/*1*/);
                 }
             }
         });
         this.theDateRow.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                EndOnDateActivity.this.showDialog(1);
+                EndOnDateActivity.this.showDialog(DATE_DIALOG_ID/*1*/);
             }
         });
         ((TextView) findViewById(R.id.endon_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
 
-        if (getIntent().getExtras().getBoolean(Prefs.BUDGETSTARTDATE)) {
+        if (Objects.requireNonNull(getIntent().getExtras()).getBoolean(Prefs.BUDGETSTARTDATE)) {
             ((TextView) findViewById(R.id.endon_label)).setText(Locales.kLOC_BUDGET_STARTDATE);
         }
         this.theDate.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -87,7 +89,7 @@ public class EndOnDateActivity extends PocketMoneyActivity {
         ((View) this.theDate.getParent().getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 
-    public void processDate() {
+    private void processDate() {
         if (this.theCheckbox.isChecked()) {
             Intent i = new Intent();
             i.putExtra("Date", this.theDate.getText().toString());
@@ -100,16 +102,14 @@ public class EndOnDateActivity extends PocketMoneyActivity {
     }
 
     protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DATE_DIALOG_ID /*1*/:
-                if (this.prevDate == null) {
-                    this.prevDate = new GregorianCalendar();
-                    this.theDate.setText(CalExt.descriptionWithMediumDate(this.prevDate));
-                }
-                return new DatePickerDialog(this, getDateListener(), this.prevDate.get(Calendar.YEAR), this.prevDate.get(Calendar.MONTH), this.prevDate.get(Calendar.DAY_OF_WEEK));
-            default:
-                return null;
+        if (id == DATE_DIALOG_ID) { /*1*/
+            if (this.prevDate == null) {
+                this.prevDate = new GregorianCalendar();
+                this.theDate.setText(CalExt.descriptionWithMediumDate(this.prevDate));
+            }
+            return new DatePickerDialog(this, getDateListener(), this.prevDate.get(Calendar.YEAR), this.prevDate.get(Calendar.MONTH), this.prevDate.get(Calendar.DAY_OF_WEEK));
         }
+        return null;
     }
 
     private OnDateSetListener getDateListener() {

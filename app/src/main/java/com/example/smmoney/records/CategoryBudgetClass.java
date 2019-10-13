@@ -24,7 +24,7 @@ import org.xmlpull.v1.XmlSerializer;
 public class CategoryBudgetClass extends PocketMoneyRecordClass {
     public static String XML_LISTTAG_CATEGORYBUDGETS = "CATEGORYBUDGETS";
     public static String XML_RECORDTAG_CATEGORYBUDGET = "CATEGORYBUDGETCLASS";
-    static String deletecatbudget_statement = null;
+    private static String deletecatbudget_statement = null;
     private double budgetLimit;
     public int categoryBudgetID;
     private String categoryName;
@@ -33,7 +33,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     private GregorianCalendar date;
     private boolean resetRollover;
 
-    public CategoryBudgetClass(int pk) {
+    private CategoryBudgetClass(int pk) {
         this.categoryBudgetID = pk;
         this.resetRollover = false;
         this.budgetLimit = 0.0d;
@@ -85,13 +85,13 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         }
     }
 
-    public String getCategoryName() {
+    private String getCategoryName() {
         hydrate();
         return this.categoryName;
     }
 
     public void setCategoryName(String category) {
-        if (this.categoryName != category) {
+        if (!this.categoryName.equals(category)) {
             this.dirty = true;
             this.categoryName = category;
         }
@@ -119,7 +119,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -137,7 +137,6 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
                 this.budgetLimit = curs.getDouble(col2);
                 col2 = col + 1;
                 this.resetRollover = curs.getInt(col) == 1;
-                col = col2 + 1;
                 str = curs.getString(col2);
                 if (str == null) {
                     str = "";
@@ -182,12 +181,12 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         }
     }
 
-    public static int insertNewBudgetItemWithCategoryNameIntoDatabase(String cat) {
+    private static int insertNewBudgetItemWithCategoryNameIntoDatabase(String cat) {
         if (cat == null || cat.length() == 0) {
             return 0;
         }
         ContentValues content = new ContentValues();
-        content.put("timestamp", Long.valueOf(System.currentTimeMillis()) / 1000);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("categoryName", cat);
         content.put("serverID", Database.newServerID());
         long id = Database.replace("categoryBudgets", null, content);
@@ -197,8 +196,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return 0;
     }
 
-    public static double limitPrior(GregorianCalendar toDate, double originalLimit, String category) {
-        Cursor curs = Database.rawQuery("SELECT budgetLimit FROM categoryBudgets WHERE deleted=0 AND date < " + Long.toString(toDate.getTimeInMillis() / 1000) + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date DESC", null);
+    static double limitPrior(GregorianCalendar toDate, double originalLimit, String category) {
+        Cursor curs = Database.rawQuery("SELECT budgetLimit FROM categoryBudgets WHERE deleted=0 AND date < " + toDate.getTimeInMillis() / 1000 + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date DESC", null);
         if (curs.getCount() > 0) {
             curs.moveToFirst();
             double limit = curs.getDouble(0);
@@ -209,8 +208,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return originalLimit;
     }
 
-    public static GregorianCalendar firstRolloverDatePriorTo(GregorianCalendar date, String category) {
-        Cursor curs = Database.rawQuery("SELECT date FROM categoryBudgets WHERE deleted=0 AND date < " + Long.toString(date.getTimeInMillis() / 1000) + " AND resetRollover=1 AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date DESC", null);
+    static GregorianCalendar firstRolloverDatePriorTo(GregorianCalendar date, String category) {
+        Cursor curs = Database.rawQuery("SELECT date FROM categoryBudgets WHERE deleted=0 AND date < " + date.getTimeInMillis() / 1000 + " AND resetRollover=1 AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date DESC", null);
         GregorianCalendar cal = null;
         if (curs.getCount() > 0) {
             curs.moveToFirst();
@@ -221,8 +220,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return cal;
     }
 
-    public static GregorianCalendar firstDateOfTransactionPriorTo(GregorianCalendar date, String category) {
-        Cursor curs = Database.rawQuery("SELECT date FROM transactions WHERE deleted=0 AND date < " + Long.toString(date.getTimeInMillis()) + " AND transactionID IN( SELECT transactionID FROM splits WHERE categoryID LIKE " + Database.SQLFormat(category) + " ) ORDER BY date", null);
+    static GregorianCalendar firstDateOfTransactionPriorTo(GregorianCalendar date, String category) {
+        Cursor curs = Database.rawQuery("SELECT date FROM transactions WHERE deleted=0 AND date < " + date.getTimeInMillis() + " AND transactionID IN( SELECT transactionID FROM splits WHERE categoryID LIKE " + Database.SQLFormat(category) + " ) ORDER BY date", null);
         GregorianCalendar cal = null;
         if (curs.getCount() > 0) {
             curs.moveToFirst();
@@ -234,10 +233,10 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     public static List<CategoryBudgetClass> budgetItemsWithRolloverForCategory(String category, GregorianCalendar startDate, GregorianCalendar endDate) {
-        Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND resetRollover=1 AND date >= " + Long.toString(startDate.getTimeInMillis()) + " AND date <= " + Long.toString(endDate.getTimeInMillis()) + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date", null);
+        Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND resetRollover=1 AND date >= " + startDate.getTimeInMillis() + " AND date <= " + endDate.getTimeInMillis() + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date", null);
         int count = curs.getCount();
         curs.moveToFirst();
-        ArrayList<CategoryBudgetClass> budgets = new ArrayList(count);
+        ArrayList<CategoryBudgetClass> budgets = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             budgets.add(new CategoryBudgetClass(curs.getInt(0)));
             curs.moveToNext();
@@ -246,11 +245,11 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return budgets;
     }
 
-    public static List<CategoryBudgetClass> budgetItems(String forCategory, GregorianCalendar startDate, GregorianCalendar endDate) {
-        Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND date >= " + Long.toString(startDate.getTimeInMillis() / 1000) + " AND date <= " + Long.toString(endDate.getTimeInMillis() / 1000) + " AND categoryName LIKE " + Database.SQLFormat(forCategory) + " ORDER BY date", null);
+    static List<CategoryBudgetClass> budgetItems(String forCategory, GregorianCalendar startDate, GregorianCalendar endDate) {
+        Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND date >= " + startDate.getTimeInMillis() / 1000 + " AND date <= " + endDate.getTimeInMillis() / 1000 + " AND categoryName LIKE " + Database.SQLFormat(forCategory) + " ORDER BY date", null);
         int count = curs.getCount();
         curs.moveToFirst();
-        ArrayList<CategoryBudgetClass> budgets = new ArrayList(count);
+        ArrayList<CategoryBudgetClass> budgets = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             budgets.add(new CategoryBudgetClass(curs.getInt(0)));
             curs.moveToNext();
@@ -267,7 +266,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date", null);
         int count = curs.getCount();
         curs.moveToFirst();
-        ArrayList<CategoryBudgetClass> cats = new ArrayList(count);
+        ArrayList<CategoryBudgetClass> cats = new ArrayList<>(count);
         for (int i = 0; i < count; i++) {
             cats.add(new CategoryBudgetClass(curs.getInt(0)));
             curs.moveToNext();
@@ -280,7 +279,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         if (deletecatbudget_statement == null) {
             deletecatbudget_statement = "UPDATE categoryBudgets SET deleted='1', timestamp=? WHERE categoryName=?";
         }
-        Database.execSQL(deletecatbudget_statement, new String[]{new StringBuilder(String.valueOf(((double) System.currentTimeMillis()) / 1000.0d)).toString(), cat});
+        Database.execSQL(deletecatbudget_statement, new String[]{String.valueOf(((double) System.currentTimeMillis()) / 1000.0d), cat});
     }
 
     public void updateWithXML(String xmlTransaction) {
@@ -309,26 +308,34 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                z = true;
-            }
-            setDeleted(z);
-        } else if (localName.equals("categoryName")) {
-            setCategoryName(this.currentElementValue);
-        } else if (localName.equals("date")) {
-            setDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
-        } else if (localName.equals("resetRollover")) {
-            if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                z = true;
-            }
-            setResetRollover(z);
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
-        } else if (localName.equals("budgetLimit")) {
-            setBudgetLimit(Double.valueOf(this.currentElementValue));
+        switch (localName) {
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setDeleted(z);
+                break;
+            case "categoryName":
+                setCategoryName(this.currentElementValue);
+                break;
+            case "date":
+                setDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
+                break;
+            case "resetRollover":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setResetRollover(z);
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
+            case "budgetLimit":
+                setBudgetLimit(Double.valueOf(this.currentElementValue));
+                break;
         }
         this.currentElementValue = null;
     }

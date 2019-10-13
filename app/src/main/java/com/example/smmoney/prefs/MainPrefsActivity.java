@@ -14,8 +14,8 @@ import com.example.smmoney.views.budgets.BudgetsActivity;
 import java.util.Objects;
 
 public class MainPrefsActivity extends ListActivity {
-    protected boolean isStartingActivity = false;
-    protected boolean showPasswordScreen = false;
+    private boolean isStartingActivity = false;
+    private boolean showPasswordScreen = false;
     protected boolean skipPasswordScreen = false;
 
     public void onCreate(Bundle savedInstanceState) throws NullPointerException {
@@ -64,14 +64,14 @@ public class MainPrefsActivity extends ListActivity {
     public void startActivityForResult(Intent i, int req) {
         this.showPasswordScreen = false;
         this.isStartingActivity = true;
-        i.putExtra("dontShowPass", new String());
+        i.putExtra("dontShowPass", "");
         super.startActivityForResult(i, req);
     }
 
     public void startActivity(Intent i) {
         this.showPasswordScreen = false;
         this.isStartingActivity = true;
-        i.putExtra("dontShowPass", new String());
+        i.putExtra("dontShowPass", "");
         super.startActivityForResult(i, 9999);
     }
 

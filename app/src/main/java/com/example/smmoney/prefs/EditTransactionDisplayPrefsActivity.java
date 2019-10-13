@@ -12,7 +12,7 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceActivity {
     ListPreference categoryPositionListPref;
-    ListPreference startEditingListPref;
+    private ListPreference startEditingListPref;
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
@@ -29,7 +29,7 @@ public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceAc
         this.startEditingListPref.setSummary(this.startEditingListPref.getValue());
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         this.startEditingListPref = (ListPreference) findPreference(Prefs.EDITTRANSACTION_STARTING_FIELD);
         String[] startPositions = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_AMOUNT};
         this.startEditingListPref.setEntries(startPositions);
@@ -37,7 +37,7 @@ public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceAc
         this.startEditingListPref.setOnPreferenceChangeListener(getChangeListener());
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);

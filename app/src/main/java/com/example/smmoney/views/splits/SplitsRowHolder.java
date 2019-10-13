@@ -2,20 +2,23 @@ package com.example.smmoney.views.splits;
 
 import android.content.Context;
 import android.widget.TextView;
+
+import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.SplitsClass;
 
-public class SplitsRowHolder {
+class SplitsRowHolder {
     TextView amount;
     TextView category;
     TextView memo;
     SplitsClass split;
     TextView theClass;
 
-    public void setSplit(SplitsClass aSplit, Context aContext) {
+    void setSplit(SplitsClass aSplit, Context aContext) {
         this.split = aSplit;
         if (this.split.isTransfer()) {
-            this.category.setText("<" + this.split.getTransferToAccount() + ">");
+            String transferToAccount = aContext.getString(R.string.splits_transfer_to_account,this.split.getTransferToAccount());
+            this.category.setText(transferToAccount);
         } else {
             this.category.setText(this.split.getCategory());
         }

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.misc.TransactionTransferRetVals;
@@ -15,9 +16,8 @@ import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.repeating.RepeatingActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Enumeration;
@@ -27,47 +27,47 @@ import java.util.Iterator;
 import java.util.TimeZone;
 
 public class TransactionDB {
-    static String match_ofxAmountDate_statement = null;
-    static String match_ofxCheck_statement = null;
-    static String match_ofxid_statement = null;
-    static String select_matching_statement = null;
+    private static String match_ofxAmountDate_statement = null;
+    private static String match_ofxCheck_statement = null;
+    private static String match_ofxid_statement = null;
+    private static String select_matching_statement = null;
 
     public static String[] transactionSortTypes() {
         return new String[]{Locales.kLOC_GENERAL_DATE, Locales.kLOC_GENERAL_AMOUNT, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CLASS, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_NOTE, Locales.kLOC_GENERAL_ID, Locales.kLOC_GENERAL_CLEARED, Locales.kLOC_TRANSACTION_SORTDATEAMOUNT};
     }
 
-    public static int transactionSortTypeFromString(String aType) {
+    private static int transactionSortTypeFromString(String aType) {
         if (aType.equals(Locales.kLOC_GENERAL_DATE)) {
-            return 0;
+            return Enums.kTransactionsSortTypeDate /*0*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_AMOUNT)) {
-            return 1;
+            return Enums.kTransactionsSortTypeAmount /*1*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_PAYEE)) {
-            return 2;
+            return Enums.kTransactionsSortTypePayee /*2*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_CLASS)) {
-            return 3;
+            return Enums.kTransactionsSortTypeClass /*3*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_CATEGORY)) {
-            return 4;
+            return Enums.kTransactionsSortTypeCategory /*4*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_NOTE)) {
-            return 5;
+            return Enums.kTransactionsSortTypeMemo /*5*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_ID)) {
-            return 6;
+            return Enums.kTransactionsSortTypeID /*6*/;
         }
         if (aType.equals(Locales.kLOC_GENERAL_CLEARED)) {
-            return 7;
+            return Enums.kTransactionsSortTypeCleared /*7*/;
         }
         if (aType.equals(Locales.kLOC_TRANSACTION_SORTDATEAMOUNT)) {
-            return 8;
+            return Enums.kTransactionsSortTypeDateAmount /*8*/;
         }
-        return 0;
+        return Enums.kTransactionsSortTypeDate /*0*/;
     }
 
-    public static String queryWithFilterOrderByClause() {
+    private static String queryWithFilterOrderByClause() {
         String orderString;
         String sortFieldString;
         if (Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING)) {
@@ -76,57 +76,57 @@ public class TransactionDB {
             orderString = "ASC";
         }
         switch (transactionSortTypeFromString(Prefs.getStringPref(Prefs.TRANSACTIONS_SORTON))) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kTransactionsSortTypeAmount /*1*/:
                 sortFieldString = "t.subtotal";
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kTransactionsSortTypePayee /*2*/:
                 sortFieldString = "UPPER(t.payee)";
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kTransactionsSortTypeClass /*3*/:
                 sortFieldString = "UPPER(s.classID)";
                 break;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kTransactionsSortTypeCategory /*4*/:
                 sortFieldString = "UPPER(s.categoryID)";
                 break;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kTransactionsSortTypeMemo /*5*/:
                 sortFieldString = "UPPER(s.memo)";
                 break;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kTransactionsSortTypeID /*6*/:
                 sortFieldString = "UPPER(t.checkNumber)";
                 break;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kTransactionsSortTypeCleared /*7*/:
                 sortFieldString = "t.cleared";
                 break;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kTransactionsSortTypeDateAmount /*8*/:
                 return "(t.date + " + timeOffsetForCurrentTimezone() + ")/86400 " + orderString + ", t.subTotal DESC";
             default:
                 sortFieldString = "t.date";
                 break;
         }
-        return new StringBuilder(String.valueOf(sortFieldString)).append(" ").append(orderString).toString();
+        return sortFieldString + " " + orderString;
     }
 
-    public static long timeOffsetForCurrentTimezone() {
+    private static long timeOffsetForCurrentTimezone() {
         return (long) (TimeZone.getDefault().getOffset(0) / 1000);
     }
 
-    public static String queryWithFilterWhereClause(FilterClass filter) {
+    private static String queryWithFilterWhereClause(FilterClass filter) {
         String where = "deleted=0";
         int type = filter.getType();
-        if (type == 5) {
+        if (type == Enums.kTransactionTypeRepeating /*5*/) {
             where = where.concat(" AND t.type = " + type);
-        } else if (type == 4) {
+        } else if (type == Enums.kTransactionTypeAll /*4*/) {
             where = where.concat(" AND t.type <> 5");
-        } else if (type == 3 || type == 2) {
+        } else if (type == Enums.kTransactionTypeTransferFrom /*3*/ || type == Enums.kTransactionTypeTransferTo /*2*/) {
             where = where.concat(" AND t.type >= 2 AND t.type <= 3");
         } else {
             where = where.concat(" AND t.type = " + type);
         }
         if (!filter.allAccounts()) {
             where = where.concat(" AND t.accountID=" + AccountClass.idForAccount(filter.getAccount()));
-        } else if (2 == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
+        } else if (Enums.kViewAccountsTotalWorth/*2*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             where = where.concat(" AND t.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1)");
-        } else if (1 == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
+        } else if (Enums.kViewAccountsNonZero/*1*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             where = where.concat(" AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))");
         }
         if (!(filter.getDate() == null || filter.getDate().length() <= 0 || filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL))) {
@@ -152,7 +152,7 @@ public class TransactionDB {
                     fromDate = FilterClass.convertFilterDateIsFromDate(filter.getDate(), true);
                     toDate = FilterClass.convertFilterDateIsFromDate(filter.getDate(), false);
                 }
-                where = new StringBuilder(String.valueOf(where)).append(" AND t.date>=").append(fromDate).append(" AND t.date<=").append(toDate).toString();
+                where = where + " AND t.date>=" + fromDate + " AND t.date<=" + toDate;
             }
         }
         if (filter.getPayee().length() > 0) {
@@ -161,9 +161,9 @@ public class TransactionDB {
         if (filter.getCheckNumber().length() > 0) {
             where = where.concat(" AND t.checkNumber LIKE " + Database.SQLFormat(filter.getCheckNumber()));
         }
-        if (filter.getCleared() == 1) {
+        if (filter.getCleared() == Enums.kClearedCleared /*1*/) {
             where = where.concat(" AND t.cleared = 1");
-        } else if (filter.getCleared() == 0) {
+        } else if (filter.getCleared() == Enums.kClearedUncleared /*0*/) {
             where = where.concat(" AND t.cleared = 0");
         }
         if (filter.getCategory().length() > 0 && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
@@ -182,7 +182,7 @@ public class TransactionDB {
         return where.concat(" AND s.classID LIKE " + Database.SQLFormat(filter.getClassName()));
     }
 
-    public static String queryWithFilterSpotlightClause(String spotlight) {
+    private static String queryWithFilterSpotlightClause(String spotlight) {
         if (spotlight == null || spotlight.length() == 0) {
             return "1";
         }
@@ -202,14 +202,17 @@ public class TransactionDB {
             if (from > to) {
                 double swap = to;
                 to = from;
+                //todo: think need to add "from = swap" so that the ... works regarless of entering highest number first. Test this out
             }
             return "s.amount >= " + from + " AND s.amount <= " + to;
         }
+        // This code below searches for positive and negative numbers and filters BOTH of this. Is that what we want the app to do? Could have separate filtering for positive and negative?
         double aNum = CurrencyExt.amountFromString(spotlight);
         String amountWhere = "";
         if (aNum > 0.0d) {
             amountWhere = "OR s.amount = " + aNum + " OR s.amount = " + (-1.0d * aNum);
         }
+        // Line below searches all other Transaction object fields with leading and trailing wildcards (ie if the spotlight search is contained anywhere in the Transaction object
         return "t.checkNumber LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "t.payee LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.memo LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.categoryID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.classID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.currencyCode LIKE " + Database.SQLFormat("%" + spotlight + "%") + " " + amountWhere;
     }
 
@@ -217,7 +220,7 @@ public class TransactionDB {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] projection = new String[]{"t.transactionID", "t.subTotal"};
         double runningBalance = 0.0d;
-        ArrayList<TransactionClass> list = new ArrayList();
+        ArrayList<TransactionClass> list = new ArrayList<>();
         qb.setDistinct(true);
         qb.setTables("transactions t INNER JOIN splits s ON t.transactionID=s.transactionID");
         String where = queryWithFilterWhereClause(filter) + " AND (" + queryWithFilterSpotlightClause(filter.getSpotlight()) + ")";
@@ -296,7 +299,7 @@ public class TransactionDB {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] projection = new String[]{"t.transactionID", "t.subTotal"};
         double runningBalance = 0.0d;
-        ArrayList<TransactionClass> list = new ArrayList();
+        ArrayList<TransactionClass> list = new ArrayList<>();
         qb.setDistinct(true);
         qb.setTables("transactions t INNER JOIN splits s ON t.transactionID=s.transactionID");
         String where = queryWithFilterWhereClause(filter) + " AND (" + queryWithFilterSpotlightClause(filter.getSpotlight()) + ")";
@@ -372,9 +375,9 @@ public class TransactionDB {
         int viewAccountType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
         String sql = "";
         String accountsWhere = "";
-        if (2 == viewAccountType) {
+        if (Enums.kViewAccountsTotalWorth/*2*/ == viewAccountType) {
             accountsWhere = " AND t.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1)  AND (NOT s.transferToAccountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
-        } else if (1 == viewAccountType) {
+        } else if (Enums.kViewAccountsNonZero/*1*/ == viewAccountType) {
             accountsWhere = " AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))";
         }
         StringBuilder append = new StringBuilder("SELECT  sum(s.amount / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = t.accountID )) FROM transactions t INNER JOIN splits s ON t.transactionID=s.transactionID WHERE deleted=0 AND type<>5 AND ").append(type == 0 ? -1.0d : 1.0d).append(" * s.amount > 0 AND t.date>=");
@@ -395,7 +398,7 @@ public class TransactionDB {
     }
 
     public static void rollupTransactionsInFilter(ArrayList<TransactionClass> transactions, FilterClass filter) {
-        Hashtable<String, Hashtable<String, Hashtable<String, Double>>> accountListings = new Hashtable();
+        Hashtable<String, Hashtable<String, Hashtable<String, Double>>> accountListings = new Hashtable<>();
         GregorianCalendar lastDate = null;
         String com = SMMoney.getAppContext().getPackageName();
         Iterator it = transactions.iterator();
@@ -437,7 +440,7 @@ public class TransactionDB {
             disconnectionTransfersForTransaction(transaction);
             transaction.deleteFromDatabase();
         }
-        if (lastDate.getTimeInMillis() > System.currentTimeMillis()) {
+        if (lastDate != null && lastDate.getTimeInMillis() > System.currentTimeMillis()) {
             lastDate = new GregorianCalendar();
         }
         Enumeration<String> e = accountListings.keys();
@@ -503,7 +506,7 @@ public class TransactionDB {
         }
     }
 
-    public static void disconnectionTransfersForTransaction(TransactionClass transaction) {
+    private static void disconnectionTransfersForTransaction(TransactionClass transaction) {
         Iterator it = transaction.getSplits().iterator();
         while (it.hasNext()) {
             SplitsClass split = (SplitsClass) it.next();
@@ -596,30 +599,31 @@ public class TransactionDB {
         }
     }
 
-    public static int getRepeatingTransactionFor(TransactionClass aTransaction) {
-        int i = 0;
-        if (aTransaction.getAccount() == null || aTransaction.getAccount().length() == 0) {
-            return 0;
+    // TODO Check original decompile for this method - always seems to produce i = 0. That doesn't seem right...
+    public static int getRepeatingTransactionFor(TransactionClass aTransaction) { // the transaction for which we want to get the repeating transaction
+        int i = 0; // the return value. It should be the ID of the repeating transaction that matches the passed on transaction
+        if (aTransaction.getAccount() == null || aTransaction.getAccount().length() == 0) { //check if the passed in transaction has a null/empty account ID. If so, it doesn't 'exist'
+            return 0; // there will be no repeating tranaction is the account ID is null/empty so return 0
         }
-        int accountID = AccountDB.uniqueID(aTransaction.getAccount());
+        int accountID = AccountDB.uniqueID(aTransaction.getAccount()); //set accountID to the accountID of the passed in transaction
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables("transactions t INNER JOIN repeatingTransactions r ON t.transactionID = r.transactionID");
-        Cursor curs = Database.query(qb, new String[]{"t.transactionID", "r.repeatingID"}, "t.deleted=0 AND t.type=5 AND t.accountID=" + accountID + " AND t.payee=" + Database.SQLFormat(aTransaction.getPayee()) + " AND t.subTotal=" + aTransaction.getSubTotal(), null, null, null, null);
+        Cursor curs = Database.query(qb, new String[]{"t.transactionID", "r.repeatingID"}, "t.deleted=0 AND t.type=5 AND t.accountID=" + accountID + " AND t.payee=" + Database.SQLFormat(aTransaction.getPayee()) + " AND t.subTotal=" + aTransaction.getSubTotal(), null, null, null, null); // This query returns a single line. It has the transactionID and repeatingID of the transaction that matches the accountID, payee and subtotal of the passed in transaction
         while (curs.moveToNext()) {
-            i = curs.getInt(0);
-            RepeatingTransactionClass repeatingTransaction = new RepeatingTransactionClass(curs.getInt(1));
-            repeatingTransaction.hydrate();
-            if (repeatingTransaction.repeatsOnDate(aTransaction.getDate())) {
-                TransactionClass transactionClass = new TransactionClass(i);
-                transactionClass.hydrate();
-                if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) {
+            i = curs.getInt(0); // gets the transactionID of the line produced by the DB query
+            RepeatingTransactionClass repeatingTransaction = new RepeatingTransactionClass(curs.getInt(1)); //gets the repeating transaction with the repeatingID from the database query
+            repeatingTransaction.hydrate(); //populates the repeatingTransaction with all the RT fields from the database (via a further query on the RepeatingTransactions table using the repeatingID
+            if (repeatingTransaction.repeatsOnDate(aTransaction.getDate())) {//gets the date of the passed in transaction (ie the date it is recorded). Then, checks if the repeatingTransaction repeats on that date. If it does then the next code block is executed, otherwise not
+                TransactionClass transactionClass = new TransactionClass(i); //creates a new transactionClass object with a transactionID of i
+                transactionClass.hydrate(); //populates the new transactionClass object with the rest of the info from the database for the 'i'th transaction
+                if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) { //checks if the 'i'th transaction has the same number of splits as the passed in transaction
                     int splitIndex = 0;
                     Iterator it = transactionClass.getSplits().iterator();
-                    while (it.hasNext()) {
+                    while (it.hasNext()) { //loop through each splitClass object
                         SplitsClass split = (SplitsClass) it.next();
                         SplitsClass matchSplit = aTransaction.getSplits().get(splitIndex);
-                        if (matchSplit.amountAsString().equals(split.amountAsString())) {
-                            if (matchSplit.getCategory().equals(split.getCategory())) {
+                        if (matchSplit.amountAsString().equals(split.amountAsString())) {//check if the amount of each split is the same and proceed if so
+                            if (matchSplit.getCategory().equals(split.getCategory())) {//check if the category is the same and proceed if so
                                 if (matchSplit.getTransferToAccount() != null && split.getTransferToAccount() != null && !matchSplit.getTransferToAccount().equalsIgnoreCase(split.getTransferToAccount())) {
                                     i = 0;
                                     break;
@@ -669,7 +673,7 @@ public class TransactionDB {
         return addRepeatingEventsThroughDate(checkDate, repeating, false);
     }
 
-    public static boolean addRepeatingEventsThroughDate(GregorianCalendar checkDate, Context context, boolean ignoreRepeating) {
+    private static boolean addRepeatingEventsThroughDate(GregorianCalendar checkDate, Context context, boolean ignoreRepeating) {
         boolean repeatingTransactionAdded = false;
         checkDate = CalExt.beginningOfDay(checkDate);
         Iterator it = queryAllRepeatingTransactions().iterator();
@@ -726,7 +730,7 @@ public class TransactionDB {
     }
 
     public static ArrayList<RepeatingTransactionClass> queryAllRepeatingTransactions() {
-        ArrayList<RepeatingTransactionClass> array = new ArrayList();
+        ArrayList<RepeatingTransactionClass> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] projection = new String[]{"repeatingID"};
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
@@ -739,7 +743,7 @@ public class TransactionDB {
     }
 
     public static ArrayList<RepeatingTransactionClass> queryAllRepeatingTransactionsWithLocalNotifications() {
-        ArrayList<RepeatingTransactionClass> array = new ArrayList();
+        ArrayList<RepeatingTransactionClass> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] projection = new String[]{"repeatingID"};
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);

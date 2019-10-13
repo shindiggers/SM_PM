@@ -28,7 +28,7 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Objects;
 
 public class ExchangeRateActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
     private double accountAmount;
@@ -136,11 +136,11 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            int i = 0 + 1;
+            int i = 1;
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            int i = 0 + 1;
+            int i = 1;
         }
     }
 
@@ -150,20 +150,30 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         setResult(0);
         Bundle b = getIntent().getExtras();
         try {
-            this.accountCurrency = AccountDB.recordFor(((TransactionClass) b.get("transaction")).getAccount()).getCurrencyCode();
+            if (b != null) {
+                this.accountCurrency = Objects.requireNonNull(AccountDB.recordFor(((TransactionClass) Objects.requireNonNull(b.get("transaction"))).getAccount())).getCurrencyCode();
+            }
         } catch (NullPointerException e) {
             this.accountCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
         try {
-            SplitsClass s = (SplitsClass) b.get("split");
-            double xrate = s.getXrate();
+            SplitsClass s = null;
+            if (b != null) {
+                s = (SplitsClass) b.get("split");
+            }
+            double xrate;
+            if (s != null) {
+                xrate = s.getXrate();
+
             setExchangeRate(xrate);
             setAccountAmount(s.getAmount());
             if (xrate != 0.0d) {
                 d = s.getAmount() / xrate;
             }
+
             setForeignAmount(d);
             this.foreignCurrency = s.getCurrencyCode();
+            }
         } catch (NullPointerException e2) {
             this.exchangeRate = 1.0d;
             this.accountAmount = 1.0d;
@@ -237,7 +247,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         findViewById(R.id.linearLayout1).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         findViewById(R.id.linearLayout2).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ArrayList<View> theViews = new ArrayList();
+        ArrayList<View> theViews = new ArrayList<>();
         TextView tView = findViewById(R.id.foreign_amount_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.foreignAmountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
@@ -257,9 +267,8 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.currencyKeyboard.setEditText(this.exchangeRateEditText, this.onFocusChangedRunnableExchangeAmount);
         this.currencyKeyboard.setEditText(this.accountAmountEditText, this.onFocusChangedRunnableAccountAmount);
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View theView : theViews) {
+            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         this.titleTextView = findViewById(R.id.title_text_view);

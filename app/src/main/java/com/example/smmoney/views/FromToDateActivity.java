@@ -21,8 +21,8 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class FromToDateActivity extends PocketMoneyActivity {
-    public static final int FROMTODATE_RESULT_SELECTED = 1;
-    private final int FROMDATE_DIALOG_ID = FROMTODATE_RESULT_SELECTED;
+    private static final int FROMTODATE_RESULT_SELECTED = 1;
+    private final int FROMDATE_DIALOG_ID = 1;
     private final int TODATE_DIALOG_ID = 2;
     private Button fromDate;
     private Button leftNoneButton;
@@ -43,7 +43,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         this.titleTextView.setText(title);
     }
 
-    public void setupView() {
+    private void setupView() {
         this.leftNoneButton = findViewById(R.id.fromtodateleftnone);
         this.leftTodayButton = findViewById(R.id.fromtodatelefttoday);
         this.rightNoneButton = findViewById(R.id.fromtodaterightnone);
@@ -66,7 +66,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
-    public void processDates() {
+    private void processDates() {
         Intent i = new Intent();
         i.putExtra("FromDate", this.fromDate.getText().toString());
         i.putExtra("ToDate", this.toDate.getText().toString());
@@ -119,7 +119,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
     }
 
     protected Dialog onCreateDialog(int id) {
-        if (id != FROMTODATE_RESULT_SELECTED && id != 2) {
+        if (id != FROMDATE_DIALOG_ID && id != TODATE_DIALOG_ID) {
             return null;
         }
         GregorianCalendar theDate;

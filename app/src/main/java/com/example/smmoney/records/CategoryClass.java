@@ -8,12 +8,10 @@ import android.util.Xml;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.budgets.BudgetsRowAdapter;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -32,9 +30,9 @@ import org.xmlpull.v1.XmlSerializer;
 public class CategoryClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_CATEGORIES = "CATEGORIES";
     public static final String XML_RECORDTAG_CATEGORY = "CATEGORYCLASS";
-    static String catpayee_statement = null;
-    static int currentViewType;
-    static String query_spent_stmt = null;
+    private static String catpayee_statement = null;
+    private static int currentViewType;
+    private static String query_spent_stmt = null;
     public double budget;
     private double budgetLimit;
     private int budgetPeriod;
@@ -48,11 +46,11 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     private int type;
 
     private class BudgetPeriodInfo {
-        public GregorianCalendar date;
-        public int daysInPeriod;
-        public int daysLeft;
+        GregorianCalendar date;
+        int daysInPeriod;
+        int daysLeft;
 
-        public BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
+        BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
             this.daysLeft = daysLeft;
             this.daysInPeriod = daysInPeriod;
             this.date = date;
@@ -60,8 +58,8 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public CategoryClass() {
-        this.budgetPeriod = 2;
-        this.type = 0;
+        this.budgetPeriod = Enums.kBudgetPeriodMonth /*2*/;
+        this.type = Enums.kTransactionTypeWithdrawal /*0*/;
     }
 
     public CategoryClass(int pk) {
@@ -84,7 +82,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         curs.close();
     }
 
-    public int getBudgetPeriod() {
+    private int getBudgetPeriod() {
         hydrate();
         return this.budgetPeriod;
     }
@@ -97,7 +95,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static ArrayList<String> periods() {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(Locales.kLOC_REPEATING_FREQUENCY_DAILY);
         list.add(Locales.kLOC_REPEATING_FREQUENCY_WEEKLY);
         list.add(Locales.kLOC_REPEATING_FREQUENCY_MONTHLY);
@@ -112,23 +110,23 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public String periodAsString() {
         switch (getBudgetPeriod()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return Locales.kLOC_REPEATING_FREQUENCY_DAILY;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 return Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 return Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 return Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 return Locales.kLOC_REPEATING_FREQUENCY_YEARLY;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 return Locales.kLOC_BUDGETS_BIWEEKLY;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 return Locales.kLOC_BUDGETS_BIMONTHLY;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 return Locales.kLOC_BUDGETS_HALFYEAR;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 return Locales.kLOC_BUDGETS_4WEEKS;
             default:
                 return "";
@@ -136,7 +134,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public void setPeriodFromString(String period) {
-        ArrayList<String> periods = new ArrayList();
+        ArrayList<String> periods = new ArrayList<>();
         periods.add(Locales.kLOC_REPEATING_FREQUENCY_DAILY);
         periods.add(Locales.kLOC_REPEATING_FREQUENCY_WEEKLY);
         periods.add(Locales.kLOC_REPEATING_FREQUENCY_MONTHLY);
@@ -167,7 +165,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static ArrayList<String> budgetTypes() {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(Locales.kLOC_BUDGETS_EXPENSES);
         list.add(Locales.kLOC_BUDGETS_INCOME);
         return list;
@@ -199,7 +197,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public void setCategory(String aString) {
         if (this.category != null || aString != null) {
-            if (this.category == null || aString == null || !this.category.equals(aString)) {
+            if (this.category == null || !this.category.equals(aString)) {
                 this.dirty = true;
                 this.category = aString;
             }
@@ -225,9 +223,9 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public String typeAsString() {
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kCategoryExpense /*0*/:
                 return Locales.kLOC_BUDGETS_EXPENSES;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kCategoryIncome /*1*/:
                 return Locales.kLOC_BUDGETS_INCOME;
             default:
                 return "";
@@ -248,10 +246,10 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             return 0;
         }
         ContentValues content = new ContentValues();
-        content.put("timestamp", Long.valueOf(System.currentTimeMillis()) / 1000);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("category", cat);
-        content.put("type", 0);
-        content.put(Prefs.DISPLAY_BUDGETPERIOD, 2);
+        content.put("type", Enums.kTransactionTypeWithdrawal /*0*/);
+        content.put(Prefs.DISPLAY_BUDGETPERIOD,Enums.kBudgetPeriodMonth /*2*/);
         content.put("serverID", Database.newServerID());
         long id = Database.replace(Database.CATEGORIES_TABLE_NAME, null, content);
         if (id != -1) {
@@ -284,7 +282,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return categoryID;
     }
 
-    public static int idForCategoryIncludeDeleted(String cat) {
+    private static int idForCategoryIncludeDeleted(String cat) {
         if (cat == null || cat.length() == 0) {
             return 0;
         }
@@ -321,7 +319,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return new CategoryClass(pk).category;
     }
 
-    public static CategoryClass categoryClassForID(int pk) {
+    private static CategoryClass categoryClassForID(int pk) {
         if (pk == 0) {
             return null;
         }
@@ -329,7 +327,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static ArrayList<String> allCategoryNamesInDatabase() {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.CATEGORIES_TABLE_NAME);
         String[] projection = new String[]{"category"};
@@ -348,7 +346,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static ArrayList<String> allCategoryNamesInDatabaseForPayee(String payee) {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         if (catpayee_statement == null) {
             catpayee_statement = "SELECT DISTINCT s.categoryID FROM splits s INNER JOIN transactions t WHERE s.transactionID = t.transactionID AND t.deleted = 0 AND t.payee LIKE ? ORDER BY UPPER(s.categoryID)";
         }
@@ -361,7 +359,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static ArrayList<CategoryClass> allCategoriesInDatabase() {
-        ArrayList<CategoryClass> array = new ArrayList();
+        ArrayList<CategoryClass> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.CATEGORIES_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"categoryID"}, null, null, null, null, null);
@@ -384,7 +382,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         }
         for (CategoryClass tempRecord : allCategoriesInDatabase()) {
             if (fromText.length() <= tempRecord.getCategory().length() && (tempRecord.getCategory() + ":").substring(0, fromText.length()).equalsIgnoreCase(fromText)) {
-                String toTextTemp = new StringBuilder(String.valueOf(toText)).append(tempRecord.getCategory().substring(fromText.length())).toString();
+                String toTextTemp = toText + tempRecord.getCategory().substring(fromText.length());
                 int toCategoryID = idForCategoryIncludeDeleted(toText);
                 int fromCategoryID = idForCategoryIncludeDeleted(tempRecord.getCategory());
                 if (toCategoryID != 0) {
@@ -431,13 +429,12 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static double querySpentInCategory(String category, boolean includeSubcategories, GregorianCalendar startDate, GregorianCalendar endDate) {
-        currentViewType = 0;
+        currentViewType = Enums.kViewAccountsAll /*0*/;
         String startTime = Long.toString(CalExt.beginningOfDay(startDate).getTimeInMillis() / 1000);
         String endTime = Long.toString(CalExt.endOfDay(endDate).getTimeInMillis() / 1000);
-        StringBuilder stringBuilder = new StringBuilder(String.valueOf(category));
         String str = includeSubcategories ? "%" : "";
         String plainCategoryString = category;
-        String[] bindArgs = new String[]{stringBuilder.append(str).toString(), startTime, endTime};
+        String[] bindArgs = new String[]{category + str, startTime, endTime};
         if (query_spent_stmt == null || ((Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) && currentViewType != 0) || currentViewType != Prefs.getIntPref(Prefs.VIEWACCOUNTS))) {
             String exchangeRateLookup = "";
             if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
@@ -446,13 +443,13 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             String transactionsLookup = "";
             currentViewType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
             if (Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS)) {
-                currentViewType = 0;
+                currentViewType = Enums.kViewAccountsAll /*0*/;
             }
             switch (currentViewType) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case Enums.kViewAccountsNonZero /*1*/:
                     transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
                     break;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case Enums.kViewAccountsTotalWorth /*2*/:
                     transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
                     break;
                 default:
@@ -476,50 +473,50 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return 0.0d;
     }
 
-    public double budgetLimitDailyForDate(GregorianCalendar aDate) {
+    private double budgetLimitDailyForDate(GregorianCalendar aDate) {
         switch (this.budgetPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return this.budgetLimit;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 return this.budgetLimit / 7.0d;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 return this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 4));
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 return this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_YEAR));
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 return this.budgetLimit / 14.0d;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_MONTH) * 2));
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 2));
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 return this.budgetLimit / 28.0d;
             default:
                 return 0.0d;
         }
     }
 
-    public double budgetLimitMonthlyForDate(GregorianCalendar aDate) {
+    private double budgetLimitMonthlyForDate(GregorianCalendar aDate) {
         switch (this.budgetPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return this.budgetLimit * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 return (this.budgetLimit / 7.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 return this.budgetLimit;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 return this.budgetLimit / 3.0d;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 return this.budgetLimit / 12.0d;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 return (this.budgetLimit / 14.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 return this.budgetLimit / 2.0d;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 return this.budgetLimit / 6.0d;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 return (this.budgetLimit / 28.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
             default:
                 return 0.0d;
@@ -528,22 +525,22 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public double budgetLimitForPeriod(int aPeriod, GregorianCalendar aDate) {
         switch (aPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 if (this.budgetPeriod == 0) {
                     return this.budgetLimit;
                 }
                 return budgetLimitDailyForDate(aDate);
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 if (1 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
                 return budgetLimitDailyForDate(aDate) * 7.0d;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 if (2 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
                 return budgetLimitMonthlyForDate(aDate);
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 if (3 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
@@ -551,7 +548,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                     return budgetLimitMonthlyForDate(aDate) * 3.0d;
                 }
                 return budgetLimitDailyForDate(aDate) * ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 4));
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 if (4 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
@@ -559,12 +556,12 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                     return budgetLimitMonthlyForDate(aDate) * 12.0d;
                 }
                 return budgetLimitDailyForDate(aDate) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_YEAR));
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 if (5 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
                 return budgetLimitDailyForDate(aDate) * 14.0d;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 if (6 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
@@ -572,7 +569,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                     return budgetLimitMonthlyForDate(aDate) * 2.0d;
                 }
                 return (budgetLimitDailyForDate(aDate) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH))) * 2.0d;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 if (7 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
@@ -580,7 +577,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                     return budgetLimitMonthlyForDate(aDate) * 6.0d;
                 }
                 return budgetLimitDailyForDate(aDate) * ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 2));
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 if (8 == this.budgetPeriod) {
                     return this.budgetLimit;
                 }
@@ -590,39 +587,39 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         }
     }
 
-    public BudgetPeriodInfo endOfBudgetPeriod(int aPeriod, GregorianCalendar atDate) {
+    private BudgetPeriodInfo endOfBudgetPeriod(int aPeriod, GregorianCalendar atDate) {
         GregorianCalendar endDate = null;
         GregorianCalendar startDate = null;
         switch (aPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 startDate = CalExt.beginningOfDay(atDate);
                 endDate = CalExt.endOfDay(atDate);
                 break;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 startDate = CalExt.beginningOfWeek(atDate);
                 endDate = CalExt.endOfWeek(atDate);
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 startDate = CalExt.beginningOfMonth(atDate);
                 endDate = CalExt.endOfMonth(atDate);
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 startDate = CalExt.beginningOfQuarter(atDate);
                 endDate = CalExt.endOfQuarter(atDate);
                 break;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 startDate = CalExt.beginningOfYear(atDate);
                 endDate = CalExt.endOfYear(atDate);
                 break;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 startDate = CalExt.beginningOfWeek(atDate);
                 endDate = CalExt.addWeeks(CalExt.endOfWeek(atDate), 1);
                 break;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 startDate = CalExt.beginningOfMonth(atDate);
                 endDate = CalExt.endOfMonth(CalExt.addMonth(CalExt.beginningOfMonth(atDate)));
                 break;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 if (!atDate.before(CalExt.middleOfYear())) {
                     startDate = CalExt.endOfMonth(CalExt.addMonths(CalExt.beginningOfYear(atDate), 5));
                     endDate = CalExt.endOfYear(atDate);
@@ -631,7 +628,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                 startDate = CalExt.beginningOfYear(atDate);
                 endDate = CalExt.endOfMonth(CalExt.addMonths(CalExt.beginningOfYear(atDate), 5));
                 break;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 startDate = CalExt.beginningOfWeek(atDate);
                 endDate = CalExt.addWeeks(CalExt.endOfWeek(atDate), 3);
                 break;
@@ -726,13 +723,13 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     private int daysInNonvariableBudgetPeriod(int aPeriod) {
         switch (aPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return 1;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 return 7;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 return 14;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 return 28;
             default:
                 return 0;
@@ -740,7 +737,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static List<CategoryClass> queryIncomeCategoriesWithBudgets() {
-        ArrayList<CategoryClass> elements = new ArrayList();
+        ArrayList<CategoryClass> elements = new ArrayList<>();
         Cursor c = Database.rawQuery("SELECT DISTINCT categoryID FROM categories c LEFT JOIN (SELECT * FROM categoryBudgets WHERE deleted=0 or deleted ISNULL) AS b ON c.category LIKE b.categoryName  WHERE c.deleted=0 AND  (c.budgetLimit <> 0 OR b.budgetLimit<>0) AND type = 1 ORDER BY UPPER(c.category)", null);
         int count = c.getCount();
         c.moveToFirst();
@@ -753,7 +750,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static List<CategoryClass> queryExpenseCategoriesWithBudgets() {
-        ArrayList<CategoryClass> elements = new ArrayList();
+        ArrayList<CategoryClass> elements = new ArrayList<>();
         Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE deleted=0 AND budgetLimit <> 0  AND type <> 1 ORDER BY UPPER(category)", null);
         int count = c.getCount();
         c.moveToFirst();
@@ -766,7 +763,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static List<CategoryClass> queryNonBudgettedCategories() {
-        ArrayList<CategoryClass> elements = new ArrayList();
+        ArrayList<CategoryClass> elements = new ArrayList<>();
         Cursor c = Database.rawQuery("SELECT c.categoryID FROM categories c WHERE c.deleted=0 AND (type ISNULL OR type=3 OR ( (c.budgetLimit ISNULL OR c.budgetLimit=0) AND UPPER(c.category) NOT IN(SELECT UPPER(b.categoryName) FROM categoryBudgets b WHERE b.deleted=0 AND b.budgetLimit <> 0) ) )", null);
         int count = c.getCount();
         c.moveToFirst();
@@ -778,13 +775,13 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return elements;
     }
 
-    public boolean isMonthlyBasedBudget(int aPeriod) {
+    private boolean isMonthlyBasedBudget(int aPeriod) {
         switch (aPeriod) {
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
+            case Enums.kBudgetPeriodYear /*4*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 return true;
             default:
                 return false;
@@ -806,7 +803,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -901,40 +898,51 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("categoryID")) {
-            this.categoryID = Integer.valueOf(this.currentElementValue);
-        } else if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                z = true;
-            }
-            setDeleted(z);
-        } else if (localName.equals("rollover")) {
-            if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                z = true;
-            }
-            setRollover(z);
-        } else if (localName.equals("type")) {
-            setType(Integer.valueOf(this.currentElementValue));
-        } else if (localName.equals(Prefs.DISPLAY_BUDGETPERIOD)) {
-            setBudgetPeriod(Integer.valueOf(this.currentElementValue));
-        } else if (localName.equals("budgetLimit")) {
-            setBudgetLimit(Double.valueOf(this.currentElementValue));
-        } else if (localName.equals("includeSubcategories")) {
-            if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                z = true;
-            }
-            setIncludeSubcategories(z);
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
-        } else if (localName.equals("category")) {
-            Class<?> c = getClass();
-            try {
-                c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
-            } catch (Exception e) {
-                Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
-            }
+        switch (localName) {
+            case "categoryID":
+                this.categoryID = Integer.valueOf(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setDeleted(z);
+                break;
+            case "rollover":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setRollover(z);
+                break;
+            case "type":
+                setType(Integer.valueOf(this.currentElementValue));
+                break;
+            case Prefs.DISPLAY_BUDGETPERIOD:
+                setBudgetPeriod(Integer.valueOf(this.currentElementValue));
+                break;
+            case "budgetLimit":
+                setBudgetLimit(Double.valueOf(this.currentElementValue));
+                break;
+            case "includeSubcategories":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setIncludeSubcategories(z);
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
+            case "category":
+                Class<?> c = getClass();
+                try {
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                } catch (Exception e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
+                }
+                break;
         }
         this.currentElementValue = null;
     }

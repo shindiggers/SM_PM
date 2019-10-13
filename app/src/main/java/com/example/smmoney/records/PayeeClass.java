@@ -23,21 +23,21 @@ import org.xmlpull.v1.XmlSerializer;
 public class PayeeClass extends PocketMoneyRecordClass {
     public static final String XML_LISTTAG_PAYEES = "PAYEES";
     public static final String XML_RECORDTAG_PAYEE = "PAYEECLASS";
-    static String catpayee_statement = null;
+    private static String catpayee_statement = null;
     private String currentElementValue;
     private String payee;
-    public int payeeID;
+    private int payeeID;
 
-    public void setPayee(String aString) {
+    private void setPayee(String aString) {
         if (this.payee != null || aString != null) {
-            if (this.payee == null || aString == null || !this.payee.equals(aString)) {
+            if (this.payee == null || !this.payee.equals(aString)) {
                 this.dirty = true;
                 this.payee = aString;
             }
         }
     }
 
-    public String getPayee() {
+    private String getPayee() {
         hydrate();
         return this.payee;
     }
@@ -77,7 +77,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -174,7 +174,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
             newClass = "";
         }
         ContentValues content = new ContentValues();
-        content.put("timestamp", Long.valueOf(System.currentTimeMillis()) / 1000);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("payee", newClass);
         content.put("serverID", Database.newServerID());
         content.put("timestamp", System.currentTimeMillis() / 1000);
@@ -231,7 +231,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
     }
 
     public static ArrayList<String> allPayeesInDatabase() {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.PAYEES_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"payee"}, "deleted=0", null, null, null, "UPPER(payee)");
@@ -248,7 +248,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
     }
 
     public static ArrayList<String> allPayeesInDatabaseForCategory(String payee) {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         if (catpayee_statement == null) {
             catpayee_statement = "SELECT DISTINCT t.payee FROM splits s INNER JOIN transactions t WHERE s.transactionID = t.transactionID AND t.deleted = 0 AND s.categoryID LIKE ? ORDER BY UPPER(t.payee)";
         }
@@ -298,22 +298,28 @@ public class PayeeClass extends PocketMoneyRecordClass {
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("payeeID")) {
-            this.payeeID = Integer.valueOf(this.currentElementValue);
-        } else if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
-            setDeleted(z);
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
-        } else if (localName.equals("payee")) {
-            Class<?> c = getClass();
-            try {
-                c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
-            } catch (Exception e) {
-                Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
-            }
+        switch (localName) {
+            case "payeeID":
+                this.payeeID = Integer.valueOf(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
+                setDeleted(z);
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
+            case "payee":
+                Class<?> c = getClass();
+                try {
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                } catch (Exception e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
+                }
+                break;
         }
         this.currentElementValue = null;
     }

@@ -1,12 +1,12 @@
-package com.example.smmoney.IAP.util;
+package com.example.smmoney.iAP.util;
 
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 
 public class Base64 {
-    public static final boolean DECODE = false;
-    public static final boolean ENCODE = true;
-    static final /* synthetic */ boolean $assertionsDisabled = (!Base64.class.desiredAssertionStatus() ? ENCODE : DECODE);
+    private static final boolean DECODE = false;
+    private static final boolean ENCODE = true;
+    private static final /* synthetic */ boolean $assertionsDisabled = (!Base64.class.desiredAssertionStatus() ? ENCODE : DECODE);
     public static final byte[] ALPHABET = new byte[]{(byte) 65, (byte) 66, (byte) 67, (byte) 68, (byte) 69, (byte) 70, (byte) 71, (byte) 72, (byte) 73, (byte) 74, (byte) 75, (byte) 76, (byte) 77, (byte) 78, (byte) 79, (byte) 80, (byte) 81, (byte) 82, (byte) 83, (byte) 84, (byte) 85, (byte) 86, (byte) 87, (byte) 88, (byte) 89, (byte) 90, (byte) 97, (byte) 98, (byte) 99, (byte) 100, (byte) 101, (byte) 102, (byte) 103, (byte) 104, (byte) 105, (byte) 106, (byte) 107, (byte) 108, (byte) 109, (byte) 110, (byte) 111, (byte) 112, (byte) 113, (byte) 114, (byte) 115, (byte) 116, (byte) 117, (byte) 118, (byte) 119, (byte) 120, (byte) 121, (byte) 122, (byte) 48, (byte) 49, (byte) 50, (byte) 51, (byte) 52, (byte) 53, (byte) 54, (byte) 55, (byte) 56, (byte) 57, (byte) 43, (byte) 47};
     private static final byte[] DECODABET;
     private static final byte EQUALS_SIGN = (byte) 61;
@@ -330,7 +330,7 @@ public class Base64 {
         return encode(source, 0, source.length, WEBSAFE_ALPHABET, doPadding);
     }
 
-    public static String encode(byte[] source, int off, int len, byte[] alphabet, boolean doPadding) {
+    private static String encode(byte[] source, int off, int len, byte[] alphabet, boolean doPadding) {
         byte[] outBuff = encode(source, off, len, alphabet, Integer.MAX_VALUE);
         int outLen = outBuff.length;
         while (!doPadding && outLen > 0 && outBuff[outLen - 1] == EQUALS_SIGN) {
@@ -411,15 +411,15 @@ public class Base64 {
         return decodeWebSafe(source, 0, source.length);
     }
 
-    public static byte[] decode(byte[] source, int off, int len) throws Base64DecoderException {
+    private static byte[] decode(byte[] source, int off, int len) throws Base64DecoderException {
         return decode(source, off, len, DECODABET);
     }
 
-    public static byte[] decodeWebSafe(byte[] source, int off, int len) throws Base64DecoderException {
+    private static byte[] decodeWebSafe(byte[] source, int off, int len) throws Base64DecoderException {
         return decode(source, off, len, WEBSAFE_DECODABET);
     }
 
-    public static byte[] decode(byte[] source, int off, int len, byte[] decodabet) throws Base64DecoderException {
+    private static byte[] decode(byte[] source, int off, int len, byte[] decodabet) throws Base64DecoderException {
         byte[] out;
         byte[] outBuff = new byte[(((len * 3) / 4) + 2)];
         int outBuffPosn = 0;

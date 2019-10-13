@@ -23,20 +23,20 @@ import org.xmlpull.v1.XmlSerializer;
 public class ClassNameClass extends PocketMoneyRecordClass {
     public static String XML_LISTTAG_CLASSES = "CLASSES";
     public static String XML_RECORDTAG_CLASS = "CLASSCLASS";
-    public int classID;
+    private int classID;
     private String className;
     private String currentElementValue;
 
-    public void setClassName(String aString) {
+    private void setClassName(String aString) {
         if (this.className != null || aString != null) {
-            if (this.className == null || aString == null || !this.className.equals(aString)) {
+            if (this.className == null || !this.className.equals(aString)) {
                 this.dirty = true;
                 this.className = aString;
             }
         }
     }
 
-    public String getClassName() {
+    private String getClassName() {
         hydrate();
         return this.className;
     }
@@ -76,7 +76,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -87,7 +87,6 @@ public class ClassNameClass extends PocketMoneyRecordClass {
                     str = "";
                 }
                 setClassName(str);
-                col2 = col + 1;
                 str = curs.getString(col);
                 if (str == null) {
                     str = "";
@@ -172,7 +171,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
             newClass = "";
         }
         ContentValues content = new ContentValues();
-        content.put("timestamp", Long.valueOf(System.currentTimeMillis()) / 1000);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("class", newClass);
         content.put("serverID", Database.newServerID());
         content.put("timestamp", System.currentTimeMillis() / 1000);
@@ -229,7 +228,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
     }
 
     public static ArrayList<String> allClassNamesInDatabase() {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.CLASSES_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"class"}, "deleted=0", null, null, null, "UPPER(class)");
@@ -290,17 +289,23 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("classID")) {
-            this.classID = Integer.valueOf(this.currentElementValue);
-        } else if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
-            setDeleted(z);
-        } else if (localName.equals("class")) {
-            setClassName(URLDecoder.decode(this.currentElementValue));
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
+        switch (localName) {
+            case "classID":
+                this.classID = Integer.valueOf(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
+                setDeleted(z);
+                break;
+            case "class":
+                setClassName(URLDecoder.decode(this.currentElementValue));
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
         }
         this.currentElementValue = null;
     }

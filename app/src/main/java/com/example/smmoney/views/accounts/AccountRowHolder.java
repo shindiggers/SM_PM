@@ -8,17 +8,18 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 
-public class AccountRowHolder {
+class AccountRowHolder {
     public AccountClass account;
-    public TextView accountname;
+    TextView accountname;
     public TextView exchangeRate;
-    public ImageView icon_image;
-    public ImageView newtransbutton;
+    ImageView icon_image;
+    ImageView newtransbutton;
     public CheckBox selected;
     public RelativeLayout therow;
     public TextView totalworth;
@@ -49,9 +50,9 @@ public class AccountRowHolder {
         }
     }
 
-    public void updateBalanceLabel() {
+    private void updateBalanceLabel() {
         int balanceType = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-        if (5 == this.account.getType()) {
+        if (Enums.kBalanceTypeFiltered/*5*/ == this.account.getType()) {
             this.totalworth.setText("");
             return;
         }

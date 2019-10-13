@@ -33,7 +33,7 @@ public class CategoryReportDataSource extends ReportDataSource {
         return newFilter;
     }
 
-    public String stripSubcategories(String category) {
+    private String stripSubcategories(String category) {
         int index;
         if (Prefs.getBooleanPref(Prefs.REPORTS_GROUPSUBCATEGORIES) && this.filter.getCategory() != null && this.filter.getCategory().length() > 0) {
             if (this.filter.getCategory().endsWith("%")) {
@@ -62,7 +62,7 @@ public class CategoryReportDataSource extends ReportDataSource {
         TransactionClass[] relaventTransactions = transactionsFromDateToDate(startOfPeriod(), endOfPeriod());
         if (relaventTransactions == null) {
             this.data = null;
-            this.data = new ArrayList();
+            this.data = new ArrayList<>();
             return;
         }
         ReportItem reportItem;
@@ -98,8 +98,11 @@ public class CategoryReportDataSource extends ReportDataSource {
                         } else {
                             tAmt = split.getAmount();
                         }
-                        reportItem.amount += tAmt;
+                        if (reportItem != null) {
+                            reportItem.amount += tAmt;
+
                         reportItem.count++;
+                        }
                     }
                 }
                 relaventTransactions[i] = null;
@@ -115,7 +118,7 @@ public class CategoryReportDataSource extends ReportDataSource {
             reportItem.expense = Locales.kLOC_FILTERS_UNFILED;
         }
         this.data = null;
-        this.data = new ArrayList();
+        this.data = new ArrayList<>();
         Enumeration<ReportItem> e = scratchReport.elements();
         while (e.hasMoreElements()) {
             this.data.add(e.nextElement());

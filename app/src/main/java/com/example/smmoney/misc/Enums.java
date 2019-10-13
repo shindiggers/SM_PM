@@ -4,11 +4,14 @@ public class Enums {
     public static final int DateChangeTypeNone = 0;
     public static final int DateChangeTypeSeparateTransactionFromRepeating = 1;
     public static final int DateChangeTypeUpdateRepeating = 2;
+
     public static final int RepeatingChangeTypeNone = 0;
     public static final int RepeatingChangeTypeSeparateTransactionFromRepeating = 1;
     public static final int RepeatingChangeTypeUpdateRepeating = 2;
+
     public static final int ReportsSortDirectionAscending = 0;
     public static final int ReportsSortDirectionDescending = 1;
+
     public static final int kAccountTypeAsset = 3;
     public static final int kAccountTypeCash = 1;
     public static final int kAccountTypeChecking = 0;
@@ -19,6 +22,7 @@ public class Enums {
     public static final int kAccountTypeMoneyMarket = 7;
     public static final int kAccountTypeOnline = 5;
     public static final int kAccountTypeSavings = 6;
+
     public static final int kBalanceTypeAvailableCredit = 4;
     public static final int kBalanceTypeAvailableFunds = 3;
     public static final int kBalanceTypeCleared = 1;
@@ -26,12 +30,15 @@ public class Enums {
     public static final int kBalanceTypeFiltered = 5;
     public static final int kBalanceTypeFuture = 0;
     public static final int kBalanceTypeNone = -1;
+
     public static final int kBudgetDisplayBeat = 1;
     public static final int kBudgetDisplayExpenseAvailable = 0;
     public static final int kBudgetDisplayExpenseBudgeted = 2;
     public static final int kBudgetDisplayExpenseOver = 3;
+
     public static final int kBudgetDisplaySaved = 0;
     public static final int kBudgetDisplayText = 1;
+
     public static final int kBudgetPeriod4Weeks = 8;
     public static final int kBudgetPeriodBimonthly = 6;
     public static final int kBudgetPeriodBiweekly = 5;
@@ -41,17 +48,22 @@ public class Enums {
     public static final int kBudgetPeriodQuarter = 3;
     public static final int kBudgetPeriodWeek = 1;
     public static final int kBudgetPeriodYear = 4;
+
     public static final int kBudgetsSortTypeActual = 1;
     public static final int kBudgetsSortTypeBudgeted = 2;
     public static final int kBudgetsSortTypeCategory = 0;
     public static final int kBudgetsSortTypePercentage = 3;
+
     public static final int kCategoryExpense = 0;
     public static final int kCategoryIncome = 1;
+
     public static final int kChartTypeNegativePie = -1;
     public static final int kChartTypePositivePie = 1;
+
     public static final int kClearedCleared = 1;
     public static final int kClearedDoesntMatter = 2;
     public static final int kClearedUncleared = 0;
+
     public static final int kDateRangeCurrentMonth = 5;
     public static final int kDateRangeCurrentQuarter = 7;
     public static final int kDateRangeCurrentWeek = 3;
@@ -71,10 +83,12 @@ public class Enums {
     public static final int kDateRangeRecentChanges = 11;
     public static final int kDateRangeToday = 1;
     public static final int kDateRangeYesterday = 2;
+
     public static final int kDesktopSyncFirstSyncActionNone = 0;
     public static final int kDesktopSyncFirstSyncActionReplaceDataOnServer = 1;
     public static final int kDesktopSyncFirstSyncActionRestoreFromServer = 2;
     public static final int kDesktopSyncFirstSyncActionSync = 3;
+
     public static final int kDesktopSyncStateACKHeaderReceived = 57;
     public static final int kDesktopSyncStateACKProcessed = 61;
     public static final int kDesktopSyncStateACKReceived = 59;
@@ -134,49 +148,63 @@ public class Enums {
     public static final int kDesktopSyncStateSyncVersionHeaderReceived = 12;
     public static final int kDesktopSyncStateSyncVersionProcessed = 16;
     public static final int kDesktopSyncStateSyncVersionReceived = 14;
+
     public static final int kDesktopSyncStateTriggerDataAvailable = 1;
     public static final int kDesktopSyncStateTriggerManual = 3;
     public static final int kDesktopSyncStateTriggerNone = 0;
     public static final int kDesktopSyncStateTriggerSpaceAvailable = 2;
+
     public static final int kDesktopSyncStateUDIDHeaderReceived = 20;
     public static final int kDesktopSyncStateUDIDProcessed = 24;
     public static final int kDesktopSyncStateUDIDProcessing = 23;
     public static final int kDesktopSyncStateUDIDReceived = 22;
     public static final int kDesktopSyncStateUnchanged = 70;
+
     public static final int kFeeTypeFixed = 0;
     public static final int kFeeTypePercent = 1;
+
     public static final int kFilterCurrentAccountID = -2;
+
     public static final int kModifyEitherEnd = 2;
     public static final int kModifyOtherEndOnly = 0;
     public static final int kModifyThisEndOnly = 1;
+
     public static final int kPocketMoneySyncClient = 0;
     public static final int kPocketMoneySyncServer = 1;
+
     public static final int kReportDisplayAmount = 0;
     public static final int kReportDisplayCount = 2;
     public static final int kReportDisplayPercentage = 1;
+
     public static final int kReportPeriodAll = 5;
     public static final int kReportPeriodOneMonth = 0;
     public static final int kReportPeriodOneYear = 4;
     public static final int kReportPeriodSixMonths = 3;
     public static final int kReportPeriodThreeMonths = 2;
     public static final int kReportPeriodTwoMonths = 1;
+
     public static final int kReportsChartTypeBar = 2;
     public static final int kReportsChartTypeLine = 3;
     public static final int kReportsChartTypeNone = 0;
     public static final int kReportsChartTypePie = 1;
+
     public static final int kReportsSortOnAmount = 1;
     public static final int kReportsSortOnCount = 2;
     public static final int kReportsSortOnItem = 0;
+
     public static final int kSIZEHEADERSIZE = 4;
+
     public static final int kSumamryChartMoreCharts = 2;
     public static final int kSumamryChartTypeCashFlow = 1;
     public static final int kSumamryChartTypeNetWorth = 0;
+
     public static final int kTransactionTypeAll = 4;
     public static final int kTransactionTypeDeposit = 1;
     public static final int kTransactionTypeRepeating = 5;
     public static final int kTransactionTypeTransferFrom = 3;
     public static final int kTransactionTypeTransferTo = 2;
     public static final int kTransactionTypeWithdrawal = 0;
+
     public static final int kTransactionsSortTypeAmount = 1;
     public static final int kTransactionsSortTypeCategory = 4;
     public static final int kTransactionsSortTypeClass = 3;
@@ -186,14 +214,18 @@ public class Enums {
     public static final int kTransactionsSortTypeID = 6;
     public static final int kTransactionsSortTypeMemo = 5;
     public static final int kTransactionsSortTypePayee = 2;
+
     public static final int kViewAccountsAll = 0;
     public static final int kViewAccountsNonZero = 1;
     public static final int kViewAccountsTotalWorth = 2;
+
+    // RepearingTransaction class object RepeatOn field possible values:
     public static final int monthlyDateInMonth = 1;
     public static final int monthlyDayOfMonth = 0;
     public static final int monthlyLastDayOfMonth = 2;
     public static final int monthlyLastOrdinalWeekdayOfMonth = 4;
     public static final int monthlyLastWeekDayOfMonth = 3;
+
     public static final int repeatDaily = 1;
     public static final int repeatMonthly = 3;
     public static final int repeatNone = 0;

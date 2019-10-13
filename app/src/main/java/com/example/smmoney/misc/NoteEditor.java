@@ -13,6 +13,8 @@ import android.widget.EditText;
 
 import com.example.smmoney.R;
 
+import java.util.Objects;
+
 public class NoteEditor extends Activity {
     private static final int DELETE_ID = 1;
     private static final String ORIGINAL_CONTENT = "origContent";
@@ -74,7 +76,7 @@ public class NoteEditor extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void doneEditing() {
+    private void doneEditing() {
         Intent i = new Intent();
         i.putExtra("selection", this.mText.getText().toString());
         setResult(-1, i);
@@ -96,7 +98,7 @@ public class NoteEditor extends Activity {
             mText.setFocusableInTouchMode(true);
             mText.requestFocus();
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-            ((InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(mText, 0);
+            ((InputMethodManager) Objects.requireNonNull(getSystemService(Context.INPUT_METHOD_SERVICE))).showSoftInput(mText, 0);
         }
     }
 }

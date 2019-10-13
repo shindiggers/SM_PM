@@ -20,17 +20,17 @@ import java.util.List;
 
 public class ImportExportOFX {
     public String accountNameBeingImported;
-    Context context;
+    private Context context;
     int currentLine;
     List data;
-    DateFormat dateFormatter;
-    String defaultCurrencyCode;
+    private DateFormat dateFormatter;
+    private String defaultCurrencyCode;
     public FilterClass filter;
-    boolean isURL;
+    private boolean isURL;
     List lines;
-    NumberFormat numberFormatter;
+    private NumberFormat numberFormatter;
     int numberOfLines;
-    OFXClass ofxData;
+    private OFXClass ofxData;
     public String path;
 
     public ImportExportOFX(Context var1, FilterClass var2) {
@@ -80,7 +80,7 @@ public class ImportExportOFX {
     }
 
     public static List dateFormats() {
-        ArrayList var0 = new ArrayList();
+        ArrayList<String> var0 = new ArrayList<>();
         var0.add(Locales.kLOC_GENERAL_DEFAULT);
         var0.add("mm/dd\'yy");
         var0.add("mm/dd\'yyyy");
@@ -95,7 +95,7 @@ public class ImportExportOFX {
     }
 
     public static List dateSeparators() {
-        ArrayList var0 = new ArrayList();
+        ArrayList<String> var0 = new ArrayList<>();
         var0.add(Locales.kLOC_GENERAL_DEFAULT);
         var0.add("/");
         var0.add(".");
@@ -119,7 +119,7 @@ public class ImportExportOFX {
     }
 
     public static List numberFormats() {
-        ArrayList var0 = new ArrayList();
+        ArrayList<String> var0 = new ArrayList<>();
         var0.add(Locales.kLOC_GENERAL_DEFAULT);
         var0.add("1,000.00");
         var0.add("1.000,00");
@@ -141,7 +141,7 @@ public class ImportExportOFX {
                 var2 = "";
             }
 
-            StringBuilder var3 = new StringBuilder(String.valueOf(var2));
+            StringBuilder var3 = new StringBuilder(var2);
             String var4;
             if(this.ofxData.statement.account.bankID == null && this.ofxData.statement.account.bankID.length() <= 0) {
                 var4 = "";
@@ -201,7 +201,7 @@ public class ImportExportOFX {
         return false;
     }
 
-    public String generateData(List var1) {
+    private String generateData(List var1) {
         if(var1.size() > 0) {
             OFXClass var2 = new OFXClass();
             var2.transactions = var1;

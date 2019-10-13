@@ -3,20 +3,26 @@ package com.example.smmoney.database;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteQueryBuilder;
+
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateClass;
 import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 
 public class AccountDB {
-    public static HashMap<Integer, AccountClass> map = new HashMap();
+    private static HashMap<Integer, AccountClass> map = new HashMap<>();
 
+    /**
+     * Uses HashMap called map to find the AccountClass object that matches the {@param id} that was passed in.
+     * If there is no mapping for the {@param id} passed in then a new AccountClass object is created using the passed in {@param id} and this is put into the HashMap.
+     *
+     * @param id the int id number of the account
+     * @return an AccountClass object that corresponds to the id
+     */
     public static AccountClass getAccount(int id) {
         AccountClass retAct = map.get(id);
         if (retAct != null) {
@@ -29,16 +35,13 @@ public class AccountDB {
 
     public static ArrayList<AccountClass> queryOnViewType(int viewType) {
         String where;
-        ArrayList<AccountClass> accounts = new ArrayList();
+        ArrayList<AccountClass> accounts = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String[] projection = new String[]{"accountID"};
-        switch (viewType) {
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                where = "deleted=0 AND totalWorth=1";
-                break;
-            default:
-                where = "deleted=0";
-                break;
+        if (viewType == Enums.kViewAccountsTotalWorth /*2*/) {
+            where = "deleted=0 AND totalWorth=1";
+        } else {
+            where = "deleted=0";
         }
         qb.setTables(Database.ACCOUNTS_TABLE_NAME);
         Cursor curs = Database.query(qb, projection, where, null, null, null, "displayOrder, UPPER(account)");
@@ -46,10 +49,10 @@ public class AccountDB {
         curs.moveToFirst();
         for (int i = 0; i < count; i++) {
             AccountClass acct = new AccountClass(curs.getInt(0));
-            if (viewType != 1 || acct.getType() == 5) {
+            if (viewType != Enums.kViewAccountsNonZero/*1*/ || acct.getType() == Enums.kAccountTypeOnline/*5*/) {
                 accounts.add(acct);
             } else {
-                double bal = acct.balanceOfType(0);
+                double bal = acct.balanceOfType(Enums.kBalanceTypeFuture/*0*/);
                 if (bal < -0.005d || bal > 0.005d) {
                     accounts.add(acct);
                 }
@@ -57,6 +60,7 @@ public class AccountDB {
             try {
                 curs.moveToNext();
             } catch (CursorIndexOutOfBoundsException e) {
+                e.printStackTrace();
             }
         }
         curs.close();
@@ -81,21 +85,25 @@ public class AccountDB {
             return;
         }
         AccountClass accountRecord = recordFor(account);
-        accountRecord.hydrate();
-        accountRecord.setLastSyncTime((double) System.currentTimeMillis());
-        accountRecord.saveToDatabase();
+        if (accountRecord != null) {
+            accountRecord.hydrate();
+        }
+        if (accountRecord != null) {
+            accountRecord.setLastSyncTime((double) System.currentTimeMillis());
+        }
+        if (accountRecord != null) {
+            accountRecord.saveToDatabase();
+        }
     }
 
     public static double totalWorth(int balanceType) {
         return totalWorthForBalanceType(queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)), balanceType);
     }
 
-    public static double totalWorthForBalanceType(ArrayList<AccountClass> accounts, int type) {
+    private static double totalWorthForBalanceType(ArrayList<AccountClass> accounts, int type) {
         double totalWorth = 0.0d;
         boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-        Iterator it = accounts.iterator();
-        while (it.hasNext()) {
-            AccountClass account = (AccountClass) it.next();
+        for (AccountClass account : accounts) {
             if (account.getTotalWorth()) {
                 double xrate;
                 if (multipleCurrencies) {
@@ -111,17 +119,17 @@ public class AccountDB {
 
     public static String totalWorthLabel(int type) {
         switch (type) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBalanceTypeFuture /*0*/:
                 return Locales.kLOC_SHOW_BALANCES_OVERALL;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBalanceTypeCleared /*1*/:
                 return Locales.kLOC_SHOW_BALANCES_CLEARED;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBalanceTypeCurrent /*2*/:
                 return Locales.kLOC_SHOW_BALANCES_CURRENT;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
                 return Locales.kLOC_SHOW_BALANCES_AVAILABLEFUNDS;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
                 return Locales.kLOC_SHOW_BALANCES_AVAILABLECREDIT;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBalanceTypeFiltered /*5*/:
                 return Locales.kLOC_TOOLS_FILTERED_BALANCE;
             default:
                 return "";
@@ -133,9 +141,7 @@ public class AccountDB {
             String homeCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
             ArrayList<AccountClass> accounts = queryOnViewType(0);
             ExchangeRateClass exchangeRate = new ExchangeRateClass(true, null);
-            Iterator it = accounts.iterator();
-            while (it.hasNext()) {
-                AccountClass act = (AccountClass) it.next();
+            for (AccountClass act : accounts) {
                 if (act.getCurrencyCode().equals(homeCurrency)) {
                     act.setExchangeRate(1.0d);
                 } else {
@@ -146,7 +152,7 @@ public class AccountDB {
     }
 
     public static String[] usedCurrencyCodes() {
-        ArrayList<String> codes = new ArrayList();
+        ArrayList<String> codes = new ArrayList<>();
         Cursor c = Database.rawQuery("SELECT DISTINCT currencyCode FROM splits UNION SELECT DISTINCT currencyCode FROM accounts", null);
         while (c.moveToNext()) {
             codes.add(c.getString(0));

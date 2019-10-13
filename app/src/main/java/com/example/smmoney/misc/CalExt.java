@@ -16,13 +16,23 @@ public class CalExt {
     private static SimpleDateFormat dfdISO861 = null;
     private static String[] months = null;
 
-    public static String[] getMonths() {
+    private static String[] getMonths() {
         if (months == null) {
             months = new DateFormatSymbols().getMonths();
         }
         return months;
     }
 
+    /**
+     * Constructs a GregorianCalendar with today's date (default for empty constructor)
+     *
+     * Set HOUR_OF_DAY to 0
+     * Set MINUTE to 0
+     * Set SECOND to 0
+     * Set MILLISECOND to 0
+     *
+     * @return GregorianCalendar object with current date, time set to just after midnight (ie start of day)
+     */
     public static GregorianCalendar beginningOfToday() {
         GregorianCalendar newCal = new GregorianCalendar();
         newCal.set(Calendar.HOUR_OF_DAY, 0);
@@ -31,7 +41,16 @@ public class CalExt {
         newCal.set(Calendar.MILLISECOND, 0);
         return newCal;
     }
-
+    /**
+     * Constructs a GregorianCalendar with today's date (default for empty constructor)
+     *
+     * Set HOUR_OF_DAY to 23
+     * Set MINUTE to 59
+     * Set SECOND to 59
+     * Set MILLISECOND to 999
+     *
+     * @return GregorianCalendar object with current date, time set to just before midnight (ie end of day)
+     */
     public static GregorianCalendar endOfToday() {
         GregorianCalendar newCal = new GregorianCalendar();
         newCal.set(Calendar.HOUR_OF_DAY, 23);
@@ -282,16 +301,16 @@ public class CalExt {
     }
 
     public static String descriptionWithYear(GregorianCalendar cal) {
-        return new StringBuilder(String.valueOf(cal.get(Calendar.YEAR))).toString();
+        return String.valueOf(cal.get(Calendar.YEAR));
     }
 
     public static String descriptionWithShortDate(GregorianCalendar cal) {
         return DateFormat.getDateFormat(SMMoney.getAppContext()).format(new Date(cal.getTimeInMillis()));
     }
 
-    public static String descriptionWithMediumDateAndTime(GregorianCalendar cal) {
+    private static String descriptionWithMediumDateAndTime(GregorianCalendar cal) {
         Date newDate = new Date(cal.getTimeInMillis());
-        return new StringBuilder(String.valueOf(DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(newDate))).append(" ").append(DateFormat.getTimeFormat(SMMoney.getAppContext()).format(newDate)).toString();
+        return DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(newDate) + " " + DateFormat.getTimeFormat(SMMoney.getAppContext()).format(newDate);
     }
 
     public static String descriptionWithShortTime(GregorianCalendar cal) {
@@ -366,6 +385,7 @@ public class CalExt {
             newCal.set(Calendar.HOUR_OF_DAY, theTime.getHours());
             newCal.set(Calendar.MINUTE, theTime.getMinutes());
         } catch (ParseException e) {
+            e.printStackTrace();
         }
         return newCal;
     }

@@ -9,15 +9,15 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class CashFlowDataSource extends NetWorthDataSource {
-    public CashFlowDataSource(AccountRowAdapter adapter) {
+    CashFlowDataSource(AccountRowAdapter adapter) {
         super(adapter);
     }
 
     public void reloadData() {
         GregorianCalendar balanceDate = CalExt.endOfDay(CalExt.endOfMonth(new GregorianCalendar()));
-        this.chartAssets = new ArrayList(12);
-        this.chartLiabilities = new ArrayList(12);
-        this.chartNetworth = new ArrayList(12);
+        this.chartAssets = new ArrayList<>(12);
+        this.chartLiabilities = new ArrayList<>(12);
+        this.chartNetworth = new ArrayList<>(12);
         balanceDate = CalExt.endOfDay(CalExt.endOfMonth(CalExt.subtractMonths(balanceDate, 11)));
         int liabilityColor = PocketMoneyThemes.redBarColor();
         int assetColor = PocketMoneyThemes.greenBarColor();

@@ -12,28 +12,12 @@ import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
 import com.example.smmoney.R;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.views.charts.items.ChartItem;
-import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ChartPieView extends ChartView {
-    float leftX;
-    float leftY;
     private Paint mBgPaints = new Paint();
-    private int mGapBottom;
-    private int mGapLeft;
-    private int mGapRight;
-    private int mGapTop;
-    private int mHeight;
     private Paint mLinePaints = new Paint();
-    RectF mOvals;
-    private float mStart;
-    private float mSweep;
-    private int mWidth;
-    Path path;
-    float pieCenterX;
-    float pieCenterY;
-    float radius;
     double rads;
 
     public ChartPieView(Context context) {
@@ -46,49 +30,54 @@ public class ChartPieView extends ChartView {
 
     private void drawChart(Canvas canvas, int type, boolean halved) {
         if (this.series != null) {
-            this.mWidth = getWidth();
-            this.mHeight = getHeight();
+            int mWidth = getWidth();
+            int mHeight = getHeight();
             int i;
+            int mGapBottom;
+            int mGapLeft;
+            int mGapRight;
+            int mGapTop;
+            float pieCenterX;
+            float radius;
             if (halved) {
-                if (this.mWidth / 2 > this.mHeight) {
-                    this.radius = (float) ((this.mHeight - 20) / 2);
-                    i = ((int) (((float) this.mWidth) - (this.radius * 4.0f))) / 3;
-                    this.mGapRight = i;
-                    this.mGapLeft = i;
-                    this.mGapBottom = 10;
-                    this.mGapTop = 10;
+                if (mWidth / 2 > mHeight) {
+                    radius = (float) ((mHeight - 20) / 2);
+                    i = ((int) (((float) mWidth) - (radius * 4.0f))) / 3;
+                    mGapRight = i;
+                    mGapLeft = i;
+                    mGapBottom = 10;
+                    mGapTop = 10;
                 } else {
-                    this.radius = (float) ((this.mWidth - 30) / 4);
-                    this.mGapRight = 10;
-                    this.mGapLeft = 10;
-                    i = ((int) (((float) this.mHeight) - (this.radius * 2.0f))) / 2;
-                    this.mGapBottom = i;
-                    this.mGapTop = i;
+                    radius = (float) ((mWidth - 30) / 4);
+                    mGapRight = 10;
+                    mGapLeft = 10;
+                    i = ((int) (((float) mHeight) - (radius * 2.0f))) / 2;
+                    mGapBottom = i;
+                    mGapTop = i;
                 }
-                if (type == -1) {
-                    this.mGapRight = (int) (((float) (this.mGapLeft * 2)) + (this.radius * 2.0f));
-                    this.pieCenterX = ((float) this.mGapLeft) + this.radius;
+                if (type ==Enums.kChartTypeNegativePie /*-1*/) {
+                    mGapRight = (int) (((float) (mGapLeft * 2)) + (radius * 2.0f));
+                    pieCenterX = ((float) mGapLeft) + radius;
                 } else {
-                    this.mGapLeft = (int) (((float) (this.mGapRight * 2)) + (this.radius * 2.0f));
-                    this.pieCenterX = ((float) this.mGapLeft) + this.radius;
+                    mGapLeft = (int) (((float) (mGapRight * 2)) + (radius * 2.0f));
+                    pieCenterX = ((float) mGapLeft) + radius;
                 }
             } else {
-                i = ((this.mWidth - this.mHeight) + 20) / 2;
-                this.mGapRight = i;
-                this.mGapLeft = i;
-                this.mGapBottom = 10;
-                this.mGapTop = 10;
-                this.radius = (float) ((this.mHeight - this.mGapLeft) - this.mGapRight);
-                this.pieCenterX = (float) (this.mWidth / 2);
-                float radiusForHeight = (float) ((this.mHeight - 20) / 2);
-                if (this.radius > radiusForHeight) {
-                    this.radius = radiusForHeight;
+                i = ((mWidth - mHeight) + 20) / 2;
+                mGapRight = i;
+                mGapLeft = i;
+                mGapBottom = 10;
+                mGapTop = 10;
+                radius = (float) ((mHeight - mGapLeft) - mGapRight);
+                pieCenterX = (float) (mWidth / 2);
+                float radiusForHeight = (float) ((mHeight - 20) / 2);
+                if (radius > radiusForHeight) {
+                    radius = radiusForHeight;
                 }
             }
-            this.pieCenterY = (float) (this.mHeight / 2);
-            this.leftX = (float) (this.mWidth - this.mGapRight);
-            this.leftY = this.pieCenterY;
-            this.mOvals = new RectF((float) this.mGapLeft, (float) this.mGapTop, (float) (this.mWidth - this.mGapRight), (float) (this.mHeight - this.mGapBottom));
+            float pieCenterY = (float) (mHeight / 2);
+            float leftX = (float) (mWidth - mGapRight);
+            RectF mOvals = new RectF((float) mGapLeft, (float) mGapTop, (float) (mWidth - mGapRight), (float) (mHeight - mGapBottom));
             this.mBgPaints.setAntiAlias(true);
             this.mBgPaints.setStyle(Style.FILL);
             this.mBgPaints.setColor(-1996554240);
@@ -97,23 +86,23 @@ public class ChartPieView extends ChartView {
             this.mLinePaints.setStyle(Style.STROKE);
             this.mLinePaints.setColor(-16777216);
             this.mLinePaints.setStrokeWidth(0.5f);
-            this.mSweep = 0.0f;
-            this.mStart = 0.0f;
-            Iterator it = ((ArrayList) this.series.get(0)).iterator();
-            while (it.hasNext()) {
-                ChartItem item = (ChartItem) it.next();
-                if ((type == 1 && item.value > 0.0d) || (type == -1 && item.value < 0.0d)) {
-                    this.mSweep = 360.0f * ((float) item.percent);
-                    this.path = new Path();
-                    this.path.moveTo(this.pieCenterX, this.pieCenterY);
-                    this.path.addArc(this.mOvals, this.mStart, this.mSweep);
-                    this.path.lineTo(this.pieCenterX, this.pieCenterY);
-                    this.path.close();
-                    item.path = this.path;
+            float mSweep;
+            float mStart = 0.0f;
+            Path path;
+            for (Object o : this.series.get(0)) {
+                ChartItem item = (ChartItem) o;
+                if ((type == Enums.kChartTypePositivePie/*1*/ && item.value > 0.0d) || (type == Enums.kChartTypeNegativePie /*-1*/ && item.value < 0.0d)) {
+                    mSweep = 360.0f * ((float) item.percent);
+                    path = new Path();
+                    path.moveTo(pieCenterX, pieCenterY);
+                    path.addArc(mOvals, mStart, mSweep);
+                    path.lineTo(pieCenterX, pieCenterY);
+                    path.close();
+                    item.path = path;
                     this.mBgPaints.setColor(item.color);
-                    canvas.drawPath(this.path, this.mBgPaints);
-                    canvas.drawPath(this.path, this.mLinePaints);
-                    this.mStart += this.mSweep;
+                    canvas.drawPath(path, this.mBgPaints);
+                    canvas.drawPath(path, this.mLinePaints);
+                    mStart += mSweep;
                 }
             }
             if (this.selectedItem != null) {
@@ -121,37 +110,37 @@ public class ChartPieView extends ChartView {
                 this.mLinePaints.setStrokeWidth(2.0f);
                 canvas.drawPath(this.selectedItem.path, this.mLinePaints);
             }
-            this.path = new Path();
-            this.path.addCircle(this.pieCenterX, this.pieCenterY, 40.0f, Direction.CCW);
+            path = new Path();
+            path.addCircle(pieCenterX, pieCenterY, 40.0f, Direction.CCW);
             this.mBgPaints.setColor(1140850688);
-            canvas.drawPath(this.path, this.mBgPaints);
-            this.path = new Path();
-            this.path.addCircle(this.pieCenterX, this.pieCenterY, 30.0f, Direction.CCW);
+            canvas.drawPath(path, this.mBgPaints);
+            path = new Path();
+            path.addCircle(pieCenterX, pieCenterY, 30.0f, Direction.CCW);
             this.mLinePaints.setColor(-16777216);
             this.mLinePaints.setStrokeWidth(1.0f);
-            canvas.drawPath(this.path, this.mLinePaints);
-            this.mBgPaints.setColor(type == -1 ? -65536 : -16711936);
-            canvas.drawPath(this.path, this.mBgPaints);
+            canvas.drawPath(path, this.mLinePaints);
+            this.mBgPaints.setColor(type == Enums.kChartTypeNegativePie /*-1*/ ? -65536 : -16711936);
+            canvas.drawPath(path, this.mBgPaints);
             Paint p = new Paint();
             p.setAntiAlias(true);
             p.setTypeface(Typeface.DEFAULT_BOLD);
             p.setTextSize(50.0f);
             p.setColor(-16777216);
             p.setTextAlign(Align.CENTER);
-            canvas.drawText(type == -1 ? "-" : "+", this.pieCenterX, this.pieCenterY + p.measureText("-"), p);
-            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.piechartoverlay), null, this.mOvals, this.mBgPaints);
+            canvas.drawText(type == Enums.kChartTypeNegativePie /*-1*/ ? "-" : "+", pieCenterX, pieCenterY + p.measureText("-"), p);
+            canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.piechartoverlay), null, mOvals, this.mBgPaints);
         }
     }
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         if (this.negativeTotal < 0.0d && this.positiveTotal > 0.0d) {
-            drawChart(canvas, -1, true);
-            drawChart(canvas, 1, true);
+            drawChart(canvas, Enums.kChartTypeNegativePie /*-1*/, true);
+            drawChart(canvas, Enums.kChartTypePositivePie /*1*/, true);
         } else if (this.negativeTotal < 0.0d) {
-            drawChart(canvas, -1, false);
+            drawChart(canvas, Enums.kChartTypeNegativePie /*-1*/, false);
         } else {
-            drawChart(canvas, 1, false);
+            drawChart(canvas, Enums.kChartTypePositivePie /*1*/, false);
         }
     }
 }

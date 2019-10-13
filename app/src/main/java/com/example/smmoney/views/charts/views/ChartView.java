@@ -14,13 +14,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ChartView extends View {
-    protected boolean allNegative;
+    boolean allNegative;
     public ChartViewDataSource dataSource;
     public ChartViewDelegate delegate;
-    protected double negativeMaxValue;
-    protected double negativeTotal;
-    protected double positiveMaxValue;
-    protected double positiveTotal;
+    double negativeMaxValue;
+    double negativeTotal;
+    double positiveMaxValue;
+    double positiveTotal;
     ChartItem selectedItem;
     ArrayList<ArrayList<ChartItem>> series;
     boolean showChartLabels;
@@ -38,10 +38,10 @@ public class ChartView extends View {
             this.dataSource.reloadData();
         }
         int seriesCount = this.dataSource.numberOfSeriesInChartView(this);
-        this.series = new ArrayList(seriesCount);
+        this.series = new ArrayList<>(seriesCount);
         for (int seriesIndex = 0; seriesIndex < seriesCount; seriesIndex++) {
             int dataCount = this.dataSource.numberOfDataPointsInSeries(this, seriesIndex);
-            ArrayList<ChartItem> data = new ArrayList(dataCount);
+            ArrayList<ChartItem> data = new ArrayList<>(dataCount);
             for (int dataIndex = 0; dataIndex < dataCount; dataIndex++) {
                 data.add(this.dataSource.itemForDataAtIndex(this, dataIndex, seriesIndex));
             }
@@ -54,9 +54,8 @@ public class ChartView extends View {
         this.allNegative = this.dataSource.getClass().equals(ReportDataSource.class);
         Iterator it = this.series.iterator();
         while (it.hasNext()) {
-            Iterator it2 = ((ArrayList) it.next()).iterator();
-            while (it2.hasNext()) {
-                ChartItem anItem = (ChartItem) it2.next();
+            for (Object o : ((ArrayList) it.next())) {
+                ChartItem anItem = (ChartItem) o;
                 if (anItem.value > 0.0d) {
                     this.positiveTotal += anItem.value;
                     this.allNegative = false;
@@ -69,9 +68,8 @@ public class ChartView extends View {
         }
         it = this.series.iterator();
         while (it.hasNext()) {
-            Iterator it2 = ((ArrayList) it.next()).iterator();
-            while (it2.hasNext()) {
-                ChartItem anItem = (ChartItem) it2.next();
+            for (Object o : ((ArrayList) it.next())) {
+                ChartItem anItem = (ChartItem) o;
                 if (anItem.value < 0.0d) {
                     anItem.percent = anItem.value / this.negativeTotal;
                 } else {
@@ -94,11 +92,9 @@ public class ChartView extends View {
             float y = event.getY();
             RectF rect = new RectF();
             Region region = new Region();
-            Iterator it = this.series.iterator();
-            while (it.hasNext()) {
-                Iterator it2 = ((ArrayList) it.next()).iterator();
-                while (it2.hasNext()) {
-                    ChartItem item = (ChartItem) it2.next();
+            for (ArrayList<ChartItem> chartItems : this.series) {
+                for (Object o : chartItems) {
+                    ChartItem item = (ChartItem) o;
                     try {
                         item.path.computeBounds(rect, true);
                         region.setPath(item.path, new Region((int) rect.left, (int) rect.top, (int) rect.right, (int) rect.bottom));
@@ -107,6 +103,7 @@ public class ChartView extends View {
                             this.selectedItem = item;
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -114,6 +111,7 @@ public class ChartView extends View {
         try {
             this.delegate.chartViewSelectedItem(this, this.selectedItem);
         } catch (NullPointerException e2) {
+            e2.printStackTrace();
         }
         invalidate();
         return true;

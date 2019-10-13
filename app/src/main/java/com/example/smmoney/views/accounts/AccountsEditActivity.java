@@ -35,7 +35,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.Objects;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
     public final int NOTE_EDIT_BUTTON = 3;
@@ -47,7 +47,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private TextView currency;
     private Activity currentActivity;
     private EditText exchangeRate;
-    private TextView exchangeRateSuffix;
     private EditText expires;
     private EditText fee;
     private ImageView icon;
@@ -68,11 +67,11 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         super.onCreate(savedInstanceState);
         this.currentActivity = this;
         setContentView(R.layout.accounts_edit);
-        this.account = (AccountClass) getIntent().getExtras().get("Account");
+        this.account = (AccountClass) Objects.requireNonNull(getIntent().getExtras()).get("Account");
         loadInfo();
         setupButtons();
-        setTitle("Account Info");
-        getActionBar().hide();
+        setTitle();
+        Objects.requireNonNull(getActionBar()).hide();
     }
 
     public void onResume() {
@@ -90,7 +89,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         }
     }
 
-    public void setupButtons() {
+    private void setupButtons() {
         LinearLayout v = (LinearLayout) this.type.getParent();
         v.setOnClickListener(getBtnClickListener());
         v.setTag(1);
@@ -107,10 +106,9 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                     public void onClick(DialogInterface dialog, final int item) {
                         AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
                         dialog.dismiss();
-                        final String[] strArr = currencyCodes;
                         new Runnable() {
                             public void run() {
-                                new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(strArr[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null);
+                                new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null);
                             }
                         }.run();
                     }
@@ -139,7 +137,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) sv.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        ArrayList<View> theViews = new ArrayList();
+        ArrayList<View> theViews = new ArrayList<>();
         TextView tView = findViewById(R.id.account_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountName.setTextColor(PocketMoneyThemes.primaryEditTextColor());
@@ -214,9 +212,8 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.notes.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add((View) tView.getParent());
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View theView : theViews) {
+            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         this.titleTextView = findViewById(R.id.title_text_view);
@@ -224,11 +221,11 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
+    private void setTitle() {
+        this.titleTextView.setText(Locales.kLOC_ACCOUNT_INFO_TITLE/*"Account Info"*/);
     }
 
-    public void loadInfo() {
+    private void loadInfo() {
         this.accountName = findViewById(R.id.accountname);
         this.totalworth = findViewById(R.id.totalworthcb);
         this.type = findViewById(R.id.type);
@@ -245,14 +242,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.notes = findViewById(R.id.notestextview);
         this.currency = findViewById(R.id.currency_edit_text);
         this.exchangeRate = findViewById(R.id.xratetextview);
-        this.exchangeRateSuffix = findViewById(R.id.amount_xrate_text_view);
+        TextView exchangeRateSuffix = findViewById(R.id.amount_xrate_text_view);
         this.keepTheChangeAccountTextView = findViewById(R.id.keep_the_change_account_text);
         this.keepTheChangeRoundToEditText = findViewById(R.id.account_keep_the_change_round_to_text);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
         if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             ((View) this.currency.getParent()).setVisibility(View.GONE);
             ((View) this.exchangeRate.getParent()).setVisibility(View.GONE);
-            ((View) this.exchangeRateSuffix.getParent()).setVisibility(View.GONE);
+            ((View) exchangeRateSuffix.getParent()).setVisibility(View.GONE);
         }
         this.accountName.setText(this.account.getAccount());
         this.totalworth.setChecked(this.account.getTotalWorth());
@@ -269,14 +266,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         setNotesText(this.account.getNotes());
         this.currency.setText(this.account.getCurrencyCode());
         this.exchangeRate.setText(this.account.exchangeRateAsString());
-        this.exchangeRateSuffix.setText("=" + Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
+        exchangeRateSuffix.setText("=" + Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
         this.keepTheChangeAccountTextView.setText(this.account.getKeepTheChangeAccount() == null ? "None" : this.account.getKeepTheChangeAccount());
         this.keepTheChangeRoundToEditText.setText(this.account.keepChangeRoundToAsString());
         this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this.currentActivity);
         this.icon.setImageResource(this.iconResourceID);
     }
 
-    public void save() {
+    private void save() {
         if (this.accountName.getText().toString().length() > 0) {
             this.account.setAccount(this.accountName.getText().toString());
             this.account.setTotalWorth(this.totalworth.isChecked());
@@ -284,6 +281,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             try {
                 this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this.currentActivity);
             } catch (Exception e) {
+                e.printStackTrace();
             }
             this.account.setExpirationDate(this.expires.getText().toString());
             this.account.setAccountNumber(this.accountNumber.getText().toString());
@@ -307,7 +305,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         }
     }
 
-    public void setNotesText(String note) {
+    private void setNotesText(String note) {
         int i = 25;
         if (note.length() > 0) {
             TextView textView = this.notes;
@@ -336,7 +334,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
-            String selection = "";
+            String selection;
             try {
                 if (data.getExtras() != null) {
                     selection = data.getExtras().getString("selection");
@@ -345,13 +343,17 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                             this.type.setText(selection);
                             return;
                         case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                            this.iconResourceID = Integer.parseInt(selection);
+                            if (selection != null) {
+                                this.iconResourceID = Integer.parseInt(selection);
+                            }
                             this.icon.setImageResource(this.iconResourceID);
                             return;
                         case SplitsActivity.REQUEST_EDIT /*3*/:
                             if (resultCode == -1) {
                                 this.account.setNotes(selection);
-                                setNotesText(selection);
+                                if (selection != null) {
+                                    setNotesText(selection);
+                                }
                                 return;
                             }
                             return;
@@ -359,10 +361,10 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                             this.keepTheChangeAccountTextView.setText(selection);
                             return;
                         default:
-                            return;
                     }
                 }
             } catch (NullPointerException e) {
+                e.printStackTrace();
             }
         }
     }
@@ -373,6 +375,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 Intent i;
                 switch ((Integer) view.getTag()) {
                     case SplitsActivity.RESULT_CHANGED /*1*/:
+                    case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
                         i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
                         i.putExtra("type", ((Integer) view.getTag()).intValue());
                         AccountsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
@@ -380,39 +383,24 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                     case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
                         AccountsEditActivity.this.currentActivity.startActivityForResult(new Intent(AccountsEditActivity.this.currentActivity, AccountTypeIconGridActivity.class), 2);
                         return;
-                    case SplitsActivity.REQUEST_EDIT /*3*/:
+                    case NOTE_EDIT_BUTTON /*3*/:
                         i = new Intent(AccountsEditActivity.this.currentActivity, NoteEditor.class);
                         i.putExtra("note", AccountsEditActivity.this.account.getNotes());
                         AccountsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
                         return;
-                    case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
-                        i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
-                        i.putExtra("type", ((Integer) view.getTag()).intValue());
-                        AccountsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
-                        return;
                     default:
-                        return;
                 }
             }
         };
     }
 
-    public void copyFile(File src, File dst) throws IOException {
-        FileChannel inChannel = new FileInputStream(src).getChannel();
-        FileChannel outChannel = new FileOutputStream(dst).getChannel();
-        try {
+    private void copyFile(File src, File dst) throws IOException {
+        try (FileChannel inChannel = new FileInputStream(src).getChannel(); FileChannel outChannel = new FileOutputStream(dst).getChannel()) {
             inChannel.transferTo(0, inChannel.size(), outChannel);
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
         }
     }
 
-    public void copyDB() {
+    private void copyDB() {
         try {
             copyFile(new File(Environment.getDataDirectory() + "/data/com.catamount.pocketmoney/databases/SMMoneyDB.sql"), new File(SMMoney.getExternalPocketMoneyDirectory(), "databasedata"));
         } catch (IOException e) {

@@ -11,13 +11,12 @@ import android.widget.BaseAdapter;
 import android.widget.ListView;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.FilterClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 import com.example.smmoney.views.transactions.TransactionsActivity;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -27,23 +26,23 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class BudgetsRowAdapter extends BaseAdapter {
-    static final Comparator<CategoryClass> categoryComparator = new Comparator<CategoryClass>() {
+    private static final Comparator<CategoryClass> categoryComparator = new Comparator<CategoryClass>() {
         public int compare(CategoryClass category1, CategoryClass category2) {
             double diff;
             switch (Prefs.getIntPref(Prefs.BUDGETS_SORTON)) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case Enums.kBudgetsSortTypeActual /*1*/:
                     diff = category2.spent - category1.spent;
                     if (diff < 0.0d) {
                         return -1;
                     }
                     return diff > 0.0d ? 1 : 0;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case Enums.kBudgetsSortTypeBudgeted /*2*/:
                     diff = category2.budget - category1.budget;
                     if (diff < 0.0d) {
                         return -1;
                     }
                     return diff > 0.0d ? 1 : 0;
-                case SplitsActivity.REQUEST_EDIT /*3*/:
+                case Enums.kBudgetsSortTypePercentage /*3*/:
                     diff = (category1.spent / category1.budget) - (category2.spent / category2.budget);
                     if (diff < 0.0d) {
                         return -1;
@@ -55,19 +54,19 @@ public class BudgetsRowAdapter extends BaseAdapter {
         }
     };
     private Context context;
-    public GregorianCalendar currentDate;
-    public int currentPeriod;
+    GregorianCalendar currentDate;
+    int currentPeriod;
     private List<CategoryClass> elements;
     private List<CategoryClass> expenseCategories;
     private List<CategoryClass> incomeCategories;
     private LayoutInflater inflater;
     private ListView listView;
     private List<CategoryClass> nonBudgetedCategories;
-    String showExpense = Prefs.COLLAPSE_EXPENSES;
-    String showIncome = Prefs.COLLAPSE_INCOME;
-    String showNonBudgeted = Prefs.COLLAPSE_UNBUDGETED;
+    private String showExpense = Prefs.COLLAPSE_EXPENSES;
+    private String showIncome = Prefs.COLLAPSE_INCOME;
+    private String showNonBudgeted = Prefs.COLLAPSE_UNBUDGETED;
 
-    public BudgetsRowAdapter(Context aContext, ListView theList) {
+    BudgetsRowAdapter(Context aContext, ListView theList) {
         this.context = aContext;
         this.listView = theList;
         this.inflater = LayoutInflater.from(this.context);
@@ -148,7 +147,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
                 Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
                 BudgetsRowHolder holder = (BudgetsRowHolder) view;
                 FilterClass aFilter = new FilterClass();
-                aFilter.setCategory(new StringBuilder(String.valueOf(holder.category.getCategory())).append(holder.category.getIncludeSubcategories() ? "%" : "").toString());
+                aFilter.setCategory(String.valueOf(holder.category.getCategory()) + (holder.category.getIncludeSubcategories() ? "%" : ""));
                 aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
                 aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
                 aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
@@ -198,7 +197,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         GregorianCalendar startDate = startOfPeriod();
         GregorianCalendar endDate = endOfPeriod();
         List<CategoryClass> tempIncomeCategories = CategoryClass.queryIncomeCategoriesWithBudgets();
-        ArrayList<CategoryClass> afterZeroIncomes = new ArrayList();
+        ArrayList<CategoryClass> afterZeroIncomes = new ArrayList<>();
         for (CategoryClass category : tempIncomeCategories) {
             category.spent = CategoryClass.querySpentInCategory(category.getCategory(), category.getIncludeSubcategories(), startDate, endDate);
             if (category.spent != 0.0d || !hideZeroActuals) {
@@ -208,7 +207,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         }
         List<CategoryClass> incomeCategoriesHolder = afterZeroIncomes;
         List<CategoryClass> tempExpenseCategories = CategoryClass.queryExpenseCategoriesWithBudgets();
-        ArrayList<CategoryClass> afterZeroExpenses = new ArrayList();
+        ArrayList<CategoryClass> afterZeroExpenses = new ArrayList<>();
         for (CategoryClass category2 : tempExpenseCategories) {
             category2.spent = CategoryClass.querySpentInCategory(category2.getCategory(), category2.getIncludeSubcategories(), startDate, endDate);
             if (category2.spent != 0.0d || !hideZeroActuals) {
@@ -219,7 +218,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         List<CategoryClass> expenseCategoriesHolder = afterZeroExpenses;
         if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED)) {
             List<CategoryClass> tempNonBudgetdCategories = CategoryClass.queryNonBudgettedCategories();
-            ArrayList<CategoryClass> afterZeroNonBudgeted = new ArrayList();
+            ArrayList<CategoryClass> afterZeroNonBudgeted = new ArrayList<>();
             for (CategoryClass category22 : tempNonBudgetdCategories) {
                 category22.spent = CategoryClass.querySpentInCategory(category22.getCategory(), category22.getIncludeSubcategories(), startDate, endDate);
                 if (category22.spent != 0.0d || !hideZeroActuals) {
@@ -256,7 +255,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return Prefs.getBooleanPref(section);
     }
 
-    public double totalIncomes() {
+    double totalIncomes() {
         double earned = 0.0d;
         if (this.incomeCategories != null) {
             for (CategoryClass category : this.incomeCategories) {
@@ -266,7 +265,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return earned;
     }
 
-    public double totalExpenses() {
+    double totalExpenses() {
         double spent = 0.0d;
         if (this.expenseCategories != null) {
             for (CategoryClass category : this.expenseCategories) {
@@ -276,7 +275,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return spent;
     }
 
-    public double totalNonBudgeted() {
+    double totalNonBudgeted() {
         double spent = 0.0d;
         if (this.nonBudgetedCategories != null) {
             for (CategoryClass category : this.nonBudgetedCategories) {
@@ -286,7 +285,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return spent;
     }
 
-    public double budgetedIncomes() {
+    double budgetedIncomes() {
         double budget = 0.0d;
         if (this.incomeCategories != null) {
             for (CategoryClass category : this.incomeCategories) {
@@ -296,7 +295,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return budget;
     }
 
-    public double budgetedExpenses() {
+    double budgetedExpenses() {
         double budget = 0.0d;
         if (this.expenseCategories != null) {
             for (CategoryClass category : this.expenseCategories) {
@@ -310,7 +309,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
     }
 
-    public String xOfy(double x, double y) {
+    private String xOfy(double x, double y) {
         String xofy = Locales.kLOC_BUDGETS_XOFY;
         if (showCents()) {
             return xofy.replace("%1$s", CurrencyExt.amountAsCurrency(x)).replace("%2$s", CurrencyExt.amountAsCurrency(y));
@@ -318,7 +317,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return xofy.replace("%1$s", CurrencyExt.amountAsCurrencyWithoutCents(x)).replace("%2$s", CurrencyExt.amountAsCurrencyWithoutCents(y));
     }
 
-    public String balanceForCategory(String cat) {
+    private String balanceForCategory(String cat) {
         String retVal = "";
         if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) {
             return xOfy(totalIncomes(), budgetedIncomes());
@@ -342,45 +341,45 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return xOfy(totalUnbudgeted, unbudgetedAvailable);
     }
 
-    public String rangeOfPeriodAsString() {
+    String rangeOfPeriodAsString() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return CalExt.descriptionWithMediumDate(this.currentDate);
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodMonth /*2*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(this.currentDate))).append(" ").append(CalExt.descriptionWithYear(this.currentDate)).toString();
+                    return String.valueOf(CalExt.descriptionWithMonth(this.currentDate)) + " " + CalExt.descriptionWithYear(this.currentDate);
                 }
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate)))).append(" ").append(CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate))).append(" - ").append(CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate))).append(" ").append(CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate))).toString();
+                    return String.valueOf(CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate))) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
                 }
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodYear /*4*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
                     return CalExt.descriptionWithYear(this.currentDate);
                 }
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(startOfPeriod()))).append(" ").append(CalExt.descriptionWithYear(startOfPeriod())).append(" - ").append(CalExt.descriptionWithMonth(endOfPeriod())).append(" ").append(CalExt.descriptionWithYear(endOfPeriod())).toString();
+                    return String.valueOf(CalExt.descriptionWithMonth(startOfPeriod())) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(startOfPeriod()))).append(" ").append(CalExt.descriptionWithYear(startOfPeriod())).append(" - ").append(CalExt.descriptionWithMonth(endOfPeriod())).append(" ").append(CalExt.descriptionWithYear(endOfPeriod())).toString();
+                    return String.valueOf(CalExt.descriptionWithMonth(startOfPeriod())) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod()))).append(" - ").append(CalExt.descriptionWithMediumDate(endOfPeriod())).toString();
+                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             default:
                 return "All";
         }
     }
 
-    public GregorianCalendar startOfPeriod() {
+    private GregorianCalendar startOfPeriod() {
         return startOfPeriod(this.currentDate, this.currentPeriod);
     }
 
@@ -796,11 +795,11 @@ public class BudgetsRowAdapter extends BaseAdapter {
         firstOfMonth = budgetStartDate == null || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
         GregorianCalendar budgetEndDate;
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 return CalExt.endOfDay(this.currentDate);
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 1));
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(this.currentDate);
                 } else {
@@ -810,7 +809,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
                     }
                 }
                 return budgetEndDate;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 2));
                 } else {
@@ -820,11 +819,11 @@ public class BudgetsRowAdapter extends BaseAdapter {
                     }
                 }
                 return budgetEndDate;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 return CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 2));
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonth(startOfPeriod()));
                 } else {
@@ -834,7 +833,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
                     }
                 }
                 return budgetEndDate;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 5));
                 } else {
@@ -844,98 +843,94 @@ public class BudgetsRowAdapter extends BaseAdapter {
                     }
                 }
                 return budgetEndDate;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 2));
             default:
                 return null;
         }
     }
 
-    public void nextPeriod() {
+    void nextPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 this.currentDate = CalExt.addDays(this.currentDate, 1);
                 return;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, 1);
                 return;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 1);
                 return;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 3);
                 return;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 this.currentDate = CalExt.addYear(this.currentDate);
                 return;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, 2);
                 return;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 2);
                 return;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 6);
                 return;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, 4);
                 return;
             default:
-                return;
         }
     }
 
-    public void previousPeriod() {
+    void previousPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBudgetPeriodDay /*0*/:
                 this.currentDate = CalExt.addDays(this.currentDate, -1);
                 return;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetPeriodWeek /*1*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, -1);
                 return;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetPeriodMonth /*2*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, -1);
                 return;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetPeriodQuarter /*3*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, -3);
                 return;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBudgetPeriodYear /*4*/:
                 this.currentDate = CalExt.subtractYear(this.currentDate);
                 return;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBudgetPeriodBiweekly /*5*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, -2);
                 return;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kBudgetPeriodBimonthly /*6*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, -2);
                 return;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kBudgetPeriodHalfYear /*7*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, -6);
                 return;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kBudgetPeriod4Weeks /*8*/:
                 this.currentDate = CalExt.addWeeks(this.currentDate, -4);
                 return;
             default:
-                return;
         }
     }
 
-    public double getProgressPercent() {
+    double getProgressPercent() {
         GregorianCalendar today = new GregorianCalendar();
-        switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                if (this.currentDate.after(today)) {
-                    return 0.0d;
-                }
-                return 1.0d;
-            default:
-                double percentIntoPeriod = ((double) (today.getTimeInMillis() - startOfPeriod().getTimeInMillis())) / ((double) (endOfPeriod().getTimeInMillis() - startOfPeriod().getTimeInMillis()));
-                if (startOfPeriod().after(today)) {
-                    return 1.0d;
-                }
-                if (endOfPeriod().before(today)) {
-                    return 0.0d;
-                }
-                return percentIntoPeriod;
+        if (this.currentPeriod == Enums.kBudgetPeriodDay/*0*/) {
+            if (this.currentDate.after(today)) {
+                return 0.0d;
+            }
+            return 1.0d;
         }
+        double percentIntoPeriod = ((double) (today.getTimeInMillis() - startOfPeriod().getTimeInMillis())) / ((double) (endOfPeriod().getTimeInMillis() - startOfPeriod().getTimeInMillis()));
+        if (startOfPeriod().after(today)) {
+            return 1.0d;
+        }
+        if (endOfPeriod().before(today)) {
+            return 0.0d;
+        }
+        return percentIntoPeriod;
     }
 }

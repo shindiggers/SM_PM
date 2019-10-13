@@ -14,11 +14,9 @@ import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.repeating.LocalNotificationRepeatingReciever;
-import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -26,6 +24,7 @@ import java.io.StringReader;
 import java.text.DateFormatSymbols;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.Attributes;
 import org.xml.sax.InputSource;
@@ -36,14 +35,14 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
     public static final String XML_RECORDTAG_REPEATINGTRANSACTION = "RPTTRANSCLASS";
     private String currentElementValue;
-    public final String dayNameToken;
-    public final String dayOrdinalToken;
+    private final String dayNameToken;
+    private final String dayOrdinalToken;
     private GregorianCalendar endDate;
-    public final String frequenceToken;
+    private final String frequenceToken;
     private int frequency;
     public boolean hydratedTransaction;
     private GregorianCalendar lastProcessedDate;
-    public final String monthNameToken;
+    private final String monthNameToken;
     private int notifyDaysInAdvance;
     private int repeatOn;
     public int repeatingID;
@@ -53,7 +52,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     private int transactionID;
     public String transactionServerID;
     private int type;
-    public final String weekOrdinalToken;
+    private final String weekOrdinalToken;
 
     public RepeatingTransactionClass() {
         this.frequenceToken = "^f";
@@ -144,7 +143,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         this.weekOrdinalToken = "^w";
         this.monthNameToken = "^m";
         this.dayNameToken = "^d";
-        this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction);
+        this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction); //THIS RETURNS TRANS ID 0 !!!SEEMS TO BE AN ERROR AS TRANS ID IS NOT 0 !!! PUT A BREAK BEFORE THIS LINE AND DEBUG FROM HERE!!!
         if (this.transactionID == 0) {
             TransactionDB.fixRepeatingTransactionsThatDontRepeatOnDate();
             aTransaction.hydrated = false;
@@ -167,7 +166,9 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public static String[] types() {
-        return new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_REPEATING_FREQUENCY_DAILY, Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY, Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
+        return new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_REPEATING_FREQUENCY_DAILY,
+                Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY,
+                Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
     }
 
     public String typeAsString() {
@@ -184,7 +185,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
-    public void setType(int aType) {
+    private void setType(int aType) {
         if (this.type != aType) {
             this.dirty = true;
             this.type = aType;
@@ -197,16 +198,13 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public String typeEveryAsString() {
-        if (2 == this.type && 2 == this.frequency) {
-            return Locales.kLOC_BUDGETS_BIWEEKLY; // type 2 = weekly therefore if frequency = 2 this returns "Bi-weekly"
-        }
-        if (2 == this.type && 2 < this.frequency) {
+        if (Enums.repeatWeekly == this.type && Enums.repeatWeekly < this.frequency) {
             return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY; // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
         }
-        if (3 == this.type && 2 == this.frequency) {
+        if (Enums.repeatMonthly == this.type && Enums.repeatWeekly == this.frequency) {
             return Locales.kLOC_BUDGETS_BIMONTHLY; // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
         }
-        if (3 != this.type || 2 >= this.frequency) { //TODO repeating view always shows none SO: type must ALWAYS by 0. Code elsewhere must not be writing '0' as the type. Figure where this is happening and fix
+        if (Enums.repeatMonthly != this.type || Enums.repeatWeekly >= this.frequency) { //TODO repeating view always shows none SO: type must ALWAYS by 0. Code elsewhere must not be writing '0' as the type. Figure where this is happening and fix
             return types()[this.type]; // type 3 = weekly thereofore if type is not monthly OR frequency > 2 this returns whatever 'type' is. That could be type = 0 = "None"; type = 1 = "Daily"; type = 4 = "Yearly"
         }
         return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY; // default if none of other conditions are met = "Monthly"
@@ -262,7 +260,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             if (cal != null) {
                 i = 1;
             }
-            if ((i & i2) == 0 || !this.lastProcessedDate.equals(cal)) {
+            if ((i & i2) == 0 || !this.lastProcessedDate.equals(cal)) { // (i & i2) is a bitwise AND. Gives 1 if i & i2 are both '1', otherwise gives 0. So 1 is only returned where lastProcessedDate != null AND cal != null. This test is also passed if lastProcessedDate != cal (ie if the lastProcessedDate of the passed in RT (ie cal) is not equal to the lastProcessedDate of the [persisted] RT object against which the DB is comparing
                 this.dirty = true;
                 this.lastProcessedDate = cal;
             }
@@ -292,7 +290,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public double amountBetweenDate(GregorianCalendar aBeginDate, GregorianCalendar anEndDate) {
         GregorianCalendar beginDateTemp = (GregorianCalendar) aBeginDate.clone();
         int count = 0;
-        if (this.type != 5) {
+        if (this.type != Enums.repeatingOnce /*5*/) {
             if (this.endDate != null && this.endDate.after(anEndDate)) {
                 anEndDate = (GregorianCalendar) this.endDate.clone();
             }
@@ -318,17 +316,17 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         GregorianCalendar futureDate = lastDate;
         if (repeatsOnDate(futureDate)) {
             switch (getType()) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
-                    return CalExt.addDays(futureDate, getFrequency() * 1);
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                    return CalExt.addWeeks(futureDate, getFrequency() * 1);
-                case SplitsActivity.REQUEST_EDIT /*3*/:
+                case Enums.repeatDaily /*1*/:
+                    return CalExt.addDays(futureDate, getFrequency());
+                case Enums.repeatWeekly /*2*/:
+                    return CalExt.addWeeks(futureDate, getFrequency());
+                case Enums.repeatMonthly /*3*/:
                     GregorianCalendar returnDate;
                     int dow;
                     switch (getRepeatOn()) {
-                        case PocketMoneyThemes.kThemeBlack /*0*/:
+                        case Enums.monthlyDayOfMonth /*0*/:
                             returnDate = (GregorianCalendar) futureDate.clone();
-                            returnDate.set(Calendar.MONTH, returnDate.get(Calendar.MONTH) + (getFrequency() * 1));
+                            returnDate.set(Calendar.MONTH, returnDate.get(Calendar.MONTH) + (getFrequency()));
                             returnDate.set(Calendar.DAY_OF_MONTH, 1);
                             int newWeekDay = returnDate.get(Calendar.DAY_OF_WEEK);
                             dow = futureDate.get(Calendar.DAY_OF_WEEK);
@@ -347,32 +345,32 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                             }
                             returnDate.set(Calendar.DAY_OF_MONTH, newDay);
                             return returnDate;
-                        case SplitsActivity.RESULT_CHANGED /*1*/:
-                            return CalExt.addMonths(futureDate, getFrequency() * 1);
-                        case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                        case SplitsActivity.REQUEST_EDIT /*3*/:
-                        case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                            returnDate = CalExt.addMonths(futureDate, getFrequency() * 1);
+                        case Enums.monthlyDateInMonth /*1*/:
+                            return CalExt.addMonths(futureDate, getFrequency());
+                        case Enums.monthlyLastDayOfMonth /*2*/:
+                        case Enums.monthlyLastWeekDayOfMonth /*3*/:
+                        case Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/:
+                            returnDate = CalExt.addMonths(futureDate, getFrequency());
                             int month = futureDate.get(Calendar.MONTH);
                             while (month == returnDate.get(Calendar.MONTH)) {
                                 returnDate.add(Calendar.DAY_OF_MONTH, 1);
                             }
                             returnDate.add(Calendar.DAY_OF_MONTH, -1);
-                            if (getRepeatOn() == 2) {
+                            if (getRepeatOn() == Enums.monthlyLastDayOfMonth /*2*/) {
                                 return returnDate;
                             }
-                            if (getRepeatOn() == 3) {
+                            if (getRepeatOn() == Enums.monthlyLastWeekDayOfMonth /*3*/) {
                                 int daysBackward = 0;
-                                if (returnDate.get(Calendar.DAY_OF_WEEK) == 1) {
-                                    daysBackward = -2;
-                                } else if (returnDate.get(Calendar.DAY_OF_WEEK) == 7) {
-                                    daysBackward = -1;
+                                if (returnDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY /*1*/) {
+                                    daysBackward = -2; /* take 2 days off the get to Friday (ie last weekday) */
+                                } else if (returnDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY /*7*/) {
+                                    daysBackward = -1; /* take 1 days off the get to Friday (ie last weekday) */
                                 }
                                 if (daysBackward != 0) {
                                     return CalExt.addDays(returnDate, daysBackward);
                                 }
                                 return returnDate;
-                            } else if (getRepeatOn() != 4) {
+                            } else if (getRepeatOn() != Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/) {
                                 return returnDate;
                             } else {
                                 dow = futureDate.get(Calendar.DAY_OF_WEEK);
@@ -384,11 +382,11 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                                 return returnDate;
                             }
                         default:
-                            setRepeatOn(0);
+                            setRepeatOn(Enums.monthlyDayOfMonth /*0*/);
                             return null;
                     }
-                case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                    return CalExt.addYears(futureDate, getFrequency() * 1);
+                case Enums.repeatYearly /*4*/:
+                    return CalExt.addYears(futureDate, getFrequency());
                 default:
                     return null;
             }
@@ -421,19 +419,19 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return this.endDate;
     }
 
-    public void setStartOfWeek(int aStartOfWeek) {
+    private void setStartOfWeek(int aStartOfWeek) {
         if (this.startOfWeek != aStartOfWeek) {
             this.dirty = true;
             this.startOfWeek = aStartOfWeek;
         }
     }
 
-    public int getStartOfWeek() {
+    private int getStartOfWeek() {
         hydrate();
         return this.startOfWeek;
     }
 
-    public void setRepeatOn(int anInt) {
+    private void setRepeatOn(int anInt) {
         if (this.repeatOn != anInt) {
             this.dirty = true;
             this.repeatOn = anInt;
@@ -445,12 +443,16 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return this.repeatOn;
     }
 
+    /**
+     * Uses @link{getType()} method to check whether a Tranaction is a RepeatingTransaction
+     * @return boolen returns true if Transaction is Repeating Transaction, false otherwise
+     */
     public boolean isRepeating() {
-        return getType() != 0;
+        return getType() != Enums.repeatNone /*0*/;
     }
 
     public boolean repeatesOnDayOfWeek(int dow) {
-        if (this.type != 2) {
+        if (this.type != Enums.repeatWeekly /*2*/) {
             return false;
         }
         return ((1 << dow) & getRepeatOn()) != 0;
@@ -504,7 +506,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 if (getNotifyDaysInAdance() > 0) {
                     newDate = CalExt.subtractDays(newDate, getNotifyDaysInAdance());
                 }
-                String newBody = new StringBuilder(String.valueOf(CalExt.descriptionWithMediumDate(getTransaction().getDate()))).append(" ").append(getTransaction().getAccount()).append("->").append(getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee()).toString();
+                String newBody = CalExt.descriptionWithMediumDate(getTransaction().getDate()) + " " + getTransaction().getAccount() + "->" + (getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee());
                 intent.putExtra("repeatingTransaction", this);
                 intent.putExtra("localNotification", true);
                 intent.putExtra("Posting", true);
@@ -518,7 +520,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public void postAndAdvanceTransaction() {
         TransactionDB.postTransactionOnDate(this, new GregorianCalendar());
-        if (getType() == 5) {
+        if (getType() == Enums.repeatingOnce /*5*/) {
             this.transaction.deleteFromDatabase();
             deleteFromDatabase();
             return;
@@ -530,7 +532,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public void postAndAdvanceTransaction(double subtotal, GregorianCalendar date) {
         TransactionDB.postTransactionOnDateWithSubtotal(this, date, subtotal);
-        if (getType() == 5) {
+        if (getType() == Enums.repeatingOnce /*5*/) {
             this.transaction.deleteFromDatabase();
             deleteFromDatabase();
             return;
@@ -577,6 +579,12 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return this.transaction.getDate().get(Calendar.DAY_OF_MONTH) <= 28;
     }
 
+    /**
+     * DOWIM = how many times a particular weekday (M to S) has occured on the transaction date
+     * If this is less than 4 then we want to show "The nth week of the month"
+     * If it is 4 or more,
+     * @return false
+     */
     public boolean showOrdinalDayOfMonth() {
         return getTransaction().getDate().get(Calendar.DAY_OF_WEEK_IN_MONTH) <= 4;
     }
@@ -597,6 +605,12 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return date.getActualMaximum(Calendar.DAY_OF_MONTH) == date.get(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * Calculates if the weekday of @date (ie Sun, Mon, Tue etc) is the last Sun, Mon, Tue etc of the month
+     * @param date the date of the repeating transaction
+     * @return true or false as appropriate
+     */
+
     private boolean isLastOrdinalWeekday(GregorianCalendar date) {
         return getTransaction() != null && date.get(Calendar.DAY_OF_MONTH) + 6 >= date.getActualMaximum(Calendar.DAY_OF_MONTH) && date.get(Calendar.DAY_OF_WEEK) == getTransaction().getDate().get(Calendar.DAY_OF_WEEK);
     }
@@ -612,6 +626,11 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return dow == 6 && date.get(Calendar.DAY_OF_MONTH) + 2 >= date.getActualMaximum(Calendar.DAY_OF_MONTH);
     }
 
+    /**
+     * Checks if a Transaction repeats on the date that is passed into the method
+     * @param cal Gregorian Calendar object
+     * @return boolean
+     */
     public boolean repeatsOnDate(GregorianCalendar cal) {
         if (getTransaction() == null) {
             return false;
@@ -624,26 +643,28 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
         boolean onDate;
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.repeatNone /*0*/:
                 return false;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.repeatDaily /*1*/:
                 return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000)) % getFrequency() == 0;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                onDate = ((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0;
+            case Enums.repeatWeekly /*2*/:
+                if (((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0)
+                    onDate = true;
+                else onDate = false;
                 if (!onDate) {
                     return onDate;
                 }
-                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 604800000)) % getFrequency() == 0;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 604800000)) % getFrequency() == 0; // 604,800,000 = milliseconds in a week
+            case Enums.repeatMonthly /*3*/:
                 switch (getRepeatOn()) {
-                    case PocketMoneyThemes.kThemeBlack /*0*/:
+                    case Enums.monthlyDayOfMonth /*0*/:
                         onDate = ((int) (((double) (cal.getTimeInMillis() - startDate.getTimeInMillis())) / 2.62974383E9d)) % getFrequency() == 0;
                         if (!onDate) {
                             return onDate;
                         }
                         onDate = cal.get(Calendar.DAY_OF_WEEK) == startDate.get(Calendar.DAY_OF_WEEK) && cal.get(Calendar.DAY_OF_WEEK_IN_MONTH) == startDate.get(Calendar.DAY_OF_WEEK_IN_MONTH);
                         return onDate;
-                    case SplitsActivity.RESULT_CHANGED /*1*/:
+                    case Enums.monthlyDateInMonth /*1*/:
                         onDate = ((int) (((double) (cal.getTimeInMillis() - startDate.getTimeInMillis())) / 2.62974383E9d)) % getFrequency() == 0;
                         if (!onDate) {
                             return onDate;
@@ -655,27 +676,27 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                         int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
                         onDate = startDate.get(Calendar.DAY_OF_MONTH) > daysInMonth && cal.get(Calendar.DAY_OF_MONTH) == daysInMonth;
                         return onDate;
-                    case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                    case Enums.monthlyLastDayOfMonth /*2*/:
                         return isLastDay(cal);
-                    case SplitsActivity.REQUEST_EDIT /*3*/:
+                    case Enums.monthlyLastWeekDayOfMonth /*3*/:
                         return isLastWeekday(cal);
-                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                    case Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/:
                         return isLastOrdinalWeekday(cal);
                     default:
                         setRepeatOn(0);
                         return false;
                 }
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.repeatYearly /*4*/:
                 onDate = ((int) (((double) (calendar.getTimeInMillis() - startDate.getTimeInMillis())) / 3.1558464E10d)) % getFrequency() == 0;
                 if (!onDate) {
                     return onDate;
                 }
                 onDate = cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH) && cal.get(Calendar.MONTH) == startDate.get(Calendar.MONTH);
-                if (!onDate && startDate.get(Calendar.MONTH) == 1 && startDate.get(Calendar.DAY_OF_MONTH) == 29 && cal.get(Calendar.MONTH) == 1 && cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
+                if (!onDate && startDate.get(Calendar.MONTH) == Calendar.FEBRUARY && startDate.get(Calendar.DAY_OF_MONTH) == 29 && cal.get(Calendar.MONTH) == Calendar.FEBRUARY && cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                     return true;
                 }
                 return onDate;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.repeatingOnce /*5*/:
                 return CalExt.beginningOfDay(getTransaction().getDate()).equals(CalExt.beginningOfDay(cal));
             default:
                 return false;
@@ -709,7 +730,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         this.dirty = true;
     }
 
-    public static int insertNewTransactionIDIntoDatabase(int newTransactionID) {
+    private static int insertNewTransactionIDIntoDatabase(int newTransactionID) {
         ContentValues content = new ContentValues();
         content.put("transactionID", newTransactionID);
         content.put("deleted", 0);
@@ -745,7 +766,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
-    public void hydrateTransaction() {
+    private void hydrateTransaction() {
         if (!this.hydratedTransaction) {
             this.transaction = new TransactionClass(this.transactionID);
             this.transaction.hydrate();
@@ -765,45 +786,45 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             }
             boolean wasDirty = this.dirty;
             curs.moveToFirst();
-            int col = 0 + 1; // col = 1
-            this.deleted = curs.getInt(0) == 1;
-            this.timestamp = new GregorianCalendar();
+            int col = 1; // col = 1
+            this.deleted = curs.getInt(0) == 1; // set this.deleted to 1 (ie true) if the selected RT is deleted
+            this.timestamp = new GregorianCalendar(); // set the timestamp to current time/date
             int col2 = col + 1; // col2 = 2
-            this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);
-            GregorianCalendar cal = new GregorianCalendar();
+            this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000); // set timestamp = timestamp of the RT that has just been read from the database
+            GregorianCalendar cal = new GregorianCalendar(); // create new GC object called 'cal'. Initialise to current time/date (ie degault when new CG intantiated)
             col = col2 + 1; // col = 3
-            cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000);
-            setLastProcessedDate(cal);
+            cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000); // set 'cal' to the lastProcessedDate as just read from the database
+            setLastProcessedDate(cal); // set the lastProcessedDate of the RT object to the value of 'cal' (ie the lastProcessedDate just read from the database
             col2 = col + 1; // col2 = 4
-            this.transactionID = curs.getInt(col);
+            this.transactionID = curs.getInt(col); // set the transactionID of the RT object equal to the transactionID just read from the database for the RT
             col = col2 + 1; // col = 5
-            setType(curs.getInt(col2));
+            setType(curs.getInt(col2)); // set the 'type' of the RT to the value just read from the database. See Enums line 223 et seq - eg 3 = monthlyLastWeekdatOfMonth
             col2 = col + 1;  // col 2 = 6
-            double tempDate = curs.getDouble(col);
-            cal = new GregorianCalendar();
-            cal.setTimeInMillis(((long) tempDate) * 1000);
-            if (tempDate == 0.0d) {
-                cal = null;
+            double tempDate = curs.getDouble(col); // store the 'endDate' of the RT as just read from the database in tempDate
+            cal = new GregorianCalendar(); // re-set 'cal' to a new GC object, automatically instantiated with current time/date
+            cal.setTimeInMillis(((long) tempDate) * 1000); // change the 'cal' time to the value of tempDate (ie the endDate of the RT just read from database). NB If there is no endDate, that would be null
+            if (tempDate == 0.0d) { // check if there is no endDate
+                cal = null; // if so, set 'cal' to null
             }
-            setEndDate(cal);
+            setEndDate(cal); // set the endDate of the RT object to equal 'cal', as determined above
             col = col2 + 1; // col = 7
-            setFrequency(curs.getInt(col2));
+            setFrequency(curs.getInt(col2)); // set the frequency of the RT object to the frequency just read from the RT database table
             col2 = col + 1; // col2 = 8
-            setRepeatOn(curs.getInt(col));
+            setRepeatOn(curs.getInt(col)); // set the 'repeatsOn' RT object param to the repeats.On of the RT just read from the database
             col = col2 + 1; // col = 9
-            setStartOfWeek(curs.getInt(col2));
+            setStartOfWeek(curs.getInt(col2)); // set the startOfWeek to the RT startOfWeek just read from the database
             col2 = col + 1; // col2 = 10
-            setNotifyDaysInAdvance(curs.getInt(col));
+            setNotifyDaysInAdvance(curs.getInt(col)); // set the notifyDaysInAdvance to the RT notifyDaysInAdvance just read from the database
             col = col2 + 1; // col = 11
-            setSendLocalNotifications(curs.getInt(col2) == 1);
+            setSendLocalNotifications(curs.getInt(col2) == 1); // set the sendLocalNotifications RT param to the notifyDaysInAdvance of the RT just read from the database
             col2 = col + 1; // col2 = 12
-            String str = curs.getString(col);
+            String str = curs.getString(col); // read the serverID of the RT just retrieved from the DB
             if (str == null) {
                 str = "";
             }
-            setServerID(str);
+            setServerID(str); // set the serverID of the RT object to the above serverID
             hydrateTransaction();
-            if (2 == this.type && this.repeatOn == 0) {
+            if (Enums.repeatWeekly/*2*/ == this.type && this.repeatOn == Enums.monthlyDayOfMonth/*0*/) {
                 setRepeatOn(this.transaction.getDate().get(Calendar.DAY_OF_WEEK) - 1);
             }
             if (!wasDirty && this.dirty) {
@@ -814,10 +835,10 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
-    public void dehydrateTransaction() {
+    private void dehydrateTransaction() {
         if (this.transaction != null) {
-            if (this.transaction.getType() != 5) {
-                this.transaction.setType(5); // Transaction object of type 5 = repeating transaction
+            if (this.transaction.getType() != Enums.kTransactionTypeRepeating /*5*/) {
+                this.transaction.setType(Enums.kTransactionTypeRepeating/*5*/); // Transaction object of type 5 = repeating transaction
                 this.transaction.dirty = true;
             }
             this.transaction.saveToDatabase();

@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -43,7 +44,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         Log.d("VIEWOPTACT","onStart() has just run");
         GregorianCalendar cal = new GregorianCalendar();
         Log.d("ACCNTVIEWOPTIONS","Balance on date = " + Prefs.BALANCEONDATE);
-        Long millis = Prefs.getLongPref(Prefs.BALANCEONDATE);
+        long millis = Prefs.getLongPref(Prefs.BALANCEONDATE);
 
         Log.d("ACCTVIEWOPTACT","millis = "+millis);
 
@@ -56,7 +57,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         this.showAccountsListPref.setSummary(nameOfAccountListPref());
     }
 
-    public String nameOfAccountListPref() {
+    private String nameOfAccountListPref() {
         switch (Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             case SplitsActivity.RESULT_CHANGED /*1*/:
                 return Locales.kLOC_PREFERENCES_NON_ZERO;
@@ -67,7 +68,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         }
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         Log.d("ACCTSVIEWOPTSACT","setupPrefs() has just run");
         this.showAccountsListPref = (ListPreference) findPreference("viewaccountslistpreference");
         this.asOfDatePref = findPreference(Prefs.BALANCEONDATE);
@@ -78,11 +79,11 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         this.showAccountsListPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (newValue.equals(Locales.kLOC_PREFERENCES_SHOW_ALL)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, 0);
+                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsAll /*0*/);
                 } else if (newValue.equals(Locales.kLOC_PREFERENCES_NON_ZERO)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, 1);
+                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsNonZero /*1*/);
                 } else if (newValue.equals(Locales.kLOC_GENERAL_TOTALWORTH)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, 2);
+                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsTotalWorth/*2*/);
                 }
                 preference.setSummary((String) newValue);
                 return true;

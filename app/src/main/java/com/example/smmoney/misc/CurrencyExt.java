@@ -20,7 +20,7 @@ public class CurrencyExt {
         return amountAsCurrencyWithoutCents(amount, null);
     }
 
-    public static String amountAsCurrencyWithoutCents(double amount, String currencyCode) {
+    private static String amountAsCurrencyWithoutCents(double amount, String currencyCode) {
         if (currencyCode == null) {
             currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
@@ -129,11 +129,11 @@ public class CurrencyExt {
         int i = 0;
         String[] codes = getCurrencies();
         String[] otherCodes = AccountDB.usedCurrencyCodes();
-        ArrayList<String> nameList = new ArrayList();
+        ArrayList<String> nameList = new ArrayList<>();
         for (String loc : otherCodes) {
             try {
-                String loc2 = "";
-                nameList.add(String.valueOf(Currency.getInstance(loc2).getCurrencyCode()) + " - " + Currency.getInstance(loc2).getSymbol());
+                String loc2 = ""; //todo think "" should be loc? To test
+                nameList.add(Currency.getInstance(loc2).getCurrencyCode() + " - " + Currency.getInstance(loc2).getSymbol());
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -142,7 +142,7 @@ public class CurrencyExt {
         while (i < length) {
             String loc2 = codes[i];
             try {
-                nameList.add(String.valueOf(Currency.getInstance(loc2).getCurrencyCode()) + " - " + Currency.getInstance(loc2).getSymbol());
+                nameList.add(Currency.getInstance(loc2).getCurrencyCode() + " - " + Currency.getInstance(loc2).getSymbol());
             } catch (Exception e2) {
                 e2.printStackTrace();
             }

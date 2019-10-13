@@ -47,7 +47,7 @@ public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity 
         this.numberFormatListPref.setOnPreferenceChangeListener(getChangeListener());
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);

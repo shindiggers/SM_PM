@@ -41,7 +41,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
                 RepeatingTransactionPrefsActivity.this.postView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
             }
         });
-        this.postEditText.setText(new StringBuilder(String.valueOf(Prefs.getIntPref(Prefs.RECURRDAYSINADVANCE))).toString());
+        this.postEditText.setText(String.valueOf(Prefs.getIntPref(Prefs.RECURRDAYSINADVANCE)));
         this.postView.setVisibility(Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED) ? View.VISIBLE : View.INVISIBLE);
         this.postCheckBox.setChecked(Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED));
         ((TextView) findViewById(R.id.post_repeating_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());

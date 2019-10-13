@@ -31,7 +31,7 @@ public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivit
         this.sortOnListPref.setSummary(this.sortOnListPref.getValue());
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         this.sortOnListPref = (ListPreference) findPreference(Prefs.TRANSACTIONS_SORTON);
         this.sortOrderPref = (ListPreference) findPreference(Prefs.NEWESTTRANSACTIONFIRST);
         String[] theStrings = TransactionDB.transactionSortTypes();
@@ -50,7 +50,7 @@ public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivit
         }
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);

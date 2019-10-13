@@ -8,7 +8,7 @@ import java.net.URL;
 public class ExchangeRateClass {
     private int accountUpdateCount = 0;
     private ExchangeRateCallbackInterface delegate;
-    public boolean inverseLookup;
+    private boolean inverseLookup;
     private boolean justUpdateTheAccounts;
 
     public ExchangeRateClass(boolean justUpdate, ExchangeRateCallbackInterface delegate) {
@@ -31,6 +31,7 @@ public class ExchangeRateClass {
                 }
             }
         } catch (NumberFormatException e) {
+            e.printStackTrace();
         }
         if (exchangeRate >= 0.01d) {
             if (!this.inverseLookup) {

@@ -14,9 +14,7 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
     private Context context;
-    private Preference emailPartnerOptionsPref;
     private ListPreference fileEncodingPref;
-    private Preference qifOptionsPref;
     private ListPreference storageDevicePref;
     private ListPreference transferModePref;
 
@@ -38,11 +36,11 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         this.storageDevicePref.setSummary(this.storageDevicePref.getEntry());
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         this.transferModePref = (ListPreference) findPreference(Prefs.TRANSFERTYPE);
         this.fileEncodingPref = (ListPreference) findPreference(Prefs.ENCODING);
-        this.qifOptionsPref = findPreference("prefsdatatransfersqifoptions");
-        this.emailPartnerOptionsPref = findPreference("datatransferemailprefs");
+        Preference qifOptionsPref = findPreference("prefsdatatransfersqifoptions");
+        Preference emailPartnerOptionsPref = findPreference("datatransferemailprefs");
         this.storageDevicePref = (ListPreference) findPreference(Prefs.EXPORT_STOREDEVICE);
         String[] theValues = new String[]{"0"};
         this.transferModePref.setEntries(new String[]{"Download/PocketMoneyBackup"});
@@ -56,13 +54,13 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         this.transferModePref.setOnPreferenceChangeListener(getChangeListener());
         this.fileEncodingPref.setOnPreferenceChangeListener(getChangeListener());
         this.storageDevicePref.setOnPreferenceChangeListener(getChangeListener());
-        this.qifOptionsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        qifOptionsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 DataTransfersPrefsActivity.this.context.startActivity(new Intent(DataTransfersPrefsActivity.this.context, QIFDataTransferPrefsActivity.class));
                 return true;
             }
         });
-        this.emailPartnerOptionsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        emailPartnerOptionsPref.setOnPreferenceClickListener(new OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 DataTransfersPrefsActivity.this.context.startActivity(new Intent(DataTransfersPrefsActivity.this.context, DataTransfersEmailPrefActivity.class));
                 return true;
@@ -70,7 +68,7 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         });
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary(((ListPreference) preference).getEntries()[((ListPreference) preference).findIndexOfValue((String) newValue)]);

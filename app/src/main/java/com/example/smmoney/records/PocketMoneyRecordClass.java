@@ -10,7 +10,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 public class PocketMoneyRecordClass extends DefaultHandler implements Serializable {
-    public boolean deleted = false;
+    boolean deleted = false;
     public boolean dirty;
     public boolean hydrated;
     public String serverID;
@@ -28,16 +28,16 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
         return this.deleted;
     }
 
-    public void setServerID(String aString) {
+    void setServerID(String aString) {
         if (this.serverID != null || aString != null) {
-            if (this.serverID == null || aString == null || !this.serverID.equals(aString)) {
+            if (this.serverID == null || !this.serverID.equals(aString)) {
                 this.dirty = true;
                 this.serverID = aString;
             }
         }
     }
 
-    public String getServerID() {
+    String getServerID() {
         hydrate();
         return this.serverID;
     }
@@ -50,11 +50,11 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
         saveToDataBaseAndUpdateTimeStamp(true);
     }
 
-    public String encode(String aString) {
+    String encode(String aString) {
         return URLEncoder.encode(aString).replace("+", "%20");
     }
 
-    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
+    void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
         Log.i(SMMoney.TAG, "dehydrateAndUpdateTimeStamp notOverriden");
     }
 

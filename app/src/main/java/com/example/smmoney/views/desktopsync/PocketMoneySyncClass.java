@@ -2,9 +2,10 @@ package com.example.smmoney.views.desktopsync;
 
 import android.os.Environment;
 import android.util.Log;
-import com.example.smmoney.IAP.util.Base64;
+import com.example.smmoney.iAP.util.Base64;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.CategoryBudgetClass;
@@ -16,8 +17,6 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.PocketMoneyRecordClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -41,13 +40,13 @@ import org.xml.sax.helpers.DefaultHandler;
 public class PocketMoneySyncClass extends DefaultHandler {
     Socket asyncSocket;
     int currentState = 0;
-    byte[] data = null;
+    private byte[] data = null;
     PocketMoneySyncActivity delegate;
     String host;
-    ArrayList<String> imageFilenames = new ArrayList();
-    int imageRecieveCounter;
+    ArrayList<String> imageFilenames = new ArrayList<>();
+    private int imageRecieveCounter;
     int imageSentCounter;
-    long lastSyncTime;
+    private long lastSyncTime;
     ServerSocket listeningSocket;
     int packetSize;
     int port;
@@ -57,44 +56,44 @@ public class PocketMoneySyncClass extends DefaultHandler {
     String udid;
 
     class AnonymousClass1TempTransAccountClass {
-        public String account;
-        public String serverID;
+        String account;
+        String serverID;
 
-        public AnonymousClass1TempTransAccountClass(String serverID, String account) {
+        AnonymousClass1TempTransAccountClass(String serverID, String account) {
             this.serverID = serverID;
             this.account = account;
         }
     }
 
     class AnonymousClass2TempTransAccountClass {
-        public String account;
-        public String serverID;
+        String account;
+        String serverID;
 
-        public AnonymousClass2TempTransAccountClass(String serverID, String account) {
+        AnonymousClass2TempTransAccountClass(String serverID, String account) {
             this.serverID = serverID;
             this.account = account;
         }
     }
 
     class AnonymousClass3TempTransAccountClass {
-        public String account;
-        public String serverID;
+        String account;
+        String serverID;
 
-        public AnonymousClass3TempTransAccountClass(String serverID, String account) {
+        AnonymousClass3TempTransAccountClass(String serverID, String account) {
             this.serverID = serverID;
             this.account = account;
         }
     }
 
-    protected void setCurrentState(int state) {
+    void setCurrentState(int state) {
         this.currentState = state;
         if (this.delegate != null) {
             this.delegate.desktopSyncWithState(this, state);
         }
     }
 
-    protected void disconnect() {
-        setCurrentState(67);
+    void disconnect() {
+        setCurrentState(Enums.kDesktopSyncStateDisconnected/*67*/);
         if (this.asyncSocket != null) {
             try {
                 this.asyncSocket.close();
@@ -111,7 +110,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
         deleteTempFile();
         this.imageSentCounter = 0;
-        this.imageFilenames = new ArrayList();
+        this.imageFilenames = new ArrayList<>();
         this.listeningSocket = null;
         this.asyncSocket = null;
         final PocketMoneySyncActivity del = this.delegate;
@@ -122,7 +121,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         });
     }
 
-    protected void deleteTempFile() {
+    private void deleteTempFile() {
         if (!new File(SMMoney.getTempFile()).delete()) {
             Log.i("com.catamount.com", "unable to delete tempfile");
         }
@@ -136,25 +135,25 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void reset() {
+    void reset() {
         if (this.delegate != null) {
             this.delegate.photoCount = 0;
         }
         disconnect();
     }
 
-    protected void readInSize(int size, int tag) {
+    private void readInSize(int size, int tag) {
         readInSize(size, tag, false);
     }
 
-    protected void readInSize(int size, int tag, boolean processState) {
+    private void readInSize(int size, int tag, boolean processState) {
         try {
             this.data = null;
             System.gc();
             this.data = new byte[size];
             int rawr = this.asyncSocket.getInputStream().available();
             if (size > 100000) {
-                int i = 0 + 1;
+                int i = 1;
             }
             int totalReadIn = 0;
             int readIn = 0;
@@ -170,19 +169,19 @@ public class PocketMoneySyncClass extends DefaultHandler {
         setCurrentState(tag);
     }
 
-    protected void readInHeaderSize(int tag) {
+    private void readInHeaderSize(int tag) {
         readInHeaderSize(tag, false);
     }
 
-    protected void readInHeaderSize(int tag, boolean processState) {
+    private void readInHeaderSize(int tag, boolean processState) {
         readInSize(4, tag, processState);
     }
 
-    protected void writeData(String sData, int tag) {
+    void writeData(String sData, int tag) {
         writeData(sData, tag, false);
     }
 
-    protected void writeData(String sData, int tag, boolean processState) {
+    private void writeData(String sData, int tag, boolean processState) {
         byte[] data = packageData(sData);
         try {
             this.asyncSocket.getOutputStream().write(data, 0, data.length);
@@ -194,7 +193,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         setCurrentState(tag);
     }
 
-    protected void recentChangesTransactions(BufferedWriter out) throws IOException {
+    private void recentChangesTransactions(BufferedWriter out) throws IOException {
         String listTag = TransactionClass.XML_LISTTAG_TRANSACTIONS;
         out.write("<" + listTag + ">\n");
         PocketMoneyRecordClass[] query = Database.queryServerSyncTableWithPKandClassAndTime(Database.TRANSACTIONS_TABLE_NAME, "transactionID", TransactionClass.class, this.lastSyncTime);
@@ -211,46 +210,46 @@ public class PocketMoneySyncClass extends DefaultHandler {
         out.write("</" + listTag + ">\n");
     }
 
-    protected String recentChanges(BufferedWriter out, String table, String primaryKey, Class<? extends PocketMoneyRecordClass> classOf, String listTag) throws IOException {
+    private String recentChanges(BufferedWriter out, String table, String primaryKey, Class<? extends PocketMoneyRecordClass> classOf, String listTag) throws IOException {
         out.write("<" + listTag + ">\n");
         Database.queryAndWriteServerSyncTableWithPKandClassAndTime(out, table, primaryKey, classOf, this.lastSyncTime);
         out.write("</" + listTag + ">\n");
         return "";
     }
 
-    protected void recentChangesAccounts(BufferedWriter out) throws IOException {
+    private void recentChangesAccounts(BufferedWriter out) throws IOException {
         recentChanges(out, Database.ACCOUNTS_TABLE_NAME, "accountID", AccountClass.class, AccountClass.XML_LISTTAG_ACCOUNTS);
     }
 
-    protected void recentChangesCategories(BufferedWriter out) throws IOException {
+    private void recentChangesCategories(BufferedWriter out) throws IOException {
         recentChanges(out, Database.CATEGORIES_TABLE_NAME, "categoryID", CategoryClass.class, CategoryClass.XML_LISTTAG_CATEGORIES);
     }
 
-    protected void recentChangesPayees(BufferedWriter out) throws IOException {
+    private void recentChangesPayees(BufferedWriter out) throws IOException {
         recentChanges(out, Database.PAYEES_TABLE_NAME, "payeeID", PayeeClass.class, PayeeClass.XML_LISTTAG_PAYEES);
     }
 
-    protected void recentChangesClasses(BufferedWriter out) throws IOException {
+    private void recentChangesClasses(BufferedWriter out) throws IOException {
         recentChanges(out, Database.CLASSES_TABLE_NAME, "classID", ClassNameClass.class, ClassNameClass.XML_LISTTAG_CLASSES);
     }
 
-    protected void recentChangesIDs(BufferedWriter out) throws IOException {
+    private void recentChangesIDs(BufferedWriter out) throws IOException {
         recentChanges(out, Database.IDS_TABLE_NAME, "idID", IDClass.class, IDClass.XML_LISTTAG_IDS);
     }
 
-    protected void recentChangesFilters(BufferedWriter out) throws IOException {
+    private void recentChangesFilters(BufferedWriter out) throws IOException {
         recentChanges(out, Database.FILTERS_TABLE_NAME, "filterID", FilterClass.class, FilterClass.XML_LISTTAG_FILTERS);
     }
 
-    protected void recentChangesRepeatingTransactions(BufferedWriter out) throws IOException {
+    private void recentChangesRepeatingTransactions(BufferedWriter out) throws IOException {
         recentChanges(out, Database.REPEATINGTRANSACTIONS_TABLE_NAME, "repeatingID", RepeatingTransactionClass.class, RepeatingTransactionClass.XML_LISTTAG_REPEATINGTRANSACTIONS);
     }
 
-    protected void recentChangesCategoryBudgets(BufferedWriter out) throws IOException {
+    private void recentChangesCategoryBudgets(BufferedWriter out) throws IOException {
         recentChanges(out, "categoryBudgets", "categoryBudgetID", CategoryBudgetClass.class, CategoryBudgetClass.XML_LISTTAG_CATEGORYBUDGETS);
     }
 
-    protected void newRecentDatabaseChanges() {
+    private void newRecentDatabaseChanges() {
         long j;
         if (this.restoreFromServer) {
             j = 0;
@@ -285,8 +284,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
         if (recentChanges != null) {
             AnonymousClass1TempTransAccountClass tempAct;
             AccountClass act;
-            ArrayList<AnonymousClass1TempTransAccountClass> overdraftAccounts = new ArrayList();
-            ArrayList<AnonymousClass1TempTransAccountClass> keepTheChangeAccounts = new ArrayList();
+            ArrayList<AnonymousClass1TempTransAccountClass> overdraftAccounts = new ArrayList<>();
+            ArrayList<AnonymousClass1TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
             for (PocketMoneyRecordClass rec : recentChanges) {
                 AccountClass record = (AccountClass) rec;
                 if (record.serverID == null || record.serverID.length() <= 0) {
@@ -315,40 +314,43 @@ public class PocketMoneySyncClass extends DefaultHandler {
             while (it.hasNext()) {
                 tempAct = (AnonymousClass1TempTransAccountClass) it.next();
                 act = AccountClass.recordWithServerID(tempAct.serverID);
-                act.hydrate();
-                act.setKeepTheChangeAccount(tempAct.account);
-                act.saveToDatabase();
+                if (act != null) {
+                    act.hydrate();
+                    act.setKeepTheChangeAccount(tempAct.account);
+                    act.saveToDatabase();
+                }
             }
             it = overdraftAccounts.iterator();
             while (it.hasNext()) {
                 tempAct = (AnonymousClass1TempTransAccountClass) it.next();
                 act = AccountClass.recordWithServerID(tempAct.serverID);
-                act.hydrate();
-                act.setOverdraftAccount(tempAct.account);
-                act.saveToDatabase();
+                if (act != null) {
+                    act.hydrate();
+                    act.setOverdraftAccount(tempAct.account);
+                    act.saveToDatabase();
+                }
             }
         }
     }
 
-    protected void processRecentAccount(AccountClass rec) {
+    void processRecentAccount(AccountClass rec) {
         if (rec != null) {
-            AccountClass record = rec;
-            if (record.serverID == null || record.serverID.length() <= 0) {
-                record.serverID = Database.newServerID();
-                record.saveToDataBaseAndUpdateTimeStamp(true);
+            if (rec.serverID == null || rec.serverID.length() <= 0) {
+                rec.serverID = Database.newServerID();
+                rec.saveToDataBaseAndUpdateTimeStamp(true);
                 return;
             }
-            AccountClass oldTransaction = AccountClass.recordWithServerID(record.serverID);
+            AccountClass oldTransaction = AccountClass.recordWithServerID(rec.serverID);
             if (oldTransaction != null) {
                 oldTransaction.hydrate();
-                if (!oldTransaction.timestamp.after(record.timestamp)) {
-                    record.accountID = oldTransaction.accountID;
+                if (!oldTransaction.timestamp.after(rec.timestamp)) {
+                    rec.accountID = oldTransaction.accountID;
                 } else {
                     return;
                 }
             }
-            record.accountID = 0;
-            record.saveToDataBaseAndUpdateTimeStamp(true);
+            rec.accountID = 0;
+            rec.saveToDataBaseAndUpdateTimeStamp(true);
         }
     }
 
@@ -376,27 +378,26 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void processRecentTransaction(TransactionClass rec) {
+    void processRecentTransaction(TransactionClass rec) {
         if (rec != null) {
-            TransactionClass record = rec;
-            if (record.serverID == null || record.serverID.length() <= 0) {
-                record.serverID = Database.newServerID();
-                record.saveToDataBaseAndUpdateTimeStamp(true);
+            if (rec.serverID == null || rec.serverID.length() <= 0) {
+                rec.serverID = Database.newServerID();
+                rec.saveToDataBaseAndUpdateTimeStamp(true);
                 return;
             }
-            TransactionClass oldTransaction = TransactionClass.recordWithServerID(record.serverID);
+            TransactionClass oldTransaction = TransactionClass.recordWithServerID(rec.serverID);
             if (oldTransaction != null) {
                 oldTransaction.hydrate();
                 oldTransaction.deleteSplitsfromDatabasePermentantly();
-                record.transactionID = oldTransaction.transactionID;
+                rec.transactionID = oldTransaction.transactionID;
             } else {
-                record.transactionID = 0;
+                rec.transactionID = 0;
             }
-            record.saveToDataBaseAndUpdateTimeStamp(true);
+            rec.saveToDataBaseAndUpdateTimeStamp(true);
         }
     }
 
-    protected void processRecentRepeatingTransaction(RepeatingTransactionClass rep) {
+    void processRecentRepeatingTransaction(RepeatingTransactionClass rep) {
         if (rep.serverID == null || rep.transactionServerID == null) {
             rep.serverID = Database.newServerID();
             rep.saveToDataBaseAndUpdateTimeStamp(true);
@@ -448,7 +449,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void processRecentChange(PocketMoneyRecordClass record, Class theClass, String primaryKeyField) {
+    void processRecentChange(PocketMoneyRecordClass record, Class theClass, String primaryKeyField) {
         if (record != null) {
             if (record.serverID == null || record.serverID.length() <= 0) {
                 try {
@@ -482,12 +483,12 @@ public class PocketMoneySyncClass extends DefaultHandler {
     protected void stackSafePhotoProcess() {
     }
 
-    protected void sendPhoto() {
+    void sendPhoto() {
         if (this.delegate != null) {
             PocketMoneySyncActivity pocketMoneySyncActivity = this.delegate;
             pocketMoneySyncActivity.photoCount++;
         }
-        setCurrentState(31);
+        setCurrentState(Enums.kDesktopSyncStateSendingPhoto/*31*/);
         BufferedOutputStream out = null;
         try {
             out = new BufferedOutputStream(this.asyncSocket.getOutputStream());
@@ -497,7 +498,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         String fileName = this.imageFilenames.get(this.imageSentCounter);
         String start = "PHOTO:<image><imagedata>";
         String end = "</imagedata><filename>" + fileName + "</filename></image>";
-        File f = new File(new StringBuilder(String.valueOf(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/")).append(fileName).toString());
+        File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
         if (f.exists()) {
             BufferedInputStream fin = null;
             try {
@@ -515,7 +516,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
             endData = end.getBytes(StandardCharsets.UTF_8);
             while (totalRead < size && read != -1) {
                 try {
-                    read = fin.read(outData, totalRead, size - totalRead);
+                    if (fin != null) {
+                        read = fin.read(outData, totalRead, size - totalRead);
+                    }
                     totalRead += read;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -535,35 +538,41 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
             retData = packageData(retData);
             try {
-                out.write(retData, 0, retData.length);
+                if (out != null) {
+                    out.write(retData, 0, retData.length);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                out.flush();
+                if (out != null) {
+                    out.flush();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
             try {
-                fin.close();
+                if (fin != null) {
+                    fin.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         }
-        setCurrentState(32);
+        setCurrentState(Enums.kDesktopSyncStateSentPhoto/*32*/);
     }
 
-    protected void getPhotoHeader() {
-        setCurrentState(33);
+    void getPhotoHeader() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingPhotoHeader/*33*/);
         readInHeaderSize(34);
     }
 
-    protected void getPhotos() {
+    void getPhotos() {
         if (this.delegate != null) {
             PocketMoneySyncActivity pocketMoneySyncActivity = this.delegate;
             pocketMoneySyncActivity.photoCount++;
         }
-        setCurrentState(35);
+        setCurrentState(Enums.kDesktopSyncStateReceivingPhoto/*35*/);
         int totalSize = sizeFromHeader();
         try {
             byte[] newData = new byte[1024];
@@ -571,7 +580,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
             int bytesReplaced = 0;
             int readIn = this.asyncSocket.getInputStream().read(newData, 0, "PHOTO:".length());
             if (readIn != -1) {
-                int totalReadIn = 0 + readIn;
+                int totalReadIn = readIn;
                 int i;
                 if (new String(newData).startsWith("UDID")) {
                     readIn = this.asyncSocket.getInputStream().read(newData, readIn, totalSize - readIn);
@@ -579,7 +588,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                     for (i = 0; i < totalSize; i++) {
                         this.data[i] = newData[i];
                     }
-                    setCurrentState(36);
+                    setCurrentState(Enums.kDesktopSyncStatePhotoReceived/*36*/);
                     return;
                 }
                 deleteTempFile();
@@ -604,7 +613,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 }
                 fr.flush();
                 fr.close();
-                setCurrentState(36);
+                setCurrentState(Enums.kDesktopSyncStatePhotoReceived/*36*/);
             }
         } catch (IOException e) {
             Log.e(SMMoney.TAG, e.getLocalizedMessage());
@@ -612,7 +621,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected boolean processPhotos() {
+    boolean processPhotos() {
         if (this.data != null) {
             return false;
         }
@@ -629,7 +638,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 in.close();
                 new TransactionClass().updateWithXMLFile(f);
                 this.imageRecieveCounter++;
-                setCurrentState(37);
+                setCurrentState(Enums.kDesktopSyncStatePhotoProcessed/*37*/);
                 return true;
             }
             in.close();
@@ -641,33 +650,33 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void sendPhotoACK() {
-        setCurrentState(38);
+    void sendPhotoACK() {
+        setCurrentState(Enums.kDesktopSyncStateSendingPhotoACK/*38*/);
         writeData("PHOTO:OK", 39);
     }
 
-    protected void getPhotoACKHeader() {
-        setCurrentState(40);
+    void getPhotoACKHeader() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingPhotoACKHeader/*40*/);
         readInHeaderSize(41);
     }
 
-    protected void getPhotoACK() {
-        setCurrentState(42);
+    void getPhotoACK() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingPhotoACK/*42*/);
         readInSize(sizeFromHeader(), 43);
     }
 
-    protected boolean processPhotoACK() {
+    boolean processPhotoACK() {
         if (stringFromDataExcluding("").equals("PHOTO:OK")) {
-            setCurrentState(45);
+            setCurrentState(Enums.kDesktopSyncStatePhotoACKProcessed/*45*/);
             return true;
         }
-        setCurrentState(69);
+        setCurrentState(Enums.kDesktopSyncStateError/*69*/);
         return false;
     }
 
-    protected void sendSyncVersion() {
+    void sendSyncVersion() {
         String syncVersionMsg;
-        setCurrentState(17);
+        setCurrentState(Enums.kDesktopSyncStateSendingUDID/*17*/);
         if (this.syncVersion != 0) {
             syncVersionMsg = "PMSYNC:" + this.syncVersion;
         } else {
@@ -676,17 +685,17 @@ public class PocketMoneySyncClass extends DefaultHandler {
         writeData(syncVersionMsg, 10);
     }
 
-    protected void getSyncVersionHeader() {
-        setCurrentState(13);
+    void getSyncVersionHeader() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingSyncVersion/*13*/);
         readInHeaderSize(12);
     }
 
-    protected void getSyncVersion() {
-        setCurrentState(9);
+    void getSyncVersion() {
+        setCurrentState(Enums.kDesktopSyncStateSendingSyncVersion/*9*/);
         readInSize(sizeFromHeader(), 14);
     }
 
-    protected boolean processSyncVersion() {
+    boolean processSyncVersion() {
         this.syncVersion = intFromDataExcluding("PMSYNC:");
         if (this.syncVersion > 2) {
             this.syncVersion = 2;
@@ -700,48 +709,48 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 }
             });
         }
-        setCurrentState(16);
+        setCurrentState(Enums.kDesktopSyncStateSyncVersionProcessed/*16*/);
         return true;
     }
 
-    protected void sendUDID() {
-        setCurrentState(17);
+    void sendUDID() {
+        setCurrentState(Enums.kDesktopSyncStateSendingUDID/*17*/);
         writeData("UDID:" + SMMoney.getID(), 18);
     }
 
-    protected void getUDIDHeader() {
-        setCurrentState(19);
+    void getUDIDHeader() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingUDIDHeader/*19*/);
         readInHeaderSize(20);
     }
 
-    protected void getUDID() {
-        setCurrentState(21);
+    void getUDID() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingUDID/*21*/);
         readInSize(sizeFromHeader(), 22);
     }
 
-    protected boolean processUDID() {
+    boolean processUDID() {
         this.udid = stringFromDataExcluding("UDID:");
         if (Database.lastSyncTimeForUDID(this.udid) != 0) {
-            setCurrentState(24);
+            setCurrentState(Enums.kDesktopSyncStateUDIDProcessed/*24*/);
             return true;
         }
-        setCurrentState(23);
+        setCurrentState(Enums.kDesktopSyncStateUDIDProcessing/*23*/);
         return this.delegate.pocketMoneySyncRequestActionForFirstSyncUDID(this, this.udid);
     }
 
-    public void firstUDIDSyncAction(int action) {
+    void firstUDIDSyncAction(int action) {
         switch (action) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kDesktopSyncFirstSyncActionReplaceDataOnServer /*1*/:
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kDesktopSyncFirstSyncActionRestoreFromServer /*2*/:
                 this.restoreFromServer = true;
                 Database.wipeDatabase();
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-                setCurrentState(24);
+            case Enums.kDesktopSyncFirstSyncActionSync /*3*/:
+                setCurrentState(Enums.kDesktopSyncStateUDIDProcessed/*24*/);
                 break;
             default:
-                setCurrentState(66);
+                setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
                 Database.sqlite3_rollback();
                 sendFail();
                 reset();
@@ -751,54 +760,54 @@ public class PocketMoneySyncClass extends DefaultHandler {
         this.delegate.udidFirstActionBlock = 0;
     }
 
-    protected void sendACK() {
-        setCurrentState(54);
+    void sendACK() {
+        setCurrentState(Enums.kDesktopSyncStateSendingACK/*54*/);
         writeData("DATA:OK", 55);
     }
 
-    protected void getACKHeader() {
-        setCurrentState(58);
+    void getACKHeader() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingACK/*58*/);
         readInHeaderSize(57);
     }
 
-    protected void getACK() {
-        setCurrentState(58);
+    void getACK() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingACK/*58*/);
         readInSize(sizeFromHeader(), 59);
     }
 
-    protected void processACK() {
+    void processACK() {
         String sData = stringFromDataExcluding("");
         if (sData.equals("DATA:OK")) {
-            setCurrentState(61);
+            setCurrentState(Enums.kDesktopSyncStateACKProcessed/*61*/);
             return;
         }
-        setCurrentState(69);
+        setCurrentState(Enums.kDesktopSyncStateError/*69*/);
         Log.e(SMMoney.TAG, "Error: processAck: Invalid response. Expected [DATA:OK], got [" + sData + "]");
     }
 
-    protected void sendTheEnd() {
-        setCurrentState(62);
+    void sendTheEnd() {
+        setCurrentState(Enums.kDesktopSyncStateSendingTheEnd/*62*/);
         writeData("PHOTO:END", 65);
     }
 
-    protected void getRecentChangesHeader() {
+    void getRecentChangesHeader() {
         Database.sqlite3_begin();
         if (this.restoreFromServer) {
             Database.wipeDatabase();
         }
-        setCurrentState(48);
-        readInHeaderSize(49);
+        setCurrentState(Enums.kDesktopSyncStateReceivingRecentChangesHeader/*48*/);
+        readInHeaderSize(Enums.kDesktopSyncStateRecentChangesHeaderReceived/*49*/);
     }
 
-    protected void getRecentChanges() {
-        setCurrentState(50);
+    void getRecentChanges() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingRecentChanges/*50*/);
         float totalSize = (float) sizeFromHeader();
         try {
             System.gc();
             byte[] newData = new byte[1024];
             int readIn = this.asyncSocket.getInputStream().read(newData, 0, "DATA:".length());
             if (readIn != -1) {
-                int totalReadIn = 0 + readIn;
+                int totalReadIn = readIn;
                 deleteTempFile();
                 BufferedOutputStream fr = new BufferedOutputStream(new FileOutputStream(new File(SMMoney.getTempFile()).getAbsoluteFile()));
                 while (((float) totalReadIn) < totalSize) {
@@ -813,9 +822,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 fr.flush();
                 fr.close();
                 if (this.server) {
-                    setCurrentState(51);
+                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
                 } else {
-                    setCurrentState(51);
+                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
                 }
             }
         } catch (IOException e) {
@@ -824,8 +833,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void sendRecentChanges() {
-        setCurrentState(46);
+    void sendRecentChanges() {
+        setCurrentState(Enums.kDesktopSyncStateSendingRecentChanges/*46*/);
         newRecentDatabaseChanges();
         try {
             File f = new File(SMMoney.getTempFile());
@@ -848,15 +857,13 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
             Log.i("DEBUGTAG123", "sendRecentChanges totalRead=" + totalRead);
             fr.close();
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (IOException e2) {
-            e2.printStackTrace();
         }
         if (this.server) {
-            setCurrentState(47);
+            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
         } else {
-            setCurrentState(47);
+            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
         }
     }
 
@@ -871,7 +878,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return sData.substring(sData.indexOf(singleQuote, currentIndex) + singleQuote.length());
     }
 
-    protected void parseTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
+    void parseTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
         String xmlBlock = "";
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
@@ -890,7 +897,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (currentIndex != cancel) {
             endIndex = xmlBlock.indexOf(endTag, currentIndex);
             try {
-                String taggedString = new StringBuilder(String.valueOf(startTag)).append(xmlBlock.substring(currentIndex, endIndex)).append(endTag).toString();
+                String taggedString = startTag + xmlBlock.substring(currentIndex, endIndex) + endTag;
                 TransactionClass record = new TransactionClass();
                 record.updateWithXML(taggedString);
                 processRecentTransaction(record);
@@ -902,9 +909,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void processAccounts(ArrayList<AccountClass> accounts) {
-        ArrayList<AnonymousClass2TempTransAccountClass> overdraftAccounts = new ArrayList();
-        ArrayList<AnonymousClass2TempTransAccountClass> keepTheChangeAccounts = new ArrayList();
+    void processAccounts(ArrayList<AccountClass> accounts) {
+        ArrayList<AnonymousClass2TempTransAccountClass> overdraftAccounts = new ArrayList<>();
+        ArrayList<AnonymousClass2TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
         Iterator it = accounts.iterator();
         while (it.hasNext()) {
             AccountClass act = (AccountClass) it.next();
@@ -919,28 +926,34 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (it.hasNext()) {
             AnonymousClass2TempTransAccountClass tempAct = (AnonymousClass2TempTransAccountClass) it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
-            act.hydrate();
+            if (act != null) {
+                act.hydrate();
+
             act.setKeepTheChangeAccount(tempAct.account);
             act.saveToDatabase();
+            }
         }
         it = overdraftAccounts.iterator();
         while (it.hasNext()) {
             AnonymousClass2TempTransAccountClass tempAct = (AnonymousClass2TempTransAccountClass) it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
-            act.hydrate();
+            if (act != null) {
+                act.hydrate();
+
             act.setOverdraftAccount(tempAct.account);
             act.saveToDatabase();
+            }
         }
     }
 
-    protected void parseAccountsXML(String sData, String listTag, String recordTag, Class classOf) {
+    void parseAccountsXML(String sData, String listTag, String recordTag, Class classOf) {
         String xmlBlock = "";
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
         String startList = "<" + listTag + ">";
         String endList = "</" + listTag + ">";
-        ArrayList<AnonymousClass3TempTransAccountClass> overdraftAccounts = new ArrayList();
-        ArrayList<AnonymousClass3TempTransAccountClass> keepTheChangeAccounts = new ArrayList();
+        ArrayList<AnonymousClass3TempTransAccountClass> overdraftAccounts = new ArrayList<>();
+        ArrayList<AnonymousClass3TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
         int currentIndex = sData.indexOf(startList);
         int endIndex = sData.indexOf(endList);
         if (currentIndex == -1 || endIndex == -1) {
@@ -954,7 +967,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (currentIndex != cancel) {
             endIndex = xmlBlock.indexOf(endTag, currentIndex);
             try {
-                String taggedString = new StringBuilder(String.valueOf(startTag)).append(xmlBlock.substring(currentIndex, endIndex)).append(endTag).toString();
+                String taggedString = startTag + xmlBlock.substring(currentIndex, endIndex) + endTag;
                 AccountClass record = new AccountClass();
                 record.updateWithXML(taggedString);
                 if (record.getOverdraftAccount() != null && record.getOverdraftAccount().length() > 0) {
@@ -974,21 +987,27 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (it.hasNext()) {
             AnonymousClass3TempTransAccountClass tempAct = (AnonymousClass3TempTransAccountClass) it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
-            act.hydrate();
+            if (act != null) {
+                act.hydrate();
+
             act.setKeepTheChangeAccount(tempAct.account);
             act.saveToDatabase();
+            }
         }
         it = overdraftAccounts.iterator();
         while (it.hasNext()) {
             AnonymousClass3TempTransAccountClass tempAct = (AnonymousClass3TempTransAccountClass) it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
-            act.hydrate();
+            if (act != null) {
+                act.hydrate();
+
             act.setOverdraftAccount(tempAct.account);
             act.saveToDatabase();
+            }
         }
     }
 
-    protected void parseRepeatingTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
+    void parseRepeatingTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
         String xmlBlock = "";
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
@@ -1007,7 +1026,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (currentIndex != cancel) {
             endIndex = xmlBlock.indexOf(endTag, currentIndex);
             try {
-                String taggedString = new StringBuilder(String.valueOf(startTag)).append(xmlBlock.substring(currentIndex, endIndex)).append(endTag).toString();
+                String taggedString = startTag + xmlBlock.substring(currentIndex, endIndex) + endTag;
                 RepeatingTransactionClass record = new RepeatingTransactionClass();
                 record.updateWithXML(taggedString);
                 processRecentRepeatingTransaction(record);
@@ -1019,7 +1038,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void parseXML(String sData, String listTag, String recordTag, Class classOf, String primaryKeyField) {
+    void parseXML(String sData, String listTag, String recordTag, Class classOf, String primaryKeyField) {
         String xmlBlock = "";
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
@@ -1039,7 +1058,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
             endIndex = xmlBlock.indexOf(endTag, currentIndex);
             try {
                 PocketMoneyRecordClass record = (PocketMoneyRecordClass) classOf.newInstance();
-                record.updateWithXML(new StringBuilder(String.valueOf(startTag)).append(xmlBlock.substring(currentIndex, endIndex)).append(endTag).toString());
+                record.updateWithXML(startTag + xmlBlock.substring(currentIndex, endIndex) + endTag);
                 processRecentChange(record, classOf, primaryKeyField);
             } catch (Exception e) {
                 Log.e(SMMoney.TAG, e.getLocalizedMessage());
@@ -1049,32 +1068,32 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void sendFail() {
+    void sendFail() {
         writeData("DATA:FAIL", 10);
     }
 
-    protected String stringFromDataExcluding(String substring) {
+    private String stringFromDataExcluding(String substring) {
         String sData = "";
         sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
         this.data = null;
         return sData.substring(substring.length());
     }
 
-    protected int intFromDataExcluding(String substring) {
+    private int intFromDataExcluding(String substring) {
         String sData = "";
         sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
         this.data = null;
         return Integer.parseInt(sData.substring(substring.length()));
     }
 
-    protected int sizeFromHeader() {
+    private int sizeFromHeader() {
         ByteBuffer buf = ByteBuffer.wrap(this.data);
         buf.order(ByteOrder.LITTLE_ENDIAN);
         this.data = null;
         return buf.getInt(0);
     }
 
-    protected byte[] packageData(String data) {
+    private byte[] packageData(String data) {
         byte[] plainData = null;
         plainData = data.getBytes(StandardCharsets.UTF_8);
         int headerLength = plainData.length;
@@ -1101,7 +1120,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return packagedData;
     }
 
-    protected byte[] packageData(byte[] plainData) {
+    private byte[] packageData(byte[] plainData) {
         int headerLength = plainData.length;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.order(ByteOrder.BIG_ENDIAN);
@@ -1126,7 +1145,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return packagedData;
     }
 
-    public byte[] packageDataWithHeader(byte[] data, int size) {
+    private byte[] packageDataWithHeader(byte[] data, int size) {
         int dataLength = data.length > size ? size : data.length;
         ByteBuffer buf = ByteBuffer.allocate(4);
         buf.order(ByteOrder.BIG_ENDIAN);

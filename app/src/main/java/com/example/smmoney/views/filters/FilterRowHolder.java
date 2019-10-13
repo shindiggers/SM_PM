@@ -6,10 +6,10 @@ import android.widget.TextView;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 
-public class FilterRowHolder {
-    public ImageView editImage;
+class FilterRowHolder {
+    ImageView editImage;
     public FilterClass filter;
-    public FrameLayout theRow;
+    FrameLayout theRow;
     public TextView title;
 
     public void setFilter(FilterClass filter) {

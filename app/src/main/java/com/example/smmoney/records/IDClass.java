@@ -24,19 +24,19 @@ public class IDClass extends PocketMoneyRecordClass {
     public static String XML_LISTTAG_IDS = "IDS";
     public static String XML_RECORDTAG_ID = "IDCLASS";
     private String currentElementValue;
-    public int idID;
+    private int idID;
     private String idName;
 
-    public void setIDName(String aString) {
+    private void setIDName(String aString) {
         if (this.idName != null || aString != null) {
-            if (this.idName == null || aString == null || !this.idName.equals(aString)) {
+            if (this.idName == null || !this.idName.equals(aString)) {
                 this.dirty = true;
                 this.idName = aString;
             }
         }
     }
 
-    public String getIDName() {
+    private String getIDName() {
         hydrate();
         return this.idName;
     }
@@ -76,7 +76,7 @@ public class IDClass extends PocketMoneyRecordClass {
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -172,7 +172,7 @@ public class IDClass extends PocketMoneyRecordClass {
             newClass = "";
         }
         ContentValues content = new ContentValues();
-        content.put("timestamp", Long.valueOf(System.currentTimeMillis()) / 1000);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("id", newClass);
         content.put("serverID", Database.newServerID());
         content.put("timestamp", System.currentTimeMillis() / 1000);
@@ -214,7 +214,7 @@ public class IDClass extends PocketMoneyRecordClass {
     }
 
     public static ArrayList<String> allCategoriesInDatabase() {
-        ArrayList<String> array = new ArrayList();
+        ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.IDS_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"id"}, "deleted=0", null, null, null, "UPPER(id)");
@@ -266,17 +266,23 @@ public class IDClass extends PocketMoneyRecordClass {
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("idID")) {
-            this.idID = Integer.valueOf(this.currentElementValue);
-        } else if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
-            setDeleted(z);
-        } else if (localName.equals("id")) {
-            setIDName(URLDecoder.decode(this.currentElementValue));
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
+        switch (localName) {
+            case "idID":
+                this.idID = Integer.valueOf(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
+                setDeleted(z);
+                break;
+            case "id":
+                setIDName(URLDecoder.decode(this.currentElementValue));
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
         }
         this.currentElementValue = null;
     }

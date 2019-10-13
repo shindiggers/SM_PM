@@ -11,14 +11,14 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Locale;
 
-public class OFXClass {
-    AccountClass account;
-    OFX_DataFormatType format;
+class OFXClass {
+    private AccountClass account;
+    private OFX_DataFormatType format;
     OFX_Statement statement;
-    OFX_Tags tags;
+    private OFX_Tags tags;
     List transactions;
 
-    public OFXClass() {
+    OFXClass() {
         this.format = OFX_DataFormatType.OFX_DataFormatSGML;
         this.tags = new OFX_Tags(this.format, "\n");
     }
@@ -31,22 +31,22 @@ public class OFXClass {
         return var0 != null && var0.length() > 0?var0:var1;
     }
 
-    public static String amountAsOFXAmount(double var0) {
+    static String amountAsOFXAmount(double var0) {
         NumberFormat var2 = NumberFormat.getInstance();
         var2.setMinimumFractionDigits(2);
         return var2.format(var0).replace(" ", "").replace(",", ".");
     }
 
-    public static double amountFromOFXAmount(String var0) {
+    static double amountFromOFXAmount(String var0) {
         if(var0 != null) {
             try {
                 if(var0.length() == 0) {
                     return 0.0D;
                 }
 
-                double var2 = Double.parseDouble(var0.trim().replace(",", "."));
-                return var2;
+                return Double.parseDouble(var0.trim().replace(",", "."));
             } catch (NumberFormatException var4) {
+                var4.printStackTrace();
             }
         }
 
@@ -63,19 +63,19 @@ public class OFXClass {
         }
     }
 
-    public static String dateAsString(GregorianCalendar var0) {
+    static String dateAsString(GregorianCalendar var0) {
         return dateFormatterForOFXDateTime().format(var0.getTime());
     }
 
-    public static SimpleDateFormat dateFormatterForOFXDate() {
+    private static SimpleDateFormat dateFormatterForOFXDate() {
         return new SimpleDateFormat("yyyyMMdd", Locale.US);
     }
 
-    public static SimpleDateFormat dateFormatterForOFXDateTime() {
+    private static SimpleDateFormat dateFormatterForOFXDateTime() {
         return new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
     }
 
-    public static GregorianCalendar dateFromString(String var0) {
+    static GregorianCalendar dateFromString(String var0) {
         SimpleDateFormat var1 = dateFormatterForOFXDateTime();
         if(var0 == null) {
             Log.i("com.catamount.pocketmon", "nullString (OFXClass[dateFromString])");
@@ -125,14 +125,14 @@ public class OFXClass {
     }
 
     private void parse(String var1) {
-        if(var1.indexOf("</CODE>") == -1) {
+        if(!var1.contains("</CODE>")) {
             this.format = OFX_DataFormatType.OFX_DataFormatSGML;
         } else {
             this.format = OFX_DataFormatType.OFX_DataFormatXML10;
         }
 
         String var2;
-        if(var1.indexOf("\r") == -1) {
+        if(!var1.contains("\r")) {
             var2 = "\n";
         } else {
             var2 = "\r";
@@ -160,13 +160,13 @@ public class OFXClass {
         return "\t\t\t" + this.tags.statusBegin + "\n" + "\t\t\t\t" + this.tags.statusCodeBegin + var2 + this.tags.statusCodeEnd + "\n" + "\t\t\t\t" + this.tags.statusSeverityBegin + var3 + this.tags.statusSeverityEnd + "\n" + "\t\t\t\t" + this.tags.statusMessageBegin + var1 + this.tags.statusMessageEnd + "\n" + "\t\t\t" + this.tags.statusEnd + "\n";
     }
 
-    public static String stringBetween(String param0, String param1, String param2, String param3) {
+    static String stringBetween(String param0, String param1, String param2, String param3) {
         // $FF: Couldn't be decompiled
         return "TEST";
     }
 
     public String toString() {
-        StringBuffer var1 = new StringBuffer();
+        StringBuilder var1 = new StringBuilder();
         var1.append(this.header());
         var1.append("<OFX>\n");
         var1.append(this.signOnMessage());

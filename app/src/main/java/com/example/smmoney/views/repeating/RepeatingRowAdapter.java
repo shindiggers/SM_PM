@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-public class RepeatingRowAdapter extends BaseAdapter {
+class RepeatingRowAdapter extends BaseAdapter {
     private ArrayList<TransactionClass> elements;
     private Context mContext;
     private LayoutInflater mInflater;
@@ -34,9 +34,9 @@ public class RepeatingRowAdapter extends BaseAdapter {
         }
     };
 
-    public RepeatingRowAdapter(Context aContext) {
+    RepeatingRowAdapter(Context aContext) {
         this.mContext = aContext;
-        this.elements = new ArrayList();
+        this.elements = new ArrayList<>();
         this.mInflater = LayoutInflater.from(this.mContext);
     }
 
@@ -53,7 +53,7 @@ public class RepeatingRowAdapter extends BaseAdapter {
             }
         });
         notifyDataSetChanged();
-    }
+           }
 
     public int getCount() {
         return this.elements.size();
@@ -69,7 +69,7 @@ public class RepeatingRowAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         TransactionClass transaction = this.elements.get(position);
-        RepeatingRowHolder holder = new RepeatingRowHolder();
+        RepeatingRowHolder holder;
         if (convertView == null) {
             convertView = this.mInflater.inflate(R.layout.repeating_transaction_row, null);
             holder = new RepeatingRowHolder();

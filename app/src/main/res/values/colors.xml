@@ -63,6 +63,7 @@
     <color name="blue_theme_highlighted_color">#ff939393</color>
     <color name="blue_theme_text">#ff000000</color>
     <color name="blue_theme_text_alt">#ff939393</color>
+    <color name="blue_theme_hint_color">#FF888888</color>
     <color name="green_theme_alternating_row_color">#fff1f4ee</color>
     <color name="green_theme_tint_color">#ff7d9d5d</color>
     <color name="green_theme_field_label_color">#ff4d9c26</color>

@@ -19,9 +19,9 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class BudgetsHeaderHolder extends View {
-    Context context;
+    private Context context;
     public String label;
-    public String xofy;
+    private String xofy;
 
     public BudgetsHeaderHolder(Context context, String label, String xofy) {
         super(context);
@@ -77,7 +77,7 @@ public class BudgetsHeaderHolder extends View {
         canvas.drawText(this.xofy, ((((float) width) - (p.measureText(this.xofy) / 2.0f)) - 10.0f) - ((float) collapseBitmap.getWidth()), y, p);
     }
 
-    double getDPFromPixels(double pixels) {
+    private double getDPFromPixels(double pixels) {
         DisplayMetrics metrics = new DisplayMetrics();
         ((WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
         switch (metrics.densityDpi) {

@@ -1,170 +1,173 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-<FrameLayout
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:id="@+id/the_tool_bar"
-android:layout_width="match_parent"
-android:layout_height="40dp">
+    <FrameLayout
+        android:id="@+id/the_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
 
-<TextView
-    android:textAppearance="@color/black_theme_text"
-    android:textStyle="bold"
-    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/title_text_view"
-    android:layout_width="match_parent"
-    android:layout_height="40dp"
-    android:text="TITLE" />
-
-</FrameLayout>
-
-<FrameLayout
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:layout_width="match_parent"
-android:layout_height="45dp"
-android:layout_marginTop="40dp">
-
-<ImageView
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/lefttarrow"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/leftarrow" />
-
-<Button
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/periodbutton"
-    android:layout_width="220dp"
-    android:layout_height="match_parent" />
-
-<ImageView
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/rightarrow"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/rightarrow" />
-
-</FrameLayout>
-
-<FrameLayout
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:background="@drawable/budgetblackbar"
-android:layout_width="match_parent"
-android:layout_height="40dp"
-android:layout_marginTop="80dp">
-
-<TextView
-    android:textColor="@color/black_theme_text"
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:text="@string/kLOC_BUDGETS_ACTUAL" />
-
-<ProgressBar
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/budgetprogressbar"
-    android:layout_width="20dp"
-    android:layout_height="20dp"
-    android:layout_marginRight="30dp"
-    android:layout_marginEnd="30dp"/>
-
-<ProgressBar
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/reloadprogressbar"
-    android:layout_width="20dp"
-    android:layout_height="20dp" />
-
-<TextView
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/budgetdisplaytextview"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginRight="30dp"
-    android:layout_marginEnd="30dp"
-    android:text="@string/kLOC_BUDGETS_ACTUAL" />
-
-<ImageView
-    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:src="@drawable/grapharrowright" />
-
-</FrameLayout>
-
-<FrameLayout
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:layout_width="match_parent"
-android:layout_height="wrap_content"
-android:layout_marginTop="120dp"
-android:layout_marginBottom="90dp">
-
-<View
-    android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-    android:id="@+id/progressbar"
-    android:background="@drawable/progressibeam"
-    android:layout_width="0px"
-    android:layout_height="0px" />
-
-<ListView
-    android:id="@+id/the_list"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content" />
-
-</FrameLayout>
-
-<com.example.smmoney.views.BalanceBar
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:id="@+id/balancebar"
-android:layout_width="match_parent"
-android:layout_height="50dp"
-android:layout_marginBottom="40dp" />
-
-<FrameLayout
-android:layout_gravity="bottom|center_horizontal"
-android:id="@+id/bottom_tool_bar"
-android:background="#000"
-android:layout_width="match_parent"
-android:layout_height="40dp">
-
-<com.example.makeramen.segmented.SegmentedRadioGroup
-    android:layout_gravity="bottom|center_horizontal"
-    android:orientation="horizontal"
-    android:id="@+id/radiogroup"
-    android:layout_width="200dp"
-    android:layout_height="wrap_content"
-    android:layout_weight="1.0">
-
-    <RadioButton
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:textAppearance="@color/radio_colors"
-        android:textColor="@color/black_theme_text"
-        android:gravity="center_horizontal|center_vertical"
-        android:id="@+id/accountsbutton"
-        android:minWidth="40dp"
-        android:minHeight="30dp"
-        android:text="@string/kLOC_GENERAL_ACCOUNTS"
-        android:layout_weight="1.0" />
-
-    <RadioButton
-        android:layout_height="wrap_content"
-        android:layout_width="0dp"
-        android:textAppearance="@color/black_theme_text"
-        android:textColor="@color/radio_colors"
-        android:gravity="center_horizontal|center_vertical"
-        android:id="@+id/budgetsbutton"
-        android:checked="true"
-        android:minWidth="40dp"
-        android:minHeight="30dp"
-        android:text="@string/kLOC_GENERAL_BUDGETS"
-        android:layout_weight="1.0" />
-
-</com.example.makeramen.segmented.SegmentedRadioGroup>
-
-</FrameLayout>
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="TITLE"
+            android:textAppearance="@color/black_theme_text"
+            android:textStyle="bold"
+            tools:text="Pocket Money" />
 
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:layout_gravity="center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="40dp">
+
+        <Button
+            android:id="@+id/periodbutton"
+            android:layout_width="220dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_vertical|center_horizontal" />
+
+        <ImageView
+            android:id="@+id/lefttarrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:src="@drawable/leftarrow" />
+
+        <ImageView
+            android:id="@+id/rightarrow"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/rightarrow" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/budgetblackbar">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/grapharrowright" />
+
+        <ProgressBar
+            android:id="@+id/reloadprogressbar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center" />
+
+        <ProgressBar
+            android:id="@+id/budgetprogressbar"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp" />
+
+        <TextView
+            android:id="@+id/budgetdisplaytextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="30dp"
+            android:layout_marginRight="30dp"
+            android:text="@string/kLOC_BUDGETS_ACTUAL" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:text="@string/kLOC_BUDGETS_ACTUAL"
+            android:textColor="@color/black_theme_text" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:layout_marginTop="120dp"
+        android:layout_marginBottom="90dp">
+
+        <ListView
+            android:id="@+id/the_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <View
+            android:id="@+id/progressbar"
+            android:layout_width="0px"
+            android:layout_height="0px"
+            android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:background="@drawable/progressibeam" />
+
+    </FrameLayout>
+
+    <FrameLayout
+        android:id="@+id/bottom_tool_bar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom|center_horizontal"
+        android:background="#000">
+
+        <com.example.makeramen.segmented.SegmentedRadioGroup
+            android:id="@+id/radiogroup"
+            android:layout_width="200dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center_horizontal"
+            android:layout_weight="1.0"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/accountsbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:gravity="center_horizontal|center_vertical"
+                android:minWidth="40dp"
+                android:minHeight="30dp"
+                android:text="@string/kLOC_GENERAL_ACCOUNTS"
+                android:textAppearance="@color/radio_colors"
+                android:textColor="@color/black_theme_text" />
+
+            <RadioButton
+                android:id="@+id/budgetsbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.0"
+                android:checked="true"
+                android:gravity="center_horizontal|center_vertical"
+                android:minWidth="40dp"
+                android:minHeight="30dp"
+                android:text="@string/kLOC_GENERAL_BUDGETS"
+                android:textAppearance="@color/black_theme_text"
+                android:textColor="@color/radio_colors" />
+
+        </com.example.makeramen.segmented.SegmentedRadioGroup>
+
+    </FrameLayout>
+
+    <com.example.smmoney.views.BalanceBar
+        android:id="@+id/balancebar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="40dp"
+        tools:text = "Current balance"
+        android:textColor="@color/black_theme_text" />
+
+</FrameLayout>

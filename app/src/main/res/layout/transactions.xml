@@ -41,7 +41,8 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="@string/kLOC_TOOLS_SEARCH"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:inputType="" />
 
         <com.example.makeramen.segmented.SegmentedRadioGroup
             android:id="@+id/radiogroup"

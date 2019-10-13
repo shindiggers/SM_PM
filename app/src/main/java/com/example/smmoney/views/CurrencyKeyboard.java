@@ -1,47 +1,52 @@
 package com.example.smmoney.views;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Handler;
+import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 
 import java.text.DecimalFormatSymbols;
 import java.util.Hashtable;
+import java.util.Objects;
 
 public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, OnKeyListener {
-    Context context;
-    EditText editText;
+    private Context context;
+    private EditText editText;
     private Hashtable<String, String> keyValues = null;
-    int keyboardSize;
+    private int keyboardSize;
     int originalScrollViewHeight;
-    View toolbar;
-    boolean toolbarEnabled = true;
+    private View toolbar;
+    private boolean toolbarEnabled = true;
 
     private class MyScanner {
         String amount = null;
-        int end = 0;
+        int end;
         int index = 0;
         char sign = '\u0000';
         StringBuffer strBuff;
         char[] theChars;
 
-        public MyScanner(String s) {
+        MyScanner(String s) {
             this.theChars = s.toCharArray();
             this.end = this.theChars.length;
         }
 
-        public boolean findNext() {
+        boolean findNext() {
             if (this.index >= this.end) {
                 return false;
             }
@@ -109,6 +114,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.keyboardSize = (int) (((double) ((Activity) this.context).getWindowManager().getDefaultDisplay().getHeight()) * 0.4425d);
     }
 
+    @SuppressLint("ClickableViewAccessibility")
     public void setEditText(EditText editText, final Runnable r) {
         this.editText = editText;
         final EditText theEdit = editText;
@@ -133,7 +139,20 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
                 CurrencyKeyboard.this.hide();
             }
         });
-    }
+        theEdit.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                EditText editText1 = (EditText) v;
+                int inType = editText1.getInputType();
+                editText1.setInputType(InputType.TYPE_NULL);
+                editText1.onTouchEvent(event);
+                editText1.setInputType(inType);
+                return true;
+        }
+    });
+
+
+}
 
     public void setToolbarView(View toolbar) {
         this.toolbar = toolbar;
@@ -149,23 +168,19 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.toolbarEnabled = toolbarEnabled;
     }
 
-    public char decimalSeperator() {
+    private char decimalSeperator() {
         return new DecimalFormatSymbols().getDecimalSeparator();
     }
 
-    public void show() {
-        ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+    private void show() {
+        ((InputMethodManager) Objects.requireNonNull(this.context.getSystemService(Context.INPUT_METHOD_SERVICE))).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
         new Handler().postDelayed(new Runnable() {
             public void run() {
                 if (CurrencyKeyboard.this.editText.hasFocus()) {
-                    switch (CurrencyKeyboard.this.getVisibility()) {
-                        case View.INVISIBLE /*4*/:
-                        case View.GONE /*8*/:
-                            CurrencyKeyboard.this.setVisibility(VISIBLE);
-                            CurrencyKeyboard.this.setToolbarVisibility(0);
-                            return;
-                        default:
-                            return;
+                    int i = CurrencyKeyboard.this.getVisibility();
+                    if (i == View.INVISIBLE || i == View.GONE) {
+                        CurrencyKeyboard.this.setVisibility(VISIBLE);
+                        CurrencyKeyboard.this.setToolbarVisibility(0);
                     }
                 }
             }
@@ -246,7 +261,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     }
 
     private void initKeyCodes() {
-        this.keyValues = new Hashtable();
+        this.keyValues = new Hashtable<>();
         this.keyValues.put(Integer.toString(7), "0");
         this.keyValues.put(Integer.toString(8), "1");
         this.keyValues.put(Integer.toString(9), "2");
@@ -262,9 +277,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.keyValues.put(Integer.toString(76), "/");
         this.keyValues.put(Integer.toString(17), "*");
         this.keyValues.put(Integer.toString(55), "00");
-        StringBuffer str = new StringBuffer();
-        str.append(decimalSeperator());
-        this.keyValues.put(Integer.toString(56), str.toString());
+        this.keyValues.put(Integer.toString(56), String.valueOf(decimalSeperator()));
     }
 
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -310,7 +323,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
                     return;
                 }
                 String firstHalf = theText.substring(0, i - 1);
-                this.editText.setText(new StringBuilder(String.valueOf(firstHalf)).append(theText.substring(i)).toString());
+                this.editText.setText(firstHalf + theText.substring(i));
                 this.editText.setSelection(i - 1);
             }
         } else if (primaryCode == 66) {
@@ -326,14 +339,14 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
             String theText = this.editText.getText().toString();
             if (i == 0) {
                 if (primaryCode != 81 && primaryCode != 76 && primaryCode != 17 && primaryCode != 69) {
-                    this.editText.setText(new StringBuilder(String.valueOf(this.keyValues.get(Integer.toString(primaryCode)))).append(this.editText.getText().toString()).toString());
+                    this.editText.setText(this.keyValues.get(Integer.toString(primaryCode)) + this.editText.getText().toString());
                     this.editText.setSelection(1);
                 }
             } else if (i == theText.length()) {
                 this.editText.append(this.keyValues.get(Integer.toString(primaryCode)));
             } else {
                 String firstHalf = theText.substring(0, i);
-                this.editText.setText(new StringBuilder(String.valueOf(firstHalf)).append(this.keyValues.get(Integer.toString(primaryCode))).append(theText.substring(i)).toString());
+                this.editText.setText(firstHalf + this.keyValues.get(Integer.toString(primaryCode)) + theText.substring(i));
                 this.editText.setSelection(i + 1);
             }
         }

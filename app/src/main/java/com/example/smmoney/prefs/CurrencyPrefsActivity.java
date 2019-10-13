@@ -33,10 +33,10 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
         this.listPref.setSummary(this.listPref.getValue());
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         String[] codeList = CurrencyExt.getCurrencies();
-        ArrayList<String> nameList = new ArrayList();
-        ArrayList<String> codeNameList = new ArrayList();
+        ArrayList<String> nameList = new ArrayList<>();
+        ArrayList<String> codeNameList = new ArrayList<>();
         this.listPref = (ListPreference) findPreference(Prefs.HOMECURRENCYCODE);
         this.multipleCurrencyPref = (CheckBoxPreference) findPreference(Prefs.MULTIPLECURRENCIES);
         this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
@@ -53,7 +53,7 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
         this.listPref.setOnPreferenceChangeListener(getChangeListener());
     }
 
-    public OnPreferenceChangeListener getChangeListener() {
+    private OnPreferenceChangeListener getChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (preference.equals(CurrencyPrefsActivity.this.listPref)) {

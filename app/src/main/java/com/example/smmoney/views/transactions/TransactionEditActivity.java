@@ -1,5 +1,6 @@
 package com.example.smmoney.views.transactions;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
@@ -50,8 +51,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
-import com.example.smmoney.SMMoney;
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
@@ -95,7 +96,7 @@ import java.util.TimerTask;
 
 public class TransactionEditActivity extends PocketMoneyActivity {
     public static final int REQUEST_PHOTO_OPTION = 37;
-    public final int DATE_DIALOG_ID = 1;
+    private final int DATE_DIALOG_ID = 1;
     private final int DIALOG_CAMERA = 8;
     private final int DIALOG_DELETECONFIRM = 2;
     private final int DIALOG_DUPLICATE = 3;
@@ -114,13 +115,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private final int MENU_SAVE = 6;
     private final int MENU_SPLIT = 1;
     private final int MSG_CLEARDROPDOWNS = 1;
-    public final int NOTE_EDIT_BUTTON = 30;
-    public final int REQUEST_CAMERA_NEW = 35;
-    public final int REQUEST_CAMERA_PICK = 36;
-    public final int REQUEST_CURRENCY = 34;
-    public final int REQUEST_REPEATING = 32;
-    public final int REQUEST_SPLITS = 31;
-    public final int REQUEST_TRANSFER = 33;
+    private final int NOTE_EDIT_BUTTON = 30;
+    private final int REQUEST_CAMERA_NEW = 35;
+    private final int REQUEST_CAMERA_PICK = 36;
+    private final int REQUEST_CURRENCY = 34;
+    private final int REQUEST_REPEATING = 32;
+    private final int REQUEST_SPLITS = 31;
+    private final int REQUEST_TRANSFER = 33;
     private final int TIME_DIALOG_ID = 5;
     private TextView accountTextView;
     private EditText amountEditText;
@@ -137,7 +138,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private Activity currentActivity;
     private int dateChanged;
     private TextView dateTextView;
-    private ArrayList<String> deletedImages = new ArrayList();
+    private ArrayList<String> deletedImages = new ArrayList<>();
     private RadioButton depositButton;
     private AutoCompleteTextView idEditText;
     private boolean isIReceipt = false;
@@ -151,7 +152,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 return;
             }
             if (TransactionEditActivity.this.transaction.transactionID == 0) {
-                TransactionEditActivity.this.dateChanged = 2;
+                TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
                 return;
             }
             Builder b = new Builder(TransactionEditActivity.this);
@@ -171,13 +172,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         });
                         b.create().show();
                     }
-                    TransactionEditActivity.this.dateChanged = 2;
+                    TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
                     dialog.dismiss();
                 }
             });
             b.setNegativeButton("This item only", new OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
-                    TransactionEditActivity.this.dateChanged = 1;
+                    TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeSeparateTransactionFromRepeating /*1*/;
                     dialog.dismiss();
                 }
             });
@@ -185,14 +186,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             TransactionEditActivity.this.repeatingDateChangedAlert.show();
         }
     };
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
-                    TransactionEditActivity.this.clearDropDowns();
-                    return;
-                default:
-                    return;
+            if (msg.what == MSG_CLEARDROPDOWNS) { /*1*/
+                TransactionEditActivity.this.clearDropDowns();
             }
         }
     };
@@ -202,7 +200,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     };
     private TextView memoTextView;
-    private ArrayList<String> newlyAddedImages = new ArrayList();
+    private ArrayList<String> newlyAddedImages = new ArrayList<>();
     private AutoCompleteTextView payeeEditText;
     private TextView payeeLabelTextView;
     private PhotoReceiptsCell photoCell;
@@ -213,7 +211,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private ImageView repeatingImageView;
     private RepeatingTransactionClass repeatingTransaction;
     private ScrollView scrollView;
-    protected File tempPhotoPath;
+    private File tempPhotoPath;
     private TextView timeTextView;
     private TextView titleTextView;
     private TransactionClass transaction;
@@ -225,7 +223,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
 
         public void run() {
-            TransactionEditActivity.this.mHandler.sendMessage(Message.obtain(TransactionEditActivity.this.mHandler, 1, 0, 0));
+            TransactionEditActivity.this.mHandler.sendMessage(Message.obtain(TransactionEditActivity.this.mHandler, MSG_CLEARDROPDOWNS /*1*/, 0, 0));
         }
     }
 
@@ -284,8 +282,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(this.repeatingTransaction.repeatingID);
                 }
                 this.currentActivity = this;
-                this.dateChanged = 0;
-                this.repeatingChanged = 0;
+                this.dateChanged = Enums.DateChangeTypeNone /*0*/;
+                this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
                 setContentView(R.layout.transaction_edit);
                 setupButtons();
                 setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
@@ -306,8 +304,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         }
         this.currentActivity = this;
-        this.dateChanged = 0;
-        this.repeatingChanged = 0;
+        this.dateChanged = Enums.DateChangeTypeNone /*0*/;
+        this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
         setContentView(R.layout.transaction_edit);
         setupButtons();
         setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
@@ -350,9 +348,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.titleTextView.setText(title);
     }
 
-    public void setupButtons() {
-        ArrayList<View> theViews = new ArrayList();
-        ArrayList<View> selectableViews = new ArrayList();
+    private void setupButtons() {
+        ArrayList<View> theViews = new ArrayList<>();
+        ArrayList<View> selectableViews = new ArrayList<>();
         this.balanceBar = findViewById(R.id.balancebar);
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.scrollView = findViewById(R.id.scroll_view);
@@ -377,7 +375,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         theViews.add(aView);
         aView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TransactionEditActivity.this.showDialog(1);
+                TransactionEditActivity.this.showDialog(DATE_DIALOG_ID /*1*/);
             }
         });
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -387,7 +385,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.timeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.timeTextView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TransactionEditActivity.this.showDialog(5);
+                TransactionEditActivity.this.showDialog(TIME_DIALOG_ID /*5*/);
             }
         });
         this.repeatingImageView = aView.findViewById(R.id.repeatingimageview);
@@ -401,7 +399,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                     i.putExtra("Transaction", TransactionEditActivity.this.transaction);
                     i.putExtra("RepeatingTransaction", TransactionEditActivity.this.repeatingTransaction);
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, 32);
+                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_REPEATING /*32*/);
                     return;
                 }
                 AccountsActivity.displayLiteDialog(TransactionEditActivity.this);
@@ -438,7 +436,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             Log.d("TransactionEditAct", "before setAdapter()");
             //this.categoryEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
             // TODO Customise the simple_list_item_1 so that it looks how it should. Just used here to make code work as original code above does not point to a TextView and therefore crashes!!
-            this.categoryEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1,CategoryClass.allCategoryNamesInDatabase()));
+            this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,CategoryClass.allCategoryNamesInDatabase()));
         }
         this.categoryTextView = cView.findViewById(R.id.categorytextview);
         this.categoryTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -456,8 +454,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 TransactionEditActivity.this.getCells();
                 if (TransactionEditActivity.this.transaction.isTransfer()) {
                     Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
-                    i.putExtra("type", 3);
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, 33);
+                    i.putExtra("type", Enums.kTransactionTypeTransferFrom /*3*/);
+                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_TRANSFER /*33*/);
                     return;
                 }
                 Intent i = new Intent(TransactionEditActivity.this.currentActivity, CategoryLookupListActivity.class);
@@ -472,7 +470,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
 //            this.payeeEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, PayeeClass.allPayeesInDatabase()));
            // TODO Customise as for category class above
-            this.payeeEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, PayeeClass.allPayeesInDatabase()));
+            this.payeeEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, PayeeClass.allPayeesInDatabase()));
         }
         this.payeeLabelTextView = pView.findViewById(R.id.payeelabeltextview);
         this.payeeLabelTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -504,7 +502,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 if (TransactionEditActivity.this.amountEditText.hasFocus()) {
                     TransactionEditActivity.this.clearKeepTheChange();
                     AccountClass act = AccountDB.recordFor(TransactionEditActivity.this.transaction.getAccount());
-                    boolean keepTheChangeEnabled = act != null && act.getKeepTheChangeAccount() != null && act.getKeepTheChangeAccount().length() > 0 && (TransactionEditActivity.this.transaction.getType() == 0 || TransactionEditActivity.this.transaction.getType() == 2);
+                    boolean keepTheChangeEnabled = act != null && act.getKeepTheChangeAccount() != null && act.getKeepTheChangeAccount().length() > 0 && (TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/);
                     TransactionEditActivity.this.currencyKeyboard.setToolbarEnabled(keepTheChangeEnabled);
                     return;
                 }
@@ -525,8 +523,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     try {
                         i.putExtra("split", TransactionEditActivity.this.transaction.getSplits().get(0));
                     } catch (NullPointerException e) {
+                        e.printStackTrace();
                     }
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, 34);
+                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_CURRENCY /*34*/);
                 }
             });
         } else {
@@ -545,7 +544,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
 //            this.idEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, IDClass.allCategoriesInDatabase()));
             // TODO Customise as for above category class adapter
-            this.idEditText.setAdapter(new ArrayAdapter(this, android.R.layout.simple_list_item_1, IDClass.allCategoriesInDatabase()));
+            this.idEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, IDClass.allCategoriesInDatabase()));
         }
         if (Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_ID_FIELD)) {
             aView.setVisibility(View.VISIBLE);
@@ -585,7 +584,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.classEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.classEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.classEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
+            this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
         }
         this.classTextView = aView.findViewById(R.id.classtextview);
         this.classTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -600,7 +599,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         aView = outterView.findViewById(R.id.memobutton);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         aView.setOnClickListener(getBtnClickListener());
-        aView.setTag(30);
+        aView.setTag(NOTE_EDIT_BUTTON /*30*/);
         this.memoTextView = aView.findViewById(R.id.memotextview);
         this.memoTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         if (Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_MEMO_FIELD)) {
@@ -632,9 +631,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 TransactionEditActivity.this.getCells();
                 TransactionEditActivity.this.deleteDeletedImages();
                 if (TransactionEditActivity.this.accountTextView.getText() == null || TransactionEditActivity.this.accountTextView.getText().toString().length() == 0) {
-                    TransactionEditActivity.this.showDialog(6);
+                    TransactionEditActivity.this.showDialog(DIALOG_NEED_ACCOUNT /*6*/);
                 } else if (TransactionEditActivity.this.transaction.isRepeatingTransaction && (TransactionEditActivity.this.repeatingTransaction == null || !TransactionEditActivity.this.repeatingTransaction.isRepeating())) {
-                    TransactionEditActivity.this.showDialog(7);
+                    TransactionEditActivity.this.showDialog(DIALOG_NEED_REPEATING /*7*/);
                 } else if (TransactionEditActivity.this.transaction.transactionID == 0 || TransactionEditActivity.this.transaction.isRepeatingTransaction || TransactionEditActivity.this.repeatingTransaction.repeatingID <= 0 || !TransactionEditActivity.this.repeatingTransaction.isRepeating() || TransactionEditActivity.this.dateChanged != 0) {
                     TransactionEditActivity.this.saveAction();
                 } else {
@@ -643,13 +642,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     b.setMessage("Change the information of the transaction and repeating event, or change the information of only this transaction?");
                     b.setPositiveButton("Both", new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            TransactionEditActivity.this.repeatingChanged = 2;
+                            TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeUpdateRepeating /*2*/;
                             TransactionEditActivity.this.saveAction();
                         }
                     });
                     b.setNegativeButton("This item only", new OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
-                            TransactionEditActivity.this.repeatingChanged = 1;
+                            TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeSeparateTransactionFromRepeating /*1*/;
                             TransactionEditActivity.this.saveAction();
                         }
                     });
@@ -677,14 +676,14 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 TransactionEditActivity.this.keepTheChange();
             }
         });
-        this.payeeEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(1));
-        this.categoryEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(2));
-        this.idEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(4));
-        this.classEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(5));
-        this.payeeEditText.setKeyListener(new MyKeyListener(this.payeeEditText.getKeyListener(), 1));
-        this.categoryEditText.setKeyListener(new MyKeyListener(this.categoryEditText.getKeyListener(), 2));
-        this.idEditText.setKeyListener(new MyKeyListener(this.idEditText.getKeyListener(), 4));
-        this.classEditText.setKeyListener(new MyKeyListener(this.classEditText.getKeyListener(), 5));
+        this.payeeEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_PAYEE /*1*/));
+        this.categoryEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_CATEGORY /*2*/));
+        this.idEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_ID /*4*/));
+        this.classEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_CLASS /*5*/));
+        this.payeeEditText.setKeyListener(new MyKeyListener(this.payeeEditText.getKeyListener(),EDITTEXT_PAYEE /*1*/));
+        this.categoryEditText.setKeyListener(new MyKeyListener(this.categoryEditText.getKeyListener(), EDITTEXT_CATEGORY /*2*/));
+        this.idEditText.setKeyListener(new MyKeyListener(this.idEditText.getKeyListener(), EDITTEXT_ID /*4*/));
+        this.classEditText.setKeyListener(new MyKeyListener(this.classEditText.getKeyListener(), EDITTEXT_CLASS /*5*/));
     }
 
     private void saveAction() {
@@ -732,13 +731,19 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
             if (thePref.equals(Locales.kLOC_GENERAL_PAYEE)) {
                 this.payeeEditText.requestFocus();
-                mgr.showSoftInput(this.payeeEditText, 1);
+                if (mgr != null) {
+                    mgr.showSoftInput(this.payeeEditText, 1);
+                }
             } else if (thePref.equals(Locales.kLOC_GENERAL_CATEGORY)) {
                 this.categoryEditText.requestFocus();
-                mgr.showSoftInput(this.categoryEditText, 1);
+                if (mgr != null) {
+                    mgr.showSoftInput(this.categoryEditText, 1);
+                }
             } else if (thePref.equals(Locales.kLOC_GENERAL_AMOUNT)) {
                 this.amountEditText.requestFocus();
-                mgr.showSoftInput(this.amountEditText, 1);
+                if (mgr != null) {
+                    mgr.showSoftInput(this.amountEditText, 1);
+                }
             } else {
                 getWindow().setSoftInputMode(3);
             }
@@ -767,14 +772,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.memoTextView.clearFocus();
     }
 
-    public void loadCells() {
+    private void loadCells() {
         this.programaticUpdate = true;
         setType();
         this.programaticUpdate = false;
         if (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating()) {
             this.dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         } else {
-            this.dateTextView.setTextColor(PocketMoneyThemes.orangeLabelColor());
+            this.dateTextView.setTextColor(0xFF00FF00);
+            //this.dateTextView.setTextColor(PocketMoneyThemes.orangeLabelColor());
         }
         this.dateTextView.setText(CalExt.descriptionWithMediumDate(this.transaction.getDate()));
         if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
@@ -784,7 +790,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.timeTextView.setVisibility(View.GONE);
         }
         this.accountTextView.setText(this.transaction.getAccount());
-        if (this.transaction.getType() == 3 || this.transaction.getType() == 2) {
+        if (this.transaction.getType() == Enums.kTransactionTypeTransferFrom/*3*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             this.payeeEditText.setText(this.transaction.getTransferToAccount());
         } else {
             this.payeeEditText.setText(this.transaction.getPayee());
@@ -818,7 +824,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.photoCell.requestLayout();
     }
 
-    public void getCells() {
+    private void getCells() {
         this.transaction.hydrate();
         saveAmountXrates();
         this.transaction.setDateFromString(this.dateTextView.getText().toString());
@@ -826,7 +832,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.transaction.updateDateWithTimeString(this.timeTextView.getText().toString());
         }
         this.transaction.setAccount(this.accountTextView.getText().toString());
-        if (this.transaction.getType() == 3 || this.transaction.getType() == 2) {
+        if (this.transaction.getType() == Enums.kTransactionTypeTransferFrom /*3*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             this.transaction.setPayee("");
             this.transaction.setTransferToAccount(this.payeeEditText.getText().toString());
         } else {
@@ -844,24 +850,22 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void deleteDeletedImages() {
-        Iterator it = this.deletedImages.iterator();
-        while (it.hasNext()) {
-            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", (String) it.next()).delete()) {
-                int hmm = 0 + 1;
+        for (String deletedImage : this.deletedImages) {
+            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", deletedImage).delete()) {
+                int hmm = 1;
             }
         }
     }
 
     private void deleteNewlyAddedImages() {
-        Iterator it = this.newlyAddedImages.iterator();
-        while (it.hasNext()) {
-            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", new StringBuilder(String.valueOf(it.next())).append(".jpg").toString()).delete()) {
-                int hmm = 0 + 1;
+        for (String newlyAddedImage : this.newlyAddedImages) {
+            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", new StringBuilder(String.valueOf(newlyAddedImage)).append(".jpg").toString()).delete()) {
+                int hmm = 1;
             }
         }
     }
 
-    public boolean save() {
+    private boolean save() {
         if (this.isIReceipt) {
             this.transaction.checkAccountAddIfMissing();
         }
@@ -869,7 +873,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (!this.transaction.isRepeatingTransaction && this.transaction.getDirty()) {
             TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
             int modTransfer = useCanModifyChildTransferOfBasedOn(this.transaction, originalRecord);
-            if (modTransfer == 0) {
+            if (modTransfer == Enums.kModifyOtherEndOnly /*0*/) {
                 AlertDialog alert = new Builder(this).create();
                 alert.setMessage(Locales.kLOC_EDIT_TRANSACTION_EDITOTHEREND);
                 alert.setCancelable(false);
@@ -883,7 +887,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             }
             keepTheChangeUpdate();
             this.transaction.saveToDatabase();
-            if (modTransfer == 2) {
+            if (modTransfer == Enums.kModifyEitherEnd /*2*/) {
                 saveUpdateTransferFromOriginalRecord(originalRecord, this.transaction);
             }
             if (Prefs.getBooleanPref(Prefs.AUTOADD_LOOKUPS)) {
@@ -919,13 +923,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 this.repeatingTransaction.getTransaction().deleteFromDatabase();
             }
             this.repeatingTransaction.deleteFromDatabase();
-        } else if (this.repeatingChanged != 1 && this.dateChanged != 1) {
+        } else if (this.repeatingChanged != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating /*1*/ && this.dateChanged != Enums.DateChangeTypeSeparateTransactionFromRepeating /*1*/) {
             GregorianCalendar originalDate = (GregorianCalendar) this.repeatingTransaction.getTransaction().getDate().clone();
             this.repeatingTransaction.getTransaction().deleteFromDatabase();
             this.repeatingTransaction.setTransaction(null);
             this.repeatingTransaction.setTransaction(this.transaction.copy());
             this.repeatingTransaction.dirty = true;
-            if (1 == this.dateChanged || (!this.transaction.isRepeatingTransaction && this.dateChanged == 0)) {
+            if (Enums.DateChangeTypeSeparateTransactionFromRepeating /*1*/ == this.dateChanged || (!this.transaction.isRepeatingTransaction && this.dateChanged == Enums.DateChangeTypeNone /*0*/)) {
                 this.repeatingTransaction.getTransaction().setDate(originalDate);
             } else if (this.transaction.isRepeatingTransaction) {
                 this.repeatingTransaction.setLastProcessedDate(CalExt.subtractDay(this.repeatingTransaction.getTransaction().getDate()));
@@ -957,7 +961,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         };
     }
 
-    public void reloadBalanceBar() {
+    private void reloadBalanceBar() {
         if (this.transaction.isRepeatingTransaction) {
             this.balanceBar.setVisibility(View.GONE);
             return;
@@ -1032,7 +1036,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             keepTheChangeRecord.setAmount(this.changeKept * -1.0d);
             keepTheChangeRecord.setCurrencyCode(account.getCurrencyCode());
             keepTheChangeRecord.setCategory(Locales.kLOC_GENERAL_KEEP_CHANGE);
-            keepTheChangeRecord.setType(3);
+            keepTheChangeRecord.setType(Enums.kTransactionTypeTransferFrom /*3*/);
             keepTheChangeRecord.setClassName(this.transaction.getClassName());
             keepTheChangeRecord.initType();
             keepTheChangeRecord.saveToDatabase();
@@ -1051,7 +1055,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         getCells();
         Intent i = new Intent(this, SplitsActivity.class);
         i.putExtra("Transaction", this.transaction);
-        startActivityForResult(i, 31);
+        startActivityForResult(i, REQUEST_SPLITS /*31*/);
     }
 
     private int getType() {
@@ -1088,7 +1092,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         } else if (this.transaction.isTransfer()) {
             this.payeeEditText.setEnabled(false);
             this.transferButton.setChecked(true);
-            if (this.transaction.getType() == 3) {
+            if (this.transaction.getType() == Enums.kTransactionTypeTransferFrom /*3*/) {
                 this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
             } else {
                 this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
@@ -1099,7 +1103,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private void includeFeeAction() {
         AccountClass account = AccountDB.recordFor(this.accountTextView.getText().toString());
         if (account.getFee() <= 0.0d) {
-            showDialog(4);
+            showDialog(DIALOG_FEE /*4*/);
             return;
         }
         save();
@@ -1140,15 +1144,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         finish();
     }
 
-    public void updateAmountFieldTextColor() {
-        if (this.transaction.getType() == 0 || this.transaction.getType() == 2) {
+    private void updateAmountFieldTextColor() {
+        if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             this.amountEditText.setTextColor(-65536);
         } else {
             this.amountEditText.setTextColor(-16711936);
         }
     }
 
-    public void updateXrates() {
+    private void updateXrates() {
         getCells();
         if (this.transaction.isTransfer() && Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             AccountClass a1 = AccountDB.recordFor(this.transaction.getTransferToAccount());
@@ -1166,7 +1170,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    public void loadAmountXrateValues() {
+    private void loadAmountXrateValues() {
         try {
             if (AccountDB.recordFor(this.transaction.getAccount()).getCurrencyCode().equals(this.transaction.getCurrencyCode())) {
                 this.amountXrateTextView.setVisibility(View.GONE);
@@ -1185,10 +1189,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    public void saveAmountXrates() {
+    private void saveAmountXrates() {
         double amount = CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), this.transaction.getCurrencyCode());
         double multiplier = 1.0d;
-        if (this.transaction.getType() == 0 || this.transaction.getType() == 2) {
+        if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             multiplier = -1.0d;
         }
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
@@ -1220,7 +1224,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         return 0;
     }
 
-    public void saveUpdateTransferFromOriginalRecord(TransactionClass oldRecP, TransactionClass modRecP) {
+    private void saveUpdateTransferFromOriginalRecord(TransactionClass oldRecP, TransactionClass modRecP) {
         double d;
         double newRate;
         double newAmount;
@@ -1386,12 +1390,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    public double xrateFromAccountToAccount(String account1, String account2) {
+    private double xrateFromAccountToAccount(String account1, String account2) {
         return AccountDB.recordFor(account1).getExchangeRate() / AccountDB.recordFor(account2).getExchangeRate();
     }
 
     private void editTextDidFinishChanging(int editTextCode) {
-        if (editTextCode == 3) {
+        if (editTextCode == EDITTEXT_AMOUNT) {
             saveAmountXrates();
             loadAmountXrateValues();
         }
@@ -1441,14 +1445,14 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     this.idEditText.setText(selection);
                     clearDropDownsTimerStart();
                     break;
-                case Enums.kDesktopSyncStateSendPhotos /*30*/:
+                case NOTE_EDIT_BUTTON /*30*/:
                     break;
-                case Enums.kDesktopSyncStateSendingPhoto /*31*/:
+                case REQUEST_SPLITS /*31*/:
                     this.transaction = (TransactionClass) data.getExtras().get("Transaction");
                     this.transaction.dirty = true;
                     reloadData();
                     break;
-                case Enums.kDesktopSyncStateSentPhoto /*32*/:
+                case REQUEST_REPEATING /*32*/:
                     this.transaction = (TransactionClass) data.getExtras().get("Transaction");
                     this.transaction.hydrated = true;
                     this.transaction.dirty = true;
@@ -1456,14 +1460,14 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     this.repeatingTransaction = (RepeatingTransactionClass) data.getExtras().get("RepeatingTransaction");
                     this.repeatingTransaction.getTransaction().hydrated = false;
                     break;
-                case Enums.kDesktopSyncStateReceivingPhotoHeader /*33*/:
+                case REQUEST_TRANSFER /*33*/:
                     if (selection == null || selection.length() == 0) {
                         this.withdrawalButton.setChecked(true);
                     }
                     this.payeeEditText.setText(selection);
                     updateXrates();
                     break;
-                case Enums.kDesktopSyncStatePhotoHeaderReceived /*34*/:
+                case REQUEST_CURRENCY /*34*/:
                     try {
                         Bundle b = data.getExtras();
                         this.transaction.setCurrencyCode(b.getString("currency"));
@@ -1474,7 +1478,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     } catch (NullPointerException e) {
                         break;
                     }
-                case Enums.kDesktopSyncStateReceivingPhoto /*35*/:
+                case REQUEST_CAMERA_NEW /*35*/:
                     FileChannel inChannel = null;
                     FileChannel outChannel = null;
                     String fileName = "";
@@ -1548,7 +1552,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                             }
                         }
                     }
-                case Enums.kDesktopSyncStatePhotoReceived /*36*/:
+                case REQUEST_CAMERA_PICK /*36*/:
                     String fileName2 = new StringBuilder(String.valueOf(this.payeeEditText.getText().toString())).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
                     String[] filePathColumn = new String[]{"_data"};
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
@@ -1591,10 +1595,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     protected Dialog onCreateDialog(int id) {
         Builder builder;
         switch (id) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case DATE_DIALOG_ID /*1*/:
                 GregorianCalendar theDate = this.transaction.getDate();
                 return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case DIALOG_DELETECONFIRM /*2*/:
                 builder = new Builder(this);
                 builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
@@ -1606,7 +1610,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case DIALOG_DUPLICATE /*3*/:
                 builder = new Builder(this);
                 builder.setTitle(Locales.kLOC_DUPLICATE_TRANSACTION_TITLE);
                 builder.setNegativeButton(Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, new OnClickListener() {
@@ -1619,7 +1623,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case DIALOG_FEE /*4*/:
                 builder = new Builder(this);
                 builder.setMessage(Locales.kLOC_FEE_MISSING_ALERT);
                 builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
@@ -1628,10 +1632,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case TIME_DIALOG_ID /*5*/:
                 GregorianCalendar theTime = this.transaction.getDate();
                 return new TimePickerDialog(this, this.mTimeSetListener, theTime.get(Calendar.HOUR_OF_DAY), theTime.get(Calendar.MINUTE), DateFormat.is24HourFormat(this));
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case DIALOG_NEED_ACCOUNT /*6*/:
                 builder = new Builder(this);
                 builder.setMessage(Locales.kLOC_EDIT_TRANSACTION_MISSINGACCOUNT);
                 builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
@@ -1640,7 +1644,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case DIALOG_NEED_REPEATING /*7*/:
                 builder = new Builder(this);
                 builder.setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.\n\nTap the calendar icon to the right of the Date to configure the repeating info for this transaction.");
                 builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
@@ -1649,7 +1653,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case DIALOG_CAMERA /*8*/:
                 builder = new Builder(this);
                 builder.setMessage("Choose existing or take new");
                 builder.setPositiveButton("New", new OnClickListener() {
@@ -1658,7 +1662,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         TransactionEditActivity.this.tempPhotoPath = new File(tempPhotoDir, "temp.jpeg");
                         Intent takePictureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
                         takePictureIntent.putExtra("output", Uri.fromFile(TransactionEditActivity.this.tempPhotoPath));
-                        TransactionEditActivity.this.startActivityForResult(takePictureIntent, 35);
+                        TransactionEditActivity.this.startActivityForResult(takePictureIntent, REQUEST_CAMERA_NEW /*35*/);
                     }
                 });
                 builder.setNegativeButton("Choose", new OnClickListener() {
@@ -1666,7 +1670,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         dialog.dismiss();
                         Intent photoPickerIntent = new Intent("android.intent.action.PICK");
                         photoPickerIntent.setType("image/*");
-                        TransactionEditActivity.this.startActivityForResult(photoPickerIntent, 36);
+                        TransactionEditActivity.this.startActivityForResult(photoPickerIntent, REQUEST_CAMERA_PICK /*36*/);
                     }
                 });
                 return builder.create();
@@ -1676,39 +1680,39 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, Locales.kLOC_GENERAL_SPLIT).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        menu.add(0, 2, 0, Locales.kLOC_GENERAL_DUPLICATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_SPLIT /*1*/, 0, Locales.kLOC_GENERAL_SPLIT).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_DUPE /*2*/, 0, Locales.kLOC_GENERAL_DUPLICATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
         if (this.transaction.getAccount() != null) {
-            menu.add(0, 3, 0, Locales.kLOC_ACCOUNT_FEE_LABEL).setIcon(R.drawable.ic_arrow_drop_down_circle);
+            menu.add(0, MENU_FEE /*3*/, 0, Locales.kLOC_ACCOUNT_FEE_LABEL).setIcon(R.drawable.ic_arrow_drop_down_circle);
         }
         if (SMMoney.hasCamera()) {
-            menu.add(0, 4, 0, "Camera").setIcon(R.drawable.ic_arrow_drop_down_circle);
+            menu.add(0, MENU_CAMERA /*4*/, 0, "Camera").setIcon(R.drawable.ic_arrow_drop_down_circle);
         }
-        menu.add(0, 5, 0, Locales.kLOC_GENERAL_DELETE).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        MenuItem item = menu.add(0, 6, 0, Locales.kLOC_TRANSACTION_NEW);
-        item.setIcon(R.drawable.circleplus);
+        menu.add(0, MENU_DELETE /*5*/, 0, Locales.kLOC_GENERAL_DELETE).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        MenuItem item = menu.add(0, MENU_SAVE /*6*/, 0, "Save");
+//        item.setIcon(R.drawable.circleplus);
         item.setShowAsAction(2);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case MENU_SPLIT /*1*/:
                 splitsAction();
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                showDialog(3);
+            case MENU_DUPE /*2*/:
+                showDialog(DIALOG_DUPLICATE /*3*/);
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case MENU_FEE /*3*/:
                 includeFeeAction();
                 break;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                showDialog(8);
+            case MENU_CAMERA /*4*/:
+                showDialog(DIALOG_CAMERA /*8*/);
                 break;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                showDialog(2);
+            case MENU_DELETE /*5*/:
+                showDialog(DIALOG_DELETECONFIRM /*2*/);
                 break;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case MENU_SAVE /*6*/:
                 getCells();
                 deleteDeletedImages();
                 if (this.accountTextView.getText() != null && this.accountTextView.getText().toString().length() != 0) {
@@ -1735,10 +1739,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         saveAction();
                         break;
                     }
-                    showDialog(7);
+                    showDialog(DIALOG_NEED_REPEATING /*7*/);
                     break;
                 }
-                showDialog(6);
+                showDialog(DIALOG_NEED_ACCOUNT /*6*/);
                 break;
         }
         return false;
@@ -1747,14 +1751,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private View.OnClickListener getBtnClickListener() {
         return new View.OnClickListener() {
             public void onClick(View view) {
-                switch ((Integer) view.getTag()) {
-                    case Enums.kDesktopSyncStateSendPhotos /*30*/:
-                        Intent i = new Intent(TransactionEditActivity.this.currentActivity, NoteEditor.class);
-                        i.putExtra("note", TransactionEditActivity.this.transaction.getMemo());
-                        TransactionEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
-                        return;
-                    default:
-                        return;
+                if ((Integer) view.getTag() == NOTE_EDIT_BUTTON) { /*30*/
+                    Intent i = new Intent(TransactionEditActivity.this.currentActivity, NoteEditor.class);
+                    i.putExtra("note", TransactionEditActivity.this.transaction.getMemo());
+                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
                 }
             }
         };
@@ -1789,10 +1789,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         TransactionEditActivity.this.payeeEditText.setEnabled(false);
                         if (TransactionEditActivity.this.transaction.getSubTotal() > 0.0d) {
                             TransactionEditActivity.this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
-                            TransactionEditActivity.this.transaction.setType(3);
+                            TransactionEditActivity.this.transaction.setType(Enums.kTransactionTypeTransferFrom /*3*/);
                         } else {
                             TransactionEditActivity.this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
-                            TransactionEditActivity.this.transaction.setType(2);
+                            TransactionEditActivity.this.transaction.setType(Enums.kTransactionTypeTransferTo /*2*/);
                         }
                         TransactionEditActivity.this.getCells();
                         Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
@@ -1806,7 +1806,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         };
     }
 
-    public OnFocusChangeListener getFocusChangedListenerWithID(int id) {
+    private OnFocusChangeListener getFocusChangedListenerWithID(int id) {
         final int theID = id;
         return new OnFocusChangeListener() {
             public void onFocusChange(View v, boolean hasFocus) {

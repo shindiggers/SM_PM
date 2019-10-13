@@ -723,4 +723,10 @@
     <string name="earlier_period">Earlier period</string>
     <string name="later_period">Later period</string>
     <string name="_0_0_report_balance_placeholder">$0.0</string>
+    <string name="splits_transfer_to_account"><![CDATA[<]]>%1$s<![CDATA[>]]></string>
+    <string name="row_checknumber">checkNumber</string>
+    <string name="row_88_88_88">88/88/88</string>
+    <string name="row_runningtotal">runningTotal</string>
+    <string name="elipses">…:</string>
+    <string name="contentDescription_image_for_account">Image for account</string>
 </resources>

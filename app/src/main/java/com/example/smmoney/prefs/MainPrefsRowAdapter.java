@@ -26,7 +26,7 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import java.util.ArrayList;
 
-public class MainPrefsRowAdapter extends BaseAdapter {
+class MainPrefsRowAdapter extends BaseAdapter {
     private Context context;
     private int[] imageList;
     private LayoutInflater inflater;
@@ -42,14 +42,14 @@ public class MainPrefsRowAdapter extends BaseAdapter {
         }
     }
 
-    public MainPrefsRowAdapter(Context aContext) {
+    MainPrefsRowAdapter(Context aContext) {
         this.context = aContext;
         this.inflater = LayoutInflater.from(aContext);
         setupTheLists();
     }
 
-    public void setupTheLists() {
-        this.listenerList = new ArrayList();
+    private void setupTheLists() {
+        this.listenerList = new ArrayList<>();
         PackageInfo pInfo = null;
         String version = "SMMoney ";
         String translations = Locales.kLOC_PREFERENCES_ABOUT_TRANSLATION;
@@ -59,7 +59,7 @@ public class MainPrefsRowAdapter extends BaseAdapter {
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
-        final String theText = new StringBuilder(String.valueOf(version)).append(pInfo.versionName).append(text).append(translations.length() > 0 ? "\n\n" + translations : "").toString();
+        final String theText = version + pInfo.versionName + text + (translations.length() > 0 ? "\n\n" + translations : "");
         this.listenerList.add(new OnClickListener() {
             public void onClick(View v) {
                 Toast.makeText(MainPrefsRowAdapter.this.context, theText, Toast.LENGTH_LONG).show();
@@ -194,6 +194,7 @@ public class MainPrefsRowAdapter extends BaseAdapter {
             holder.title.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             holder.image = convertView.findViewById(R.id.prefsrowimage);
             holder.theRow = (FrameLayout) holder.title.getParent();
+            //holder.theRow.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

@@ -1,5 +1,6 @@
 package com.example.smmoney.views.accounts;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -39,11 +40,9 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
-//import com.android.vending.licensing.LicenseChecker;
-//import com.android.vending.licensing.LicenseCheckerCallback;
-//import com.android.vending.licensing.LicenseCheckerCallback.ApplicationErrorCode;
-import com.example.smmoney.SMMoney;
+
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
@@ -79,33 +78,41 @@ import com.example.smmoney.views.reports.ClassReportDataSource;
 import com.example.smmoney.views.reports.PayeeReportDataSource;
 import com.example.smmoney.views.reports.ReportsActivity;
 import com.example.smmoney.views.transactions.TransactionsActivity;
-//import com.google.android.gms.ads.AdRequest.Builder;
-//import com.google.android.gms.ads.AdView;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.Objects;
+
+import static com.example.smmoney.SMMoney.TAG;
+
+//import com.android.vending.licensing.LicenseChecker;
+//import com.android.vending.licensing.LicenseCheckerCallback;
+//import com.android.vending.licensing.LicenseCheckerCallback.ApplicationErrorCode;
+//import com.google.android.gms.ads.AdRequest.Builder;
+//import com.google.android.gms.ads.AdView;
 
 public class AccountsActivity extends PocketMoneyActivity implements HandlerActivity, ChartViewDelegate {
-    public static final int ACCOUNT_REQUEST_BUDGET = 2;
-    public static final int ACCOUNT_REQUEST_EMAIL = 3;
-    public static final int ACCOUNT_REQUEST_FILTER = 1;
+    private static final int ACCOUNT_REQUEST_BUDGET = 2;
+    private static final int ACCOUNT_REQUEST_EMAIL = 3;
+    private static final int ACCOUNT_REQUEST_FILTER = 1;
     private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static boolean DEBUG = false;
     public static boolean IS_GOOGLE_MARKET = false;
     private static final byte[] SALT = new byte[]{(byte) -25, (byte) 23, (byte) -92, (byte) -16, (byte) -78, (byte) -65, (byte) 20, (byte) 65, (byte) 36, (byte) -9, (byte) 18, (byte) -44, (byte) 13, (byte) -81, (byte) -44, (byte) -13, (byte) -4, (byte) 19, (byte) -111, (byte) 73};
     private static AsyncTask initTask = null;
-    private final int CMENU_DELETE = ACCOUNT_REQUEST_EMAIL;
-    private final int CMENU_EDIT = ACCOUNT_REQUEST_FILTER;
+    private final int CMENU_DELETE = 3;
+    private final int CMENU_EDIT = 1;
     private final int DIALOG_REPORTS = 10;
-    private final int EMAIL_CSV = ACCOUNT_REQUEST_BUDGET;
-    private final int EMAIL_OFX = ACCOUNT_REQUEST_EMAIL;
+    private final int EMAIL_CSV = 2;
+    private final int EMAIL_OFX = 3;
     private final int EMAIL_QIF = 0;
-    private final int EMAIL_TDF = ACCOUNT_REQUEST_FILTER;
+    private final int EMAIL_TDF = 1;
     private final int IMPORT_PROGRESS_DIALOG = 9;
     private final int LISCENSING = 8;
-    private final int MENU_EMAILTRANSFERS = ACCOUNT_REQUEST_EMAIL;
+    private final int MENU_EMAILTRANSFERS = 3;
+    private final int DIALOG_FILETRANSFERS = 1;
     private final int MENU_FILETRANSFERS = 3;
     private final int MENU_NEW = 1;
     private final int MENU_PREFS = 2;
@@ -118,13 +125,13 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private final int MENU_SD_IMPORT_OFX = 14;
     private final int MENU_SD_IMPORT_QIF = 13;
     private final int MENU_SD_IMPORT_TDF = 12;
-    private final int MENU_TRANSFER = ACCOUNT_REQUEST_EMAIL;
+    private final int MENU_TRANSFER = 3;
     private final int MENU_VIEW = 4;
-    private final int MENU_WIFITRANSFERS = ACCOUNT_REQUEST_BUDGET;
+    private final int MENU_WIFITRANSFERS = 2;
     private final int MENU_WIFI_EXPORT = 4;
-    public final int REQUEST_EDIT = ACCOUNT_REQUEST_BUDGET;
-    public final int REQUEST_NEW = ACCOUNT_REQUEST_FILTER;
-    RadioButton accountRadioButton;
+    public final int REQUEST_EDIT = 2;
+    public final int REQUEST_NEW = 1;
+    private RadioButton accountRadioButton;
     private AccountRowAdapter adapter;
     private double availableCreditBalanceCache = 0.0d;
     private double availableFundsBalanceCache = 0.0d;
@@ -132,7 +139,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private AsyncTask balanceBarTask;
     private ChartView cashFlowChartView;
     private double clearedBalanceCache = 0.0d;
-    Context context;
+    private Context context;
     private double currentBalanceCache = 0.0d;
     private String emailFileLocation;
     private ArrayList<Uri> fileNames;
@@ -151,7 +158,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private Button moreChartsButton;
     private int msgEmail = -1;
     private ChartView netWorthChartView;
-    boolean progUpdate = false;
+    private boolean progUpdate = false;
     private ProgressDialog progressDialog = null;
     private boolean shouldEmail = false;
     double startTime = 0.0d;
@@ -191,20 +198,20 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         }
 
         protected Object doInBackground(Object... params) {
-            Log.d("ACCOUNTSACTIVITY","BalanceTask() doInBackground() has just run");
+            Log.d("ACCOUNTSACTIVITY", "BalanceTask() doInBackground() has just run");
             this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-            if (this.pref == 5) {
-                Prefs.setPref(Prefs.BALANCETYPE, AccountsActivity.ACCOUNT_REQUEST_BUDGET);
-                this.pref = AccountsActivity.ACCOUNT_REQUEST_BUDGET;
+            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
+                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
+                this.pref = Enums.kBalanceTypeCurrent /*2*/;
             }
             this.totalWorth = AccountsActivity.this.totalWorth(this.pref);
             return null;
         }
 
         protected void onPostExecute(Object result) {
-            Log.d("ACCOUNTSACTIVITY","onPostExecute(Object result) has just been triggered");
+            Log.d("ACCOUNTSACTIVITY", "onPostExecute(Object result) has just been triggered");
             AccountsActivity.this.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-            AccountsActivity.this.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? -65536 : -1);
+            AccountsActivity.this.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? -65536 /*RED*/ : -1 /*WHITE*/);
             AccountsActivity.this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
             AccountsActivity.this.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
             AccountsActivity.this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
@@ -224,7 +231,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         }
 
         protected Object doInBackground(Object... params) {
-            Log.d("ACCOUNTSACTIVITY","InitTask() doInBackground - ie update f/x rate - has just run");
+            Log.d("ACCOUNTSACTIVITY", "InitTask() doInBackground - ie update f/x rate - has just run");
             if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
                 AccountDB.updateExchangeRates();
             }
@@ -247,20 +254,20 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     //private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-      //  private MyLicenseCheckerCallback() {
-        //}
+    //  private MyLicenseCheckerCallback() {
+    //}
 
-        public void allow() {
-            if (!AccountsActivity.this.isFinishing()) {
-                String wtf = "";
-            }
+    public void allow() {
+        if (!AccountsActivity.this.isFinishing()) {
+            String wtf = "";
         }
+    }
 
-        public void dontAllow() {
-            if (!AccountsActivity.this.isFinishing()) {
-                AccountsActivity.this.showDialog(8);
-            }
+    public void dontAllow() {
+        if (!AccountsActivity.this.isFinishing()) {
+            AccountsActivity.this.showDialog(LISCENSING /*8*/ );
         }
+    }
 
 //        public void applicationError(ApplicationErrorCode errorCode) {
 //            if (!AccountsActivity.this.isFinishing()) {
@@ -274,8 +281,8 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ACCOUNTSACTIVITY", "i =" + ContextCompat.checkSelfPermission(this, "android.permission.READ_PHONE_STATE"));
-        Log.d("ACCOUNTSACTIVITY","onCreate() has just run");
-        this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(26, "AccountsActivity:DoNotDimScreen");
+        Log.d("ACCOUNTSACTIVITY", "onCreate() has just run");
+        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "AccountsActivity:DoNotDimScreen");
         this.context = this;
         LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.accounts, null);
         setContentView(layout);
@@ -287,7 +294,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
 
     protected void onResume() {
         super.onResume();
-        Log.d("ACCOUNTSACTIVITY","onResume just called");
+        Log.d("ACCOUNTSACTIVITY", "onResume just called");
         if (isLite(this)) {
             checkLastUpgradeDialog();
         } else if (IS_GOOGLE_MARKET && !DEBUG) {
@@ -335,7 +342,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
 
     private void showMenuDialog() {
         if (this.tipDialog != null) {
-            Log.d("ACCOUNTSACTIVITY","showMenuDialog() called and this.tipDialog != null");
+            Log.d("ACCOUNTSACTIVITY", "showMenuDialog() called and this.tipDialog != null");
             this.tipDialog.isShowing();
         }
     }
@@ -379,10 +386,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
             return;
         }
         GregorianCalendar selectedDate = this.theChartView.dataSource.dateForRow(row);
-        this.graphTitleTextView.setText(new StringBuilder(String.valueOf(this.theChartView.dataSource.title())).append(": ").append(CalExt.descriptionWithYear(selectedDate)).append(" ").append(CalExt.descriptionWithMonth(selectedDate)).toString());
+        this.graphTitleTextView.setText(new StringBuilder().append(this.theChartView.dataSource.title()).append(": ").append(CalExt.descriptionWithYear(selectedDate)).append(" ").append(CalExt.descriptionWithMonth(selectedDate)).toString());
         this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void reloadCharts() {
         this.netWorthChartView.setVisibility(View.GONE);
         this.cashFlowChartView.setVisibility(View.GONE);
@@ -391,13 +399,13 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         this.graphSpinner.setVisibility(View.VISIBLE);
         if (Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS)) {
             switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case Enums.kSumamryChartTypeNetWorth /*0*/:
                     this.theChartView = this.netWorthChartView;
                     break;
-                case ACCOUNT_REQUEST_FILTER /*1*/:
+                case Enums.kSumamryChartTypeCashFlow /*1*/:
                     this.theChartView = this.cashFlowChartView;
                     break;
-                case ACCOUNT_REQUEST_BUDGET /*2*/:
+                case Enums.kSumamryChartMoreCharts /*2*/:
                     this.theChartView = null;
                     break;
             }
@@ -409,7 +417,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 protected Object doInBackground(Object... arg0) {
                     if (AccountsActivity.this.theChartView != null) {
                         synchronized (AccountsActivity.this.adapter) {
-                            //AccountsActivity.this.theChartView.reloadData(true);
+                            //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
                         }
                     }
                     return this;
@@ -444,22 +452,21 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         ((View) this.graphSpinner.getParent()).setVisibility(View.GONE);
         this.graphSpinner.setVisibility(View.GONE);
         switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kSumamryChartTypeNetWorth /*0*/:
                 this.netWorthChartView.setVisibility(View.VISIBLE);
                 return;
-            case ACCOUNT_REQUEST_FILTER /*1*/:
+            case Enums.kSumamryChartTypeCashFlow /*1*/:
                 this.cashFlowChartView.setVisibility(View.VISIBLE);
                 return;
-            case ACCOUNT_REQUEST_BUDGET /*2*/:
+            case Enums.kSumamryChartMoreCharts /*2*/:
                 ((View) this.moreChartsButton.getParent()).setVisibility(View.VISIBLE);
                 this.moreChartsButton.setVisibility(View.VISIBLE);
                 return;
             default:
-                return;
         }
     }
 
-    public void reloadData() {
+    private void reloadData() {
         this.adapter.setElements(AccountDB.queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
         this.adapter.notifyDataSetChanged();
     }
@@ -471,21 +478,21 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 int i = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
                 if (v.equals(AccountsActivity.this.balanceBar.nextButton)) {
                     i = AccountsActivity.this.balanceBar.nextBalanceTypeAfter(i);
-                    Log.d("ACCOUNTSACTIVITY","'Next' balance bar button clicked");
+                    Log.d("ACCOUNTSACTIVITY", "'Next' balance bar button clicked");
                 } else {
                     i = AccountsActivity.this.balanceBar.nextBalanceTypeBefore(i);
-                    Log.d("ACCOUNTSACTIVITY","'Previous' balance bar button clicked");
+                    Log.d("ACCOUNTSACTIVITY", "'Previous' balance bar button clicked");
                 }
                 if (Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED)) {
                     str = Prefs.BALANCETYPE;
-                    Log.d("ACCOUNTSACTIVITY","Balance bar type = 'unified'");
+                    Log.d("ACCOUNTSACTIVITY", "Balance bar type = 'unified'");
                 } else {
                     str = Prefs.BALANCEBARREGISTER;
-                    Log.d("ACCOUNTSACTIVITY","Balance bar type != 'unified'");
+                    Log.d("ACCOUNTSACTIVITY", "Balance bar type != 'unified'");
                 }
                 Prefs.setPref(str, i);
                 AccountsActivity.this.reloadBalanceBar();
-                Log.d("ACCOUNTSACTIVITY","reloadBalanceBar() just called");
+                Log.d("ACCOUNTSACTIVITY", "reloadBalanceBar() just called");
             }
         };
     }
@@ -498,7 +505,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         this.clearedBalanceCache = 0.0d;
     }
 
-    public void animateBalanceBarBack() {
+    private void animateBalanceBarBack() {
         reloadBalanceBar();
         TranslateAnimation anim = new TranslateAnimation(0.0f, -200.0f, 0.0f, 0.0f);
         anim.setDuration(1);
@@ -513,38 +520,38 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private double totalWorth(int pref) {
         double totalWorth;
         switch (pref) {
-            case Enums.kChartTypeNegativePie /*-1*/:
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kBalanceTypeNone /*-1*/:
+            case Enums.kBalanceTypeFiltered /*5*/:
                 return 0.0d;
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBalanceTypeFuture /*0*/:
                 if (this.futureBalanceCache != 0.0d) {
                     return this.futureBalanceCache;
                 }
                 totalWorth = AccountDB.totalWorth(pref);
                 this.futureBalanceCache = totalWorth;
                 return totalWorth;
-            case ACCOUNT_REQUEST_FILTER /*1*/:
+            case Enums.kBalanceTypeCleared /*1*/:
                 if (this.clearedBalanceCache != 0.0d) {
                     return this.clearedBalanceCache;
                 }
                 totalWorth = AccountDB.totalWorth(pref);
                 this.clearedBalanceCache = totalWorth;
                 return totalWorth;
-            case ACCOUNT_REQUEST_BUDGET /*2*/:
+            case Enums.kBalanceTypeCurrent /*2*/:
                 if (this.currentBalanceCache != 0.0d) {
                     return this.currentBalanceCache;
                 }
                 totalWorth = AccountDB.totalWorth(pref);
                 this.currentBalanceCache = totalWorth;
                 return totalWorth;
-            case ACCOUNT_REQUEST_EMAIL /*3*/:
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
                 if (this.availableFundsBalanceCache != 0.0d) {
                     return this.availableFundsBalanceCache;
                 }
                 totalWorth = AccountDB.totalWorth(pref);
                 this.availableFundsBalanceCache = totalWorth;
                 return totalWorth;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
                 if (this.availableCreditBalanceCache != 0.0d) {
                     return this.availableCreditBalanceCache;
                 }
@@ -606,8 +613,8 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         alert.show();
     }
 
-    public void setupView(LinearLayout layout) {
-        Log.d("ACCOUNTSACTIVITY","setupView() called and started");
+    private void setupView(LinearLayout layout) {
+        Log.d("ACCOUNTSACTIVITY", "setupView() called and started");
         createHandler();
         this.balanceBar = layout.findViewById(R.id.balancebar);
         this.balanceBar.nextButton.setOnClickListener(getBalanceBarClickListener());
@@ -651,14 +658,14 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
             public void onClick(View v) {
                 if (AccountsActivity.this.graphButtonEnabled) {
                     switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                        case PocketMoneyThemes.kThemeBlack /*0*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, AccountsActivity.ACCOUNT_REQUEST_FILTER);
+                        case Enums.kSumamryChartTypeNetWorth /*0*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow/*1*/);
                             break;
-                        case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, AccountsActivity.ACCOUNT_REQUEST_BUDGET);
+                        case Enums.kSumamryChartTypeCashFlow /*1*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts/*2*/);
                             break;
-                        case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, 0);
+                        case Enums.kSumamryChartMoreCharts /*2*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth/*0*/);
                             break;
                     }
                     AccountsActivity.this.runOnUiThread(new Runnable() {
@@ -674,14 +681,14 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
             public void onClick(View v) {
                 if (AccountsActivity.this.graphButtonEnabled) {
                     switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                        case PocketMoneyThemes.kThemeBlack /*0*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, AccountsActivity.ACCOUNT_REQUEST_BUDGET);
+                        case Enums.kSumamryChartTypeNetWorth /*0*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts /*2*/);
                             break;
-                        case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, 0);
+                        case Enums.kSumamryChartTypeCashFlow /*1*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth /*0*/);
                             break;
-                        case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, AccountsActivity.ACCOUNT_REQUEST_FILTER);
+                        case Enums.kSumamryChartMoreCharts /*2*/:
+                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow /*1*/);
                             break;
                     }
                     AccountsActivity.this.runOnUiThread(new Runnable() {
@@ -703,7 +710,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
         this.moreChartsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AccountsActivity.this.showDialog(10);
+                AccountsActivity.this.showDialog(DIALOG_REPORTS /*10*/);
             }
         });
         this.graphSpinner = layout.findViewById(R.id.graphspinner);
@@ -712,7 +719,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     private void importCSVFromSD() {
-        final ImportExportCSV importcsv = new ImportExportCSV(new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup/").append("SMMoney.csv").toString(), this);
+        final ImportExportCSV importcsv = new ImportExportCSV(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/" + "SMMoney.csv", this);
         if (importcsv.hasFile()) {
             new Thread() {
                 public void run() {
@@ -725,7 +732,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     private void importTDFFromSD() {
-        final ImportExportCSV importtdf = new ImportExportCSV(new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup/").append("SMMoney.txt").toString(), this);
+        final ImportExportCSV importtdf = new ImportExportCSV(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/" + "SMMoney.txt", this);
         if (importtdf.hasFile()) {
             new Thread() {
                 public void run() {
@@ -738,15 +745,15 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     private void importQIFFromSD() {
-        File[] qifList = new File(new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup").toString()).listFiles(new FilenameFilter() {
+        File[] qifList = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup").listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.endsWith(".qif") || name.endsWith(".QIF")) && !name.startsWith(".");
             }
         });
         if (qifList != null) {
-            for (int i = 0; i < qifList.length; i += ACCOUNT_REQUEST_FILTER) {
-                Log.i("Q File Path = ", qifList[i].getAbsolutePath());
-                final ImportExportQIF importqif = new ImportExportQIF(qifList[i].getAbsolutePath(), this);
+            for (File file : qifList) {
+                Log.i("Q File Path = ", file.getAbsolutePath());
+                final ImportExportQIF importqif = new ImportExportQIF(file.getAbsolutePath(), this);
                 if (importqif.hasFile()) {
                     new Thread() {
                         public void run() {
@@ -764,15 +771,15 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     private void importOFXFromSD() {
-        File[] qifList = new File(new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup").toString()).listFiles(new FilenameFilter() {
+        File[] qifList = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup").listFiles(new FilenameFilter() {
             public boolean accept(File dir, String name) {
                 return (name.endsWith(".ofx") || name.endsWith(".qfx") || name.endsWith(".OFX") || name.endsWith(".QFX")) && !name.startsWith(".");
             }
         });
         if (qifList != null) {
-            for (int i = 0; i < qifList.length; i += ACCOUNT_REQUEST_FILTER) {
-                if (qifList[i].exists()) {
-                    final ImportExportOFX importofx = new ImportExportOFX(this, qifList[i].getAbsolutePath());
+            for (File file : qifList) {
+                if (file.exists()) {
+                    final ImportExportOFX importofx = new ImportExportOFX(this, file.getAbsolutePath());
                     new Thread() {
                         public void run() {
                             importofx.importIntoDatabase();
@@ -857,22 +864,20 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 String fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
                 FilterClass filter = new FilterClass();
                 if (exportSeperately) {
-                    ArrayList<String> accNames = new ArrayList();
-                    Iterator<AccountClass> iterator = AccountsActivity.this.adapter.getElements().iterator();
-                    while (iterator.hasNext()) {
+                    ArrayList<String> accNames = new ArrayList<>();
+                    for (AccountClass accountClass : AccountsActivity.this.adapter.getElements()) {
                         try {
-                            accNames.add(iterator.next().getAccount());
+                            accNames.add(accountClass.getAccount());
                         } catch (Exception exAcc) {
                             Log.i("***** Doing this ERROR:", exAcc.toString());
                         }
                     }
                     String[] array = accNames.toArray(new String[accNames.size()]);
                     int length = array.length;
-                    for (int i = 0; i < length; i += AccountsActivity.ACCOUNT_REQUEST_FILTER) {
-                        String item = array[i];
+                    for (String item : array) {
                         filter.setAccount(item);
                         ArrayList query = TransactionDB.queryWithFilter(filter);
-                        String fileName = new StringBuilder(String.valueOf(fileDir)).append("/PocketMoneyBackup/").append(item).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qif").toString();
+                        String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
                         ImportExportQIF exportqif = new ImportExportQIF(AccountsActivity.this);
                         exportqif.QIFPath = fileName;
                         exportqif.accountNameBeingImported = item;
@@ -885,6 +890,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 try {
                     pd.dismiss();
                 } catch (Exception e) {
+                    e.printStackTrace();
                 }
             }
         }.start();
@@ -897,12 +903,10 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
             public void run() {
                 String fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
                 FilterClass filter = new FilterClass();
-                Iterator it = AccountsActivity.this.adapter.getElements().iterator();
-                while (it.hasNext()) {
-                    AccountClass account = (AccountClass) it.next();
+                for (AccountClass account : AccountsActivity.this.adapter.getElements()) {
                     filter.setAccount(account.getAccount());
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, new StringBuilder(String.valueOf(fileDir)).append("/PocketMoneyBackup/").append(account.getAccount()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qfx").toString());
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, new StringBuilder(fileDir).append("/PocketMoneyBackup/").append(account.getAccount()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qfx").toString());
                     exportofx.accountNameBeingImported = account.getAccount();
                     exportofx.filter = filter;
                     exportofx.exportRecords(query);
@@ -928,7 +932,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         this.msgEmail = ACCOUNT_REQUEST_BUDGET;
         this.shouldEmail = true;
-        this.emailFileLocation = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.csv").toString();
+        this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.csv";
         final String fl3 = this.emailFileLocation;
         new Thread() {
             public void run() {
@@ -944,7 +948,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         this.msgEmail = ACCOUNT_REQUEST_FILTER;
         this.shouldEmail = true;
-        this.emailFileLocation = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.txt").toString();
+        this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
         final String fl2 = this.emailFileLocation;
         new Thread() {
             public void run() {
@@ -986,23 +990,21 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 FilterClass filter = new FilterClass();
                 ImportExportQIF exportqif;
                 if (exportSeperately) {
-                    final ArrayList<Uri> fileNames = new ArrayList();
-                    ArrayList<String> accNames = new ArrayList();
-                    Iterator<AccountClass> iterator = AccountsActivity.this.adapter.getElements().iterator();
-                    while (iterator.hasNext()) {
+                    final ArrayList<Uri> fileNames = new ArrayList<>();
+                    ArrayList<String> accNames = new ArrayList<>();
+                    for (AccountClass accountClass : AccountsActivity.this.adapter.getElements()) {
                         try {
-                            accNames.add(iterator.next().getAccount());
+                            accNames.add(accountClass.getAccount());
                         } catch (Exception exAcc) {
                             Log.i("***** Doing this ERROR:", exAcc.toString());
                         }
                     }
                     String[] array = accNames.toArray(new String[accNames.size()]);
                     int length = array.length;
-                    for (int i = 0; i < length; i += AccountsActivity.ACCOUNT_REQUEST_FILTER) {
-                        String item = array[i];
+                    for (String item : array) {
                         filter.setAccount(item);
                         ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                        String fileName = new StringBuilder(String.valueOf(fileDir)).append("/PocketMoneyBackup/").append(item).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qif").toString();
+                        String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
                         fileNames.add(Uri.parse("file://" + fileName));
                         exportqif = new ImportExportQIF(AccountsActivity.this);
                         exportqif.QIFPath = fileName;
@@ -1016,7 +1018,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                         }
                     });
                 } else {
-                    AccountsActivity.this.emailFileLocation = new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup/SMMoney.qif").toString();
+                    AccountsActivity.this.emailFileLocation = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/SMMoney.qif";
                     String fl = AccountsActivity.this.emailFileLocation;
                     exportqif = new ImportExportQIF(AccountsActivity.this);
                     exportqif.QIFPath = fl;
@@ -1037,7 +1039,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         Object[] objArr = new Object[ACCOUNT_REQUEST_BUDGET];
         objArr[0] = "OFX/QFX";
         objArr[ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0],objArr[1]));
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0], objArr[1]));
         this.fileNames = fileNames;
         startActivityForResult(emailIntent, ACCOUNT_REQUEST_EMAIL);
     }
@@ -1049,13 +1051,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
             public void run() {
                 String fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
                 FilterClass filter = new FilterClass();
-                final ArrayList<Uri> fileNames = new ArrayList();
-                Iterator it = AccountsActivity.this.adapter.getElements().iterator();
-                while (it.hasNext()) {
-                    AccountClass account = (AccountClass) it.next();
+                final ArrayList<Uri> fileNames = new ArrayList<>();
+                for (AccountClass account : AccountsActivity.this.adapter.getElements()) {
                     filter.setAccount(account.getAccount());
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    String fileName = new StringBuilder(String.valueOf(fileDir)).append("/PocketMoneyBackup/").append(account.getAccount()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qfx").toString();
+                    String fileName = fileDir + "/PocketMoneyBackup/" + account.getAccount() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
                     fileNames.add(Uri.parse("file://" + fileName));
                     ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileName);
                     exportofx.accountNameBeingImported = account.getAccount();
@@ -1082,18 +1082,18 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         Object[] objArr = new Object[ACCOUNT_REQUEST_BUDGET];
         objArr[0] = Locales.kLOC_TOOLS_BACKUPFILES;
         objArr[ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0],objArr[1]));
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0], objArr[1]));
         startActivity(emailIntent);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        Log.d("ACCOUNTSACTIVITY","Menu has just been opened");
-        menu.add(0, ACCOUNT_REQUEST_FILTER, 0, Locales.kLOC_ACCOUNT_NEW).setIcon(R.drawable.abouticon);
-        menu.add(0, ACCOUNT_REQUEST_BUDGET, 0, Locales.kLOC_GENERAL_PREFERENCES).setIcon(R.drawable.abouticon);
-        menu.add(0, ACCOUNT_REQUEST_EMAIL, 0, Locales.kLOC_TOOLS_FILETRANSFERS).setIcon(R.drawable.abouticon);
-        menu.add(0, 4, 0, "View Options").setIcon(R.drawable.abouticon);
-        menu.add(0, 5, 0, Locales.kLOC_REPEATING_TRANSACTIONS).setIcon(R.drawable.abouticon);
-        menu.add(0, 6, 0, Locales.kLOC_GENERAL_QUIT).setIcon(R.drawable.abouticon);
+        Log.d("ACCOUNTSACTIVITY", "Menu has just been opened");
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_ACCOUNT_NEW).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_TRANSFER, 0, Locales.kLOC_TOOLS_FILETRANSFERS).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_VIEW, 0, "View Options").setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_REPEATING, 0, Locales.kLOC_REPEATING_TRANSACTIONS).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT).setIcon(R.drawable.abouticon);
         return true;
     }
 
@@ -1112,7 +1112,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
             case MENU_FILETRANSFERS /*3*/:
-                showDialog(ACCOUNT_REQUEST_FILTER);
+                showDialog(DIALOG_FILETRANSFERS /*1*/);
                 return true;
             case MENU_VIEW /*4*/:
                 startActivity(new Intent(this, AccountsViewOptionsActivity.class));
@@ -1132,43 +1132,38 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     protected Dialog onCreateDialog(int id) {
         AlertDialog.Builder builder;
         switch (id) {
-            case ACCOUNT_REQUEST_FILTER /*1*/:
+            case DIALOG_FILETRANSFERS /*1*/:
                 CharSequence[] items = new CharSequence[ACCOUNT_REQUEST_EMAIL];
                 items[0] = Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL;
-                items[ACCOUNT_REQUEST_FILTER] = Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD;
-                items[ACCOUNT_REQUEST_BUDGET] = Locales.kLOC_DESKTOPSYNC_TITLE;
+                items[1] = Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD;
+                items[2] = Locales.kLOC_DESKTOPSYNC_TITLE;
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setItems(items, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
-                                AccountsActivity.this.showDialog(AccountsActivity.ACCOUNT_REQUEST_EMAIL);
+                            case 0 /*Email Transferss...*/:
+                                AccountsActivity.this.showDialog(ACCOUNT_REQUEST_EMAIL /*3*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
-                                AccountsActivity.this.showDialog(5);
+                            case 1 /*Local Storage Trasnfers...*/:
+                                AccountsActivity.this.showDialog(MENU_SDCARDTRANSFER /*5*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                            case 2 /*PocketMoney Sync...*/:
                                 AccountsActivity.this.context.startActivity(new Intent(AccountsActivity.this.context, PocketMoneySyncActivity.class));
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
                 return builder.create();
-            case ACCOUNT_REQUEST_BUDGET /*2*/:
+            case MENU_WIFITRANSFERS /*2 NB This dialog not currently referenced in code. Think Wifi transfers were deprecated in the app in favour of PM Sync*/:
                 CharSequence[] items2 = new CharSequence[]{Locales.kLOC_TOOLS_BACKUP, Locales.kLOC_TOOLS_RESTORE, Locales.kLOC_TOOLS_IMPORT, Locales.kLOC_TOOLS_EXPORT};
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_WIFI);
                 builder.setItems(items2, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
-                                AccountsActivity.this.showDialog(4);
-                                return;
-                            default:
-                                return;
+                        if (item == AccountsActivity.ACCOUNT_REQUEST_EMAIL) { /*3*/
+                            AccountsActivity.this.showDialog(4);
                         }
                     }
                 });
@@ -1180,23 +1175,22 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 builder.setItems(items3, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
+                            case EMAIL_QIF /*0*/:
                                 AccountsActivity.this.generateQIFForEmail();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                            case EMAIL_TDF /*1*/:
                                 AccountsActivity.this.generateTDFForEmail();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                            case EMAIL_CSV /*2*/:
                                 AccountsActivity.this.generateCSVForEmail();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
+                            case EMAIL_OFX /*3*/:
                                 AccountsActivity.this.generateOFXForEmail();
                                 return;
-                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                            case 4 /*Backup file*/:
                                 AccountsActivity.this.generateBackupForEmail();
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
@@ -1208,101 +1202,97 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 builder.setItems(items4, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
+                            case 0 /*0*/:
                                 new ImportExportQIF(AccountsActivity.this).exportRecords();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                            case 1 /*1*/:
                                 ImportExportTDF exporttdf = new ImportExportTDF(AccountsActivity.this);
                                 exporttdf.setFilter(new FilterClass());
                                 exporttdf.exportRecords();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                            case 2 /*2*/:
                                 ImportExportCSV exportcsv = new ImportExportCSV(AccountsActivity.this);
                                 exportcsv.setFilter(new FilterClass());
                                 exportcsv.exportRecords();
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case MENU_SDCARDTRANSFER /*5*/:
                 CharSequence[] items5 = new CharSequence[]{Locales.kLOC_TOOLS_BACKUP_SD, Locales.kLOC_TOOLS_RESTORE_SD, Locales.kLOC_TOOLS_IMPORT_SD, Locales.kLOC_TOOLS_EXPORT_SD};
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD);
                 builder.setItems(items5, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
+                            case 0 /*Backup...*/:
                                 AccountsActivity.this.backupToSD();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                            case 1 /*Restors...*/:
                                 AccountsActivity.this.restoreFromSD();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
-                                AccountsActivity.this.showDialog(6);
+                            case 2 /*Import...*/:
+                                AccountsActivity.this.showDialog(MENU_SD_IMPORT /*6*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
-                                AccountsActivity.this.showDialog(7);
+                            case 3 /*Export*/:
+                                AccountsActivity.this.showDialog(MENU_SD_EXPORT /*7*/);
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case MENU_SD_IMPORT /*6*/:
                 CharSequence[] items7 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setItems(items7, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
-                                AccountsActivity.this.showDialog(13);
+                            case 0 /*QIF*/:
+                                AccountsActivity.this.showDialog(MENU_SD_IMPORT_QIF /*13*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
-                                AccountsActivity.this.showDialog(12);
+                            case 1 /*TDF*/:
+                                AccountsActivity.this.showDialog(MENU_SD_IMPORT_TDF /*12*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
-                                AccountsActivity.this.showDialog(11);
+                            case 2 /*CSV*/:
+                                AccountsActivity.this.showDialog(MENU_SD_IMPORT_CSV /*11*/);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
-                                AccountsActivity.this.showDialog(14);
+                            case 3 /*OFX/QFX*/:
+                                AccountsActivity.this.showDialog(MENU_SD_IMPORT_OFX /*14*/);
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case MENU_SD_EXPORT /*7*/:
                 CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setItems(items6, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
+                            case 0 /*QIF*/:
                                 AccountsActivity.this.exportQIFToSD();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                            case 1 /*TDF*/:
                                 AccountsActivity.this.exportTDFToSD();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                            case 2 /*CSV*/:
                                 AccountsActivity.this.exportCSVToSD();
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
+                            case 3 /*OFX/QFX*/:
                                 AccountsActivity.this.exportOFXToSD();
                                 return;
                             default:
-                                return;
                         }
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case LISCENSING /*8*/:
                 return new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
@@ -1316,49 +1306,48 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                         AccountsActivity.this.context.startActivity(i);
                     }
                 }).setCancelable(false).create();
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
+            case IMPORT_PROGRESS_DIALOG /*9*/:
                 this.progressDialog = new ProgressDialog(this);
                 this.progressDialog.setProgressStyle(ACCOUNT_REQUEST_FILTER);
                 this.progressDialog.setMessage("Transferring...\n\nWarning: This may take several minutes");
                 this.progressDialog.setCancelable(true);
                 return this.progressDialog;
-            case LookupsListActivity.FILTER_DATES /*10*/:
+            case DIALOG_REPORTS /*10*/:
                 return new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         FilterClass f = new FilterClass();
                         ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
                         Intent i;
                         switch (which) {
-                            case PocketMoneyThemes.kThemeBlack /*0*/:
+                            case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
                                 AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
                                 i = new Intent(AccountsActivity.this, ReportsActivity.class);
                                 PMGlobal.datasource = ds;
                                 AccountsActivity.this.startActivity(i);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                            case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
                                 CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
                                 i = new Intent(AccountsActivity.this, ReportsActivity.class);
                                 PMGlobal.datasource = ds2;
                                 AccountsActivity.this.startActivity(i);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                            case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
                                 ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
                                 i = new Intent(AccountsActivity.this, ReportsActivity.class);
                                 PMGlobal.datasource = ds3;
                                 AccountsActivity.this.startActivity(i);
                                 return;
-                            case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
+                            case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
                                 PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
                                 i = new Intent(AccountsActivity.this, ReportsActivity.class);
                                 PMGlobal.datasource = ds4;
                                 AccountsActivity.this.startActivity(i);
                                 return;
                             default:
-                                return;
                         }
                     }
                 }).create();
-            case LookupsListActivity.FILTER_PAYEES /*11*/:
+            case MENU_SD_IMPORT_CSV /*11*/:
                 builder = new AlertDialog.Builder(this.context);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setMessage("The file 'SMMoney.csv' should be placed in the folder '/Download/PocketMoneyBackup'");
@@ -1374,7 +1363,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.FILTER_IDS /*12*/:
+            case MENU_SD_IMPORT_TDF /*12*/:
                 builder = new AlertDialog.Builder(this.context);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setMessage("The file to 'SMMoney.txt' should be placed in the folder '/Download/PocketMoneyBackup'");
@@ -1390,7 +1379,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.FILTER_CLEARED /*13*/:
+            case MENU_SD_IMPORT_QIF /*13*/:
                 builder = new AlertDialog.Builder(this.context);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setMessage("Place the *.qif file(s) in the folder '/Download/PocketMoneyBackup'\n\nMake sure to select the correct file format in the preferences");
@@ -1406,7 +1395,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                     }
                 });
                 return builder.create();
-            case LookupsListActivity.FILTER_CATEGORIES /*14*/:
+            case MENU_SD_IMPORT_OFX /*14*/:
                 builder = new AlertDialog.Builder(this.context);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
                 builder.setMessage("Place the *.ofx file in the folder '/Download/PocketMoneyBackup'.\n\nWarning: Make sure to select the correct file format in the preferences");
@@ -1432,10 +1421,10 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         AccountRowHolder aHolder = (AccountRowHolder) v.getTag();
         Intent i = new Intent();
         i.putExtra("Account", aHolder.account);
-        MenuItem item = menu.add(0, ACCOUNT_REQUEST_FILTER, 0, Locales.kLOC_GENERAL_EDIT);
+        MenuItem item = menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT);
         item.setIcon(R.drawable.abouticon);
         item.setIntent(i);
-        item = menu.add(0, ACCOUNT_REQUEST_EMAIL, 0, Locales.kLOC_GENERAL_DELETE);
+        item = menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
         item.setIcon(R.drawable.abouticon);
         item.setIntent(i);
     }
@@ -1443,13 +1432,17 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case ACCOUNT_REQUEST_FILTER /*1*/:
+            case CMENU_EDIT /*1*/:
                 Intent it = new Intent(this, AccountsEditActivity.class);
-                it.putExtra("Account", (AccountClass) b.get("Account"));
+                if (b != null) {
+                    it.putExtra("Account", (AccountClass) b.get("Account"));
+                }
                 startActivity(it);
                 return true;
-            case ACCOUNT_REQUEST_EMAIL /*3*/:
-                deleteAccount((AccountClass) b.get("Account"));
+            case CMENU_DELETE /*3*/:
+                if (b != null) {
+                    deleteAccount((AccountClass) b.get("Account"));
+                }
                 return true;
             default:
                 return super.onContextItemSelected(item);
@@ -1463,7 +1456,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 case ACCOUNT_REQUEST_FILTER /*1*/:
                     if (resultCode == ACCOUNT_REQUEST_FILTER) {
                         Intent i = new Intent(this, TransactionsActivity.class);
-                        i.putExtra("Filter", (FilterClass) data.getExtras().get("Filter"));
+                        i.putExtra("Filter", (FilterClass) Objects.requireNonNull(data.getExtras()).get("Filter"));
                         startActivity(i);
                         return;
                     }
@@ -1476,15 +1469,13 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                     }
                     return;
                 case ACCOUNT_REQUEST_EMAIL /*3*/:
-                    Iterator it = this.fileNames.iterator();
-                    while (it.hasNext()) {
-                        if (!new File(((Uri) it.next()).getPath()).delete()) {
+                    for (Uri fileName : this.fileNames) {
+                        if (!new File(Objects.requireNonNull((fileName).getPath())).delete()) {
                             int i2 = ACCOUNT_REQUEST_FILTER + ACCOUNT_REQUEST_FILTER;
                         }
                     }
                     return;
                 default:
-                    return;
             }
         }
     }
@@ -1509,22 +1500,24 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         return this.mHandler;
     }
 
+    @SuppressLint("HandlerLeak")
     private void createHandler() {
         this.mHandler = new Handler() {
             public void handleMessage(Message msg) {
                 switch (msg.what) {
-                    case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
+                    case HandlerActivity.MSG_ANIMATEBALANCEBAR /*3*/:
                         AccountsActivity.this.animateBalanceBarBack();
                         break;
-                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                    case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
                         break;
-                    case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                    case HandlerActivity.MSG_PROGRESS_FINISH /*5*/:
                         if (!AccountsActivity.this.shouldEmail && msg.obj.getClass().equals(String.class)) {
                             Toast.makeText(AccountsActivity.this.context, (String) msg.obj, Toast.LENGTH_LONG).show();
                         }
                         try {
                             AccountsActivity.this.wakeLock.release();
                         } catch (Exception e) {
+                            Log.d(TAG, "handleMessage: ");
                         }
                         if (AccountsActivity.this.progressDialog != null) {
                             AccountsActivity.this.progressDialog.dismiss();
@@ -1607,7 +1600,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                         }
                         AccountsActivity.this.reloadData();
                         return;
-                    case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                    case HandlerActivity.MSG_ERROR /*6*/:
                         if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
                             AccountsActivity.this.progressDialog.dismiss();
                             AccountsActivity.this.progressDialog.setProgress(0);
@@ -1627,10 +1620,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                         throw new IllegalArgumentException("Unknown message id " + msg.what);
                 }
                 if (AccountsActivity.this.progressDialog == null || !AccountsActivity.this.progressDialog.isShowing()) {
-                    AccountsActivity.this.showDialog(9);
+                    AccountsActivity.this.showDialog(IMPORT_PROGRESS_DIALOG /*9*/);
                     try {
-                        AccountsActivity.this.wakeLock.acquire();
+                        AccountsActivity.this.wakeLock.acquire(10000);
                     } catch (Exception e2) {
+                        Log.d(TAG, "handleMessage: ");
                     }
                 }
                 if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {

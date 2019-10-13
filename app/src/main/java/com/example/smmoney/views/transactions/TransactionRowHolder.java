@@ -9,6 +9,7 @@ import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -17,10 +18,10 @@ import com.example.smmoney.records.TransactionClass;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 
-public class TransactionRowHolder {
+class TransactionRowHolder {
     public TextView amount;
     public TextView category;
-    public TextView checkNumber;
+    TextView checkNumber;
     public TextView date;
     LinearLayout dateAndChecknumberLayout;
     public TextView payee;
@@ -35,7 +36,7 @@ public class TransactionRowHolder {
             this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("197", "7").replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
             this.date.setTextColor(PocketMoneyThemes.alternateCellTextColor());
         }
-        if (this.transaction.getType() != 3 && this.transaction.getType() != 2) {
+        if (this.transaction.getType() != Enums.kTransactionTypeTransferFrom /*3*/ && this.transaction.getType() != Enums.kTransactionTypeTransferTo /*2*/) {
             this.payee.setText(this.transaction.getPayee());
         } else if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_TRANSTOANDTO_FIELD)) {
             TextView textView = this.payee;
@@ -49,7 +50,7 @@ public class TransactionRowHolder {
         } else {
             this.payee.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         }
-        if (this.transaction.getType() == 0 || this.transaction.getType() == 2) {
+        if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo/*2*/) {
             this.amount.setText(this.transaction.subTotalAsCurrency());
             this.amount.setTextColor(PocketMoneyThemes.redLabelColor());
         } else {

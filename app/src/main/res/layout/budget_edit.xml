@@ -121,7 +121,7 @@
                     android:layout_marginEnd="4dp"
                     android:hint="@string/kLOC_GENERAL_CATEGORY"
                     android:singleLine="true"
-                    android:capitalize="words"
+                    android:inputType="textCapWords"
                     android:layout_weight="1.0"
                     android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious" />
 

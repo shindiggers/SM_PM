@@ -6,7 +6,7 @@
     <ListPreference
         android:title="@string/kLOC_INAPPPURCHASES_THEMESTITLE"
         android:key="themecolor"
-        android:defaultValue="Black" />
+        android:defaultValue="Blue" />
 
     <PreferenceCategory
         android:name="">

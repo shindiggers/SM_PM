@@ -14,8 +14,6 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.accounts.AccountsActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -30,7 +28,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
     private ArrayList<AccountClass> accounts;
     private String currentElementValue;
 
-    public boolean connectToServer() {
+    boolean connectToServer() {
         if (this.asyncSocket != null) {
             return false;
         }
@@ -53,17 +51,17 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         }
     }
 
-    public void processStateLoop() {
+    private void processStateLoop() {
         while (true) {
             Log.i("PMSYNCSTATETAG", "client state: " + this.currentState);
             switch (this.currentState) {
-                case SplitsActivity.REQUEST_EDIT /*3*/:
+                case Enums.kDesktopSyncStateConnecting /*3*/:
                     getSyncVersionHeader();
                     break;
-                case LookupsListActivity.FILTER_DATES /*10*/:
+                case Enums.kDesktopSyncStateSentSyncVersion /*10*/:
                     getUDIDHeader();
                     break;
-                case LookupsListActivity.FILTER_IDS /*12*/:
+                case Enums.kDesktopSyncStateSyncVersionHeaderReceived /*12*/:
                     try {
                         getSyncVersion();
                         break;
@@ -76,16 +74,16 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                         e.printStackTrace();
                         return;
                     }
-                case LookupsListActivity.FILTER_CATEGORIES /*14*/:
+                case Enums.kDesktopSyncStateSyncVersionReceived /*14*/:
                     if (!processSyncVersion()) {
                         break;
                     }
                     sendSyncVersion();
                     break;
-                case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
+                case Enums.kDesktopSyncStateSentUDID /*18*/:
                     getRecentChangesHeader();
                     break;
-                case LookupsListActivity.BUDGET_PERIOD /*20*/:
+                case Enums.kDesktopSyncStateUDIDHeaderReceived /*20*/:
                     getUDID();
                     break;
                 case Enums.kDesktopSyncStateUDIDReceived /*22*/:
@@ -113,7 +111,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     if (!processPhotos()) {
                         Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
                         Database.sqlite3_commit();
-                        setCurrentState(66);
+                        setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
                         disconnect();
                         break;
                     }
@@ -127,7 +125,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     break;
                 case Enums.kDesktopSyncStatePhotoACKReceived /*43*/:
                     processPhotoACK();
-                    setCurrentState(30);
+                    setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
                     break;
                 case Enums.kDesktopSyncStateSentRecentChanges /*47*/:
                     getACKHeader();
@@ -137,11 +135,11 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     break;
                 case Enums.kDesktopSyncStateRecentChangesReceived /*51*/:
                     if (!processRecentChanges()) {
-                        setCurrentState(69);
+                        setCurrentState(Enums.kDesktopSyncStateError /*69*/);
                         sendFail();
                         break;
                     }
-                    setCurrentState(53);
+                    setCurrentState(Enums.kDesktopSyncStateRecentChangesProcessed /*53*/);
                     sendACK();
                     break;
                 case Enums.kDesktopSyncStateSentACK /*55*/:
@@ -151,7 +149,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     }
                     Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
                     Database.sqlite3_commit();
-                    setCurrentState(66);
+                    setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
                     disconnect();
                     break;
                 case Enums.kDesktopSyncStateACKHeaderReceived /*57*/:
@@ -160,7 +158,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                 case Enums.kDesktopSyncStateACKReceived /*59*/:
                     processACK();
                     if (this.syncVersion != 1) {
-                        setCurrentState(30);
+                        setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
                         break;
                     } else {
                         sendUDID();
@@ -175,7 +173,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         }
     }
 
-    public void sendRecentChanges() {
+    protected void sendRecentChanges() {
         if (this.restoreFromServer) {
             writeData("DATA:RESTORE", 47);
         } else {
@@ -208,7 +206,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         return true;
     }
 
-    public boolean processRecentChanges() {
+    private boolean processRecentChanges() {
         try {
             FileInputStream fi = new FileInputStream(new File(SMMoney.getTempFile()).getAbsolutePath());
             XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
@@ -231,7 +229,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT) || localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION) || localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY) || localName.equals(PayeeClass.XML_RECORDTAG_PAYEE) || localName.equals(IDClass.XML_RECORDTAG_ID) || localName.equals(ClassNameClass.XML_RECORDTAG_CLASS) || localName.equals(FilterClass.XML_RECORDTAG_FILTER) || localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION) || localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
             this.currentElementValue = new String("<" + localName + ">");
         } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
-            this.accounts = new ArrayList();
+            this.accounts = new ArrayList<>();
         } else if (this.currentElementValue == null) {
             this.currentElementValue = new String("<" + localName + ">");
         } else {

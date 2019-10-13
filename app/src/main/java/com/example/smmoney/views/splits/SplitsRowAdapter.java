@@ -15,14 +15,15 @@ import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import java.util.ArrayList;
 
-public class SplitsRowAdapter extends BaseAdapter {
-    private ArrayList<SplitsClass> elements = new ArrayList();
+class SplitsRowAdapter extends BaseAdapter {
+    private ArrayList<SplitsClass> elements = new ArrayList<>();
     private Context mContext;
-    private LayoutInflater mInflater = LayoutInflater.from(this.mContext);
+    private LayoutInflater mInflater; //= LayoutInflater.from(this.mContext); TODO Same error are in transaction row adapter. Moving to constructor seems to fix...
     private TransactionClass transaction;
 
-    public SplitsRowAdapter(Context aContext, TransactionClass aTrans) {
+    SplitsRowAdapter(Context aContext, TransactionClass aTrans) {
         this.mContext = aContext;
+        mInflater = LayoutInflater.from(this.mContext);
         this.transaction = aTrans;
     }
 
@@ -50,7 +51,7 @@ public class SplitsRowAdapter extends BaseAdapter {
         SplitsRowHolder holder;
         SplitsClass split = this.elements.get(position);
         if (convertView == null) {
-            convertView = this.mInflater.inflate(R.layout.split_row, null);
+            convertView = this.mInflater.inflate(R.layout.split_row, parent, false);
             holder = new SplitsRowHolder();
             ((Activity) this.mContext).registerForContextMenu(convertView);
             convertView.setOnClickListener(getBtnClickListener());

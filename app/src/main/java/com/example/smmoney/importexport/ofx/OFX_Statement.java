@@ -7,23 +7,23 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 import java.util.List;
 
-public class OFX_Statement {
+class OFX_Statement {
     OFX_AccountClass account;
-    OFX_BalanceClass availableBalance;
-    GregorianCalendar dateEnd;
-    GregorianCalendar dateStart;
+    private OFX_BalanceClass availableBalance;
+    private GregorianCalendar dateEnd;
+    private GregorianCalendar dateStart;
     String defaultCurrency;
-    OFX_BalanceClass ledgerBalance;
+    private OFX_BalanceClass ledgerBalance;
     ArrayList ofxtransactions;
     OFX_Tags tags;
-    ArrayList transactions;
+    private ArrayList transactions;
 
-    public OFX_Statement(String var1, OFX_Tags var2) {
+    OFX_Statement(String var1, OFX_Tags var2) {
         this.tags = var2;
         this.parse(var1);
     }
 
-    public OFX_Statement(List var1, OFX_Tags var2) {
+    OFX_Statement(List var1, OFX_Tags var2) {
         this.tags = var2;
         this.transactions = new ArrayList(var1);
         if(var1.size() > 0) {
@@ -37,20 +37,20 @@ public class OFX_Statement {
 
     }
 
-    protected String availableBalanceMessage() {
+    String availableBalanceMessage() {
         return "";
     }
 
-    protected String bankAccountMessage() {
+    String bankAccountMessage() {
         String var1 = this.account.bankID;
         String var2 = this.account.accountID;
         String var3 = this.account.accountTypeAsString();
         return "\t\t\t\t" + this.tags.accountBegin + "\n" + "\t\t\t\t\t" + this.tags.bankIDBegin + var1 + this.tags.bankIDEnd + "\n" + "\t\t\t\t\t" + this.tags.accountIDBegin + var2 + this.tags.accountIDEnd + "\n" + "\t\t\t\t\t" + this.tags.accountTypeBegin + var3 + this.tags.accountTypeEnd + "\n" + "\t\t\t\t" + this.tags.accountEnd + "\n";
     }
 
-    protected String bankTransactionListMessage() {
+    String bankTransactionListMessage() {
         String var1 = OFXClass.dateAsString(new GregorianCalendar());
-        StringBuffer var2 = new StringBuffer(10000);
+        StringBuilder var2 = new StringBuilder(10000);
         Iterator var3 = this.transactions.iterator();
 
         while(var3.hasNext()) {
@@ -64,13 +64,13 @@ public class OFX_Statement {
         return "STATEMENT:\naccount=" + this.account + "\ndefaultCurrency=" + this.defaultCurrency + "\ndateStart=" + this.dateStart + "\ndateEnd=" + this.dateEnd + "\nledgerBalance=" + this.ledgerBalance + "\navailableBalance=" + this.availableBalance + "\ntransaction=" + this.transactions;
     }
 
-    protected String ledgerBalanceMessage() {
+    String ledgerBalanceMessage() {
         String var1 = OFXClass.amountAsOFXAmount(this.account.ledgerBalance);
         String var2 = OFXClass.dateAsString(new GregorianCalendar());
         return "\t\t\t\t" + this.tags.ledgerBalanceBegin + "\n" + "\t\t\t\t\t" + this.tags.balanceAmountBegin + var1 + this.tags.balanceAmountEnd + "\n" + "\t\t\t\t\t" + this.tags.dateAsOfBegin + var2 + this.tags.dateAsOfEnd + "\n" + "\t\t\t\t" + this.tags.ledgerBalanceEnd + "\n";
     }
 
-    protected void parse(String var1) {
+    void parse(String var1) {
         this.account = new OFX_AccountClass(OFXClass.stringBetween(var1, this.tags.accountBegin, this.tags.accountEnd, this.tags.lineEnding), this.tags);
         this.defaultCurrency = OFXClass.stringBetween(var1, this.tags.currencyBegin, this.tags.currencyEnd, this.tags.lineEnding);
         this.dateStart = OFXClass.dateFromString(OFXClass.stringBetween(var1, this.tags.dateStartBegin, this.tags.dateStartEnd, this.tags.lineEnding));
@@ -102,7 +102,7 @@ public class OFX_Statement {
 
     }
 
-    protected String statusMessage(String var1, String var2, String var3) {
+    String statusMessage(String var1, String var2, String var3) {
         return "\t\t\t" + this.tags.statusBegin + "\n" + "\t\t\t\t" + this.tags.statusCodeBegin + var2 + this.tags.statusCodeEnd + "\n" + "\t\t\t\t" + this.tags.statusSeverityBegin + var3 + this.tags.statusSeverityEnd + "\n" + "\t\t\t\t" + this.tags.statusMessageBegin + var1 + this.tags.statusMessageEnd + "\n" + "\t\t\t" + this.tags.statusEnd + "\n";
     }
 

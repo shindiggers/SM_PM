@@ -39,15 +39,15 @@ import java.util.Vector;
 public class ImportExportCSV {
     public String CSVPath;
     String accountNameBeingImported;
-    Context context;
+    private Context context;
     Boolean csvOld = Boolean.FALSE;
-    int currentLine;
-    FilterClass filter;
-    boolean importFileExists = false;
+    private int currentLine;
+    private FilterClass filter;
+    private boolean importFileExists = false;
     boolean invalidCSV;
-    ArrayList<String> lines = new ArrayList();
-    int numberOfLines;
-    int oldNumber = -1;
+    private ArrayList<String> lines = new ArrayList<>();
+    private int numberOfLines;
+    private int oldNumber = -1;
 
     public ImportExportCSV(Context context) {
         this.context = context;
@@ -94,7 +94,7 @@ public class ImportExportCSV {
         this.filter = newFilter;
     }
 
-    public void updateProgressBar() {
+    private void updateProgressBar() {
         if (this.numberOfLines > 30 && (this.currentLine * 100) / this.numberOfLines != this.oldNumber) {
             this.oldNumber = (this.currentLine * 100) / this.numberOfLines;
             ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 4, (this.currentLine * 100) / this.numberOfLines, 0));
@@ -206,6 +206,7 @@ public class ImportExportCSV {
         try {
             number = numberFormatter.parse(text);
         } catch (ParseException e) {
+            e.printStackTrace();
         }
         if (number == null && text.startsWith("-")) {
             try {
@@ -379,11 +380,12 @@ public class ImportExportCSV {
         try {
             Database.currentDB().endTransaction();
         } catch (IllegalStateException e) {
+            e.printStackTrace();
         }
         ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
     }
 
-    public static String[] parseLine(String line) {
+    private static String[] parseLine(String line) {
         if (line == null) {
             return null;
         }

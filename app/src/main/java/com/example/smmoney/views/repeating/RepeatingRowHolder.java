@@ -4,7 +4,6 @@ import android.content.Context;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
@@ -13,21 +12,22 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
+
 import java.util.GregorianCalendar;
 
-public class RepeatingRowHolder {
+class RepeatingRowHolder {
     public TextView account;
     public TextView amount;
     public TextView category;
     public TextView date;
-    public TextView frequency;
+    TextView frequency;
     public TextView payee;
-    public Button postButton;
-    public RepeatingTransactionClass repeatingTransaction;
+    Button postButton;
+    RepeatingTransactionClass repeatingTransaction;
     public LinearLayout therow;
     public TransactionClass transaction;
 
-    public void setTransaction(TransactionClass trans, Context context) {
+    void setTransaction(TransactionClass trans, Context context) {
         this.transaction = trans;
         this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         this.repeatingTransaction.hydrate();
@@ -39,7 +39,7 @@ public class RepeatingRowHolder {
             this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_grey));
         }
         // TODO The next line does not get correct date - date bears no obvious resemblence to next post date - to fix
-        this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2"));
+        this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
         // TODO This scaling causes date not to display - to fix
         //        scaleTextField(this.date);
         // TODO The next line seems to set frequency to "none" by default - to fix
@@ -47,7 +47,7 @@ public class RepeatingRowHolder {
 // TODO This scaling causes frequency not to display - to fix
         //        scaleTextField(this.frequency);
         if (this.transaction.isTransfer()) {
-            this.payee.setText(String.valueOf(this.transaction.getPayee()) + " <" + this.transaction.getTransferToAccount() + ">");
+            this.payee.setText(this.transaction.getPayee() + " <" + this.transaction.getTransferToAccount() + ">");
         } else {
             this.payee.setText(this.transaction.getPayee());
         }

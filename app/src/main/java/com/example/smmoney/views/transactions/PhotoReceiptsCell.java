@@ -21,17 +21,16 @@ import com.example.smmoney.SMMoney;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class PhotoReceiptsCell extends View {
-    int PHOTO_HEIGHT = 40;
-    int PHOTO_SPACE_H = 10;
-    int PHOTO_SPACE_W = -1;
-    int PHOTO_WIDTH = 40;
-    ArrayList<Bitmap> bitmaps = new ArrayList();
-    Context context;
-    ArrayList<String> imageNames = new ArrayList();
-    int itemsPerRow = 3;
+    private int PHOTO_HEIGHT = 40;
+    private int PHOTO_SPACE_H = 10;
+    private int PHOTO_SPACE_W = -1;
+    private int PHOTO_WIDTH = 40;
+    private ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    private Context context;
+    private ArrayList<String> imageNames = new ArrayList<>();
+    private int itemsPerRow = 3;
 
     public PhotoReceiptsCell(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -58,6 +57,7 @@ public class PhotoReceiptsCell extends View {
                             this.imageNames.add(name);
                         }
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
             }
@@ -68,9 +68,8 @@ public class PhotoReceiptsCell extends View {
         Paint paint = new Paint();
         paint.setFilterBitmap(true);
         int i = 0;
-        Iterator it = this.bitmaps.iterator();
-        while (it.hasNext()) {
-            canvas.drawBitmap((Bitmap) it.next(), null, new Rect(this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W)), this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H)), (this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W))) + this.PHOTO_WIDTH, (this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H))) + this.PHOTO_HEIGHT), paint);
+        for (Bitmap bitmap : this.bitmaps) {
+            canvas.drawBitmap(bitmap, null, new Rect(this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W)), this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H)), (this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W))) + this.PHOTO_WIDTH, (this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H))) + this.PHOTO_HEIGHT), paint);
             i++;
         }
     }
@@ -81,9 +80,7 @@ public class PhotoReceiptsCell extends View {
             int x = (int) event.getX();
             int y = (int) event.getY();
             int i = 0;
-            Iterator it = this.bitmaps.iterator();
-            while (it.hasNext()) {
-                Bitmap bitmap = (Bitmap) it.next();
+            for (Bitmap bitmap : this.bitmaps) {
                 if (new Rect(this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W)), this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H)), (this.PHOTO_SPACE_W + ((i % this.itemsPerRow) * (this.PHOTO_WIDTH + this.PHOTO_SPACE_W))) + this.PHOTO_WIDTH, (this.PHOTO_SPACE_H + ((i / this.itemsPerRow) * (this.PHOTO_HEIGHT + this.PHOTO_SPACE_H))) + this.PHOTO_HEIGHT).contains(x, y)) {
                     Intent intent = new Intent(this.context, PhotoReceiptOptionsActivity.class);
                     intent.putExtra("imageName", this.imageNames.get(i));

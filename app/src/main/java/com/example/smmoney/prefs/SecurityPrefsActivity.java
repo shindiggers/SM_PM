@@ -22,12 +22,12 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     static final int SECURITY_RESULT_DONTPROMPT = 1;
     static final int SECURITY_RESULT_PROMPT = 0;
     boolean confirmChanged = false;
-    EditTextPreference confirmPref;
-    Context context;
-    ListPreference delayListPref;
+    private EditTextPreference confirmPref;
+    private Context context;
+    private ListPreference delayListPref;
     boolean passwordChanged = false;
-    EditTextPreference passwordPref;
-    String storedPassword;
+    private EditTextPreference passwordPref;
+    private String storedPassword;
 
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
@@ -45,7 +45,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         this.delayListPref.setSummary(this.delayListPref.getEntry());
     }
 
-    protected void checkPassword() {
+    private void checkPassword() {
         if (this.passwordPref.getText() == null || this.confirmPref.getText() == null || this.passwordPref.getText().equals(this.confirmPref.getText())) {
             clearToPrefs();
             return;
@@ -71,7 +71,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         startActivity(i);
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         String[] delays = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_PASSWORDDELAY1MIN, Locales.kLOC_PASSWORDDELAY5MINS, Locales.kLOC_PASSWORDDELAY10MINS, Locales.kLOC_PASSWORDDELAY15MINS, Locales.kLOC_PASSWORDDELAY30MINS, Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_PASSWORDDELAY24HOURS};
         this.delayListPref = (ListPreference) findPreference(Prefs.PASSWORD_DELAY);
         this.delayListPref.setEntries(delays);
@@ -93,7 +93,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         return true;
     }
 
-    public OnPreferenceChangeListener getOnChangeListener() {
+    private OnPreferenceChangeListener getOnChangeListener() {
         return new OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);

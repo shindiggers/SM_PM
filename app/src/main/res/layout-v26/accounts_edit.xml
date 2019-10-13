@@ -97,6 +97,8 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
+                    android:autofillHints="@string/accounts_edit_account_name"
+                    android:importantForAutofill="no"
                     android:hint="@string/accounts_edit_account_name"
                     android:nextFocusDown="@+id/totalworthcb"
                     android:singleLine="true"

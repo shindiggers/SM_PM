@@ -47,18 +47,18 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private final int CMENU_DELETE = 1;
     private final int DIALOG_BUDGET = 1;
     private final int DIALOG_PICKDATE = 2;
-    View addBudgetCell;
-    View budgetCell;
-    EditText budgetEditText;
-    TextView budgetTypeTextView;
-    CategoryClass category;
-    ArrayList<CategoryBudgetClass> categoryBudgetItems;
-    EditText categoryEditText;
-    CurrencyKeyboard currencyKeyboard;
-    ArrayList<CategoryBudgetClass> deletedCategoryBudgetItems;
-    Button enableVariableBudgetCell;
-    View includeSubcategoriesCell;
-    CheckBox includeSubcategoriesCheckBox;
+    private View addBudgetCell;
+    private View budgetCell;
+    private EditText budgetEditText;
+    private TextView budgetTypeTextView;
+    private CategoryClass category;
+    private ArrayList<CategoryBudgetClass> categoryBudgetItems;
+    private EditText categoryEditText;
+    private CurrencyKeyboard currencyKeyboard;
+    private ArrayList<CategoryBudgetClass> deletedCategoryBudgetItems;
+    private Button enableVariableBudgetCell;
+    private View includeSubcategoriesCell;
+    private CheckBox includeSubcategoriesCheckBox;
     private OnDateSetListener mDateSetListener = new OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
@@ -70,14 +70,14 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             BudgetsEditActivity.this.reloadData();
         }
     };
-    String oldCategory;
-    TextView originalHistoryBudgetTextView;
-    View originalHistoryCell;
-    TextView originalHistoryDateTextView;
-    ViewGroup outterView;
-    TextView periodTextView;
-    CheckBox rolloverCheckBox;
-    CategoryBudgetClass selectedBudgetItem;
+    private String oldCategory;
+    private TextView originalHistoryBudgetTextView;
+    private View originalHistoryCell;
+    private TextView originalHistoryDateTextView;
+    private ViewGroup outterView;
+    private TextView periodTextView;
+    private CheckBox rolloverCheckBox;
+    private CategoryBudgetClass selectedBudgetItem;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,7 +85,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.oldCategory = this.category.getCategory();
         setContentView(R.layout.budget_edit);
         this.categoryBudgetItems = CategoryBudgetClass.budgetItemsForCategory(this.category.getCategory());
-        this.deletedCategoryBudgetItems = new ArrayList();
+        this.deletedCategoryBudgetItems = new ArrayList<>();
         setupButtons();
         loadCells();
         setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
@@ -98,7 +98,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     }
 
     private void setupButtons() {
-        ArrayList<View> theViews = new ArrayList();
+        ArrayList<View> theViews = new ArrayList<>();
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((TextView) findViewById(R.id.title_text_view)).setTextColor(PocketMoneyThemes.toolbarTextColor());
         findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
@@ -222,7 +222,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         });
     }
 
-    public void reloadData() {
+    private void reloadData() {
         this.outterView.removeViews(9, (this.outterView.getChildCount() - 9) - 2);
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         Collections.sort(this.categoryBudgetItems, new Comparator<CategoryBudgetClass>() {
@@ -435,6 +435,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                     getCells();
                 }
             } catch (NullPointerException e) {
+                e.printStackTrace();
             }
         }
     }

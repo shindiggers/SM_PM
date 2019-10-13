@@ -15,14 +15,13 @@ import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.RepeatingTransactionClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class LocalNotificationAlertActivitiy extends Activity {
-    Context context;
-    GregorianCalendar date;
+    private Context context;
+    private GregorianCalendar date;
     private OnClickListener mainOkayListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
@@ -41,38 +40,35 @@ public class LocalNotificationAlertActivitiy extends Activity {
     private OnClickListener postMenuListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             GregorianCalendar gregorianCalendar;
-            switch (which) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
-                    gregorianCalendar = (GregorianCalendar) LocalNotificationAlertActivitiy.this.date.clone();
-                    return;
-                default:
-                    gregorianCalendar = new GregorianCalendar();
-                    return;
+            if (which == PocketMoneyThemes.kThemeBlack) { /*0*/
+                gregorianCalendar = (GregorianCalendar) LocalNotificationAlertActivitiy.this.date.clone();
+                return;
             }
+            gregorianCalendar = new GregorianCalendar();
         }
     };
-    RepeatingTransactionClass repeatingTransaction;
+    private RepeatingTransactionClass repeatingTransaction;
     private OnClickListener snoozeMenuListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             String transferToAccount;
             int hours = 0;
             switch (which) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case 0 /*0*/:
                     hours = 1;
                     break;
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case 1 /*1*/:
                     hours = 2;
                     break;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case 2 /*2*/:
                     hours = 4;
                     break;
-                case SplitsActivity.REQUEST_EDIT /*3*/:
+                case 3 /*3*/:
                     hours = 8;
                     break;
-                case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                case 4 /*4*/:
                     hours = 24;
                     break;
-                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                case 5 /*5*/:
                     hours = 48;
                     break;
             }

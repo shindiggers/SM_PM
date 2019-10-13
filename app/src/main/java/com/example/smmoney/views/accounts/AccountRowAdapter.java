@@ -32,7 +32,7 @@ import com.example.smmoney.views.transactions.TransactionsActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AccountRowAdapter extends BaseAdapter {
+class AccountRowAdapter extends BaseAdapter {
     private int NUMBER_OF_ACCOUNT_GROUPS = 7;
     private View allTransView;
     private Object customRowTag = new Object();

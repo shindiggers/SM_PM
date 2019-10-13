@@ -11,20 +11,30 @@ import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
 import java.text.DecimalFormat;
 
-public class ReportsRowHolder {
-    private final int PAYEE_NAME_LENGTH = 20;
+class ReportsRowHolder {
     public TextView amount;
     public CheckBox checked;
-    public TextView expense;
+    TextView expense;
     private FilterClass filter;
-    public ReportItem report;
-    public RelativeLayout theRow;
+    ReportItem report;
+    RelativeLayout theRow;
 
-    public void setReport(ReportItem aReport) {
+    void setReport(ReportItem aReport) {
         this.report = null;
         this.report = aReport;
-        this.expense.setText(this.report.expense.length() > 20 ? this.report.expense.substring(0, 19) : this.report.expense);
-        this.amount.setText(amountString() + " " + "\u00b7" + " " + percentString(this.report.percent) + "% " + "\u00b7" + " " + this.report.count);
+        int PAYEE_NAME_LENGTH = 20;
+        this.expense.setText(this.report.expense.length() > PAYEE_NAME_LENGTH ? this.report.expense.substring(0, 19) : this.report.expense);
+        //noinspection StringBufferReplaceableByString
+        this.amount.setText(new StringBuilder()
+                .append(amountString())
+                .append(" ")
+                .append("\u00b7") // unicode "middle dot"
+                .append(" ")
+                .append(percentString(this.report.percent))
+                .append("% ")
+                .append("\u00b7")
+                .append(" ")
+                .append(this.report.count).toString());
         this.expense.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.amount.setTextColor(aReport.color);
     }

@@ -1,5 +1,6 @@
 package com.example.smmoney.views.reports;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.app.ProgressDialog;
@@ -20,8 +21,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.example.smmoney.SMMoney;
+
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -34,14 +37,16 @@ import com.example.smmoney.views.charts.items.ReportChartItem;
 import com.example.smmoney.views.charts.views.ChartBarView;
 import com.example.smmoney.views.charts.views.ChartPieView;
 import com.example.smmoney.views.charts.views.ChartView;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
+import java.util.Objects;
 
 public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate {
     public static boolean processData = false;
     private final int MENU_PERIOD = 1;
     private final int MENU_VIEW = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int MSG_PROGRESS_FINISH = 0;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int MSG_PROGRESS_UPDATE = 1;
     private ReportsRowAdapter adapter;
     private TextView balanceAmountView;
@@ -49,10 +54,11 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private ChartBarView barChartView;
     private ChartView chartView;
     private ReportDataSource datasource;
+    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
             switch (msg.what) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case MSG_PROGRESS_FINISH /*0*/:
                     if (ReportsActivity.this.progressDialog != null) {
                         if (ReportsActivity.this.progressDialog.isShowing()) {
                             ReportsActivity.this.progressDialog.dismiss();
@@ -61,7 +67,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
                         return;
                     }
                     return;
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case MSG_PROGRESS_UPDATE /*1*/:
                     if (ReportsActivity.this.progressDialog == null || !ReportsActivity.this.progressDialog.isShowing()) {
                         ReportsActivity.this.progressDialog = new ProgressDialog(ReportsActivity.this);
                         ReportsActivity.this.progressDialog.setProgressStyle(1);
@@ -85,7 +91,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
                     }
                     return;
                 default:
-                    return;
             }
         }
     };
@@ -94,6 +99,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private ChartPieView pieChartView;
     private View previousPeriodView;
     private ProgressDialog progressDialog = null;
+    @SuppressWarnings("unused")
     private ProgressDialog progressSpinnerDialog;
     private ListView theList;
     private TextView titleTextView;
@@ -101,7 +107,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(26, "ReportsActivity:DoNotDimScreen");
+        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "ReportsActivity:DoNotDimScreen");
         this.datasource = PMGlobal.datasource;
         this.datasource.currentPeriod = 0;
         setContentView(R.layout.reports);
@@ -116,7 +122,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
 
     public void onResume() {
         super.onResume();
-        this.wakeLock.acquire();
+        this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
         this.datasource.data = null;
         reloadData();
     }
@@ -125,7 +131,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.titleTextView.setText(title);
     }
 
-    public void setupView() {
+    private void setupView() {
         this.theList = findViewById(R.id.thelist);
         this.adapter = new ReportsRowAdapter(this);
         this.theList.setAdapter(this.adapter);
@@ -135,7 +141,8 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.periodButton = findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                ReportsActivity.this.showDialog(1);
+                //noinspection deprecation
+                ReportsActivity.this.showDialog(MENU_PERIOD);
             }
         });
         this.previousPeriodView = findViewById(R.id.lefttarrow);
@@ -183,17 +190,17 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
 
     private void selectChartView() {
         switch (Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE)) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kReportsChartTypeNone /*0*/:
                 this.chartView = null;
                 this.pieChartView.setVisibility(View.GONE);
                 this.barChartView.setVisibility(View.GONE);
                 break;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kReportsChartTypePie /*1*/:
                 this.chartView = this.pieChartView;
                 this.pieChartView.setVisibility(View.VISIBLE);
                 this.barChartView.setVisibility(View.GONE);
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kReportsChartTypeBar /*2*/:
                 this.chartView = this.barChartView;
                 this.pieChartView.setVisibility(View.GONE);
                 this.barChartView.setVisibility(View.VISIBLE);
@@ -204,6 +211,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
     }
 
+    @SuppressLint("StaticFieldLeak")
     public void reloadData() {
         selectChartView();
         this.periodButton.setText(this.datasource.rangeOfPeriodAsString());
@@ -226,14 +234,14 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
             protected void onPostExecute(Object result) {
                 if (ReportsActivity.processData) {
                     ReportsActivity.this.reloadDataCallback();
-                    ReportsActivity.this.chartView.reloadData(false);
+                    //ReportsActivity.this.chartView.reloadData(false); TODO This line causes null pointer exception. Same as trying to load graph in AccountsActivity. To fix
                 }
                 ReportsActivity.this.finishProgressBar();
             }
         }.execute();
     }
 
-    public void reloadDataCallback() {
+    private void reloadDataCallback() {
         this.adapter.setElements(this.datasource.data);
         loadBalanceBar();
         if (this.chartView != null) {
@@ -264,23 +272,23 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
             public void onClick(DialogInterface dialog, int item) {
                 int periodType;
                 switch (item) {
-                    case PocketMoneyThemes.kThemeBlack /*0*/:
-                        periodType = 0;
+                    case Enums.kReportPeriodOneMonth /*0*/:
+                        periodType = Enums.kReportPeriodOneMonth;
                         break;
-                    case SplitsActivity.RESULT_CHANGED /*1*/:
-                        periodType = 1;
+                    case Enums.kReportPeriodTwoMonths /*1*/:
+                        periodType = Enums.kReportPeriodTwoMonths;
                         break;
-                    case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                        periodType = 2;
+                    case Enums.kReportPeriodThreeMonths /*2*/:
+                        periodType = Enums.kReportPeriodThreeMonths;
                         break;
-                    case SplitsActivity.REQUEST_EDIT /*3*/:
-                        periodType = 3;
+                    case Enums.kReportPeriodSixMonths /*3*/:
+                        periodType = Enums.kReportPeriodSixMonths;
                         break;
-                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                        periodType = 4;
+                    case Enums.kReportPeriodOneYear /*4*/:
+                        periodType = Enums.kReportPeriodOneYear;
                         break;
                     default:
-                        periodType = 5;
+                        periodType = Enums.kReportPeriodAll /*5*/;
                         break;
                 }
                 Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
@@ -303,18 +311,16 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, 1, 0, "View Options").setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_VIEW/*1*/, 0, "View Options").setIcon(R.drawable.ic_arrow_drop_down_circle);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                startActivity(new Intent(this, ReportsViewOptionsActivity.class));
-                return true;
-            default:
-                return false;
+        if (item.getItemId() == MENU_VIEW) {
+            startActivity(new Intent(this, ReportsViewOptionsActivity.class));
+            return true;
         }
+        return false;
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -6,9 +6,9 @@ import java.net.URLDecoder;
 import java.net.URLEncoder;
 
 public class iReceiptClass {
-    public String callbackURL;
-    public Uri data;
-    public String showUI;
+    private String callbackURL;
+    private Uri data;
+    private String showUI;
     public TransactionClass transaction;
 
     public iReceiptClass(TransactionClass transaction) {

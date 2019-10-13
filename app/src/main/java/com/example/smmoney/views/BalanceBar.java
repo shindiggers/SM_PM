@@ -9,6 +9,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.example.smmoney.R;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -19,14 +20,14 @@ public class BalanceBar extends FrameLayout {
     public TextView balanceTypeTextView;
     public LinearLayout balanceView;
     private FilterClass filter;
-    LinearLayout innerLinearLayout;
+    private LinearLayout innerLinearLayout;
     public View nextButton;
     public View previousButton;
     public ProgressBar progressBar;
     public TextView secondBalanceAmountTextView;
     public TextView secondBalanceTypeTextView;
-    LinearLayout secondInnerLinearLayout;
-    public ImageView seperatorImage;
+    private LinearLayout secondInnerLinearLayout;
+    private ImageView seperatorImage;
 
     public BalanceBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -50,7 +51,7 @@ public class BalanceBar extends FrameLayout {
         LinearLayout.LayoutParams innerllp = new LinearLayout.LayoutParams(-1, -1, 1.0f);
         lp = new LayoutParams(-2, -2, 17);
         this.balanceTypeTextView = new TextView(context);
-        this.balanceTypeTextView.setText("Current Balance");
+        this.balanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_CURRENT);
         this.balanceTypeTextView.setGravity(17);
         this.balanceAmountTextView = new TextView(context);
         this.balanceAmountTextView.setText("0.00");
@@ -121,15 +122,15 @@ public class BalanceBar extends FrameLayout {
 
     public int nextBalanceTypeAfter(int type) {
         switch (type) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                return 3;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return (this.filter == null || !this.filter.customFilter()) ? 2 : 5;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                return 0;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-                return 4;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBalanceTypeFuture /*0*/:
+                return Enums.kBalanceTypeAvailableFunds/*3*/;
+            case Enums.kBalanceTypeCleared /*1*/:
+                return (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeCurrent/*2*/ : Enums.kBalanceTypeFiltered/*5*/;
+            case Enums.kBalanceTypeCurrent /*2*/:
+                return Enums.kBalanceTypeFuture /*0*/;
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
+                return Enums.kBalanceTypeAvailableCredit /*4*/;
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
                 return 1;
             default:
                 return 2;

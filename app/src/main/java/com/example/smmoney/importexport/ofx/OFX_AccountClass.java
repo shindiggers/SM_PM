@@ -2,17 +2,17 @@ package com.example.smmoney.importexport.ofx;
 
 import com.example.smmoney.records.AccountClass;
 
-public class OFX_AccountClass {
+class OFX_AccountClass {
     // $FF: synthetic field
     private static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType;
     String accountID;
     OFX_AccountType accountType;
     String bankID;
     double ledgerBalance;
-    OFX_Tags tags;
+    private OFX_Tags tags;
 
     // $FF: synthetic method
-    static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType() {
+    private static int[] $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType() {
         int[] var0 = $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType;
         if(var0 != null) {
             return var0;
@@ -22,41 +22,49 @@ public class OFX_AccountClass {
             try {
                 var1[OFX_AccountType.OFX_CHECKING.ordinal()] = 1;
             } catch (NoSuchFieldError var17) {
+                var17.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_CMA.ordinal()] = 5;
             } catch (NoSuchFieldError var16) {
+                var16.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_CREDITCARD.ordinal()] = 6;
             } catch (NoSuchFieldError var15) {
+                var15.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_CREDITLINE.ordinal()] = 4;
             } catch (NoSuchFieldError var14) {
+                var14.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_INVESTMENT.ordinal()] = 7;
             } catch (NoSuchFieldError var13) {
+                var13.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_MONEYMRKT.ordinal()] = 3;
             } catch (NoSuchFieldError var12) {
+                var12.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_SAVINGS.ordinal()] = 2;
             } catch (NoSuchFieldError var11) {
+                var11.printStackTrace();
             }
 
             try {
                 var1[OFX_AccountType.OFX_UNKOWN.ordinal()] = 8;
             } catch (NoSuchFieldError var10) {
+                var10.printStackTrace();
             }
 
             $SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType = var1;
@@ -64,7 +72,7 @@ public class OFX_AccountClass {
         }
     }
 
-    public OFX_AccountClass(AccountClass var1) {
+    OFX_AccountClass(AccountClass var1) {
         this.bankID = var1.getRoutingNumber();
         if(this.bankID == null) {
             this.bankID = "";
@@ -83,12 +91,12 @@ public class OFX_AccountClass {
 
     }
 
-    public OFX_AccountClass(String var1, OFX_Tags var2) {
+    OFX_AccountClass(String var1, OFX_Tags var2) {
         this.tags = var2;
         this.parse(var1);
     }
 
-    public String accountTypeAsString() {
+    String accountTypeAsString() {
         switch($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
             case 1:
                 return "CHECKING";
@@ -113,7 +121,7 @@ public class OFX_AccountClass {
         return "(bankID=" + this.bankID + "\taccountID=" + this.accountID + "\taccountType" + this.accountTypeAsString() + ")";
     }
 
-    public int ofxAccountTypeAsPocketMoneyAccountType() {
+    int ofxAccountTypeAsPocketMoneyAccountType() {
         switch($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
             case 1:
                 return 0;
@@ -134,13 +142,13 @@ public class OFX_AccountClass {
         }
     }
 
-    public void parse(String var1) {
+    private void parse(String var1) {
         this.bankID = OFXClass.stringBetween(var1, this.tags.bankIDBegin, this.tags.bankIDEnd, this.tags.lineEnding);
         this.accountID = OFXClass.stringBetween(var1, this.tags.accountIDBegin, this.tags.accountIDEnd, this.tags.lineEnding);
         this.setAccountTypeFromString(OFXClass.stringBetween(var1, this.tags.accountTypeBegin, this.tags.accountTypeEnd, this.tags.lineEnding));
     }
 
-    public OFX_AccountType pmAccountTypeToOFXType(int var1) {
+    private OFX_AccountType pmAccountTypeToOFXType(int var1) {
         switch(var1) {
             case 0:
                 return OFX_AccountType.OFX_CHECKING;
@@ -164,7 +172,7 @@ public class OFX_AccountClass {
         }
     }
 
-    public void setAccountTypeFromString(String var1) {
+    private void setAccountTypeFromString(String var1) {
         if("CHECKING".equalsIgnoreCase(var1)) {
             this.accountType = OFX_AccountType.OFX_CHECKING;
         } else if("SAVINGS".equalsIgnoreCase(var1)) {

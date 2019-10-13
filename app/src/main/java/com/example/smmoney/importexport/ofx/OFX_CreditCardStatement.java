@@ -4,11 +4,11 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class OFX_CreditCardStatement extends OFX_Statement {
-    public OFX_CreditCardStatement(String var1, OFX_Tags var2) {
+    OFX_CreditCardStatement(String var1, OFX_Tags var2) {
         super(var1, var2);
     }
 
-    public OFX_CreditCardStatement(List var1, OFX_Tags var2) {
+    OFX_CreditCardStatement(List var1, OFX_Tags var2) {
         super(var1, var2);
     }
 

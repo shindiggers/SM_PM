@@ -20,14 +20,16 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.List;
+import java.util.Objects;
 
 public class CategoryLookupListActivity extends PocketMoneyActivity {
     private final int CMENU_DELETE = 3;
@@ -35,14 +37,14 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
     private final int CMENU_SUBCATEGORY = 4;
     private final int TYPE_ALL = 1;
     private final int TYPE_PAYEE = 2;
-    CatPayeeRowAdapter adapter;
-    int currentType = 2;
-    boolean isCategoryLookup = true;
-    ListView listView;
-    LayoutInflater mInflater;
-    String payee;
-    boolean progUpdate = false;
-    TextView titleTextView;
+    private CatPayeeRowAdapter adapter;
+    private int currentType = 2;
+    private boolean isCategoryLookup = true;
+    private ListView listView;
+    private LayoutInflater mInflater;
+    private String payee;
+    private boolean progUpdate = false;
+    private TextView titleTextView;
 
     private class CatPayeeRowAdapter extends BaseAdapter {
         List<String> allCategories;
@@ -56,11 +58,11 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         };
         List<String> payeeCategories;
 
-        public CatPayeeRowAdapter() {
+        CatPayeeRowAdapter() {
             reloadData();
         }
 
-        public void reloadData() {
+        void reloadData() {
             if (CategoryLookupListActivity.this.isCategoryLookup) {
                 this.payeeCategories = CategoryClass.allCategoryNamesInDatabaseForPayee(CategoryLookupListActivity.this.payee);
                 this.allCategories = CategoryClass.allCategoryNamesInDatabase();
@@ -72,9 +74,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
         public int getCount() {
             switch (CategoryLookupListActivity.this.currentType) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case TYPE_ALL /*1*/:
                     return this.allCategories.size();
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case TYPE_PAYEE /*2*/:
                     return this.payeeCategories.size();
                 default:
                     return 0;
@@ -83,9 +85,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
         public String getItem(int arg0) {
             switch (CategoryLookupListActivity.this.currentType) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case TYPE_ALL /*1*/:
                     return this.allCategories.get(arg0);
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case TYPE_PAYEE /*2*/:
                     return this.payeeCategories.get(arg0);
                 default:
                     return "";
@@ -111,7 +113,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.payee = getIntent().getExtras().getString("payee");
+        this.payee = Objects.requireNonNull(getIntent().getExtras()).getString("payee");
         if (this.payee == null) {
             this.payee = getIntent().getExtras().getString("category");
             this.isCategoryLookup = false;
@@ -171,10 +173,10 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, 3, 0, Locales.kLOC_GENERAL_DELETE);
-        menu.add(0, 1, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
+        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
+        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
         if (this.isCategoryLookup) {
-            menu.add(0, 4, 0, Locales.kLOC_ADDSUBCATEGORY);
+            menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
         }
     }
 
@@ -184,8 +186,8 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         Builder alert;
         final EditText input;
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                int theItem = this.currentType;
+            case CMENU_EDIT /*1*/:
+                // int theItem = this.currentType; ** Coded out as inspection showed theItem was never used
                 originalString = this.adapter.getItem(info.position);
                 alert = new Builder(this);
                 input = new EditText(this);
@@ -199,13 +201,12 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                         b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                         b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
                         CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
-                        final String str = originalString;
                         b.setPositiveButton(charSequence, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (CategoryLookupListActivity.this.isCategoryLookup) {
-                                    CategoryClass.renameFromToInDatabase(str, value, false);
+                                    CategoryClass.renameFromToInDatabase(originalString, value, false);
                                 } else {
-                                    PayeeClass.renameFromToInDatabase(str, value, false);
+                                    PayeeClass.renameFromToInDatabase(originalString, value, false);
                                 }
                                 CategoryLookupListActivity.this.reloadData();
                             }
@@ -215,9 +216,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                         b.setNegativeButton(charSequence, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int which) {
                                 if (CategoryLookupListActivity.this.isCategoryLookup) {
-                                    CategoryClass.renameFromToInDatabase(str, value, true);
+                                    CategoryClass.renameFromToInDatabase(originalString, value, true);
                                 } else {
-                                    PayeeClass.renameFromToInDatabase(str, value, true);
+                                    PayeeClass.renameFromToInDatabase(originalString, value, true);
                                 }
                                 CategoryLookupListActivity.this.reloadData();
                             }
@@ -230,9 +231,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                     }
                 });
                 alert.show();
-                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(input, 1);
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
                 return true;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case CMENU_DELETE /*3*/:
                 originalString = this.adapter.getItem(info.position);
                 if (this.isCategoryLookup) {
                     new CategoryClass(CategoryClass.idForCategory(originalString)).deleteFromDatabase();
@@ -241,7 +242,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 }
                 reloadData();
                 return true;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case CMENU_SUBCATEGORY /*4*/:
                 originalString = this.adapter.getItem(info.position);
                 alert = new Builder(this);
                 input = new EditText(this);
@@ -259,7 +260,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                     }
                 });
                 alert.show();
-                ((InputMethodManager) getSystemService(INPUT_METHOD_SERVICE)).showSoftInput(input, 1);
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
                 return true;
             default:
                 return super.onContextItemSelected(item);

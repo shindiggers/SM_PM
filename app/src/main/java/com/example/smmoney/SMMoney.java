@@ -72,22 +72,22 @@ public class SMMoney extends Application {
 
         public static String[] getExternalMounts () {
             try {
-                ArrayList<String> out = new ArrayList();
+                ArrayList<String> out = new ArrayList<>();
                 String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
-                String s = "";
+                StringBuilder s = new StringBuilder();
                 try {
                     Process process = new ProcessBuilder().command("mount").redirectErrorStream(true).start();
                     process.waitFor();
                     InputStream is = process.getInputStream();
                     byte[] buffer = new byte[1024];
                     while (is.read(buffer) != -1) {
-                        s = new StringBuilder(String.valueOf(s)).append(new String(buffer)).toString();
+                        s.append(new String(buffer));
                     }
                     is.close();
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                for (String line : s.split("\n")) {
+                for (String line : s.toString().split("\n")) {
                     if (!line.toLowerCase(Locale.US).contains("asec") && line.matches(reg)) {
                         for (String part : line.split(" ")) {
                             if (part.startsWith("/") && !part.toLowerCase(Locale.US).contains("vold")) {
@@ -111,15 +111,15 @@ public class SMMoney extends Application {
         }
 
         public static String getTempFile () {
-            String dir = "";
+            String dir;
             dir = Environment.getDataDirectory() + "/data/" + getAppContext().getPackageName() + "/";
             new File(dir).mkdirs();
             try {
-                new File(new StringBuilder(String.valueOf(dir)).append("temp.data").toString()).createNewFile();
+                new File(dir + "temp.data").createNewFile();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return new StringBuilder(String.valueOf(dir)).append("temp.data").toString();
+            return dir + "temp.data";
         }
 
         public static boolean IsExternalStorageWritable () {

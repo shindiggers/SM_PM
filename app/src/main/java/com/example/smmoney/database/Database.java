@@ -34,46 +34,46 @@ public class Database {
     public static final String CLASSES_TABLE_NAME = "classes";
     public static final String DATABASESYNCLIST_TABLE_NAME = "databaseSyncList";
     private static final String DATABASE_NAME = "SMMoneyDB.sql";
-    public static final int DATABASE_VERSION_1 = 1;
-    public static final int DATABASE_VERSION_10 = 10;
-    public static final int DATABASE_VERSION_11 = 11;
-    public static final int DATABASE_VERSION_12 = 12;
-    public static final int DATABASE_VERSION_13 = 13;
-    public static final int DATABASE_VERSION_14 = 14;
-    public static final int DATABASE_VERSION_15 = 15;
-    public static final int DATABASE_VERSION_16 = 16;
-    public static final int DATABASE_VERSION_17 = 17;
-    public static final int DATABASE_VERSION_18 = 18;
-    public static final int DATABASE_VERSION_19 = 19;
-    public static final int DATABASE_VERSION_2 = 2;
-    public static final int DATABASE_VERSION_20 = 20;
-    public static final int DATABASE_VERSION_21 = 21;
-    public static final int DATABASE_VERSION_22 = 22;
-    public static final int DATABASE_VERSION_23 = 23;
-    public static final int DATABASE_VERSION_24 = 24;
-    public static final int DATABASE_VERSION_25 = 25;
-    public static final int DATABASE_VERSION_26 = 26;
-    public static final int DATABASE_VERSION_27 = 27;
-    public static final int DATABASE_VERSION_28 = 28;
-    public static final int DATABASE_VERSION_29 = 29;
-    public static final int DATABASE_VERSION_3 = 3;
-    public static final int DATABASE_VERSION_30 = 30;
-    public static final int DATABASE_VERSION_31 = 31;
-    public static final int DATABASE_VERSION_32 = 32;
-    public static final int DATABASE_VERSION_33 = 33;
+    private static final int DATABASE_VERSION_1 = 1;
+    private static final int DATABASE_VERSION_10 = 10;
+    private static final int DATABASE_VERSION_11 = 11;
+    private static final int DATABASE_VERSION_12 = 12;
+    private static final int DATABASE_VERSION_13 = 13;
+    private static final int DATABASE_VERSION_14 = 14;
+    private static final int DATABASE_VERSION_15 = 15;
+    private static final int DATABASE_VERSION_16 = 16;
+    private static final int DATABASE_VERSION_17 = 17;
+    private static final int DATABASE_VERSION_18 = 18;
+    private static final int DATABASE_VERSION_19 = 19;
+    private static final int DATABASE_VERSION_2 = 2;
+    private static final int DATABASE_VERSION_20 = 20;
+    private static final int DATABASE_VERSION_21 = 21;
+    private static final int DATABASE_VERSION_22 = 22;
+    private static final int DATABASE_VERSION_23 = 23;
+    private static final int DATABASE_VERSION_24 = 24;
+    private static final int DATABASE_VERSION_25 = 25;
+    private static final int DATABASE_VERSION_26 = 26;
+    private static final int DATABASE_VERSION_27 = 27;
+    private static final int DATABASE_VERSION_28 = 28;
+    private static final int DATABASE_VERSION_29 = 29;
+    private static final int DATABASE_VERSION_3 = 3;
+    private static final int DATABASE_VERSION_30 = 30;
+    private static final int DATABASE_VERSION_31 = 31;
+    private static final int DATABASE_VERSION_32 = 32;
+    private static final int DATABASE_VERSION_33 = 33;
     public static final int DATABASE_VERSION_34 = 34;
-    public static final int DATABASE_VERSION_4 = 4;
-    public static final int DATABASE_VERSION_5 = 5;
-    public static final int DATABASE_VERSION_6 = 6;
-    public static final int DATABASE_VERSION_7 = 7;
-    public static final int DATABASE_VERSION_8 = 8;
-    public static final int DATABASE_VERSION_9 = 9;
-    public static final int DATABASE_VERSION_CURRENT = 34;
+    private static final int DATABASE_VERSION_4 = 4;
+    private static final int DATABASE_VERSION_5 = 5;
+    private static final int DATABASE_VERSION_6 = 6;
+    private static final int DATABASE_VERSION_7 = 7;
+    private static final int DATABASE_VERSION_8 = 8;
+    private static final int DATABASE_VERSION_9 = 9;
+    private static final int DATABASE_VERSION_CURRENT = 34;
     public static final String EXCHANGERATES_TABLE_NAME = "exchangeRates";
     public static final String FILTERS_TABLE_NAME = "filters";
     public static final String IDS_TABLE_NAME = "ids";
     public static final String PAYEES_TABLE_NAME = "payees";
-    public static final int PMSYNC_VERSION_1 = 1;
+    private static final int PMSYNC_VERSION_1 = 1;
     public static final int PMSYNC_VERSION_2 = 2;
     public static final int PMSYNC_VERSION_CURRENT = 2;
     public static final String PREFS_TABLE_NAME = "preferences";
@@ -81,9 +81,9 @@ public class Database {
     public static final String SPLITS_TABLE_NAME = "splits";
     public static final String TRANSACTIONS_TABLE_NAME = "transactions";
     public static int databaseID;
-    public static int databaseVersion;
+    private static int databaseVersion;
     private static SQLiteDatabase db = null;
-    private static Object dbLock = new Object();
+    private static final Object dbLock = new Object();
     private static DatabaseHelper dbh = null;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
@@ -164,14 +164,14 @@ public class Database {
         }
     }
 
-    public static void updateDatabase() {
-        if (databaseVersion == PMSYNC_VERSION_1) {
+    private static void updateDatabase() {
+        if (databaseVersion == DATABASE_VERSION_1) {
             execSqlWithCatch("UPDATE splits SET categoryID = (SELECT categories.category FROM categories WHERE categories.categoryID=splits.categoryID)");
             execSqlWithCatch("UPDATE splits SET classID = (SELECT classes.class FROM classes WHERE classes.classID=splits.classID)");
-            databaseVersion = PMSYNC_VERSION_CURRENT;
+            databaseVersion = DATABASE_VERSION_2;
             updateVersion(databaseVersion);
         }
-        if (databaseVersion == PMSYNC_VERSION_CURRENT) {
+        if (databaseVersion == DATABASE_VERSION_2) {
             execSqlWithCatch("CREATE TABLE repeatingTransactions ('repeatingID' INTEGER PRIMARY KEY AUTOINCREMENT,\t'deleted' BOOLEAN DEFAULT 0, 'timestamp' INTEGER,'lastProcessedDate' INTEGER,'transactionID' INTEGER, 'type' INTEGER, 'endDate' INTEGER,'frequency' INTEGER,'repeatOn' INTEGER,'startOfWeek' INTEGER)");
             databaseVersion = DATABASE_VERSION_3;
             updateVersion(databaseVersion);
@@ -545,7 +545,7 @@ public class Database {
         if (c.getCount() > 0) {
             c.moveToFirst();
             databaseVersion = c.getInt(0);
-            databaseID = c.getInt(PMSYNC_VERSION_1);
+            databaseID = c.getInt(1);
         } else {
             Random r = new Random();
             databaseVersion = DATABASE_VERSION_CURRENT;
@@ -561,7 +561,7 @@ public class Database {
         Prefs.setPref(Prefs.HOMECURRENCYCODE, getHomeCurrency());
     }
 
-    public static void updateVersion(int version) {
+    private static void updateVersion(int version) {
         execSQL("UPDATE preferences SET databaseVersion=" + version + " WHERE rowid=1", null);
     }
 
@@ -596,7 +596,7 @@ public class Database {
         if (transaction.getPayee() != null && transaction.getPayee().length() > 0 && PayeeClass.idForPayee(transaction.getPayee()) == 0) {
             PayeeClass.insertIntoDatabase(transaction.getPayee());
         }
-        Iterator it = transaction.getSplits().iterator();
+            Iterator it = transaction.getSplits().iterator();
         while (it.hasNext()) {
             SplitsClass split = (SplitsClass) it.next();
             if (!split.isTransfer()) {
@@ -625,50 +625,50 @@ public class Database {
 
     public static void populateDatabaseDefaults(Context context) {
         int i = 0;
-        String[] defaultCategories = new String[DATABASE_VERSION_20];
+        String[] defaultCategories = new String[20];
         defaultCategories[0] = Locales.kLOC_DEFAULTCATEGORIES1;
-        defaultCategories[PMSYNC_VERSION_1] = Locales.kLOC_DEFAULTCATEGORIES2;
-        defaultCategories[PMSYNC_VERSION_CURRENT] = Locales.kLOC_DEFAULTCATEGORIES3;
-        defaultCategories[DATABASE_VERSION_3] = Locales.kLOC_DEFAULTCATEGORIES4;
-        defaultCategories[DATABASE_VERSION_4] = Locales.kLOC_DEFAULTCATEGORIES5;
-        defaultCategories[DATABASE_VERSION_5] = Locales.kLOC_DEFAULTCATEGORIES6;
-        defaultCategories[DATABASE_VERSION_6] = Locales.kLOC_DEFAULTCATEGORIES7;
-        defaultCategories[DATABASE_VERSION_7] = Locales.kLOC_DEFAULTCATEGORIES8;
-        defaultCategories[DATABASE_VERSION_8] = Locales.kLOC_DEFAULTCATEGORIES9;
-        defaultCategories[DATABASE_VERSION_9] = Locales.kLOC_DEFAULTCATEGORIES10;
-        defaultCategories[DATABASE_VERSION_10] = Locales.kLOC_DEFAULTCATEGORIES11;
-        defaultCategories[DATABASE_VERSION_11] = Locales.kLOC_DEFAULTCATEGORIES12;
-        defaultCategories[DATABASE_VERSION_12] = Locales.kLOC_DEFAULTCATEGORIES13;
-        defaultCategories[DATABASE_VERSION_13] = Locales.kLOC_DEFAULTCATEGORIES14;
-        defaultCategories[DATABASE_VERSION_14] = Locales.kLOC_DEFAULTCATEGORIES15;
-        defaultCategories[DATABASE_VERSION_15] = Locales.kLOC_DEFAULTCATEGORIES16;
-        defaultCategories[DATABASE_VERSION_16] = Locales.kLOC_DEFAULTCATEGORIES17;
-        defaultCategories[DATABASE_VERSION_17] = Locales.kLOC_DEFAULTCATEGORIES18;
-        defaultCategories[DATABASE_VERSION_18] = Locales.kLOC_DEFAULTCATEGORIES19;
-        defaultCategories[DATABASE_VERSION_19] = Locales.kLOC_DEFAULTCATEGORIES20;
+        defaultCategories[1] = Locales.kLOC_DEFAULTCATEGORIES2;
+        defaultCategories[2] = Locales.kLOC_DEFAULTCATEGORIES3;
+        defaultCategories[3] = Locales.kLOC_DEFAULTCATEGORIES4;
+        defaultCategories[4] = Locales.kLOC_DEFAULTCATEGORIES5;
+        defaultCategories[5] = Locales.kLOC_DEFAULTCATEGORIES6;
+        defaultCategories[6] = Locales.kLOC_DEFAULTCATEGORIES7;
+        defaultCategories[7] = Locales.kLOC_DEFAULTCATEGORIES8;
+        defaultCategories[8] = Locales.kLOC_DEFAULTCATEGORIES9;
+        defaultCategories[9] = Locales.kLOC_DEFAULTCATEGORIES10;
+        defaultCategories[10] = Locales.kLOC_DEFAULTCATEGORIES11;
+        defaultCategories[11] = Locales.kLOC_DEFAULTCATEGORIES12;
+        defaultCategories[12] = Locales.kLOC_DEFAULTCATEGORIES13;
+        defaultCategories[13] = Locales.kLOC_DEFAULTCATEGORIES14;
+        defaultCategories[14] = Locales.kLOC_DEFAULTCATEGORIES15;
+        defaultCategories[15] = Locales.kLOC_DEFAULTCATEGORIES16;
+        defaultCategories[16] = Locales.kLOC_DEFAULTCATEGORIES17;
+        defaultCategories[17] = Locales.kLOC_DEFAULTCATEGORIES18;
+        defaultCategories[18] = Locales.kLOC_DEFAULTCATEGORIES19;
+        defaultCategories[19] = Locales.kLOC_DEFAULTCATEGORIES20;
         if (CategoryClass.idForCategory(SMMoney.getAppContext().getString(R.string.kLOC_DEFAULTCATEGORIES1)) <= 0) {
             int i2;
             int length = defaultCategories.length;
-            for (i2 = 0; i2 < length; i2 += PMSYNC_VERSION_1) {
+            for (i2 = 0; i2 < length; i2 += 1) {
                 CategoryClass.insertIntoDatabase(defaultCategories[i2]);
             }
-            String[] defaultIDs = new String[DATABASE_VERSION_5];
+            String[] defaultIDs = new String[5];
             defaultIDs[0] = Locales.kLOC_DEFAULTIDS1;
-            defaultIDs[PMSYNC_VERSION_1] = Locales.kLOC_DEFAULTIDS2;
-            defaultIDs[PMSYNC_VERSION_CURRENT] = Locales.kLOC_DEFAULTIDS3;
-            defaultIDs[DATABASE_VERSION_3] = Locales.kLOC_DEFAULTIDS4;
-            defaultIDs[DATABASE_VERSION_4] = Locales.kLOC_DEFAULTIDS5;
+            defaultIDs[1] = Locales.kLOC_DEFAULTIDS2;
+            defaultIDs[2] = Locales.kLOC_DEFAULTIDS3;
+            defaultIDs[3] = Locales.kLOC_DEFAULTIDS4;
+            defaultIDs[4] = Locales.kLOC_DEFAULTIDS5;
             length = defaultIDs.length;
-            for (i2 = 0; i2 < length; i2 += PMSYNC_VERSION_1) {
+            for (i2 = 0; i2 < length; i2 += 1) {
                 IDClass.insertIntoDatabase(defaultIDs[i2]);
             }
-            String[] defaultClasses = new String[PMSYNC_VERSION_CURRENT];
+            String[] defaultClasses = new String[2];
             defaultClasses[0] = Locales.kLOC_DEFAULTCLASSES1;
-            defaultClasses[PMSYNC_VERSION_1] = Locales.kLOC_DEFAULTCLASSES2;
+            defaultClasses[1] = Locales.kLOC_DEFAULTCLASSES2;
             i2 = defaultClasses.length;
             while (i < i2) {
                 ClassNameClass.insertIntoDatabase(defaultClasses[i]);
-                i += PMSYNC_VERSION_1;
+                i += 1;
             }
         }
     }
@@ -727,7 +727,7 @@ public class Database {
 
     public static PocketMoneyRecordClass[] queryServerSyncTableWithPKandClassAndTime(String table, String primaryKey, Class<? extends PocketMoneyRecordClass> aClass, long lastSyncTime) {
         Cursor c;
-        ArrayList<PocketMoneyRecordClass> foundRecords = new ArrayList();
+        ArrayList<PocketMoneyRecordClass> foundRecords = new ArrayList<>();
         if (lastSyncTime > 0) {
             c = rawQuery("SELECT " + primaryKey + " FROM " + table + " WHERE timestamp >= " + lastSyncTime, null);
         } else {
@@ -739,12 +739,9 @@ public class Database {
             Class[] clsArr = new Class[PMSYNC_VERSION_1];
             clsArr[0] = Integer.TYPE;
             constructor = aClass.getConstructor(clsArr);
-        } catch (SecurityException e) {
+        } catch (SecurityException | NoSuchMethodException e) {
             Log.e(SMMoney.TAG, e.getLocalizedMessage());
             e.printStackTrace();
-        } catch (NoSuchMethodException e2) {
-            Log.e(SMMoney.TAG, e2.getLocalizedMessage());
-            e2.printStackTrace();
         }
         while (c.moveToNext()) {
             try {
@@ -762,7 +759,7 @@ public class Database {
             int i = 0;
             Iterator it = foundRecords.iterator();
             while (it.hasNext()) {
-                int i2 = i + PMSYNC_VERSION_1;
+                int i2 = i + 1;
                 returnRecords[i] = (PocketMoneyRecordClass) it.next();
                 i = i2;
             }
@@ -785,12 +782,9 @@ public class Database {
             Class[] clsArr = new Class[PMSYNC_VERSION_1];
             clsArr[0] = Integer.TYPE;
             constructor = aClass.getConstructor(clsArr);
-        } catch (SecurityException e) {
+        } catch (SecurityException | NoSuchMethodException e) {
             Log.e(SMMoney.TAG, e.getLocalizedMessage());
             e.printStackTrace();
-        } catch (NoSuchMethodException e2) {
-            Log.e(SMMoney.TAG, e2.getLocalizedMessage());
-            e2.printStackTrace();
         }
         while (c.moveToNext()) {
             try {
@@ -829,7 +823,7 @@ public class Database {
         }
     }
 
-    public static boolean getMultipleCurrencies() {
+    private static boolean getMultipleCurrencies() {
         boolean mc = false;
         Cursor c = rawQuery("SELECT multipleCurrencies FROM preferences WHERE rowid=1", null);
         if (c.getCount() > 0) {
@@ -844,7 +838,7 @@ public class Database {
         execSqlWithCatch("UPDATE preferences SET multipleCurrencies=" + (mc ? PMSYNC_VERSION_1 : 0) + " WHERE rowid=1");
     }
 
-    public static String getHomeCurrency() {
+    private static String getHomeCurrency() {
         String currency = "";
         Cursor c = rawQuery("SELECT homeCurrency FROM preferences WHERE rowid=1", null);
         if (c.getCount() > 0) {

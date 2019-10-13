@@ -6,7 +6,7 @@ import com.example.smmoney.views.reports.ReportItem;
 
 public class ChartItem {
     public int color;
-    public String label;
+    private String label;
     public Path path;
     public double percent = 0.0d;
     public boolean selected = false;

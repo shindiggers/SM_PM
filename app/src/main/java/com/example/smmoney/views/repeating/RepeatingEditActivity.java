@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -32,13 +33,12 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 import java.text.DateFormatSymbols;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
+import java.util.Objects;
 
 public class RepeatingEditActivity extends PocketMoneyActivity {
     private final int REQUEST_ENDON = 1;
@@ -86,7 +86,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         setupButtons();
         reloadData();
         setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
-        getActionBar().setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
+        Objects.requireNonNull(getActionBar()).setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
         getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
     }
 
@@ -127,13 +127,13 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.notifyDaysInAdvanceTextView = findViewById(R.id.daysinadvancetextview);
         this.notifyCheckBox = findViewById(R.id.notifycheckbox);
         this.notifyCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
-        this.sunday = this.daysOfWeek[1];
-        this.monday = this.daysOfWeek[2];
-        this.tuesdayTextView.setText(this.daysOfWeek[3]);
-        this.wednesdayTextView.setText(this.daysOfWeek[4]);
-        this.thursdayTextView.setText(this.daysOfWeek[5]);
-        this.fridayTextView.setText(this.daysOfWeek[6]);
-        this.saturdayTextView.setText(this.daysOfWeek[7]);
+        this.sunday = this.daysOfWeek[Calendar.SUNDAY /*1*/];
+        this.monday = this.daysOfWeek[Calendar.MONDAY /*2*/];
+        this.tuesdayTextView.setText(this.daysOfWeek[Calendar.TUESDAY /*3*/]);
+        this.wednesdayTextView.setText(this.daysOfWeek[Calendar.WEDNESDAY /*4*/]);
+        this.thursdayTextView.setText(this.daysOfWeek[Calendar.THURSDAY /*5*/]);
+        this.fridayTextView.setText(this.daysOfWeek[Calendar.FRIDAY /*6*/]);
+        this.saturdayTextView.setText(this.daysOfWeek[Calendar.SATURDAY /*7*/]);
         this.sundayCheck = findViewById(R.id.sundaycheck);
         this.mondayCheck = findViewById(R.id.mondaycheck);
         this.tuesdayCheck = findViewById(R.id.tuesdaycheck);
@@ -148,14 +148,14 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             public void onClick(View v) {
                 Intent i = new Intent(RepeatingEditActivity.this.context, LookupsListActivity.class);
                 i.putExtra("type", 16);
-                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, 16);
+                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, LookupsListActivity.REPEAT_TYPE /*16*/);
             }
         });
         ((View) this.endOnTextView.getParent()).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(RepeatingEditActivity.this.context, EndOnDateActivity.class);
                 i.putExtra("Date", RepeatingEditActivity.this.endOnTextView.getText().toString());
-                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, 1);
+                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, REQUEST_ENDON/*1*/);
             }
         });
         this.everyTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -179,7 +179,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         ((View) this.thursdayTextView.getParent()).setOnClickListener(getDayClickListener(this.thursdayCheck));
         ((View) this.fridayTextView.getParent()).setOnClickListener(getDayClickListener(this.fridayCheck));
         ((View) this.saturdayTextView.getParent()).setOnClickListener(getDayClickListener(this.saturdayCheck));
-        ArrayList<View> theViews = new ArrayList();
+        ArrayList<View> theViews = new ArrayList<>();
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setVerticalScrollBarEnabled(false);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -237,9 +237,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         theViews.add(aView);
         this.suffixTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View view : theViews) {
+            (view).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         this.titleTextView = findViewById(R.id.title_text_view);
@@ -256,23 +255,23 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
 
     private void loadInfo() {
         this.frequencyTextView.setText(this.repeatingTransaction.typeAsString());
-        this.everyTextView.setText(new StringBuilder(String.valueOf(this.repeatingTransaction.getFrequency())).toString());
+        this.everyTextView.setText(String.valueOf(this.repeatingTransaction.getFrequency()));
         this.notifyCheckBox.setChecked(this.repeatingTransaction.getSendLocalNotifications());
-        this.notifyDaysInAdvanceTextView.setText(this.repeatingTransaction.getNotifyDaysInAdance());
+        this.notifyDaysInAdvanceTextView.setText(String.valueOf(this.repeatingTransaction.getNotifyDaysInAdance()));
         switch (this.repeatingTransaction.getType()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.repeatDaily /*1*/:
                 this.suffix = Locales.kLOC_REPEATING_FREQUENCY_DAYS;
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.repeatWeekly /*2*/:
                 this.suffix = Locales.kLOC_REPEATING_FREQUENCY_WEEKS;
                 ImageView[] checkMarks = new ImageView[]{this.sundayCheck, this.mondayCheck, this.tuesdayCheck, this.wednesdayCheck, this.thursdayCheck, this.fridayCheck, this.saturdayCheck};
                 int dow = 0;
                 boolean atLeastOneDaySet = false;
-                this.thursdayTextView.setText(this.daysOfWeek[5]);
-                this.wednesdayTextView.setText(this.daysOfWeek[4]);
-                this.tuesdayTextView.setText(this.daysOfWeek[3]);
-                this.mondayTextView.setText(this.daysOfWeek[2]);
-                this.sundayTextView.setText(this.daysOfWeek[1]);
+                this.thursdayTextView.setText(this.daysOfWeek[Calendar.THURSDAY /*5*/]);
+                this.wednesdayTextView.setText(this.daysOfWeek[Calendar.WEDNESDAY /*4*/]);
+                this.tuesdayTextView.setText(this.daysOfWeek[Calendar.TUESDAY /*3*/]);
+                this.mondayTextView.setText(this.daysOfWeek[Calendar.MONDAY /*2*/]);
+                this.sundayTextView.setText(this.daysOfWeek[Calendar.SUNDAY /*1*/]);
                 for (ImageView check : checkMarks) {
                     if (this.repeatingTransaction.repeatesOnDayOfWeek(dow)) {
                         check.setVisibility(View.VISIBLE);
@@ -287,7 +286,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                     break;
                 }
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.repeatMonthly /*3*/:
                 this.suffix = Locales.kLOC_REPEATING_FREQUENCY_MONTHS;
                 this.sundayTextView.setText(this.repeatingTransaction.repeatsOnDayOfMonthAsString());
                 this.mondayTextView.setText(this.repeatingTransaction.repeatsOnDateOfMonthAsString());
@@ -299,11 +298,11 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 this.tuesdayCheck.setVisibility(View.GONE);
                 this.wednesdayCheck.setVisibility(View.GONE);
                 this.thursdayCheck.setVisibility(View.GONE);
-                if (this.repeatingTransaction.getRepeatOn() != 0 || !this.repeatingTransaction.showOrdinalDayOfMonth()) {
-                    if (this.repeatingTransaction.getRepeatOn() != 1 || !this.repeatingTransaction.showDateOfMonth()) {
-                        if (this.repeatingTransaction.getRepeatOn() != 2 || !this.repeatingTransaction.isLastDay()) {
-                            if (this.repeatingTransaction.getRepeatOn() != 4 || !this.repeatingTransaction.isLastDay()) {
-                                if (this.repeatingTransaction.getRepeatOn() == 3 && this.repeatingTransaction.isLastWeekday()) {
+                if (this.repeatingTransaction.getRepeatOn() != Enums.monthlyDayOfMonth /*0*/ || !this.repeatingTransaction.showOrdinalDayOfMonth()) {
+                    if (this.repeatingTransaction.getRepeatOn() != Enums.monthlyDateInMonth /*1*/ || !this.repeatingTransaction.showDateOfMonth()) {
+                        if (this.repeatingTransaction.getRepeatOn() != Enums.monthlyLastDayOfMonth /*2*/ || !this.repeatingTransaction.isLastDay()) {
+                            if (this.repeatingTransaction.getRepeatOn() != Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/ || !this.repeatingTransaction.isLastDay()) {
+                                if (this.repeatingTransaction.getRepeatOn() == Enums.monthlyLastWeekDayOfMonth /*3*/ && this.repeatingTransaction.isLastWeekday()) {
                                     this.thursdayCheck.setVisibility(View.VISIBLE);
                                     break;
                                 }
@@ -319,7 +318,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 }
                 this.sundayCheck.setVisibility(View.VISIBLE);
                 break;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.repeatYearly /*4*/:
                 this.suffix = Locales.kLOC_REPEATING_FREQUENCY_YEARS;
                 break;
         }
@@ -328,65 +327,65 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        int every = 8;
-        int endon = 8;
-        int sunday = 8;
-        int monday = 8;
-        int tuesday = 8;
-        int wednesday = 8;
-        int thursday = 8;
-        int friday = 8;
-        int saturday = 8;
-        int repeaton = 8;
-        int notify = 8;
+        int every; // not necessary to initialise this view here as it gets initialised later
+        int endon; // not necessary to initialise this view here as it gets initialised later
+        int sunday = View.GONE /*8*/;
+        int monday = View.GONE /*8*/;
+        int tuesday = View.GONE /*8*/;
+        int wednesday = View.GONE /*8*/;
+        int thursday = View.GONE /*8*/;
+        int friday = View.GONE /*8*/;
+        int saturday = View.GONE /*8*/;
+        int repeaton = View.GONE /*8*/;
+        int notify; // not necessary to initialise this view here as it gets initialised later
         switch (this.repeatingTransaction.getType()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.repeatDaily /*1*/:
+            case Enums.repeatYearly /*4*/:
                 break;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                saturday = 0;
-                friday = 0;
-                thursday = 0;
-                wednesday = 0;
-                tuesday = 0;
-                monday = 0;
-                sunday = 0;
-                repeaton = 0;
+            case Enums.repeatWeekly /*2*/:
+                saturday = View.VISIBLE /*0*/;
+                friday = View.VISIBLE /*0*/;
+                thursday = View.VISIBLE /*0*/;
+                wednesday = View.VISIBLE /*0*/;
+                tuesday = View.VISIBLE /*0*/;
+                monday = View.VISIBLE /*0*/;
+                sunday = View.VISIBLE /*0*/;
+                repeaton = View.VISIBLE /*0*/;
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.repeatMonthly /*3*/:
                 View check = null;
                 boolean alreadyChecked = false;
-                every = 0;
-                endon = 0;
-                notify = 0;
+                //every = View.VISIBLE /*0*/; TEMP CODED OUT AS JETBRAINS SAYS NOT NEEDED
+                //endon = View.VISIBLE /*0*/; TEMP CODED OUT AS JETBRAINS SAYS NOT NEEDED
+                //notify = View.VISIBLE /*0*/; TEMP CODED OUT AS JETBRAINS SAYS NOT NEEDED
                 if (this.repeatingTransaction.isLastOrdinalWeekday()) {
-                    wednesday = 0;
+                    wednesday = View.VISIBLE /*0*/;
                     check = this.wednesdayCheck;
                     alreadyChecked = check.getVisibility() == View.VISIBLE;
                 }
                 if (this.repeatingTransaction.showOrdinalDayOfMonth()) {
-                    sunday = 0;
+                    sunday = View.VISIBLE /*0*/;
                     if (!alreadyChecked) {
                         check = this.sundayCheck;
                         alreadyChecked = check.getVisibility() == View.VISIBLE;
                     }
                 }
                 if (this.repeatingTransaction.showDateOfMonth()) {
-                    monday = 0;
+                    monday = View.VISIBLE /*0*/;
                     if (!alreadyChecked) {
                         check = this.mondayCheck;
                         alreadyChecked = check.getVisibility() == View.VISIBLE;
                     }
                 }
                 if (this.repeatingTransaction.isLastDay()) {
-                    tuesday = 0;
+                    tuesday = View.VISIBLE /*0*/;
                     if (!alreadyChecked) {
                         check = this.tuesdayCheck;
                         alreadyChecked = check.getVisibility() == View.VISIBLE;
                     }
                 }
                 if (this.repeatingTransaction.isLastWeekday()) {
-                    thursday = 0;
+                    thursday = View.VISIBLE /*0*/;
                     if (!alreadyChecked) {
                         check = this.thursdayCheck;
                         alreadyChecked = check.getVisibility() == View.VISIBLE;
@@ -397,9 +396,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                     break;
                 }
         }
-        every = 0;
-        endon = 0;
-        notify = 0;
+        every = View.VISIBLE /*0*/;
+        endon = View.VISIBLE /*0*/;
+        notify = View.VISIBLE /*0*/;
         ((View) this.notifyCheckBox.getParent()).setVisibility(notify);
         ((View) this.everyTextView.getParent()).setVisibility(every);
         ((View) this.endOnTextView.getParent()).setVisibility(endon);
@@ -425,7 +424,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         String endOnText = this.endOnTextView.getText().toString();
         this.repeatingTransaction.setEndDate(endOnText.equalsIgnoreCase(Locales.kLOC_EDIT_REPEATING_ENDONNONE) ? null : CalExt.dateFromDescriptionWithMediumDate(endOnText));
         switch (this.repeatingTransaction.getType()) {
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.repeatWeekly /*2*/:
                 int dow = 0;
                 for (ImageView check : new ImageView[]{this.sundayCheck, this.mondayCheck, this.tuesdayCheck, this.wednesdayCheck, this.thursdayCheck, this.fridayCheck, this.saturdayCheck}) {
                     boolean z;
@@ -435,26 +434,26 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                     dow++;
                 }
                 break;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.repeatMonthly /*3*/:
                 if (this.sundayCheck.getVisibility() != View.VISIBLE) {
                     if (this.mondayCheck.getVisibility() != View.VISIBLE) {
                         if (this.tuesdayCheck.getVisibility() != View.VISIBLE) {
                             if (this.wednesdayCheck.getVisibility() != View.VISIBLE) {
-                                if (this.thursdayCheck.getVisibility() == View.VISIBLE) {
-                                    this.repeatingTransaction.setRepeatOnMonth(3);
+                                if (this.thursdayCheck.getVisibility() == View.VISIBLE) { // This is opposite
+                                    this.repeatingTransaction.setRepeatOnMonth(Enums.monthlyLastWeekDayOfMonth/*3*/);
                                     break;
                                 }
                             }
-                            this.repeatingTransaction.setRepeatOnMonth(4);
+                            this.repeatingTransaction.setRepeatOnMonth(Enums.monthlyLastOrdinalWeekdayOfMonth/*4*/);
                             break;
                         }
-                        this.repeatingTransaction.setRepeatOnMonth(2);
+                        this.repeatingTransaction.setRepeatOnMonth(Enums.monthlyLastDayOfMonth/*2*/);
                         break;
                     }
-                    this.repeatingTransaction.setRepeatOnMonth(1);
+                    this.repeatingTransaction.setRepeatOnMonth(Enums.monthlyDateInMonth/*1*/);
                     break;
                 }
-                this.repeatingTransaction.setRepeatOnMonth(0);
+                this.repeatingTransaction.setRepeatOnMonth(Enums.monthlyDayOfMonth/*0*/);
                 break;
         }
         this.repeatingTransaction.setSendLocalNotifications(this.notifyCheckBox.isChecked());
@@ -473,16 +472,16 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
             switch (requestCode) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case REQUEST_ENDON /*1*/:
                     if (resultCode != EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
                         this.endOnTextView.setText(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
                         break;
                     } else {
-                        this.endOnTextView.setText(data.getExtras().getString("Date"));
+                        this.endOnTextView.setText(Objects.requireNonNull(data.getExtras()).getString("Date"));
                         break;
                     }
                 case LookupsListActivity.REPEAT_TYPE /*16*/:
-                    this.frequencyTextView.setText(data.getExtras().getString("selection"));
+                    this.frequencyTextView.setText(Objects.requireNonNull(data.getExtras()).getString("selection"));
                     break;
             }
             this.repeatingTransaction.hydrated = true;
@@ -494,13 +493,13 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private View.OnClickListener getDayClickListener(final ImageView check) {
         return new View.OnClickListener() {
             public void onClick(View v) {
-                int i = 8;
-                int i2 = 0;
+                int i = View.GONE /*8*/;
+                int i2 = View.VISIBLE /*0*/;
                 ImageView imageView;
-                if (RepeatingEditActivity.this.repeatingTransaction.getType() == 2) {
+                if (RepeatingEditActivity.this.repeatingTransaction.getType() == Enums.repeatWeekly /*2*/) {
                     imageView = check;
                     if (check.getVisibility() != View.VISIBLE) {
-                        i = 0;
+                        i = View.VISIBLE /*0*/;
                     }
                     imageView.setVisibility(i);
                     return;
@@ -508,35 +507,35 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 int i3;
                 ImageView access$6 = RepeatingEditActivity.this.sundayCheck;
                 if (check == RepeatingEditActivity.this.sundayCheck) {
-                    i3 = 0;
+                    i3 = View.VISIBLE /*0*/;
                 } else {
-                    i3 = 8;
+                    i3 = View.GONE /*8*/;
                 }
                 access$6.setVisibility(i3);
                 access$6 = RepeatingEditActivity.this.mondayCheck;
                 if (check == RepeatingEditActivity.this.mondayCheck) {
-                    i3 = 0;
+                    i3 = View.VISIBLE /*0*/;
                 } else {
-                    i3 = 8;
+                    i3 = View.GONE /*8*/;
                 }
                 access$6.setVisibility(i3);
                 access$6 = RepeatingEditActivity.this.tuesdayCheck;
                 if (check == RepeatingEditActivity.this.tuesdayCheck) {
-                    i3 = 0;
+                    i3 = View.VISIBLE /*0*/;
                 } else {
-                    i3 = 8;
+                    i3 = View.GONE /*8*/;
                 }
                 access$6.setVisibility(i3);
                 access$6 = RepeatingEditActivity.this.wednesdayCheck;
                 if (check == RepeatingEditActivity.this.wednesdayCheck) {
-                    i3 = 0;
+                    i3 = View.VISIBLE /*0*/;
                 } else {
-                    i3 = 8;
+                    i3 = View.GONE /*8*/;
                 }
                 access$6.setVisibility(i3);
                 imageView = RepeatingEditActivity.this.thursdayCheck;
                 if (check != RepeatingEditActivity.this.thursdayCheck) {
-                    i2 = 8;
+                    i2 = View.GONE /*8*/;
                 }
                 imageView.setVisibility(i2);
             }

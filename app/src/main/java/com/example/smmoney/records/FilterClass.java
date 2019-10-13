@@ -9,9 +9,9 @@ import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,7 +43,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     private String date = "";
     private GregorianCalendar dateFrom = null;
     private GregorianCalendar dateTo = null;
-    public int filterID = 0;
+    private int filterID = 0;
     private String filterName = "";
     private double internalFromDate = 0.0d;
     private double internalToDate = 0.0d;
@@ -52,7 +52,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     private int type;
 
     public static ArrayList<String> transactionTypes() {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(Locales.kLOC_GENERAL_WITHDRAWAL);
         list.add(Locales.kLOC_GENERAL_DEPOSIT);
         list.add(Locales.kLOC_GENERAL_TRANSFER);
@@ -61,7 +61,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public static ArrayList<String> clearedTypes() {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(Locales.kLOC_GENERAL_CLEARED);
         list.add(Locales.kLOC_FILTER_UNCLEARED);
         list.add(Locales.kLOC_FILTER_DOESNTMATTER);
@@ -69,7 +69,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public static ArrayList<String> dateRanges() {
-        ArrayList<String> list = new ArrayList();
+        ArrayList<String> list = new ArrayList<>();
         list.add(Locales.kLOC_FILTER_DATES_ALL);
         list.add(Locales.kLOC_FILTER_DATES_CUSTOM);
         list.add(Locales.kLOC_FILTER_DATES_MODIFIEDTODAY);
@@ -90,14 +90,14 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public FilterClass() {
-        setCleared(2);
-        setType(4);
+        setCleared(Enums.kClearedDoesntMatter /*2*/);
+        setType(Enums.kTransactionTypeAll /*4*/);
         this.customFilter = false;
     }
 
     public FilterClass(String act) {
-        setCleared(2);
-        setType(4);
+        setCleared(Enums.kClearedDoesntMatter /*2*/);
+        setType(Enums.kTransactionTypeAll /*4*/);
         this.customFilter = false;
         setAccount(act);
     }
@@ -114,11 +114,11 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setClearedFromString(String aString) {
         if (aString.equals(Locales.kLOC_GENERAL_CLEARED)) {
-            setCleared(1);
+            setCleared(Enums.kClearedCleared /*1*/);
         } else if (aString.equals(Locales.kLOC_FILTER_UNCLEARED)) {
-            setCleared(0);
+            setCleared(Enums.kClearedUncleared/*0*/);
         } else {
-            setCleared(2);
+            setCleared(Enums.kClearedDoesntMatter /*2*/);
         }
     }
 
@@ -135,24 +135,24 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setTypeFromString(String aString) {
         if (aString.equals(Locales.kLOC_GENERAL_WITHDRAWAL)) {
-            setType(0);
+            setType(Enums.kTransactionTypeWithdrawal /*0*/);
         } else if (aString.equals(Locales.kLOC_GENERAL_DEPOSIT)) {
-            setType(1);
+            setType(Enums.kTransactionTypeDeposit /*1*/);
         } else if (aString.equals(Locales.kLOC_GENERAL_TRANSFER)) {
-            setType(3);
+            setType(Enums.kTransactionTypeTransferFrom /*3*/);
         } else {
-            setType(4);
+            setType(Enums.kTransactionTypeAll /*4*/);
         }
     }
 
     public String typeAsString() {
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kTransactionTypeWithdrawal /*0*/:
                 return Locales.kLOC_GENERAL_WITHDRAWAL;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kTransactionTypeDeposit /*1*/:
                 return Locales.kLOC_GENERAL_DEPOSIT;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kTransactionTypeTransferTo /*2*/:
+            case Enums.kTransactionTypeTransferFrom /*3*/:
                 return Locales.kLOC_GENERAL_TRANSFER;
             default:
                 return Locales.kLOC_PREFERENCES_SHOW_ALL;
@@ -169,7 +169,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setFilterName(String aString) {
         if (this.filterName != null || aString != null) {
-            if (this.filterName == null || aString == null || !this.filterName.equals(aString)) {
+            if (this.filterName == null || !this.filterName.equals(aString)) {
                 this.dirty = true;
                 this.filterName = aString;
             }
@@ -196,69 +196,69 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         return this.type;
     }
 
-    public double internalDateAsDateUsingFromDate(boolean isFromDate) {
+    private double internalDateAsDateUsingFromDate(boolean isFromDate) {
         if (Locales.kLOC_FILTER_DATES_ALL.equals(this.date)) {
-            return 0.0d;
+            return (double) Enums.kDateRangeNone; /*0.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_TODAY.equals(this.date)) {
-            return 1.0d;
+            return (double) Enums.kDateRangeToday; /*1.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_YESTERDAY.equals(this.date)) {
-            return 2.0d;
+            return (double) Enums.kDateRangeYesterday ; /*2.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST30DAYS.equals(this.date)) {
-            return 15.0d;
+            return (double) Enums.kDateRangeLast30Days; /*15.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST60DAYS.equals(this.date)) {
-            return 16.0d;
+            return (double) Enums.kDateRangeLast60Days; /*16.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST90DAYS.equals(this.date)) {
-            return 17.0d;
+            return (double) Enums.kDateRangeLast90Days; /*17.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISWEEK.equals(this.date)) {
-            return 3.0d;
+            return (double) Enums.kDateRangeCurrentWeek; /*3.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTWEEK.equals(this.date)) {
-            return 4.0d;
+            return (double) Enums.kDateRangeLastWeek; /*4.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISMONTH.equals(this.date)) {
-            return 5.0d;
+            return (double) Enums.kDateRangeCurrentMonth; /*5.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTMONTH.equals(this.date)) {
-            return 6.0d;
+            return (double) Enums.kDateRangeLastMonth; /*6.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISQUARTER.equals(this.date)) {
-            return 7.0d;
+            return (double) Enums.kDateRangeCurrentQuarter; /*7.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTQUARTER.equals(this.date)) {
-            return 8.0d;
+            return (double) Enums.kDateRangeLastQuarter; /*8.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISYEAR.equals(this.date)) {
-            return 9.0d;
+            return (double) Enums.kDateRangeCurrentYear; /*9.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTYEAR.equals(this.date)) {
-            return 10.0d;
+            return (double) Enums.kDateRangeLastYear; /*10.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_RECENTLYCHANGED.equals(this.date)) {
-            return 11.0d;
+            return (double) Enums.kDateRangeRecentChanges; /*11.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_MODIFIEDTODAY.equals(this.date)) {
-            return 14.0d;
+            return (double) Enums.kDateRangeModifiedToday; /*14.0d*/
         }
         if (isFromDate) {
             if (this.dateFrom != null) {
                 return (double) (this.dateFrom.getTimeInMillis() / 1000);
             }
-            return 12.0d;
+            return (double) Enums.kDateRangeNoFromDate; /*12.0d*/
         } else if (this.dateTo != null) {
             return (double) (this.dateTo.getTimeInMillis() / 1000);
         } else {
-            return 13.0d;
+            return (double) Enums.kDateRangeNoToDate; /*13.0d*/
         }
     }
 
-    public GregorianCalendar dateFromInternalDate(double internalDate) {
-        if (18.0d >= internalDate) {
+    private GregorianCalendar dateFromInternalDate(double internalDate) {
+        if (Enums.kDateRangeOther /*18.0d*/ >= internalDate) {
             return null;
         }
         GregorianCalendar cal = new GregorianCalendar();
@@ -266,39 +266,39 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         return cal;
     }
 
-    public String dateStringFromDBDate(double internalDate) {
+    private String dateStringFromDBDate(double internalDate) {
         switch ((int) internalDate) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kDateRangeNone /*0*/:
                 return Locales.kLOC_FILTER_DATES_ALL;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kDateRangeToday /*1*/:
                 return Locales.kLOC_FILTER_DATES_TODAY;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kDateRangeYesterday /*2*/:
                 return Locales.kLOC_FILTER_DATES_YESTERDAY;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kDateRangeCurrentWeek /*3*/:
                 return Locales.kLOC_FILTER_DATES_THISWEEK;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kDateRangeLastWeek /*4*/:
                 return Locales.kLOC_FILTER_DATES_LASTWEEK;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kDateRangeCurrentMonth /*5*/:
                 return Locales.kLOC_FILTER_DATES_THISMONTH;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kDateRangeLastMonth /*6*/:
                 return Locales.kLOC_FILTER_DATES_LASTMONTH;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kDateRangeCurrentQuarter /*7*/:
                 return Locales.kLOC_FILTER_DATES_THISQUARTER;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kDateRangeLastQuarter /*8*/:
                 return Locales.kLOC_FILTER_DATES_LASTQUARTER;
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
+            case Enums.kDateRangeCurrentYear /*9*/:
                 return Locales.kLOC_FILTER_DATES_THISYEAR;
-            case LookupsListActivity.FILTER_DATES /*10*/:
+            case Enums.kDateRangeLastYear /*10*/:
                 return Locales.kLOC_FILTER_DATES_LASTYEAR;
-            case LookupsListActivity.FILTER_PAYEES /*11*/:
+            case Enums.kDateRangeRecentChanges /*11*/:
                 return Locales.kLOC_FILTER_DATES_RECENTLYCHANGED;
-            case LookupsListActivity.FILTER_CATEGORIES /*14*/:
+            case Enums.kDateRangeModifiedToday /*14*/:
                 return Locales.kLOC_FILTER_DATES_MODIFIEDTODAY;
-            case LookupsListActivity.FILTER_CLASSES /*15*/:
+            case Enums.kDateRangeLast30Days /*15*/:
                 return Locales.kLOC_FILTER_DATES_LAST30DAYS;
-            case LookupsListActivity.REPEAT_TYPE /*16*/:
+            case Enums.kDateRangeLast60Days /*16*/:
                 return Locales.kLOC_FILTER_DATES_LAST60DAYS;
-            case LookupsListActivity.ACCOUNT_LOOKUP_TRANS /*17*/:
+            case Enums.kDateRangeLast90Days /*17*/:
                 return Locales.kLOC_FILTER_DATES_LAST90DAYS;
             default:
                 return Locales.kLOC_FILTER_DATES_CUSTOM;
@@ -310,12 +310,12 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public String customDateString() {
-        return new StringBuilder(String.valueOf(getDateFrom() != null ? CalExt.descriptionWithMediumDate(getDateFrom()) : "*")).append("<->").append(getDateTo() != null ? CalExt.descriptionWithMediumDate(getDateTo()) : "*").toString();
+        return (getDateFrom() != null ? CalExt.descriptionWithMediumDate(getDateFrom()) : "*") + "<->" + (getDateTo() != null ? CalExt.descriptionWithMediumDate(getDateTo()) : "*");
     }
 
     public void setDate(String aString) {
         if (this.date != null || aString != null) {
-            if (this.date == null || aString == null || !this.date.equals(aString)) {
+            if (this.date == null || !this.date.equals(aString)) {
                 this.dirty = true;
                 this.date = aString;
                 if (this.date.length() > 0 && !this.date.equals(Locales.kLOC_FILTER_DATES_ALL)) {
@@ -335,7 +335,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setDateFrom(GregorianCalendar aDate) {
         if (this.dateFrom != null || aDate != null) {
-            if (this.dateFrom == null || aDate == null || !this.dateFrom.equals(aDate)) {
+            if (this.dateFrom == null || !this.dateFrom.equals(aDate)) {
                 this.dirty = true;
                 this.dateFrom = aDate;
             }
@@ -349,7 +349,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setDateTo(GregorianCalendar aDate) {
         if (this.dateTo != null || aDate != null) {
-            if (this.dateTo == null || aDate == null || !this.dateTo.equals(aDate)) {
+            if (this.dateTo == null || !this.dateTo.equals(aDate)) {
                 this.dirty = true;
                 this.dateTo = aDate;
             }
@@ -363,7 +363,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setAccount(String aString) {
         if (this.account != null || aString != null) {
-            if (this.account == null || aString == null || !this.account.equals(aString)) {
+            if (this.account == null || !this.account.equals(aString)) {
                 if (this.account == null) {
                     this.account = "";
                 } else {
@@ -384,7 +384,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setCategory(String aString) {
         if (this.category != null || aString != null) {
-            if (this.category == null || aString == null || !this.category.equals(aString)) {
+            if (this.category == null || !this.category.equals(aString)) {
                 if (aString == null) {
                     this.category = "";
                 } else {
@@ -405,7 +405,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setPayee(String aString) {
         if (this.payee != null || aString != null) {
-            if (this.payee == null || aString == null || !this.payee.equals(aString)) {
+            if (this.payee == null || !this.payee.equals(aString)) {
                 this.dirty = true;
                 this.payee = aString;
                 if (this.payee.length() > 0) {
@@ -422,7 +422,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setCheckNumber(String aString) {
         if (this.checkNumber != null || aString != null) {
-            if (this.checkNumber == null || aString == null || !this.checkNumber.equals(aString)) {
+            if (this.checkNumber == null || !this.checkNumber.equals(aString)) {
                 if (aString == null) {
                     this.checkNumber = "";
                 } else {
@@ -443,7 +443,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setClassName(String aString) {
         if (this.className != null || aString != null) {
-            if (this.className == null || aString == null || !this.className.equals(aString)) {
+            if (this.className == null || !this.className.equals(aString)) {
                 if (aString == null) {
                     this.className = "";
                 } else {
@@ -466,7 +466,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (this.cleared != clearIt) {
             this.dirty = true;
             this.cleared = clearIt;
-            if (this.cleared != 2) {
+            if (this.cleared != Enums.kClearedDoesntMatter /*2*/) {
                 this.customFilter = true;
             }
         }
@@ -479,7 +479,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public void setSpotlight(String aString) {
         if (this.spotlight != null || aString != null) {
-            if (this.spotlight == null || aString == null || !this.spotlight.equals(aString)) {
+            if (this.spotlight == null || !this.spotlight.equals(aString)) {
                 this.dirty = true;
                 this.spotlight = aString;
             }
@@ -540,7 +540,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -603,7 +603,6 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                     str = "";
                 }
                 setSpotlight(str);
-                col2 = col + 1;
                 str = curs.getString(col);
                 if (str == null) {
                     str = "";
@@ -668,7 +667,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         Database.update(Database.FILTERS_TABLE_NAME, values, "filterID=" + this.filterID, null);
     }
 
-    public static int insertIntoDatabase(String name) {
+    private static int insertIntoDatabase(String name) {
         if (name == null) {
             name = "";
         }
@@ -685,7 +684,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public static ArrayList<FilterClass> query() {
-        ArrayList<FilterClass> theList = new ArrayList();
+        ArrayList<FilterClass> theList = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         String where = "deleted=0 AND filterName NOT IN (select account from accounts where deleted=0)  AND filterName <> '" + Locales.kLOC_FILTERS_ALL_ACCOUNTS + "'";
         String[] projection = new String[]{"filterID"};
@@ -838,24 +837,24 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     private static int getMaxDayForMonth(GregorianCalendar cal) {
         switch (cal.get(Calendar.MONTH)) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-            case LookupsListActivity.ID_LOOKUP /*7*/:
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
-            case LookupsListActivity.FILTER_PAYEES /*11*/:
+            case 0 /*Jan*/:
+            case 2 /*Mar*/:
+            case 4 /*May*/:
+            case 6 /*Ju;*/:
+            case 7 /*Aug*/:
+            case 9 /*Oct*/:
+            case 11 /*Dec*/:
                 return 31;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case 1 /*Feb*/:
                 int year = cal.get(Calendar.YEAR);
                 if ((year % 4 != 0 || year % 100 == 0) && year % 400 != 0) {
                     return 28;
                 }
                 return 29;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
-            case LookupsListActivity.FILTER_DATES /*10*/:
+            case 3 /*Apr*/:
+            case 5 /*Jun*/:
+            case 8 /*Sep*/:
+            case 10 /*Nov*/:
                 return 30;
             default:
                 return 0;
@@ -877,12 +876,8 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             InputSource is = new InputSource(new StringReader(xmlTransaction));
             xr.setContentHandler(this);
             xr.parse(is);
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | IOException | SAXException e) {
             e.printStackTrace();
-        } catch (SAXException e2) {
-            e2.printStackTrace();
-        } catch (IOException e3) {
-            e3.printStackTrace();
         }
         if (0.0d == this.internalFromDate && 0.0d == this.internalToDate) {
             setDate(Locales.kLOC_FILTER_DATES_ALL);
@@ -907,40 +902,57 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (localName.equals("filterID")) {
-            this.filterID = Integer.valueOf(this.currentElementValue);
-        } else if (localName.equals("timestamp")) {
-            this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-        } else if (localName.equals("deleted")) {
-            boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
-            setDeleted(z);
-        } else if (localName.equals("dateFrom")) {
-            this.internalFromDate = Double.valueOf(this.currentElementValue);
-        } else if (localName.equals("dateTo")) {
-            this.internalToDate = Double.valueOf(this.currentElementValue);
-        } else if (localName.equals("type")) {
-            setType(Integer.valueOf(this.currentElementValue));
-        } else if (localName.equals("cleared")) {
-            setCleared(Integer.valueOf(this.currentElementValue));
-        } else if (localName.equals("account")) {
-            if (this.currentElementValue == null) {
-                setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-            } else {
-                setAccount(URLDecoder.decode(this.currentElementValue));
-            }
-        } else if (localName.equals("categoryID")) {
-            setCategory(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
-        } else if (localName.equals("classID")) {
-            setClassName(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
-        } else if (localName.equals("serverID")) {
-            setServerID(this.currentElementValue);
-        } else if (localName.equals("payee") || localName.equals("checkNumber") || localName.equals("spotlight") || localName.equals("selectedFilterName") || localName.equals("filterName")) {
-            Class<?> c = getClass();
-            try {
-                c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
-            } catch (Exception e) {
-                Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
-            }
+        switch (localName) {
+            case "filterID":
+                this.filterID = Integer.valueOf(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                boolean z = this.currentElementValue.equals("Y") || this.currentElementValue.equals("1");
+                setDeleted(z);
+                break;
+            case "dateFrom":
+                this.internalFromDate = Double.valueOf(this.currentElementValue);
+                break;
+            case "dateTo":
+                this.internalToDate = Double.valueOf(this.currentElementValue);
+                break;
+            case "type":
+                setType(Integer.valueOf(this.currentElementValue));
+                break;
+            case "cleared":
+                setCleared(Integer.valueOf(this.currentElementValue));
+                break;
+            case "account":
+                if (this.currentElementValue == null) {
+                    setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+                } else {
+                    setAccount(URLDecoder.decode(this.currentElementValue));
+                }
+                break;
+            case "categoryID":
+                setCategory(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
+                break;
+            case "classID":
+                setClassName(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
+            case "payee":
+            case "checkNumber":
+            case "spotlight":
+            case "selectedFilterName":
+            case "filterName":
+                Class<?> c = getClass();
+                try {
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                } catch (Exception e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
+                }
+                break;
         }
         this.currentElementValue = null;
     }

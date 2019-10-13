@@ -1,6 +1,6 @@
 package com.example.smmoney.importexport.ofx;
 
-public class OFX_Tags {
+class OFX_Tags {
     String accountBegin;
     String accountEnd;
     String accountIDBegin;
@@ -29,7 +29,6 @@ public class OFX_Tags {
     String dateEndEnd;
     String dateStartBegin;
     String dateStartEnd;
-    OFX_DataFormatType format;
     String ledgerBalanceBegin;
     String ledgerBalanceEnd;
     String lineEnding;
@@ -60,13 +59,12 @@ public class OFX_Tags {
     String transactionTypeBegin;
     String transactionTypeEnd;
 
-    public OFX_Tags(OFX_DataFormatType var1, String var2) {
+    OFX_Tags(OFX_DataFormatType var1, String var2) {
         this.lineEnding = var2;
         this.setFormat(var1);
     }
 
     private void setFormat(OFX_DataFormatType var1) {
-        this.format = var1;
         this.bankStatementTransmissionBegin = "<STMTRS>";
         this.bankStatementTransmissionEnd = "</STMTRS>";
         this.creditCardStatementTransmissionBegin = "<CCSTMTRS>";
@@ -123,7 +121,7 @@ public class OFX_Tags {
         this.transactionDatePostedEnd = "";
         this.transactionDateUserEnteredBegin = "<DTUSER>";
         this.transactionDateUserEnteredEnd = "";
-        if(OFX_DataFormatType.OFX_DataFormatXML10 == this.format || OFX_DataFormatType.OFX_DataFormatXML20 == this.format) {
+        if(OFX_DataFormatType.OFX_DataFormatXML10 == var1 || OFX_DataFormatType.OFX_DataFormatXML20 == var1) {
             this.currencyEnd = "</CURDEF>";
             this.dateStartEnd = "</DTSTART>";
             this.dateEndEnd = "</DTEND>";

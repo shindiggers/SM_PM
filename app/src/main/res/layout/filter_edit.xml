@@ -90,7 +90,8 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_FILTER_NAME"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:inputType="" />
 
             </FrameLayout>
 
@@ -213,7 +214,8 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_PAYEE_TITLE"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -246,7 +248,8 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_ID_TITLE"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -308,7 +311,8 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp" />
+                    android:layout_marginStart="100dp"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -339,7 +343,8 @@
                     android:layout_width="150dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp" />
+                    android:layout_marginStart="100dp"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"

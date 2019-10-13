@@ -4,8 +4,8 @@ import android.content.Intent;
 import android.preference.PreferenceActivity;
 import com.example.smmoney.misc.Prefs;
 
-public class PocketMoneyPreferenceActivity extends PreferenceActivity {
-    boolean skipPasswordScreen = false;
+public abstract class PocketMoneyPreferenceActivity extends PreferenceActivity {
+    private boolean skipPasswordScreen = false;
 
     protected void onResume() {
         super.onResume();

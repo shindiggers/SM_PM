@@ -22,15 +22,15 @@ import com.example.smmoney.views.splits.SplitsActivity;
 
 public class BudgetsRowHolder extends View {
     static int textSize = 0;
-    String actualString;
-    TextView actualTextView;
-    double budget;
-    String budgetedString;
-    TextView budgetedTextView;
+    private String actualString;
+    private TextView actualTextView;
+    private double budget;
+    private String budgetedString;
+    private TextView budgetedTextView;
     public CategoryClass category;
-    String categoryString;
-    TextView categoryTextView;
-    Context context;
+    private String categoryString;
+    private TextView categoryTextView;
+    private Context context;
     private boolean touched = false;
     private double greenBarWidth;
     private double redBarWidth;

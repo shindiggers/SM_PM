@@ -12,7 +12,7 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 
 public class PasswordActivity extends Activity {
-    public static final int PASSWORD_CORRECT = 132;
+    private static final int PASSWORD_CORRECT = 132;
     public static final int PASSWORD_INCORRECT = 133;
     private boolean preferenceScreen;
     private String thePass;
@@ -50,7 +50,7 @@ public class PasswordActivity extends Activity {
         }
     }
 
-    public void checkPassword(String text) {
+    private void checkPassword(String text) {
         if (text != null) {
             if (this.thePass == null || this.thePass.equals(text)) {
                 Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
@@ -60,7 +60,7 @@ public class PasswordActivity extends Activity {
         }
     }
 
-    public static long getDelayLongFromDelayPref(String theString) {
+    private static long getDelayLongFromDelayPref(String theString) {
         if (Locales.kLOC_GENERAL_NONE.equals(theString)) {
             return 0;
         }

@@ -37,7 +37,7 @@ public class AccountsReportDataSource extends ReportDataSource {
         TransactionClass[] relaventTransactions = transactionsFromDateToDate(startOfPeriod(), endOfPeriod());
         if (relaventTransactions == null) {
             this.data = null;
-            this.data = new ArrayList();
+            this.data = new ArrayList<>();
             return;
         }
         int oldAccountViewType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
@@ -73,8 +73,10 @@ public class AccountsReportDataSource extends ReportDataSource {
                         } else {
                             tAmt = split.getAmount();
                         }
-                        reportItem.amount += tAmt;
+                        if (reportItem != null) {
+                            reportItem.amount += tAmt;
                         reportItem.count++;
+                        }
                     }
                 }
                 relaventTransactions[i] = null;
@@ -86,7 +88,7 @@ public class AccountsReportDataSource extends ReportDataSource {
         }
         Prefs.setPref(Prefs.VIEWACCOUNTS, oldAccountViewType);
         this.data = null;
-        this.data = new ArrayList();
+        this.data = new ArrayList<>();
         Enumeration<ReportItem> e = scratchReport.elements();
         while (e.hasMoreElements()) {
             this.data.add(e.nextElement());

@@ -8,14 +8,14 @@ import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
 import android.preference.Preference.OnPreferenceClickListener;
+
 import com.example.smmoney.R;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private Context context;
@@ -44,20 +44,20 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         this.sortOnPref.setSummary(nameOfSortOnListPref(Prefs.getIntPref(Prefs.BUDGETS_SORTON)));
     }
 
-    public String nameOfSortOnListPref(int sortOn) {
+    private String nameOfSortOnListPref(int sortOn) {
         switch (sortOn) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBudgetsSortTypeActual /*1*/:
                 return Locales.kLOC_BUDGETS_ACTUAL;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBudgetsSortTypeBudgeted /*2*/:
                 return Locales.kLOC_BUDGETS_BUDGETED;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBudgetsSortTypePercentage /*3*/:
                 return Locales.kLOC_BUDGETS_PERCENTAGE;
             default:
                 return Locales.kLOC_GENERAL_CATEGORY;
         }
     }
 
-    public void setupPrefs() {
+    private void setupPrefs() {
         this.sortOnPref = (ListPreference) findPreference("budgetsortonpref");
         this.startOnDate = findPreference("budgetStartDatePref");
         this.sortOnPref.setEntries(new String[]{Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_BUDGETS_ACTUAL, Locales.kLOC_BUDGETS_BUDGETED, Locales.kLOC_BUDGETS_PERCENTAGE});

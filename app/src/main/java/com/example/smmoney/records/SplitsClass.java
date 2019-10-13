@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import java.io.Serializable;
@@ -19,7 +20,7 @@ public class SplitsClass implements Serializable {
     public boolean dirty;
     public boolean hydrated;
     private String memo;
-    public int splitID;
+    int splitID;
     private int transactionID;
     private String transferToAccount;
     private int transferTransactionID;
@@ -74,21 +75,21 @@ public class SplitsClass implements Serializable {
         return this.xrate;
     }
 
-    public void setTransferTransactionID(int anID) {
+    private void setTransferTransactionID(int anID) {
         if (this.transferTransactionID != anID) {
             this.dirty = true;
             this.transferTransactionID = anID;
         }
     }
 
-    public int getTransferTransactionID() {
+    int getTransferTransactionID() {
         hydrate();
         return this.transferTransactionID;
     }
 
     public void setCategory(String aString) {
         if (this.category != null || aString != null) {
-            if (this.category != null && aString != null && this.category.equals(aString)) {
+            if (this.category != null && this.category.equals(aString)) {
                 return;
             }
             if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
@@ -105,7 +106,7 @@ public class SplitsClass implements Serializable {
 
     public void setClassName(String aString) {
         if (this.className != null || aString != null) {
-            if (this.className != null && aString != null && this.className.equals(aString)) {
+            if (this.className != null && this.className.equals(aString)) {
                 return;
             }
             if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
@@ -122,7 +123,7 @@ public class SplitsClass implements Serializable {
 
     public void setMemo(String aString) {
         if (this.memo != null || aString != null) {
-            if (this.memo == null || aString == null || !this.memo.equals(aString)) {
+            if (this.memo == null || !this.memo.equals(aString)) {
                 this.dirty = true;
                 this.memo = aString;
             }
@@ -136,7 +137,7 @@ public class SplitsClass implements Serializable {
 
     public void setTransferToAccount(String aString) {
         if (this.transferToAccount != null || aString != null) {
-            if (this.transferToAccount != null && aString != null && this.transferToAccount.equals(aString)) {
+            if (this.transferToAccount != null && this.transferToAccount.equals(aString)) {
                 return;
             }
             if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
@@ -153,7 +154,7 @@ public class SplitsClass implements Serializable {
 
     public void setCurrencyCode(String aString) {
         if (this.currencyCode != null || aString != null) {
-            if (this.currencyCode == null || aString == null || !this.currencyCode.equals(aString)) {
+            if (this.currencyCode == null || !this.currencyCode.equals(aString)) {
                 this.dirty = true;
                 this.currencyCode = aString;
             }
@@ -178,13 +179,13 @@ public class SplitsClass implements Serializable {
     public int getTransactionType() {
         if (isTransfer()) {
             if (getAmount() >= 0.0d) {
-                return 3;
+                return Enums.kTransactionTypeTransferFrom/*3*/;
             }
-            return 2;
+            return Enums.kTransactionTypeTransferTo/*2*/;
         } else if (getAmount() > 0.0d) {
-            return 1;
+            return Enums.kTransactionTypeDeposit/*1*/;
         } else {
-            return 0;
+            return Enums.kTransactionTypeWithdrawal/*0*/;
         }
     }
 
@@ -211,7 +212,6 @@ public class SplitsClass implements Serializable {
         this.memo = "";
         this.transferToAccount = "";
         this.currencyCode = "";
-        this.xrate = 1.0d;
         this.hydrated = true;
         this.amount = 0.0d;
         this.category = "";
@@ -234,7 +234,7 @@ public class SplitsClass implements Serializable {
         this.dirty = false;
     }
 
-    public static int insertNewRecordIntoDatabase() {
+    private static int insertNewRecordIntoDatabase() {
         ContentValues content = new ContentValues();
         content.put("transactionID", "''");
         long id = Database.insert(Database.SPLITS_TABLE_NAME, null, content);
@@ -253,7 +253,7 @@ public class SplitsClass implements Serializable {
             if (curs.getCount() > 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setTransactionID(curs.getInt(0));
                 int col2 = col + 1;
                 setAmount(curs.getDouble(col));

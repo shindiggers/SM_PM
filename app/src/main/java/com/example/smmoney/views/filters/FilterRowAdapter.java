@@ -13,17 +13,18 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
-import java.util.ArrayList;
-import java.util.Iterator;
 
-public class FilterRowAdapter extends BaseAdapter {
+import java.util.ArrayList;
+import java.util.Objects;
+
+class FilterRowAdapter extends BaseAdapter {
     private FiltersMainActivity delegate;
     private FilterClass filter;
-    private ArrayList<FilterClass> filterList = new ArrayList();
+    private ArrayList<FilterClass> filterList = new ArrayList<>();
     private LayoutInflater inflater;
     private ListView theList;
 
-    public FilterRowAdapter(FiltersMainActivity theDelegate, FilterClass aFilter) {
+    FilterRowAdapter(FiltersMainActivity theDelegate, FilterClass aFilter) {
         this.filter = aFilter;
         this.delegate = theDelegate;
         this.inflater = LayoutInflater.from(theDelegate);
@@ -34,10 +35,8 @@ public class FilterRowAdapter extends BaseAdapter {
         this.filterList.clear();
         ArrayList arrayList = new ArrayList();
         ArrayList<FilterClass> fList = FilterClass.query();
-        ArrayList<String> nameList = new ArrayList();
-        Iterator it = fList.iterator();
-        while (it.hasNext()) {
-            FilterClass filter = (FilterClass) it.next();
+        ArrayList<String> nameList = new ArrayList<>();
+        for (FilterClass filter : fList) {
             if (filter.getFilterName().length() > 0) {
                 nameList.add(filter.getFilterName());
                 this.filterList.add(filter);
@@ -87,7 +86,7 @@ public class FilterRowAdapter extends BaseAdapter {
         return new OnClickListener() {
             public void onClick(View v) {
                 FilterRowHolder vw = (FilterRowHolder) v.getTag();
-                if (vw.filter.getAccount() == Locales.kLOC_FILTERS_CURRENT_ACCOUNT) {
+                if (Objects.equals(vw.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                     vw.filter.setAccount(FilterRowAdapter.this.filter.getAccount());
                 }
                 FilterRowAdapter.this.delegate.filterSelected(vw.filter);

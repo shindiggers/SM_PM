@@ -34,13 +34,13 @@ public class PocketMoneyThemes {
     private static final int green_theme_highlighted_color = -3218503;
     private static final int green_theme_tint_color = -8544931;
     public static final int kThemeBlack = 0;
-    public static final int kThemeBlue = 1;
-    public static final int kThemeCoffee = 5;
-    public static final int kThemeGray = 4;
-    public static final int kThemeGreen = 2;
-    public static final int kThemePurple = 3;
-    public static final int kThemeRuby = 6;
-    public static final int kThemeWhite = 7;
+    private static final int kThemeBlue = 1;
+    private static final int kThemeCoffee = 5;
+    private static final int kThemeGray = 4;
+    private static final int kThemeGreen = 2;
+    private static final int kThemePurple = 3;
+    private static final int kThemeRuby = 6;
+    private static final int kThemeWhite = 7;
     private static final int purple_theme_alternating_row_color = -267538;
     private static final int purple_theme_background_color = -267538;
     private static final int purple_theme_field_label_color = -8571043;
@@ -375,10 +375,10 @@ public class PocketMoneyThemes {
     }
 
     public static int greenBarColor() {
-        return theme_green_deposit_color;
+        return theme_green_bar_color;
     }
 
     public static int redBarColor() {
-        return theme_red_label_color;
+        return theme_red_bar_color;
     }
 }

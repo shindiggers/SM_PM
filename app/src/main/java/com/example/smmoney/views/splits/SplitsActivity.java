@@ -14,6 +14,7 @@ import android.view.View.OnClickListener;
 import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
@@ -24,20 +25,23 @@ import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import java.util.Iterator;
+
+import java.util.Objects;
 
 public class SplitsActivity extends PocketMoneyActivity {
     public static final int REQUEST_EDIT = 3;
     public static final int RESULT_CHANGED = 1;
-    public static final int RESULT_NO_CHANGE = 0;
-    private final int CMENU_DELETE = REQUEST_EDIT;
-    private final int CMENU_EDIT = RESULT_CHANGED;
-    private final int MENU_ADJUST = REQUEST_EDIT;
+    private static final int RESULT_NO_CHANGE = 0;
+    private final int CMENU_DELETE = 3;
+    private final int CMENU_EDIT = 1;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int MENU_ADJUST = 3;
     private final int MENU_CLEAR = 4;
-    private final int MENU_NEW = RESULT_CHANGED;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int MENU_NEW = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int MENU_REMAINDER = 2;
-    private final int REQUEST_NEW = RESULT_CHANGED;
+    private final int REQUEST_NEW = 1;
     private final int REQUEST_REMAINDER = 2;
     private SplitsRowAdapter adapter;
     private Context context;
@@ -83,14 +87,14 @@ public class SplitsActivity extends PocketMoneyActivity {
         FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
         theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         theView.setVisibility(View.GONE);
-        setResult(0);
+        setResult(RESULT_NO_CHANGE);
         setContentView(layout);
-        setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
+        setTitle();
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
-        getActionBar().setTitle(title);
+    private void setTitle() {
+        this.titleTextView.setText(Locales.kLOC_EDIT_SPLITS_TITLE);
+        if (getActionBar() != null) getActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
     }
 
     protected void onResume() {
@@ -98,7 +102,7 @@ public class SplitsActivity extends PocketMoneyActivity {
         reloadData();
     }
 
-    public void reloadData() {
+    private void reloadData() {
         double remainderTotal;
         double totalTotal;
         int i;
@@ -157,7 +161,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     private void setTransactionAsResult() {
         Intent i = new Intent();
         double splitsSum = splitsSum();
-        if ((this.originalSubtotal == 0.0d || this.transaction.getNumberOfSplits() == RESULT_CHANGED) && splitsSum != 0.0d) {
+        if ((this.originalSubtotal == 0.0d || this.transaction.getNumberOfSplits() == 1) && splitsSum != 0.0d) {
             this.transaction.setSubTotal(splitsSum);
         }
         this.transaction.initType();
@@ -167,9 +171,8 @@ public class SplitsActivity extends PocketMoneyActivity {
 
     private double splitsSum() {
         double splitsTotal = 0.0d;
-        Iterator it = this.transaction.getSplits().iterator();
-        while (it.hasNext()) {
-            splitsTotal += ((SplitsClass) it.next()).getAmount();
+        for (SplitsClass splitsClass : this.transaction.getSplits()) {
+            splitsTotal += (splitsClass).getAmount();
         }
         return splitsTotal;
     }
@@ -182,18 +185,18 @@ public class SplitsActivity extends PocketMoneyActivity {
         Intent i = new Intent(this, SplitsEditActivity.class);
         i.putExtra("Transaction", this.transaction);
         i.putExtra("Split", split);
-        startActivityForResult(i, RESULT_CHANGED);
+        startActivityForResult(i, REQUEST_NEW/*1*/);
     }
 
     private void remainderAction() {
         SplitsClass split = new SplitsClass();
-        split.setCurrencyCode(AccountDB.recordFor(this.transaction.getAccount()).getCurrencyCode());
+        split.setCurrencyCode(Objects.requireNonNull(AccountDB.recordFor(this.transaction.getAccount())).getCurrencyCode());
         split.setAmount(this.transaction.getSubTotal() - splitsSum());
         split.dirty = false;
         Intent i = new Intent(this, SplitsEditActivity.class);
         i.putExtra("Transaction", this.transaction);
         i.putExtra("Split", split);
-        startActivityForResult(i, 2);
+        startActivityForResult(i, REQUEST_REMAINDER/*2*/);
     }
 
     private void adjustSplitsAction() {
@@ -212,25 +215,25 @@ public class SplitsActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, RESULT_CHANGED, 0, Locales.kLOC_SPLITS_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        MenuItem item = menu.add(0, 2, 0, "+" + Locales.kLOC_EDIT_SPLITS_REMAINDER);
-        item = menu.add(0, REQUEST_EDIT, 0, Locales.kLOC_EDIT_SPLITS_ADJUST);
-        menu.add(0, 4, 0, Locales.kLOC_EDIT_SPLITS_CLEAR).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_SPLITS_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_REMAINDER, 0, "+" + Locales.kLOC_EDIT_SPLITS_REMAINDER);
+        menu.add(0, MENU_ADJUST, 0, Locales.kLOC_EDIT_SPLITS_ADJUST);
+        menu.add(0, MENU_CLEAR, 0, Locales.kLOC_EDIT_SPLITS_CLEAR).setIcon(R.drawable.ic_arrow_drop_down_circle);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case RESULT_CHANGED /*1*/:
+            case REQUEST_NEW /*1*/:
                 newSplitAction();
                 return true;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case REQUEST_REMAINDER /*2*/:
                 remainderAction();
                 return true;
             case REQUEST_EDIT /*3*/:
                 adjustSplitsAction();
                 return true;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case MENU_CLEAR /*4*/:
                 clearAction();
                 return true;
             default:
@@ -241,7 +244,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
-            SplitsClass split = (SplitsClass) data.getExtras().get("Split");
+            SplitsClass split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
             switch (requestCode) {
                 case RESULT_CHANGED /*1*/:
                     if (resultCode == RESULT_CHANGED) {
@@ -249,7 +252,7 @@ public class SplitsActivity extends PocketMoneyActivity {
                         return;
                     }
                     return;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case REQUEST_REMAINDER /*2*/:
                     if (resultCode == RESULT_CHANGED) {
                         this.transaction.addSplit(split);
                         return;
@@ -263,7 +266,7 @@ public class SplitsActivity extends PocketMoneyActivity {
                     }
                     return;
                 default:
-                    return;
+
             }
         }
     }
@@ -274,21 +277,21 @@ public class SplitsActivity extends PocketMoneyActivity {
         Intent i = new Intent();
         i.putExtra("Split", aHolder.split);
         i.putExtra("Transaction", this.transaction);
-        menu.add(0, RESULT_CHANGED, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, REQUEST_EDIT, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
+        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case RESULT_CHANGED /*1*/:
+            case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, SplitsEditActivity.class);
-                anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
+                anIntent.putExtra("Transaction", (TransactionClass) Objects.requireNonNull(b).get("Transaction"));
                 anIntent.putExtra("Split", (SplitsClass) b.get("Split"));
-                startActivityForResult(anIntent, REQUEST_EDIT);
+                startActivityForResult(anIntent, REQUEST_EDIT /*3*/);
                 return true;
-            case REQUEST_EDIT /*3*/:
-                this.transaction.deleteSplitAtIndex(this.transaction.getSplits().indexOf(b.get("Split")));
+            case CMENU_DELETE /*3*/:
+                this.transaction.deleteSplitAtIndex(this.transaction.getSplits().indexOf(Objects.requireNonNull(b).get("Split")));
                 setTransactionAsResult();
                 reloadData();
                 return true;

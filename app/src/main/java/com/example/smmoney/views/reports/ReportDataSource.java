@@ -5,6 +5,7 @@ import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.ColorExt;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -25,19 +26,19 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 public abstract class ReportDataSource implements ChartViewDataSource, Serializable {
-    Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
+    private Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
         public int compare(ReportItem o1, ReportItem o2) {
             int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
             double retVal = 0.0d;
             double flipIt = Prefs.getIntPref(Prefs.PREFS_REPORTS_SORTDIRECTION) == 0 ? 1.0d : -1.0d;
             switch (sortType) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case Enums.kReportsSortOnItem /*0*/:
                     retVal = ((double) o1.expense.compareToIgnoreCase(o2.expense)) * flipIt;
                     break;
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case Enums.kReportsSortOnAmount /*1*/:
                     retVal = (o1.amount - o2.amount) * flipIt;
                     break;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case Enums.kReportsSortOnCount /*2*/:
                     retVal = ((double) (o1.count - o2.count)) * flipIt;
                     break;
             }
@@ -48,22 +49,20 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         }
     };
     int currentAction = 0;
-    GregorianCalendar currentDate;
+    private GregorianCalendar currentDate;
     int currentPeriod;
     public ArrayList<ReportItem> data;
-    ReportsActivity delegate;
+    private ReportsActivity delegate;
     FilterClass filter;
-    int previousPercentSent = -1;
-    int sortType;
     int totalActions = 0;
 
-    public abstract void generateReport();
+    protected abstract void generateReport();
 
     public abstract FilterClass newFilterBasedOnSelectedRow(String str);
 
     public abstract String title();
 
-    public ReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
+    ReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
         this.filter = theFilter;
         this.currentPeriod = Prefs.getIntPref(Prefs.REPORTS_PERIOD);
         if (theTrans == null || theTrans.size() <= 0) {
@@ -73,7 +72,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         }
     }
 
-    public ArrayList<ReportItem> calculatePercentagesAndColors(ArrayList<ReportItem> array) {
+    private ArrayList<ReportItem> calculatePercentagesAndColors(ArrayList<ReportItem> array) {
         double negativeTotal = 0.0d;
         double positiveTotal = 0.0d;
         double negativeMaxValue = 0.0d;
@@ -115,7 +114,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         if (this.data != null) {
             Collections.sort(this.data, this.comparator);
             if (ReportsActivity.processData) {
-                this.data = calculatePercentagesAndColors(this.data);
+                calculatePercentagesAndColors(this.data);
             }
         }
     }
@@ -125,11 +124,10 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         reloadData();
     }
 
+    @SuppressWarnings("unused")
     public int itemCount() {
         int count = 0;
-        Iterator it = this.data.iterator();
-        while (it.hasNext()) {
-            ReportItem item = (ReportItem) it.next();
+        for (ReportItem item : this.data) {
             if (item.checked) {
                 count += item.count;
             }
@@ -137,11 +135,9 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         return count;
     }
 
-    public double expenseTotal() {
+    double expenseTotal() {
         double total = 0.0d;
-        Iterator it = this.data.iterator();
-        while (it.hasNext()) {
-            ReportItem item = (ReportItem) it.next();
+        for (ReportItem item : this.data) {
             if (item.checked) {
                 total += item.amount;
             }
@@ -149,7 +145,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         return total;
     }
 
-    public String expenseTotalAsString() {
+    String expenseTotalAsString() {
         AccountClass account = null;
         if (!this.filter.allAccounts()) {
             account = AccountDB.recordFor(this.filter.getAccount());
@@ -158,14 +154,14 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         return CurrencyExt.amountAsCurrency(expenseTotal(), account != null ? account.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
     }
 
-    public String rangeOfPeriodAsString() {
+    String rangeOfPeriodAsString() {
         switch (this.currentPeriod) {
             case PocketMoneyThemes.kThemeBlack /*0*/:
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(startOfPeriod()))).append(" ").append(CalExt.descriptionWithYear(endOfPeriod())).toString();
+                return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
             case SplitsActivity.RESULT_CHANGED /*1*/:
             case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
             case SplitsActivity.REQUEST_EDIT /*3*/:
-                return new StringBuilder(String.valueOf(CalExt.descriptionWithMonth(startOfPeriod()))).append(" ").append(CalExt.descriptionWithYear(startOfPeriod())).append(" - ").append(CalExt.descriptionWithMonth(endOfPeriod())).append(" ").append(CalExt.descriptionWithYear(endOfPeriod())).toString();
+                return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
             case LookupsListActivity.PAYEE_LOOKUP /*4*/:
                 return CalExt.descriptionWithYear(this.currentDate);
             default:
@@ -173,82 +169,80 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         }
     }
 
-    public GregorianCalendar startOfPeriod() {
+    GregorianCalendar startOfPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kReportPeriodOneMonth /*0*/:
+            case Enums.kReportPeriodTwoMonths /*1*/:
+            case Enums.kReportPeriodThreeMonths /*2*/:
+            case Enums.kReportPeriodSixMonths /*3*/:
                 return CalExt.beginningOfMonth(this.currentDate);
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kReportPeriodOneYear /*4*/:
                 return CalExt.beginningOfYear(this.currentDate);
             default:
                 return CalExt.distantPast();
         }
     }
 
-    public GregorianCalendar endOfPeriod() {
+    GregorianCalendar endOfPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kReportPeriodOneMonth /*0*/:
                 return CalExt.endOfMonth(CalExt.addMonth(CalExt.subtractDay(startOfPeriod())));
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kReportPeriodTwoMonths /*1*/:
                 return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 2));
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kReportPeriodThreeMonths /*2*/:
                 return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 3));
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kReportPeriodSixMonths /*3*/:
                 return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 6));
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kReportPeriodOneYear /*4*/:
                 return CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
             default:
                 return CalExt.distantFuture();
         }
     }
 
-    public void nextPeriod() {
+    void nextPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kReportPeriodOneMonth /*0*/:
                 this.currentDate = CalExt.addMonth(this.currentDate);
                 return;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kReportPeriodTwoMonths /*1*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 2);
                 return;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kReportPeriodThreeMonths /*2*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 3);
                 return;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kReportPeriodSixMonths /*3*/:
                 this.currentDate = CalExt.addMonths(this.currentDate, 6);
                 return;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kReportPeriodOneYear /*4*/:
                 this.currentDate = CalExt.addYear(this.currentDate);
                 return;
             default:
-                return;
         }
     }
 
-    public void previousPeriod() {
+    void previousPeriod() {
         switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kReportPeriodOneMonth /*0*/:
                 this.currentDate = CalExt.subtractMonth(this.currentDate);
                 return;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kReportPeriodTwoMonths /*1*/:
                 this.currentDate = CalExt.subtractMonths(this.currentDate, 2);
                 return;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kReportPeriodThreeMonths /*2*/:
                 this.currentDate = CalExt.subtractMonths(this.currentDate, 3);
                 return;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kReportPeriodSixMonths /*3*/:
                 this.currentDate = CalExt.subtractMonths(this.currentDate, 6);
                 return;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kReportPeriodOneYear /*4*/:
                 this.currentDate = CalExt.subtractYear(this.currentDate);
                 return;
             default:
-                return;
         }
     }
 
-    public TransactionClass[] transactionsFromDateToDate(GregorianCalendar fromDate, GregorianCalendar toDate) {
+    TransactionClass[] transactionsFromDateToDate(GregorianCalendar fromDate, GregorianCalendar toDate) {
         FilterClass tempFilter = this.filter.copy();
         tempFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
         tempFilter.setDateFrom(fromDate);
@@ -256,7 +250,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         return TransactionDB.queryWithFilterToCArray(tempFilter);
     }
 
-    public void addCurrentPeriodToFilter(FilterClass modFilter) {
+    void addCurrentPeriodToFilter(FilterClass modFilter) {
         String str = null;
         if (5 == this.currentPeriod) {
             modFilter.setDate(this.filter.getDate());
@@ -294,36 +288,37 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         }
     }
 
-    public GregorianCalendar laterDate(GregorianCalendar date1, GregorianCalendar date2) {
+    private GregorianCalendar laterDate(GregorianCalendar date1, GregorianCalendar date2) {
         if (date2 != null && date1.before(date2)) {
             return date2;
         }
         return date1;
     }
 
-    public GregorianCalendar earlierDate(GregorianCalendar date1, GregorianCalendar date2) {
+    private GregorianCalendar earlierDate(GregorianCalendar date1, GregorianCalendar date2) {
         if (date2 != null && date1.after(date2)) {
             return date2;
         }
         return date1;
     }
 
-    protected void updateProgress() {
+    void updateProgress() {
         int percent = (this.currentAction * 100) / this.totalActions;
-        if (this.previousPercentSent != percent && ReportsActivity.processData) {
+        int previousPercentSent = -1;
+        if (previousPercentSent != percent && ReportsActivity.processData) {
             this.delegate.updateProgressBar(percent);
         }
     }
 
+    @SuppressWarnings("unused")
     protected void progressFinished() {
         this.delegate.finishProgressBar();
     }
 
     public int numberOfDataPointsInSeries(ChartView chartView, int series) {
         int count = 0;
-        Iterator it = this.data.iterator();
-        while (it.hasNext()) {
-            if (((ReportItem) it.next()).checked) {
+        for (ReportItem datum : this.data) {
+            if ((datum).checked) {
                 count++;
             }
         }
@@ -333,9 +328,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
     public ChartItem itemForDataAtIndex(ChartView chartView, int row, int sections) {
         boolean displayCount = Prefs.getIntPref(Prefs.REPORTS_SORTON) == 2;
         int indexPos = 0;
-        Iterator it = this.data.iterator();
-        while (it.hasNext()) {
-            ReportItem item = (ReportItem) it.next();
+        for (ReportItem item : this.data) {
             if (item.checked) {
                 if (indexPos == row) {
                     ChartItem reportChartItem = new ReportChartItem(displayCount ? (double) item.count : item.amount, item.expense, item.color);

@@ -8,9 +8,12 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.budgets.BudgetsActivity;
 
-public class PocketMoneyActivity extends Activity {
-    protected boolean isStartingActivity = false;
-    protected boolean showPasswordScreen = false;
+import static android.view.KeyEvent.KEYCODE_BACK;
+import static android.view.KeyEvent.KEYCODE_HOME;
+
+public abstract class PocketMoneyActivity extends Activity {
+    private boolean isStartingActivity = false;
+    private boolean showPasswordScreen = false;
     protected boolean skipPasswordScreen = false;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,6 +23,7 @@ public class PocketMoneyActivity extends Activity {
         try {
             dontShowPass = getIntent().getExtras().getString("dontShowPass");
         } catch (NullPointerException e) {
+            e.printStackTrace();
         }
         if (dontShowPass == null) {
             this.showPasswordScreen = true;
@@ -68,10 +72,10 @@ public class PocketMoneyActivity extends Activity {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == 3) {
+        if (keyCode == KEYCODE_HOME) {
             Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
             startActivity(new Intent(this, PasswordActivity.class));
-        } else if (keyCode == 4) {
+        } else if (keyCode == KEYCODE_BACK) {
             Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
             if (getClass().equals(AccountsActivity.class) || getClass().equals(BudgetsActivity.class)) {
                 startActivity(new Intent(this, PasswordActivity.class));

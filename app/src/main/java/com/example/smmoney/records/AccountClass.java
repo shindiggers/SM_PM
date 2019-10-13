@@ -11,12 +11,11 @@ import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountTypeIconGridActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -34,15 +33,15 @@ import org.xmlpull.v1.XmlSerializer;
 public class AccountClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_ACCOUNTS = "ACCOUNTS";
     public static final String XML_RECORDTAG_ACCOUNT = "ACCOUNTCLASS";
-    static String select_accountNumBankID_statement = null;
+    private static String select_accountNumBankID_statement = null;
     private String account;
     public int accountID;
     private String accountNumber;
-    public double balanceAvailableCreditCached;
-    public double balanceAvailableFundsCached;
-    public double balanceClearedCached;
-    public double balanceCurrentCached;
-    public double balanceOverallCached;
+    private double balanceAvailableCreditCached;
+    private double balanceAvailableFundsCached;
+    private double balanceClearedCached;
+    private double balanceCurrentCached;
+    private double balanceOverallCached;
     private int balanceType;
     private String checkNumber;
     private String currencyCode;
@@ -69,30 +68,30 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private int uniqueID;
     private String url;
 
-    public int getAccountId() {
+    private int getAccountId() {
         return this.accountID;
     }
 
-    public void setDisplayOrder(int order) {
+    private void setDisplayOrder(int order) {
         if (this.displayOrder != order) {
             this.dirty = true;
             this.displayOrder = order;
         }
     }
 
-    public int getDisplayOrder() {
+    private int getDisplayOrder() {
         hydrate();
         return this.displayOrder;
     }
 
-    public void setBalanceType(int atype) {
+    private void setBalanceType(int atype) {
         if (this.balanceType != atype) {
             this.dirty = true;
             this.balanceType = atype;
         }
     }
 
-    public int getBalanceType() {
+    private int getBalanceType() {
         hydrate();
         return this.balanceType;
     }
@@ -111,7 +110,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setAccount(String aString) {
         if (this.account != null || aString != null) {
-            if (this.account == null || aString == null || !this.account.equals(aString)) {
+            if (this.account == null || !this.account.equals(aString)) {
                 this.dirty = true;
                 this.account = aString;
             }
@@ -125,7 +124,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setAccountNumber(String aString) {
         if (this.accountNumber != null || aString != null) {
-            if (this.accountNumber == null || aString == null || !this.accountNumber.equals(aString)) {
+            if (this.accountNumber == null || !this.accountNumber.equals(aString)) {
                 this.dirty = true;
                 this.accountNumber = aString;
             }
@@ -139,7 +138,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setRoutingNumber(String aString) {
         if (this.routingNumber != null || aString != null) {
-            if (this.routingNumber == null || aString == null || !this.routingNumber.equals(aString)) {
+            if (this.routingNumber == null || !this.routingNumber.equals(aString)) {
                 this.dirty = true;
                 this.routingNumber = aString;
             }
@@ -153,7 +152,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setInstitution(String aString) {
         if (this.institution != null || aString != null) {
-            if (this.institution == null || aString == null || !this.institution.equals(aString)) {
+            if (this.institution == null || !this.institution.equals(aString)) {
                 this.dirty = true;
                 this.institution = aString;
             }
@@ -167,7 +166,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setPhone(String aString) {
         if (this.phone != null || aString != null) {
-            if (this.phone == null || aString == null || !this.phone.equals(aString)) {
+            if (this.phone == null || !this.phone.equals(aString)) {
                 this.dirty = true;
                 this.phone = aString;
             }
@@ -181,7 +180,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setExpirationDate(String aString) {
         if (this.expirationDate != null || aString != null) {
-            if (this.expirationDate == null || aString == null || !this.expirationDate.equals(aString)) {
+            if (this.expirationDate == null || !this.expirationDate.equals(aString)) {
                 this.dirty = true;
                 this.expirationDate = aString;
             }
@@ -195,7 +194,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setCheckNumber(String aString) {
         if (this.checkNumber != null || aString != null) {
-            if (this.checkNumber == null || aString == null || !this.checkNumber.equals(aString)) {
+            if (this.checkNumber == null || !this.checkNumber.equals(aString)) {
                 this.dirty = true;
                 this.checkNumber = aString;
             }
@@ -209,7 +208,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setNotes(String aString) {
         if (this.notes != null || aString != null) {
-            if (this.notes == null || aString == null || !this.notes.equals(aString)) {
+            if (this.notes == null || !this.notes.equals(aString)) {
                 this.dirty = true;
                 this.notes = aString;
             }
@@ -223,7 +222,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setIconFileName(String aString) {
         if (this.iconFileName != null || aString != null) {
-            if (this.iconFileName == null || aString == null || !this.iconFileName.equals(aString)) {
+            if (this.iconFileName == null || !this.iconFileName.equals(aString)) {
                 this.dirty = true;
                 this.iconFileName = aString;
             }
@@ -234,19 +233,19 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         hydrate();
         if (this.iconFileName == null || this.iconFileName.length() == 0) {
             switch (this.type) {
-                case PocketMoneyThemes.kThemeBlack /*0*/:
+                case Enums.kAccountTypeChecking /*0*/:
                     this.iconFileName = "checkbook.png";
                     break;
-                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                case Enums.kAccountTypeCreditCard /*2*/:
                     this.iconFileName = "visa.png";
                     break;
-                case SplitsActivity.REQUEST_EDIT /*3*/:
+                case Enums.kAccountTypeAsset /*3*/:
                     this.iconFileName = "asset.png";
                     break;
-                case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                case Enums.kAccountTypeLiability /*4*/:
                     this.iconFileName = "liability.png";
                     break;
-                case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                case Enums.kAccountTypeSavings /*6*/:
                     this.iconFileName = "savings.png";
                     break;
                 default:
@@ -267,7 +266,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setUrl(String aString) {
         if (this.url != null || aString != null) {
-            if (this.url == null || aString == null || !this.url.equals(aString)) {
+            if (this.url == null || !this.url.equals(aString)) {
                 this.dirty = true;
                 this.url = aString;
             }
@@ -279,7 +278,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.url;
     }
 
-    public void setFee(double amount) {
+    private void setFee(double amount) {
         if (this.fee != amount) {
             this.dirty = true;
             this.fee = amount;
@@ -298,7 +297,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setKeepTheChangeAccount(String aString) {
         if (this.keepTheChangeAccount != null || aString != null) {
-            if (this.keepTheChangeAccount == null || aString == null || !this.keepTheChangeAccount.equals(aString)) {
+            if (this.keepTheChangeAccount == null || !this.keepTheChangeAccount.equals(aString)) {
                 this.dirty = true;
                 this.keepTheChangeAccount = aString;
             }
@@ -310,7 +309,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.keepChangeRoundTo;
     }
 
-    public void setKeepChangeRoundTo(double aKeepChangeRoundTo) {
+    private void setKeepChangeRoundTo(double aKeepChangeRoundTo) {
         if (this.keepChangeRoundTo != aKeepChangeRoundTo) {
             this.dirty = true;
             this.keepChangeRoundTo = aKeepChangeRoundTo;
@@ -391,14 +390,14 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return CurrencyExt.exchangeRateAsString(getExchangeRate());
     }
 
-    public void setFixedPercent(int value) {
+    private void setFixedPercent(int value) {
         if (this.fixedPercent != value) {
             this.dirty = true;
             this.fixedPercent = value;
         }
     }
 
-    public int getFixedPercent() {
+    private int getFixedPercent() {
         hydrate();
         return this.fixedPercent;
     }
@@ -429,7 +428,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setCurrencyCode(String aString) {
         if (this.currencyCode != null || aString != null) {
-            if (this.currencyCode == null || aString == null || !this.currencyCode.equals(aString)) {
+            if (this.currencyCode == null || !this.currencyCode.equals(aString)) {
                 this.dirty = true;
                 this.currencyCode = aString;
             }
@@ -461,7 +460,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setOverdraftAccount(String aString) {
         if (this.overdraftAccount != null || aString != null) {
-            if (this.overdraftAccount == null || aString == null || !this.overdraftAccount.equals(aString)) {
+            if (this.overdraftAccount == null || !this.overdraftAccount.equals(aString)) {
                 this.dirty = true;
                 this.overdraftAccount = aString;
             }
@@ -513,17 +512,17 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             return false;
         }
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-            case LookupsListActivity.ID_LOOKUP /*7*/:
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
+            case Enums.kAccountTypeChecking /*0*/:
+            case Enums.kAccountTypeCash /*1*/:
+            case Enums.kAccountTypeAsset /*3*/:
+            case Enums.kAccountTypeOnline /*5*/:
+            case Enums.kAccountTypeSavings /*6*/:
+            case Enums.kAccountTypeMoneyMarket /*7*/:
+            case Enums.kAccountTypeInvestment /*9*/:
                 return getLimit() >= balanceCurrent();
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kAccountTypeCreditCard /*2*/:
+            case Enums.kAccountTypeLiability /*4*/:
+            case Enums.kAccountTypeCreditLine /*8*/:
                 return -1.0d * getLimit() > balanceCurrent();
             default:
                 return false;
@@ -535,32 +534,33 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             return false;
         }
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-            case LookupsListActivity.ID_LOOKUP /*7*/:
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
+            case Enums.kAccountTypeChecking /*0*/:
+            case Enums.kAccountTypeCash /*1*/:
+            case Enums.kAccountTypeAsset /*3*/:
+            case Enums.kAccountTypeOnline /*5*/:
+            case Enums.kAccountTypeSavings /*6*/:
+            case Enums.kAccountTypeMoneyMarket /*7*/:
+            case Enums.kAccountTypeInvestment /*9*/:
                 return getLimit() >= amount;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kAccountTypeCreditCard /*2*/:
+            case Enums.kAccountTypeLiability /*4*/:
+            case Enums.kAccountTypeCreditLine /*8*/:
                 return -1.0d * getLimit() > amount;
             default:
                 return false;
         }
     }
 
-    public boolean hasLimit() {
+    private boolean hasLimit() {
         return !getNoLimit();
     }
 
-    public boolean isLiability() {
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean isLiability() {
         switch (getType()) {
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kAccountTypeCreditCard /*2*/:
+            case Enums.kAccountTypeLiability /*4*/:
+            case Enums.kAccountTypeCreditLine /*8*/:
                 return true;
             default:
                 return false;
@@ -574,28 +574,28 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     public double balanceOfType(int balanceType) {
         double retBalance;
         switch (balanceType) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kBalanceTypeFuture /*0*/:
                 if (this.balanceOverallCached == 0.0d) {
                     retBalance = balanceOverall();
                     this.balanceOverallCached = retBalance;
                     break;
                 }
                 return this.balanceOverallCached;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case Enums.kBalanceTypeCleared /*1*/:
                 if (this.balanceClearedCached == 0.0d) {
                     retBalance = balanceCleared();
                     this.balanceClearedCached = retBalance;
                     break;
                 }
                 return this.balanceClearedCached;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kBalanceTypeCurrent /*2*/:
                 if (this.balanceCurrentCached == 0.0d) {
                     retBalance = balanceCurrent();
                     this.balanceCurrentCached = retBalance;
                     break;
                 }
                 return this.balanceCurrentCached;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
                 if (this.balanceAvailableFundsCached == 0.0d) {
                     if (!isLiability()) {
                         if (hasLimit()) {
@@ -620,10 +620,10 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     break;
                 }
                 return this.balanceAvailableFundsCached;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
                 if (this.balanceAvailableCreditCached == 0.0d) {
                     retBalance = 0.0d;
-                    if ((2 == getType() || 8 == getType()) && hasLimit()) {
+                    if ((Enums.kAccountTypeCreditCard/*2*/ == getType() || Enums.kAccountTypeCreditLine /*8*/ == getType()) && hasLimit()) {
                         retBalance = this.limit + balanceCurrent();
                     }
                     this.balanceAvailableCreditCached = retBalance;
@@ -661,21 +661,21 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public String typeAsString() {
         switch (getType()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
+            case Enums.kAccountTypeChecking /*0*/:
                 return Locales.kLOC_ACCOUNTTYPE_CHECKING;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case Enums.kAccountTypeCreditCard /*2*/:
                 return Locales.kLOC_ACCOUNTTYPE_CREDITCARD;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
+            case Enums.kAccountTypeAsset /*3*/:
                 return Locales.kLOC_ACCOUNTTYPE_ASSET;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+            case Enums.kAccountTypeLiability /*4*/:
                 return Locales.kLOC_ACCOUNTTYPE_LIABILITY;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+            case Enums.kAccountTypeOnline /*5*/:
                 return Locales.kLOC_ACCOUNTTYPE_ONLINE;
-            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+            case Enums.kAccountTypeSavings /*6*/:
                 return Locales.kLOC_ACCOUNTTYPE_SAVINGS;
-            case LookupsListActivity.ID_LOOKUP /*7*/:
+            case Enums.kAccountTypeMoneyMarket /*7*/:
                 return Locales.kLOC_ACCOUNTTYPE_MONEYMARKET;
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+            case Enums.kAccountTypeCreditLine /*8*/:
                 return Locales.kLOC_ACCOUNTTYPE_CREDITLINE;
             default:
                 return Locales.kLOC_ACCOUNTTYPE_CASH;
@@ -734,7 +734,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
-                int col = 0 + 1;
+                int col = 1;
                 setDeleted(curs.getInt(0) == 1);
                 this.timestamp = new GregorianCalendar();
                 int col2 = col + 1;
@@ -914,7 +914,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     }
 
     public static ArrayList<String> accountTypes() {
-        ArrayList<String> accountTypes = new ArrayList();
+        ArrayList<String> accountTypes = new ArrayList<>();
         accountTypes.add(Locales.kLOC_ACCOUNTTYPE_ASSET);
         accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CASH);
         accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CHECKING);
@@ -971,7 +971,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return accountID;
     }
 
-    public static int idForAccount(boolean deleted, String account) {
+    static int idForAccount(boolean deleted, String account) {
         int i = 1;
         if (account == null || account.length() == 0) {
             return 0;
@@ -993,7 +993,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return accountID;
     }
 
-    public static String accountForID(int pk) {
+    static String accountForID(int pk) {
         if (pk == 0) {
             return null;
         }
@@ -1028,7 +1028,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return accountID;
     }
 
-    public double balanceCleared() {
+    private double balanceCleared() {
         Cursor curs;
         double balance = 0.0d;
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -1064,7 +1064,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return balance;
     }
 
-    public double balanceOverall() {
+    private double balanceOverall() {
         if (Prefs.getLongPref(Prefs.BALANCEONDATE) <= 0) {
             return balanceAsOfDate(CalExt.distantFuture());
         }
@@ -1073,9 +1073,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return balanceAsOfDate(cal);
     }
 
-    public double balanceCurrent() {
+    private double balanceCurrent() {
         GregorianCalendar cal = new GregorianCalendar();
-        cal.setTimeInMillis(Long.valueOf(System.currentTimeMillis()));
+        cal.setTimeInMillis(System.currentTimeMillis());
         return balanceAsOfDate(cal);
     }
 
@@ -1141,25 +1141,42 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         } else if (localName.equals("exchangeRate")) {
             setExchangeRate(Double.valueOf(this.currentElementValue));
         } else if (!localName.equals("customIcon")) {
-            if (localName.equals("iconFileName")) {
-                setIconFileName(this.currentElementValue);
-            } else if (localName.equals("serverID")) {
-                setServerID(this.currentElementValue);
-            } else if (localName.equals("keepChangeRoundTo")) {
-                try {
-                    setKeepChangeRoundTo(Double.parseDouble(this.currentElementValue));
-                } catch (Exception e) {
-                    setKeepChangeRoundTo(1.0d);
-                }
-            } else if (localName.equals("keepTheChangeAccount")) {
-                setKeepTheChangeAccount(this.currentElementValue);
-            } else if (localName.equals("category") || localName.equals("account") || localName.equals("accountNumber") || localName.equals("routingNumber") || localName.equals("institution") || localName.equals("phone") || localName.equals("expirationDate") || localName.equals("checkNumber") || localName.equals("notes") || localName.equals("currencyCode") || localName.equals("url") || localName.equals("overdraftAccount")) {
-                Class<?> c = getClass();
-                try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
-                } catch (Exception e2) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml [" + localName + "]");
-                }
+            switch (localName) {
+                case "iconFileName":
+                    setIconFileName(this.currentElementValue);
+                    break;
+                case "serverID":
+                    setServerID(this.currentElementValue);
+                    break;
+                case "keepChangeRoundTo":
+                    try {
+                        setKeepChangeRoundTo(Double.parseDouble(this.currentElementValue));
+                    } catch (Exception e) {
+                        setKeepChangeRoundTo(1.0d);
+                    }
+                    break;
+                case "keepTheChangeAccount":
+                    setKeepTheChangeAccount(this.currentElementValue);
+                    break;
+                case "category":
+                case "account":
+                case "accountNumber":
+                case "routingNumber":
+                case "institution":
+                case "phone":
+                case "expirationDate":
+                case "checkNumber":
+                case "notes":
+                case "currencyCode":
+                case "url":
+                case "overdraftAccount":
+                    Class<?> c = getClass();
+                    try {
+                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                    } catch (Exception e2) {
+                        Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml [" + localName + "]");
+                    }
+                    break;
             }
         }
         this.currentElementValue = null;

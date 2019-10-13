@@ -1,15 +1,15 @@
 package com.example.smmoney.misc;
 
 import android.graphics.Color;
-import com.example.smmoney.views.PasswordActivity;
+
 import java.util.ArrayList;
 
 public class ColorExt {
-    public static ArrayList<Integer> colors = null;
+    private static ArrayList<Integer> colors = null;
 
-    public static ArrayList<Integer> getColors() {
+    private static ArrayList<Integer> getColors() {
         if (colors == null) {
-            colors = new ArrayList();
+            colors = new ArrayList<>();
             colors.add(Color.rgb(26, 146, 23));
             colors.add(Color.rgb(185, 0, 0));
             colors.add(Color.rgb(0, 197, 211));
@@ -29,7 +29,7 @@ public class ColorExt {
             colors.add(Color.rgb(95, 137, 240));
             colors.add(Color.rgb(28, 255, 226));
             colors.add(Color.rgb(221, 188, 7));
-            colors.add(Color.rgb(PasswordActivity.PASSWORD_CORRECT, 6, 146));
+            colors.add(Color.rgb(132, 6, 146));
         }
         return colors;
     }

@@ -31,16 +31,16 @@ import java.util.UUID;
 
 public class Prefs {
     public static final String ALLTRANSACTIONS = "prefsdisplayaccountalltransactions"; // ACCOUNTS PREF Show all trans. Type: boolean
-    public static final String ALTBALANCETYPE = "secondbalancelinepref";
-    public static final String APP_FIRST_RUN = "appFirstRun"; // Is this first run v0. Type must be boolean
-    public static final String APP_FIRST_RUN_U1 = "appFirstRunUpdate1"; // Is this first run v1. Type must be boolean
-    public static final String APP_FIRST_RUN_U1_05 = "appFirstRunUpdate1_05"; // Is this first run v1.05. Type must be boolean
-    public static final String APP_FIRST_RUN_U1_09 = "appFirstRunUpdate1_09"; // Is this first run v1.09 Type must be boolean
-    public static final String APP_FIRST_RUN_U1_11 = "appFirstRunUpdate1_11"; // Is this first run v1.11 Type must be boolean
-    public static final String APP_FIRST_RUN_U2 = "appFirstRunUpdate2"; // Is this first run v2. Type must be boolean
-    public static final String APP_FIRST_RUN_U2_0 = "appFirstRunUpdate2_0"; // Is this first run v2.0 Type must be boolean
-    public static final String APP_FIRST_RUN_U2_0_5 = "appFirstRunUpdate2_0_5"; // Is this first run v2.0.5 Type must be boolean
-    public static final String APP_FIRST_RUN_U3 = "appFirstRunUpdate3"; // Is this first run v3. Type must be boolean
+    private static final String ALTBALANCETYPE = "secondbalancelinepref";
+    private static final String APP_FIRST_RUN = "appFirstRun"; // Is this first run v0. Type must be boolean
+    private static final String APP_FIRST_RUN_U1 = "appFirstRunUpdate1"; // Is this first run v1. Type must be boolean
+    private static final String APP_FIRST_RUN_U1_05 = "appFirstRunUpdate1_05"; // Is this first run v1.05. Type must be boolean
+    private static final String APP_FIRST_RUN_U1_09 = "appFirstRunUpdate1_09"; // Is this first run v1.09 Type must be boolean
+    private static final String APP_FIRST_RUN_U1_11 = "appFirstRunUpdate1_11"; // Is this first run v1.11 Type must be boolean
+    private static final String APP_FIRST_RUN_U2 = "appFirstRunUpdate2"; // Is this first run v2. Type must be boolean
+    private static final String APP_FIRST_RUN_U2_0 = "appFirstRunUpdate2_0"; // Is this first run v2.0 Type must be boolean
+    private static final String APP_FIRST_RUN_U2_0_5 = "appFirstRunUpdate2_0_5"; // Is this first run v2.0.5 Type must be boolean
+    private static final String APP_FIRST_RUN_U3 = "appFirstRunUpdate3"; // Is this first run v3. Type must be boolean
     public static final String AUTOADD_LOOKUPS = "prefsmanagedlistsautoadd";
     public static final String AUTO_FILL = "prefsmanagedlistsautofill";
     public static final String AUTO_SUGGEST = "prefsautosuggest";
@@ -70,8 +70,8 @@ public class Prefs {
     public static final String COLLAPSE_UNBUDGETED = "collapseUnbudgeted"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String CREATED_ON = "createdon";
     public static final String CURRENT_DATABASE_NAME = "currentDBName";
-    public static final boolean DEBUGGING = true;
-    public static final String DEFAULTROUNDING = "prefscurrencydefaultrounding";
+    private static final boolean DEBUGGING = true;
+    private static final String DEFAULTROUNDING = "prefscurrencydefaultrounding";
     public static final String DISPLAY_BUDGETPERIOD = "budgetPeriod";
     public static final String EDITTRANSACTION_CATBYPAYEE_FIELD = "prefsdispplayeditcatposition";
     public static final String EDITTRANSACTION_SHOW_ALL_ACCOUNTS = "prefsdisplayeditallaccounts";
@@ -89,17 +89,17 @@ public class Prefs {
     public static final String GROUPBYACCOUNTTYPE = "prefsdisplayaccountgroupbyaccounttype"; //ACCOUNTS PREFS Group eg assets or no. Tpye: boolean
     public static final String HINT_ACCOUNT_INFO = "h2"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_ACCOUNT_TYPE_OPTIONS = "h8"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_ACCOUNT_VIEW_OPTIONS = "h6"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_BUDGETS = "hB"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_ACCOUNT_VIEW_OPTIONS = "h6"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_BUDGETS = "hB"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_EDITTRANSACTION = "h5"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_FILETRANSFER = "hA"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_FILETRANSFER = "hA"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_FIRSTNEWACCOUNT = "h3"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_KEYBOARD = "h9"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_REDBADGE = "hD"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_REGISTER = "h4"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_KEYBOARD = "h9"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_REDBADGE = "hD"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_REGISTER = "h4"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_REPEATING = "hE"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_REPORTS = "h7"; // whether this hint shows? Type: Likely boolean
-    public static final String HINT_VIDEOS = "hC"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_REPORTS = "h7"; // whether this hint shows? Type: Likely boolean
+    private static final String HINT_VIDEOS = "hC"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_WELCOME = "h1"; // whether this hint shows? Type: Likely boolean
     public static final String HOMECURRENCYCODE = "prefscurrencyhomecurrency"; // Home curr code (3 digit). Type: String
     public static final String LASTFULLEXPORT = "lastFllExport";
@@ -267,7 +267,7 @@ public class Prefs {
     }
 
     public static String getStringPref(String thePref) {
-        return getSharedPrefs().getString(thePref, "");
+        return getSharedPrefs().getString(thePref, "Blue");
     }
 
     public static Long getLongPref(String thePref) {
@@ -357,6 +357,7 @@ public class Prefs {
             try {
                 code = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
             } catch (Exception e) {
+                e.printStackTrace();
             }
             if (code != null) {
                 setPref(HOMECURRENCYCODE, code);
@@ -392,21 +393,31 @@ public class Prefs {
             setPref(PASSWORD_DELAY_LAST, new GregorianCalendar().getTimeInMillis());
             setPref(PASSWORD_DELAY, Locales.kLOC_GENERAL_NONE);
             setPref(BALANCEONDATE,0L);
-            setPref(VIEWACCOUNTS, 0);
+            setPref(VIEWACCOUNTS, Enums.kViewAccountsAll/*0*/);
             setPref(NEWESTTRANSACTIONFIRST, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
             setPref(QIF_NUMBERFORMAT, Locales.kLOC_GENERAL_DEFAULT);
             setPref(QIF_MARKALLCLEARED, false);
             setPref(QIF_IMPORT_DUPS, DEBUGGING);
             setPref(QIF_EXPORT_SEPERATELY, false);
-            setPref(BALANCETYPE, 2);
-            setPref(BALANCEBARREGISTER, 2);
+            setPref(BALANCETYPE, Enums.kBalanceTypeCurrent/*2*/);
+            setPref(BALANCEBARREGISTER, Enums.kBalanceTypeCurrent /*2*/);
             setPref(APP_FIRST_RUN, DEBUGGING);
         }
         if (!getBooleanPref(APP_FIRST_RUN_U1)) {
             setPref(BALANCEONDATE, 0L);
             setPref(NEWESTTRANSACTIONFIRST, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
-            setPref(VIEWACCOUNTS, 0);
+            setPref(VIEWACCOUNTS, Enums.kViewAccountsAll/*0*/);
             setPref(HOMECURRENCYCODE, "USD");
+            String code = "USD";
+            try {
+                code = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (code != null) {
+                setPref(HOMECURRENCYCODE, code);
+                Database.setHomeCurrency(code);
+            }
             setPref(APP_FIRST_RUN_U1, DEBUGGING);
         }
         if (!getBooleanPref(APP_FIRST_RUN_U2)) {
@@ -475,7 +486,7 @@ public class Prefs {
         Database.execSQL("DELETE FROM repeatingTransactions WHERE transactionID NOT IN( SELECT transactionID FROM transactions WHERE transactions.deleted = 0)");
     }
 
-    public static void disconnectTransferForTransactionU4(TransactionClass transaction, int transactionsAccountID) {
+    private static void disconnectTransferForTransactionU4(TransactionClass transaction, int transactionsAccountID) {
         Cursor c = Database.rawQuery("SELECT splitID,transferToAccountID FROM splits WHERE transactionID=" + transaction.getTransactionID(), null);
         TransactionClass otherTransaction = null;
         int transFromAccountID = transaction.getTransactionID();
