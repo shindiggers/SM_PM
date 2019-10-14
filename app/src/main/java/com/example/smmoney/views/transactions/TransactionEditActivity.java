@@ -584,7 +584,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.classEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.classEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
+//            this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
+            // TODO Customise as for above category class adapter
+            this.classEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ClassNameClass.allClassNamesInDatabase()));
         }
         this.classTextView = aView.findViewById(R.id.classtextview);
         this.classTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -1484,10 +1486,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     String fileName = "";
                     try {
                         Object obj;
-                        fileName = new StringBuilder(String.valueOf(this.payeeEditText.getText().toString())).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
+                        fileName = new StringBuilder(this.payeeEditText.getText().toString()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
                         this.newlyAddedImages.add(fileName);
                         file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, new StringBuilder(String.valueOf(fileName)).append(".jpg").toString());
+                        file = new File(file, new StringBuilder(fileName).append(".jpg").toString());
                         if (!file.exists()) {
                             file.mkdirs();
                         }
@@ -1553,7 +1555,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         }
                     }
                 case REQUEST_CAMERA_PICK /*36*/:
-                    String fileName2 = new StringBuilder(String.valueOf(this.payeeEditText.getText().toString())).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
+                    String fileName2 = new StringBuilder(this.payeeEditText.getText().toString()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
                     String[] filePathColumn = new String[]{"_data"};
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
                     cursor.moveToFirst();
@@ -1562,13 +1564,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
                     try {
                         file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, new StringBuilder(String.valueOf(fileName2)).append(".jpg").toString());
+                        file = new File(file, new StringBuilder(fileName2).append(".jpg").toString());
                         if (!file.exists()) {
                             file.mkdirs();
                         }
                         boolean fail = file.createNewFile();
                         yourSelectedImage.compress(CompressFormat.JPEG, 90, new FileOutputStream(file));
-                        this.transaction.setImageLocation(new StringBuilder(String.valueOf(this.transaction.getImageLocation() == null ? "" : this.transaction.getImageLocation())).append(fileName2).append(".jpg;").toString());
+                        this.transaction.setImageLocation(new StringBuilder(this.transaction.getImageLocation() == null ? "" : this.transaction.getImageLocation()).append(fileName2).append(".jpg;").toString());
                         this.newlyAddedImages.add(fileName2);
                         break;
                     } catch (Exception e32) {
