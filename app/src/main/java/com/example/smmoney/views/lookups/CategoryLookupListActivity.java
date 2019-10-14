@@ -143,8 +143,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         final RadioButton allRadioButton = findViewById(R.id.allbutton);
         RadioGroup rg = findViewById(R.id.radiogroup);
         if (this.payee.length() == 0) {
-            this.currentType = 1;
+            this.currentType = TYPE_ALL/*1*/;
             allRadioButton.setChecked(true);
+            payeeRadioButton.setText("<empty>");
         }
         rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {

@@ -43,12 +43,12 @@
             android:layout_weight="1.0"
             android:checked="true"
             android:button="@null"
-            android:gravity="center_horizontal|fill_vertical"
+            android:gravity="center_horizontal|center_vertical"
             android:minHeight="30dp"
             android:minWidth="100dp"
             android:text="@string/kLOC_GENERAL_ACCOUNTS"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/radio_text_color_unchecked" />
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@drawable/segment_radio_text_color" />
 
         <RadioButton
             android:id="@+id/allbutton"
@@ -56,12 +56,12 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:button="@null"
-            android:gravity="fill_vertical|center_horizontal"
+            android:gravity="center_vertical|center_horizontal"
             android:minHeight="30dp"
             android:minWidth="100dp"
             android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/radio_text_color_unchecked" />
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textColor="@drawable/segment_radio_text_color" />
 
     </com.example.makeramen.segmented.SegmentedRadioGroup>
 
