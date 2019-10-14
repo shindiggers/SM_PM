@@ -96,7 +96,7 @@
                         android:minWidth="40dp"
                         android:text="@string/kLOC_GENERAL_WITHDRAWAL"
                         android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@color/radio_text_color_unchecked" />
 
                     <RadioButton
                         android:id="@+id/depositbutton"
@@ -109,7 +109,7 @@
                         android:minWidth="40dp"
                         android:text="@string/kLOC_GENERAL_DEPOSIT"
                         android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@color/radio_text_color_unchecked" />
 
                     <RadioButton
                         android:id="@+id/transferbutton"
@@ -122,7 +122,7 @@
                         android:minWidth="40dp"
                         android:text="@string/kLOC_GENERAL_TRANSFER"
                         android:textAppearance="?android:textAppearanceMedium"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@color/radio_text_color_unchecked" />
 
                 </com.example.makeramen.segmented.SegmentedRadioGroup>
 

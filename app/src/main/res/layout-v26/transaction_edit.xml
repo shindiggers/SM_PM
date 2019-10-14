@@ -105,7 +105,7 @@
                         android:nextFocusDown="@+id/datebutton"
                         android:nextFocusUp="@+id/save_button"
                         android:text="@string/kLOC_GENERAL_WITHDRAWAL"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@drawable/segment_radio_text_color" />
 
                     <RadioButton
                         android:id="@+id/depositbutton"
@@ -120,7 +120,7 @@
                         android:nextFocusDown="@+id/datebutton"
                         android:nextFocusUp="@+id/save_button"
                         android:text="@string/kLOC_GENERAL_DEPOSIT"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@drawable/segment_radio_text_color" />
 
                     <RadioButton
                         android:id="@+id/transferbutton"
@@ -135,7 +135,7 @@
                         android:nextFocusDown="@+id/datebutton"
                         android:nextFocusUp="@+id/save_button"
                         android:text="@string/kLOC_GENERAL_TRANSFER"
-                        android:textColor="@color/radio_colors" />
+                        android:textColor="@drawable/segment_radio_text_color" />
 
                 </com.example.makeramen.segmented.SegmentedRadioGroup>
 

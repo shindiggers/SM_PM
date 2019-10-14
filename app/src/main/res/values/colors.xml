@@ -99,5 +99,7 @@
     <color name="gray_theme_highlighted_color">#ff7d7d7d</color>
     <color name="gray_theme_text">#ff000000</color>
     <color name="gray_theme_text_alt">#ff939393</color>
-    <color name="radio_colors">#000000</color>
+    <color name="radio_text_color_unchecked">#000000</color>
+    <color name="radio_text_color_checked">#ffffff</color>
+    <color name="radio_text_color_pressed">#ffc8c8c8</color>
 </resources>

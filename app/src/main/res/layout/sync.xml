@@ -42,7 +42,7 @@
             android:minHeight="40dp"
             android:minWidth="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_CLIENT"
-            android:textColor="@color/radio_colors" />
+            android:textColor="@color/radio_text_color_unchecked" />
 
         <RadioButton
             android:id="@+id/serverbutton"
@@ -54,7 +54,7 @@
             android:minHeight="40dp"
             android:minWidth="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_SERVER"
-            android:textColor="@color/radio_colors" />
+            android:textColor="@color/radio_text_color_unchecked" />
 
     </com.example.makeramen.segmented.SegmentedRadioGroup>
 

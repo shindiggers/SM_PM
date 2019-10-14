@@ -48,7 +48,7 @@
             android:minWidth="100dp"
             android:text="@string/kLOC_GENERAL_ACCOUNTS"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/radio_colors" />
+            android:textColor="@color/radio_text_color_unchecked" />
 
         <RadioButton
             android:id="@+id/allbutton"
@@ -61,7 +61,7 @@
             android:minWidth="100dp"
             android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/radio_colors" />
+            android:textColor="@color/radio_text_color_unchecked" />
 
     </com.example.makeramen.segmented.SegmentedRadioGroup>
 
