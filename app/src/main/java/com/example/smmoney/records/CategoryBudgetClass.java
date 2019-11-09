@@ -6,9 +6,15 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
+
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
@@ -16,10 +22,8 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.jar.Attributes;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class CategoryBudgetClass extends PocketMoneyRecordClass {
     public static String XML_LISTTAG_CATEGORYBUDGETS = "CATEGORYBUDGETS";
@@ -91,7 +95,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     public void setCategoryName(String category) {
-        if (!this.categoryName.equals(category)) {
+        if (this.categoryName == null || !this.categoryName.equals(category)) {
             this.dirty = true;
             this.categoryName = category;
         }

@@ -17,7 +17,7 @@
             android:layout_height="40dp"
             android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
             android:text="TITLE"
-            android:textAppearance="@color/black_theme_text"
+            android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             tools:text="Pocket Money" />
 
@@ -26,13 +26,14 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:layout_gravity="center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp">
+        android:layout_gravity="top|center_horizontal"
+        android:layout_marginTop="10dp">
 
         <Button
             android:id="@+id/periodbutton"
             android:layout_width="220dp"
             android:layout_height="match_parent"
+            android:textSize="12sp"
             android:layout_gravity="center_vertical|center_horizontal" />
 
         <ImageView
@@ -40,14 +41,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
-            android:src="@drawable/leftarrow" />
+            android:src="@drawable/leftarrow"
+            android:contentDescription="TODO" />
 
         <ImageView
             android:id="@+id/rightarrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/rightarrow" />
+            android:src="@drawable/rightarrow"
+            android:contentDescription="TODO" />
 
     </FrameLayout>
 
@@ -55,14 +58,15 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="80dp"
+        android:layout_marginTop="60dp"
         android:background="@drawable/budgetblackbar">
 
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/grapharrowright" />
+            android:src="@drawable/grapharrowright"
+            android:contentDescription="TODO" />
 
         <ProgressBar
             android:id="@+id/reloadprogressbar"
@@ -75,8 +79,7 @@
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:layout_gravity="center"
-            android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp" />
+            android:layout_marginEnd="30dp" />
 
         <TextView
             android:id="@+id/budgetdisplaytextview"
@@ -84,8 +87,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="30dp"
-            android:layout_marginRight="30dp"
-            android:text="@string/kLOC_BUDGETS_ACTUAL" />
+            android:text="@string/kLOC_BUDGETS_ACTUAL"
+            tools:textColor="@color/black_theme_text" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -128,8 +131,7 @@
             android:id="@+id/radiogroup"
             android:layout_width="200dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center_horizontal"
-            android:layout_weight="1.0"
+            android:layout_gravity="center_vertical|center_horizontal"
             android:orientation="horizontal">
 
             <RadioButton
@@ -138,11 +140,12 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:gravity="center_horizontal|center_vertical"
-                android:minWidth="40dp"
+                android:button="@null"
+                android:minWidth="100dp"
                 android:minHeight="30dp"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:text="@string/kLOC_GENERAL_ACCOUNTS"
-                android:textAppearance="@color/radio_text_color_unchecked"
-                android:textColor="@color/black_theme_text" />
+                android:textColor="@drawable/segment_radio_text_color" />
 
             <RadioButton
                 android:id="@+id/budgetsbutton"
@@ -150,12 +153,13 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
                 android:checked="true"
+                android:button="@null"
                 android:gravity="center_horizontal|center_vertical"
-                android:minWidth="40dp"
+                android:minWidth="100dp"
                 android:minHeight="30dp"
                 android:text="@string/kLOC_GENERAL_BUDGETS"
-                android:textAppearance="@color/black_theme_text"
-                android:textColor="@color/radio_text_color_unchecked" />
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@drawable/segment_radio_text_color" />
 
         </com.example.makeramen.segmented.SegmentedRadioGroup>
 
@@ -168,6 +172,7 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="40dp"
         tools:text = "Current balance"
+        tools:textColor="@color/black_theme_text"
         android:textColor="@color/black_theme_text" />
 
 </FrameLayout>

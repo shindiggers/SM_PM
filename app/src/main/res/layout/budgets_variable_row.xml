@@ -3,28 +3,29 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:minHeight="50dp">
 
     <TextView
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_gravity="start|center_vertical"
         android:id="@+id/date"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginLeft="50dp"
+        android:gravity="center_vertical"
         android:layout_marginStart="50dp"
-        android:text="budget" />
+        android:text="date" />
 
     <TextView
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_gravity="end|center_vertical"
         android:id="@+id/budget"
         android:layout_width="wrap_content"
+        android:gravity="center_vertical"
         android:layout_height="match_parent"
-        android:layout_marginRight="50dp"
         android:layout_marginEnd="50dp"
         android:text="budget" />
 
     <CheckBox
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_gravity="end|center_vertical"
         android:id="@+id/resetrollovercheckbox"
         android:layout_width="wrap_content"
         android:layout_height="match_parent" />

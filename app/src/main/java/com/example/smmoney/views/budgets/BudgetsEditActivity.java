@@ -24,6 +24,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
@@ -36,6 +37,7 @@ import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -189,13 +191,13 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.originalHistoryDateTextView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 BudgetsEditActivity.this.selectedBudgetItem = null;
-                BudgetsEditActivity.this.showDialog(2);
+                BudgetsEditActivity.this.showDialog(DIALOG_PICKDATE/*2*/);
             }
         });
         this.originalHistoryBudgetTextView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v.getParent()).getTag();
-                BudgetsEditActivity.this.showDialog(1);
+                BudgetsEditActivity.this.showDialog(DIALOG_BUDGET/*1*/);
             }
         });
         this.enableVariableBudgetCell = findViewById(R.id.enablevariablebutton);
@@ -389,7 +391,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 bItem.deleteFromDatabase();
             }
         }
-        if (this.category.getCategory() != null && this.category.getCategory() != this.oldCategory) {
+        if (this.category.getCategory() != null && !this.category.getCategory().equals(this.oldCategory)) {
             CategoryBudgetClass.renameBudgetItems(this.oldCategory, this.category.getCategory());
         }
     }
@@ -398,13 +400,13 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         Intent i = new Intent();
         i.putExtra("BudgetItem", (CategoryBudgetClass) v.getTag());
-        menu.add(0, 1, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_DELETE/*1*/, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
+            case CMENU_DELETE /*1*/:
                 this.categoryBudgetItems.remove(b.get("BudgetItem"));
                 this.deletedCategoryBudgetItems.add((CategoryBudgetClass) b.get("BudgetItem"));
                 reloadData();
@@ -442,8 +444,8 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     protected Dialog onCreateDialog(int id) {
         switch (id) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+            case DIALOG_BUDGET /*1*/:
+            case DIALOG_PICKDATE /*2*/:
                 double budgetLimit;
                 Builder alert = new Builder(this);
                 final EditText input = new EditText(this);

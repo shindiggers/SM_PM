@@ -13,8 +13,10 @@ import android.graphics.Typeface;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView.LayoutParams;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
@@ -28,7 +30,7 @@ public class BudgetsHeaderHolder extends View {
         this.context = context;
         this.label = label;
         this.xofy = xofy;
-        setLayoutParams(new LayoutParams(-1, -2));
+        setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT/*-1*/, ViewGroup.LayoutParams.WRAP_CONTENT/*-2*/));
         setMinimumHeight((int) (((double) getPrefferedItemHeight()) * 0.5d));
     }
 
@@ -51,7 +53,7 @@ public class BudgetsHeaderHolder extends View {
         canvas.drawBitmap(collapseBitmap, (float) ((width - 5) - collapseBitmap.getWidth()), (float) ((height / 2) - (collapseBitmap.getHeight() / 2)), p);
         p.setTextAlign(Align.CENTER);
         try {
-            p.setTextSize((float) getDPFromPixels(25.0d));
+            p.setTextSize((float) getDPFromPixels(35.0d));
         } catch (Exception e) {
             p.setTextSize(25.0f);
         }

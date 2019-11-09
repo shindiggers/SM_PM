@@ -9,16 +9,18 @@ import android.graphics.Paint.Align;
 import android.graphics.Rect;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AbsListView.LayoutParams;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.PocketMoneyThemes;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 public class BudgetsRowHolder extends View {
     static int textSize = 0;
@@ -38,32 +40,36 @@ public class BudgetsRowHolder extends View {
     public BudgetsRowHolder(Context context) {
         super(context);
         this.context = context;
-        LayoutParams params = new LayoutParams(-1, -2);
+        ViewGroup.LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT/*-1*/, ViewGroup.LayoutParams.WRAP_CONTENT/*-2*/);
+        int sizeInDP = 50;
+        int marginInDP = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, sizeInDP, getResources().getDisplayMetrics());
+        //ViewGroup.MarginLayoutParams marginLayoutParams = (ViewGroup.MarginLayoutParams) getLayoutParams();
+        //marginLayoutParams.leftMargin = marginInDP;
         setLayoutParams(params);
         setMinimumHeight((int) ((((double) getPrefferedItemHeight()) * 2.0d) / 3.0d));
         setWillNotDraw(false);
         this.categoryTextView = new TextView(context);
         this.budgetedTextView = new TextView(context);
         this.actualTextView = new TextView(context);
-        this.categoryTextView.setLayoutParams(params);
-        this.budgetedTextView.setLayoutParams(params);
-        this.actualTextView.setLayoutParams(params);
-        this.categoryTextView.setGravity(17);
-        this.budgetedTextView.setGravity(21);
-        this.actualTextView.setGravity(19);
-        this.budgetedTextView.setPadding(0, 0, 5, 0);
-        this.actualTextView.setPadding(5, 0, 0, 0);
+        //this.categoryTextView.setLayoutParams(params);
+        //this.budgetedTextView.setLayoutParams(params);
+        //this.actualTextView.setLayoutParams(params);
+        this.categoryTextView.setGravity(Gravity.CENTER/*17*/);
+        this.budgetedTextView.setGravity(Gravity.CENTER /*was21 now 17*/);
+        this.actualTextView.setGravity(Gravity.CENTER /*was 19 now 17*/);
+        this.budgetedTextView.setPadding(200, 0, 200, 0);
+        this.actualTextView.setPadding(marginInDP, 0, marginInDP, 0);
         this.categoryTextView.setText("CATEGORY");
         this.budgetedTextView.setText("(USD1,000.12)");
         this.actualTextView.setText("USD1,500.12");
         setOnTouchListener(new OnTouchListener() {
             public boolean onTouch(View v, MotionEvent event) {
                 switch (event.getAction()) {
-                    case PocketMoneyThemes.kThemeBlack /*0*/:
+                    case MotionEvent.ACTION_DOWN /*0*/:
                         BudgetsRowHolder.this.touched = true;
                         break;
-                    case SplitsActivity.RESULT_CHANGED /*1*/:
-                    case SplitsActivity.REQUEST_EDIT /*3*/:
+                    case MotionEvent.ACTION_UP /*1*/:
+                    case MotionEvent.ACTION_CANCEL /*3*/:
                         BudgetsRowHolder.this.touched = false;
                         break;
                 }
@@ -95,7 +101,7 @@ public class BudgetsRowHolder extends View {
         double spent;
         double d = 0.0d;
         this.category = category;
-        if (category.getType() == 0) {
+        if (category.getType() == Enums.kCategoryExpense/*0*/) {
             spent = ((double) Math.round(category.spent * -100.0d)) / 100.0d;
             if (spent == -0.0d) {
                 spent = 0.0d;
@@ -105,10 +111,10 @@ public class BudgetsRowHolder extends View {
         }
         this.budget = category.budget;
         this.actualString = amountAsString(spent);
-        if (2 == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
+        if (Enums.kBudgetDisplayExpenseBudgeted/*2*/ == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
             this.budgetedString = amountAsString(this.budget);
-        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == 0) {
-            if (category.getType() == 0) {
+        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable/*0*/) {
+            if (category.getType() == Enums.kCategoryExpense/*0*/) {
                 if (this.budget - spent >= 0.0d) {
                     d = this.budget - spent;
                 }
@@ -119,8 +125,8 @@ public class BudgetsRowHolder extends View {
                 }
                 this.budgetedString = amountAsString(d);
             }
-        } else if (3 == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
-            if (category.getType() == 0) {
+        } else if (Enums.kBudgetDisplayExpenseOver/*3*/ == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
+            if (category.getType() == Enums.kCategoryExpense/*0*/) {
                 this.budgetedString = amountAsString(this.budget - spent);
             } else {
                 this.budgetedString = amountAsString(spent - this.budget);
@@ -134,7 +140,7 @@ public class BudgetsRowHolder extends View {
         double width = (double) getWidth();
         double spent = ((double) Math.round(this.category.spent * 100.0d)) / 100.0d;
         double budget = this.category.budget;
-        if (this.category.getType() == 0) {
+        if (this.category.getType() == Enums.kCategoryExpense/*0*/) {
             spent *= -1.0d;
         }
         Rect bounds = new Rect(getLeft(), 0, getRight(), getBottom() - getTop());
@@ -148,7 +154,7 @@ public class BudgetsRowHolder extends View {
                 rect = new Rect(0, bounds.top, (int) ((budget / budget) * width), bounds.bottom);
                 secondBitmapRes = R.drawable.budgetyellow;
             }
-        } else if (this.category.getType() == 0) {
+        } else if (this.category.getType() == Enums.kCategoryExpense/*0*/) {
             if (spent > budget) {
                 if (budget < 0.0d) {
                     greenBarWidth = 0.0d;
@@ -200,7 +206,7 @@ public class BudgetsRowHolder extends View {
         }
         p.setTextScaleX(xscale);
         p.setTextAlign(Align.CENTER);
-        p.setColor(this.touched ? -7829368 : -16777216);
+        p.setColor(this.touched ? -7829368 /*DARKISH GREY*/ : -16777216 /*BLACK*/);
         p.setAntiAlias(true);
         float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);
         canvas.drawText(this.categoryString, ((float) width) / 2.0f, y, p);

@@ -16,6 +16,7 @@ import android.os.PowerManager.WakeLock;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -243,16 +244,16 @@ public class BudgetsActivity extends PocketMoneyActivity {
 
     private void reloadDataCallBack() {
         this.periodButton.setText(this.adapter.rangeOfPeriodAsString());
-        if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == 2) {
+        if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseBudgeted/*2*/) {
             this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BUDGETED);
-        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == 0) {
+        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable/*0*/) {
             this.budgetDisplay.setText(Locales.kLOC_BUDGETS_AVAILABLE);
-        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == 3) {
+        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseOver/*3*/) {
             this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BALANCE);
         }
         int newWidth = (int) TypedValue.applyDimension(1, 9.0f, getResources().getDisplayMetrics());
         LayoutParams lp = new LayoutParams(newWidth, this.theList.getHeight());
-        lp.gravity = 3;
+        lp.gravity = Gravity.LEFT/*3*/;
         int width = this.theList.getWidth();
         int leftMargin = (int) (((double) width) * this.adapter.getProgressPercent());
         if (leftMargin + newWidth > width) {

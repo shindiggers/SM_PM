@@ -9,6 +9,7 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
+
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
@@ -18,6 +19,7 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.transactions.TransactionsActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
@@ -147,7 +149,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
                 Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
                 BudgetsRowHolder holder = (BudgetsRowHolder) view;
                 FilterClass aFilter = new FilterClass();
-                aFilter.setCategory(String.valueOf(holder.category.getCategory()) + (holder.category.getIncludeSubcategories() ? "%" : ""));
+                aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
                 aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
                 aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
                 aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
@@ -348,32 +350,32 @@ public class BudgetsRowAdapter extends BaseAdapter {
             case Enums.kBudgetPeriodWeek /*1*/:
             case Enums.kBudgetPeriodBiweekly /*5*/:
             case Enums.kBudgetPeriod4Weeks /*8*/:
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             case Enums.kBudgetPeriodMonth /*2*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return String.valueOf(CalExt.descriptionWithMonth(this.currentDate)) + " " + CalExt.descriptionWithYear(this.currentDate);
+                    return CalExt.descriptionWithMonth(this.currentDate) + " " + CalExt.descriptionWithYear(this.currentDate);
                 }
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             case Enums.kBudgetPeriodQuarter /*3*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return String.valueOf(CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate))) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
+                    return CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
                 }
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             case Enums.kBudgetPeriodYear /*4*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
                     return CalExt.descriptionWithYear(this.currentDate);
                 }
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             case Enums.kBudgetPeriodBimonthly /*6*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return String.valueOf(CalExt.descriptionWithMonth(startOfPeriod())) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+                    return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             case Enums.kBudgetPeriodHalfYear /*7*/:
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return String.valueOf(CalExt.descriptionWithMonth(startOfPeriod())) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+                    return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return String.valueOf(CalExt.descriptionWithMediumDate(startOfPeriod())) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
             default:
                 return "All";
         }
@@ -385,61 +387,61 @@ public class BudgetsRowAdapter extends BaseAdapter {
 
     /* JADX WARNING: inconsistent code. */
     /* Code decompiled incorrectly, please refer to instructions dump. */
-    public static java.util.GregorianCalendar startOfPeriod(java.util.GregorianCalendar r18, int r19) {
+    //public static java.util.GregorianCalendar startOfPeriod(java.util.GregorianCalendar r18, int r19) {
         /*
-        r15 = "budgetStartDate";
-        r5 = com.catamount.pocketmoney.misc.Prefs.getStringPref(r15);
-        r4 = com.catamount.pocketmoney.misc.CalExt.dateFromDescriptionWithMediumDate(r5);
-        r15 = com.catamount.pocketmoney.misc.Locales.kLOC_GENERAL_DEFAULT;
-        r15 = r5.equalsIgnoreCase(r15);
-        if (r15 == 0) goto L_0x004a;
+        Prefs.BUDGETSTARTDATE r15 = "budgetStartDate";
+        String r5 = com.catamount.pocketmoney.misc.Prefs.getStringPref(Prefs.BUDGETSTARTDATE r15);
+        GregorianCalendar budgetStartDate r4 = com.catamount.pocketmoney.misc.CalExt.dateFromDescriptionWithMediumDate(r5);
+        Prefs.BUDGETSTARTDATE r15 = com.catamount.pocketmoney.misc.Locales.kLOC_GENERAL_DEFAULT;
+        Prefs.BUDGETSTARTDATE r15 = String r5.equalsIgnoreCase(Prefs.BUDGETSTARTDATE r15);
+        if (Prefs.BUDGETSTARTDATE r15 == 0) goto L_0x004a;
     L_0x0012:
-        r4 = new java.util.GregorianCalendar;
-        r4.<init>();
-        r15 = 1;
+        GregorianCalendar budgetStartDate r4 = new java.util.GregorianCalendar;
+        GregorianCalendar budgetStartDate r4.<init>();
+        Prefs.BUDGETSTARTDATE r15 = 1;
         r16 = 1989; // 0x7c5 float:2.787E-42 double:9.827E-321;
         r0 = r16;
-        r4.set(r15, r0);
-        r15 = 2;
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r16 = 0;
         r0 = r16;
-        r4.set(r15, r0);
-        r15 = 5;
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = 1;
         r0 = r16;
-        r4.set(r15, r0);
-        r15 = 11;
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 11;
         r16 = 0;
         r0 = r16;
-        r4.set(r15, r0);
-        r15 = 12;
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 12;
         r16 = 0;
         r0 = r16;
-        r4.set(r15, r0);
-        r15 = 13;
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 13;
         r16 = 0;
         r0 = r16;
-        r4.set(r15, r0);
+        GregorianCalendar budgetStartDate r4.set(Prefs.BUDGETSTARTDATE r15, r0);
     L_0x004a:
         r10 = 0;
-        r11 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r4);
-        r15 = 5;
-        r15 = r4.get(r15);
-        r16 = 5;
+        r11 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(GregorianCalendar budgetStartDate r4);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        r16 = 5; // MONTH
         r0 = r16;
         r16 = r11.get(r0);
         r0 = r16;
-        if (r15 != r0) goto L_0x006c;
+        if (Prefs.BUDGETSTARTDATE r15 != r0) goto L_0x006c;
     L_0x0060:
         r10 = 1;
     L_0x0061:
         r13 = r18.clone();
         r13 = (java.util.GregorianCalendar) r13;
         switch(r19) {
-            case 0: goto L_0x006e;
-            case 1: goto L_0x0073;
-            case 2: goto L_0x0111;
-            case 3: goto L_0x0181;
+            case 0: goto L_0x006e;  Enums.kBudgetPeriodDay
+            case 1: goto L_0x0073;  Enums.kBudgetPeriodWeek
+            case 2: goto L_0x0111;  Enums.kBudgetPeriodMonth
+            case 3: goto L_0x0181;  Enums.kBudgetPeriodQuarter
             case 4: goto L_0x01d7;
             case 5: goto L_0x00a7;
             case 6: goto L_0x0156;
@@ -448,50 +450,50 @@ public class BudgetsRowAdapter extends BaseAdapter {
             default: goto L_0x006a;
         };
     L_0x006a:
-        r15 = 0;
+        Prefs.BUDGETSTARTDATE r15 = 0;
     L_0x006b:
-        return r15;
+        return Prefs.BUDGETSTARTDATE r15;
     L_0x006c:
         r10 = 0;
         goto L_0x0061;
-    L_0x006e:
-        r15 = com.catamount.pocketmoney.misc.CalExt.beginningOfDay(r18);
+    L_0x006e: // todo CASE 0  Enums.kBudgetPeriodDay
+        Prefs.BUDGETSTARTDATE r15 = com.catamount.pocketmoney.misc.CalExt.beginningOfDay(r18);
         goto L_0x006b;
-    L_0x0073:
-        r15 = 7;
-        r2 = r4.get(r15);
-        r15 = 7;
+    L_0x0073: // todo CASE 1  Enums.kBudgetPeriodWeek
+        Prefs.BUDGETSTARTDATE r15 = 7;
+        r2 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 7;
         r0 = r18;
-        r7 = r0.get(r15);
-        r15 = 7;
+        r7 = r0.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 7;
         r0 = r18;
-        r15 = r0.get(r15);
+        Prefs.BUDGETSTARTDATE r15 = r0.get(Prefs.BUDGETSTARTDATE r15);
         r16 = 7;
         r0 = r16;
-        r16 = r4.get(r0);
+        r16 = GregorianCalendar budgetStartDate r4.get(r0);
         r0 = r16;
-        if (r15 >= r0) goto L_0x009e;
+        if (Prefs.BUDGETSTARTDATE r15 >= r0) goto L_0x009e;
     L_0x0092:
-        r15 = r2 - r7;
-        r15 = 7 - r15;
+        Prefs.BUDGETSTARTDATE r15 = r2 - r7;
+        Prefs.BUDGETSTARTDATE r15 = 7 - Prefs.BUDGETSTARTDATE r15;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x009c:
-        r15 = r13;
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x009e:
-        r15 = r7 - r2;
+        Prefs.BUDGETSTARTDATE r15 = r7 - r2;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x009c;
-    L_0x00a7:
+    L_0x00a7: // todo CASE 5 Enums.kBudgetPeriodBiweekly
         r0 = r18;
-        r14 = com.catamount.pocketmoney.misc.CalExt.weeksBetween(r4, r0);
+        r14 = com.catamount.pocketmoney.misc.CalExt.weeksBetween(GregorianCalendar budgetStartDate r4, r0);
         r0 = r18;
-        r15 = com.catamount.pocketmoney.misc.CalExt.daysBetween(r4, r0);
-        r9 = r15 % 7;
-        r15 = r14 % 2;
-        if (r15 != 0) goto L_0x00cc;
+        Prefs.BUDGETSTARTDATE r15 = com.catamount.pocketmoney.misc.CalExt.daysBetween(GregorianCalendar budgetStartDate r4, r0);
+        r9 = Prefs.BUDGETSTARTDATE r15 % 7;
+        Prefs.BUDGETSTARTDATE r15 = r14 % 2;
+        if (Prefs.BUDGETSTARTDATE r15 != 0) goto L_0x00cc;
     L_0x00b9:
         r12 = 1;
     L_0x00ba:
@@ -501,172 +503,172 @@ public class BudgetsRowAdapter extends BaseAdapter {
     L_0x00be:
         if (r12 == 0) goto L_0x00ce;
     L_0x00c0:
-        r15 = 7;
+        Prefs.BUDGETSTARTDATE r15 = 7;
     L_0x00c1:
-        r15 = r15 + 6;
-        r15 = r15 + r9;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + 6;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + r9;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x00ca:
-        r15 = r13;
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x00cc:
         r12 = 0;
         goto L_0x00ba;
     L_0x00ce:
-        r15 = 0;
+        Prefs.BUDGETSTARTDATE r15 = 0;
         goto L_0x00c1;
     L_0x00d0:
         if (r12 == 0) goto L_0x00db;
     L_0x00d2:
-        r15 = 0;
+        Prefs.BUDGETSTARTDATE r15 = 0;
     L_0x00d3:
-        r15 = r15 + r9;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + r9;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x00ca;
     L_0x00db:
-        r15 = 7;
+        Prefs.BUDGETSTARTDATE r15 = 7;
         goto L_0x00d3;
-    L_0x00dd:
+    L_0x00dd: // todo CASE 8 Enums.kBudgetPeriod4Weeks
         r0 = r18;
-        r14 = com.catamount.pocketmoney.misc.CalExt.weeksBetween(r4, r0);
+        r14 = com.catamount.pocketmoney.misc.CalExt.weeksBetween(GregorianCalendar budgetStartDate r4, r0);
         r0 = r18;
-        r15 = com.catamount.pocketmoney.misc.CalExt.daysBetween(r4, r0);
-        r9 = r15 % 7;
+        Prefs.BUDGETSTARTDATE r15 = com.catamount.pocketmoney.misc.CalExt.daysBetween(GregorianCalendar budgetStartDate r4, r0);
+        r9 = Prefs.BUDGETSTARTDATE r15 % 7;
         if (r14 < 0) goto L_0x00ef;
     L_0x00ed:
         if (r9 >= 0) goto L_0x0105;
     L_0x00ef:
-        r15 = r14 % 4;
-        r15 = java.lang.Math.abs(r15);
-        r15 = 3 - r15;
-        r15 = r15 * 7;
-        r15 = r15 + 6;
-        r15 = r15 + r9;
+        Prefs.BUDGETSTARTDATE r15 = r14 % 4;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 3 - Prefs.BUDGETSTARTDATE r15;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 * 7;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + 6;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + r9;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x0102:
-        r15 = r13;
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x0105:
-        r15 = r14 * 7;
-        r15 = r15 % 4;
-        r15 = r15 + r9;
+        Prefs.BUDGETSTARTDATE r15 = r14 * 7;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 4;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 + r9;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractDays(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x0102;
-    L_0x0111:
+    L_0x0111: // todo CASE 2  Enums.kBudgetPeriodMonth
         r0 = r18;
-        r9 = com.catamount.pocketmoney.misc.CalExt.daysBetween(r4, r0);
-        r15 = 5;
+        r9 = com.catamount.pocketmoney.misc.CalExt.daysBetween(GregorianCalendar budgetStartDate r4, r0);
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r0 = r18;
-        r15 = r0.get(r15);
+        Prefs.BUDGETSTARTDATE r15 = r0.get(Prefs.BUDGETSTARTDATE r15);
         r16 = 5;
         r0 = r16;
-        r16 = r4.get(r0);
+        r16 = GregorianCalendar budgetStartDate r4.get(r0);
         r0 = r16;
-        if (r15 >= r0) goto L_0x012e;
+        if (Prefs.BUDGETSTARTDATE r15 >= r0) goto L_0x012e;
     L_0x012a:
         r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonth(r13);
     L_0x012e:
         if (r10 == 0) goto L_0x0137;
     L_0x0130:
         r13 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
-        r15 = r13;
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x0137:
-        r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
         r17 = 5;
         r16 = r16.get(r17);
         r17 = 5;
         r0 = r17;
-        r17 = r4.get(r0);
+        r17 = GregorianCalendar budgetStartDate r4.get(r0);
         r16 = java.lang.Math.min(r16, r17);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = r13;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
-    L_0x0156:
-        r15 = 2;
-        r3 = r4.get(r15);
-        r15 = 5;
-        r1 = r4.get(r15);
-        r15 = 2;
+    L_0x0156: // todo CASE 6 Enums.kBudgetPeriodBimonthly
+        Prefs.BUDGETSTARTDATE r15 = 2;
+        r3 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r1 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r0 = r18;
-        r8 = r0.get(r15);
-        r15 = 5;
-        r6 = r4.get(r15);
-        r15 = r8 - r3;
-        r15 = r15 % 2;
-        if (r15 != 0) goto L_0x0216;
+        r8 = r0.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r6 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 2;
+        if (Prefs.BUDGETSTARTDATE r15 != 0) goto L_0x0216;
     L_0x0172:
         if (r6 >= r1) goto L_0x0216;
     L_0x0174:
-        r15 = 2;
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x017b:
         if (r10 == 0) goto L_0x023a;
     L_0x017d:
         r13 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
-    L_0x0181:
-        r15 = 2;
-        r3 = r4.get(r15);
-        r15 = 5;
-        r1 = r4.get(r15);
-        r15 = 2;
+    L_0x0181: // todo CASE 3  Enums.kBudgetPeriodQuarter
+        Prefs.BUDGETSTARTDATE r15 = 2; MONTH OF YEAR
+        r3 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5; DAY OF MONTH
+        r1 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r0 = r18;
-        r8 = r0.get(r15);
-        r15 = 5;
-        r6 = r4.get(r15);
-        r15 = r8 - r3;
-        r15 = r15 % 3;
-        if (r15 != 0) goto L_0x0259;
+        r8 = r0.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r6 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 3;
+        if (Prefs.BUDGETSTARTDATE r15 != 0) goto L_0x0259;
     L_0x019d:
         if (r6 >= r1) goto L_0x0259;
     L_0x019f:
-        r15 = 3;
+        Prefs.BUDGETSTARTDATE r15 = 3;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x01a6:
         if (r10 == 0) goto L_0x027d;
     L_0x01a8:
         r13 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
-    L_0x01ac:
-        r15 = 2;
-        r3 = r4.get(r15);
-        r15 = 5;
-        r1 = r4.get(r15);
-        r15 = 2;
+    L_0x01ac: // todo CASE 7 Enums.kBudgetPeriodHalfYear
+        Prefs.BUDGETSTARTDATE r15 = 2;
+        r3 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r1 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r0 = r18;
-        r8 = r0.get(r15);
-        r15 = 5;
-        r6 = r4.get(r15);
-        r15 = r8 - r3;
-        r15 = r15 % 6;
-        if (r15 != 0) goto L_0x029c;
+        r8 = r0.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r6 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 6;
+        if (Prefs.BUDGETSTARTDATE r15 != 0) goto L_0x029c;
     L_0x01c8:
         if (r6 >= r1) goto L_0x029c;
     L_0x01ca:
-        r15 = 6;
+        Prefs.BUDGETSTARTDATE r15 = 6;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
     L_0x01d1:
         if (r10 == 0) goto L_0x02c0;
     L_0x01d3:
         r13 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
-    L_0x01d7:
-        r15 = 2;
-        r3 = r4.get(r15);
-        r15 = 5;
-        r1 = r4.get(r15);
-        r15 = 2;
+    L_0x01d7: // todo CASE 4 Enums.kBudgetPeriodYear
+        Prefs.BUDGETSTARTDATE r15 = 2;
+        r3 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r1 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r0 = r18;
-        r8 = r0.get(r15);
-        r15 = 5;
-        r6 = r4.get(r15);
+        r8 = r0.get(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 5;
+        r6 = GregorianCalendar budgetStartDate r4.get(Prefs.BUDGETSTARTDATE r15);
         if (r8 < r3) goto L_0x01f3;
     L_0x01ef:
         if (r8 != r3) goto L_0x01f7;
@@ -675,112 +677,204 @@ public class BudgetsRowAdapter extends BaseAdapter {
     L_0x01f3:
         r13 = com.catamount.pocketmoney.misc.CalExt.subtractYear(r18);
     L_0x01f7:
-        r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = 5;
         r0 = r16;
-        r16 = r4.get(r0);
+        r16 = GregorianCalendar budgetStartDate r4.get(r0);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = 2;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = 2;
         r16 = 2;
         r0 = r16;
-        r16 = r4.get(r0);
+        r16 = GregorianCalendar budgetStartDate r4.get(r0);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = r13;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x0216:
         if (r8 >= r3) goto L_0x022a;
     L_0x0218:
-        r15 = r8 - r3;
-        r15 = r15 % 2;
-        r15 = java.lang.Math.abs(r15);
-        r15 = 2 - r15;
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 2;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 2 - Prefs.BUDGETSTARTDATE r15;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x017b;
     L_0x022a:
-        r15 = r8 - r3;
-        r15 = r15 % 2;
-        r15 = java.lang.Math.abs(r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 2;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x017b;
     L_0x023a:
-        r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
         r17 = 5;
         r16 = r16.get(r17);
         r17 = 5;
         r0 = r17;
-        r17 = r4.get(r0);
+        r17 = GregorianCalendar budgetStartDate r4.get(r0);
         r16 = java.lang.Math.min(r16, r17);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = r13;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x0259:
         if (r8 >= r3) goto L_0x026d;
     L_0x025b:
-        r15 = r8 - r3;
-        r15 = r15 % 3;
-        r15 = java.lang.Math.abs(r15);
-        r15 = 3 - r15;
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 3;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 3 - Prefs.BUDGETSTARTDATE r15;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x01a6;
     L_0x026d:
-        r15 = r8 - r3;
-        r15 = r15 % 3;
-        r15 = java.lang.Math.abs(r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 3;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x01a6;
     L_0x027d:
-        r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
         r17 = 5;
         r16 = r16.get(r17);
         r17 = 5;
         r0 = r17;
-        r17 = r4.get(r0);
+        r17 = GregorianCalendar budgetStartDate r4.get(r0);
         r16 = java.lang.Math.min(r16, r17);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = r13;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
     L_0x029c:
         if (r8 >= r3) goto L_0x02b0;
     L_0x029e:
-        r15 = r8 - r3;
-        r15 = r15 % 6;
-        r15 = java.lang.Math.abs(r15);
-        r15 = 6 - r15;
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 6;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
+        Prefs.BUDGETSTARTDATE r15 = 6 - Prefs.BUDGETSTARTDATE r15;
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x01d1;
     L_0x02b0:
-        r15 = r8 - r3;
-        r15 = r15 % 6;
-        r15 = java.lang.Math.abs(r15);
+        Prefs.BUDGETSTARTDATE r15 = r8 - r3;
+        Prefs.BUDGETSTARTDATE r15 = Prefs.BUDGETSTARTDATE r15 % 6;
+        Prefs.BUDGETSTARTDATE r15 = java.lang.Math.abs(Prefs.BUDGETSTARTDATE r15);
         r0 = r18;
-        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, r15);
+        r13 = com.catamount.pocketmoney.misc.CalExt.subtractMonths(r0, Prefs.BUDGETSTARTDATE r15);
         goto L_0x01d1;
     L_0x02c0:
-        r15 = 5;
+        Prefs.BUDGETSTARTDATE r15 = 5;
         r16 = com.catamount.pocketmoney.misc.CalExt.endOfMonth(r13);
         r17 = 5;
         r16 = r16.get(r17);
         r17 = 5;
         r0 = r17;
-        r17 = r4.get(r0);
+        r17 = GregorianCalendar budgetStartDate r4.get(r0);
         r16 = java.lang.Math.min(r16, r17);
         r0 = r16;
-        r13.set(r15, r0);
-        r15 = r13;
+        r13.set(Prefs.BUDGETSTARTDATE r15, r0);
+        Prefs.BUDGETSTARTDATE r15 = r13;
         goto L_0x006b;
         */
-        throw new UnsupportedOperationException("Method not decompiled: com.catamount.pocketmoney.views.budgets.BudgetsRowAdapter.startOfPeriod(java.util.GregorianCalendar, int):java.util.GregorianCalendar");
+    //throw new UnsupportedOperationException("Method not decompiled: com.catamount.pocketmoney.views.budgets.BudgetsRowAdapter.startOfPeriod(java.util.GregorianCalendar, int):java.util.GregorianCalendar");
+    //}
+
+    public static GregorianCalendar startOfPeriod(GregorianCalendar calendar, int budgetPeriod) {
+        boolean firstOfMonth;
+        String budgetStartDateString /*r5*/ = Prefs.getStringPref(Prefs.BUDGETSTARTDATE /*r15*/);
+        GregorianCalendar budgetStartDate /*r4*/ = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString /*r5*/);
+        boolean endOfMonth = false;
+        if (budgetStartDateString /*r5*/.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
+            budgetStartDate = CalExt.beginningOfMonth(calendar) /*r11*/;
+        } else
+            endOfMonth /*r11*/ = budgetStartDate /*r4*/.get(Calendar.DAY_OF_MONTH /*5*/) == CalExt.endOfMonth(budgetStartDate).get(Calendar.DAY_OF_MONTH);
+        firstOfMonth = budgetStartDate == null || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
+
+
+        switch (budgetPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/:
+                return CalExt.beginningOfDay(calendar);
+            case Enums.kBudgetPeriodWeek /*1*/:
+                return CalExt.beginningOfWeek(calendar);
+            case Enums.kBudgetPeriodMonth /*2*/:
+                if (firstOfMonth) {
+                    budgetStartDate = CalExt.beginningOfDay(calendar);
+                } else {
+                    budgetStartDate = CalExt.beginningOfDay(calendar);
+                    if (endOfMonth) {
+                        budgetStartDate = CalExt.beginningOfMonth(CalExt.beginningOfMonth(budgetStartDate)); // Calls beginningOfMonth twice? Surely only need to call once??
+                    }
+                }
+                return budgetStartDate;
+            case Enums.kBudgetPeriodQuarter /*3*/:
+                if (endOfMonth) {
+                    budgetStartDate = CalExt.beginningOfMonth(CalExt.subtractMonths(CalExt.addDays(calendar, 1), 3));
+                } else {
+                    budgetStartDate = CalExt.subtractMonths(CalExt.addDays(calendar, 1), 3);
+                    if (firstOfMonth) {
+                        budgetStartDate = CalExt.subtractDay(CalExt.endOfMonth(budgetStartDate));
+                    }
+                }
+                return budgetStartDate;
+            case Enums.kBudgetPeriodYear /*4*/:
+                return CalExt.beginningOfYear(calendar);
+            case Enums.kBudgetPeriodBiweekly /*5*/:
+                // get budget start date
+                // count weeks (lweekdbetween) between budget start date and current date (will be positive if budget start date preceeds current date)
+                // counts days between budget start date and current date (will be positive if budget start date preceeds current date)
+                // if modulus of lweeksbetween = 0 that means that we can use the DAYOFTHEMONTH of the budget start date
+                int lWeeksBetween /*r14*/ = CalExt.weeksBetween(budgetStartDate, calendar);
+                int lDaysBetween /*r15*/ = CalExt.daysBetween(budgetStartDate, calendar);
+                int lDaysRemainder /*r9*/ = lDaysBetween % 7;
+                int lWeeksRemainder /*r15(revised)*/ = lWeeksBetween % 2;
+                if (lWeeksRemainder /*r15(revised)*/ != 0) {
+                    int r12 = 0;
+                }
+                if (lWeeksBetween/*r14*/ > 0) {
+                    if (lWeeksRemainder == 0) {
+                        budgetStartDate = CalExt.subtractDays(budgetStartDate, lDaysRemainder);
+                    } else {
+                        budgetStartDate = CalExt.subtractDays(budgetStartDate, lDaysRemainder + 7);
+                    }
+                } else {
+                    if (lWeeksRemainder == 0) {
+                        budgetStartDate = CalExt.addDays(budgetStartDate, lDaysRemainder);
+                    } else {
+                        budgetStartDate = CalExt.addDays(budgetStartDate, lDaysRemainder + 7);
+                    }
+                }
+                return budgetStartDate;
+            case Enums.kBudgetPeriodBimonthly /*6*/:
+                if (endOfMonth) {
+                    budgetStartDate = CalExt.beginningOfMonth(CalExt.addDays(CalExt.subtractMonths(calendar, 2), 1));
+                } else {
+                    budgetStartDate = CalExt.subtractMonths(CalExt.subtractDay(calendar), 2);
+                    if (firstOfMonth) {
+                        budgetStartDate = CalExt.subtractDay(CalExt.endOfMonth(budgetStartDate));
+                    }
+                }
+                return budgetStartDate;
+            case Enums.kBudgetPeriodHalfYear /*7*/:
+                if (endOfMonth) {
+                    budgetStartDate = CalExt.beginningOfMonth(CalExt.addMonths(calendar, 6));
+                } else {
+                    budgetStartDate = CalExt.subtractMonths(calendar, 6);
+                    if (firstOfMonth) {
+                        budgetStartDate = CalExt.addDays(CalExt.beginningOfDay(budgetStartDate), 1);
+                    }
+                }
+                return budgetStartDate;
+            case Enums.kBudgetPeriod4Weeks /*8*/:
+                return CalExt.beginningOfDay(CalExt.subtractDays(CalExt.subtractDay(calendar), 4 * 7));
+            default:
+                return null;
+        }
     }
 
     private GregorianCalendar endOfPeriod() {
