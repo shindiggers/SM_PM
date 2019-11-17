@@ -24,6 +24,11 @@ public class BudgetsHeaderHolder extends View {
     private Context context;
     public String label;
     private String xofy;
+    Rect r = new Rect(0, 0, 0, 0);
+    Paint p = new Paint();
+    PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.currentTintColor(), Mode.SCREEN);
+    Bitmap catBarBitmap;
+    Bitmap collBarBitmap;
 
     public BudgetsHeaderHolder(Context context, String label, String xofy) {
         super(context);
@@ -32,6 +37,8 @@ public class BudgetsHeaderHolder extends View {
         this.xofy = xofy;
         setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT/*-1*/, ViewGroup.LayoutParams.WRAP_CONTENT/*-2*/));
         setMinimumHeight((int) (((double) getPrefferedItemHeight()) * 0.5d));
+        catBarBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.categorybar);
+        collBarBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.collapseandexpand);
     }
 
     private float getPrefferedItemHeight() {
@@ -44,19 +51,16 @@ public class BudgetsHeaderHolder extends View {
     protected void onDraw(Canvas canvas) {
         int width = getWidth();
         int height = getHeight();
-        Rect r = new Rect(0, 0, width, height);
-        Paint p = new Paint();
-        p.setColorFilter(new PorterDuffColorFilter(PocketMoneyThemes.currentTintColor(), Mode.SCREEN));
-        canvas.drawBitmap(BitmapFactory.decodeResource(getResources(), R.drawable.categorybar), null, r, p);
+        r.set(0, 0, width, height);
+        p.setColorFilter(porterDuffColorFilter);
+        canvas.drawBitmap(catBarBitmap, null, r, p);
         p.setColorFilter(null);
-        Bitmap collapseBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.collapseandexpand);
-        canvas.drawBitmap(collapseBitmap, (float) ((width - 5) - collapseBitmap.getWidth()), (float) ((height / 2) - (collapseBitmap.getHeight() / 2)), p);
+        //Bitmap collapseBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.collapseandexpand);
+        canvas.drawBitmap(collBarBitmap, (float) ((width - 20) - collBarBitmap.getWidth()), (float) ((height / 2) - (collBarBitmap.getHeight() / 2)), p);
         p.setTextAlign(Align.CENTER);
-        try {
-            p.setTextSize((float) getDPFromPixels(35.0d));
-        } catch (Exception e) {
-            p.setTextSize(25.0f);
-        }
+        int spSize = 14;
+        float scaledSizeInPixels = spSize * getResources().getDisplayMetrics().scaledDensity;
+        p.setTextSize(scaledSizeInPixels);
         p.setColor(-16777216);
         p.setTypeface(Typeface.SANS_SERIF);
         p.setAntiAlias(true);
@@ -68,7 +72,7 @@ public class BudgetsHeaderHolder extends View {
             xscale = totalTextWidth / text_w;
         }
         p.setTextScaleX(xscale);
-        canvas.drawText(this.label, (p.measureText(this.label) / 2.0f) + 5.0f, y, p);
+        canvas.drawText(this.label, (p.measureText(this.label) / 2.0f) + 50.0f, y, p);
         text_w = p.measureText(this.xofy);
         totalTextWidth = ((float) getWidth()) * 0.65f;
         xscale = 1.0f;
@@ -76,7 +80,7 @@ public class BudgetsHeaderHolder extends View {
             xscale = totalTextWidth / text_w;
         }
         p.setTextScaleX(xscale);
-        canvas.drawText(this.xofy, ((((float) width) - (p.measureText(this.xofy) / 2.0f)) - 10.0f) - ((float) collapseBitmap.getWidth()), y, p);
+        canvas.drawText(this.xofy, ((((float) width) - (p.measureText(this.xofy) / 2.0f)) - 50.0f) - ((float) collBarBitmap.getWidth()), y, p);
     }
 
     private double getDPFromPixels(double pixels) {

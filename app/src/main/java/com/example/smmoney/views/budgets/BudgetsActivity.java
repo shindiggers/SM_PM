@@ -137,6 +137,17 @@ public class BudgetsActivity extends PocketMoneyActivity {
                 BudgetsActivity.this.reloadData();
             }
         });
+        this.balanceBar.previousButton.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
+                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
+                } else {
+                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
+                }
+                BudgetsActivity.this.reloadData();
+            }
+        });
+
         this.budgetDisplay = layout.findViewById(R.id.budgetdisplaytextview);
         this.budgetDisplay.setVisibility(View.INVISIBLE);
         this.budgetDisplay.setTextColor(-1);
@@ -252,8 +263,14 @@ public class BudgetsActivity extends PocketMoneyActivity {
             this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BALANCE);
         }
         int newWidth = (int) TypedValue.applyDimension(1, 9.0f, getResources().getDisplayMetrics());
+
+        loadBalanceBar();
+        this.budgetProgressBar.setVisibility(View.INVISIBLE);
+        this.reloadProgressBar.setVisibility(View.INVISIBLE);
+        this.budgetDisplay.setVisibility(View.VISIBLE);
+        this.theList.setVisibility(View.VISIBLE);
         LayoutParams lp = new LayoutParams(newWidth, this.theList.getHeight());
-        lp.gravity = Gravity.LEFT/*3*/;
+        lp.gravity = Gravity.START/*3*/;
         int width = this.theList.getWidth();
         int leftMargin = (int) (((double) width) * this.adapter.getProgressPercent());
         if (leftMargin + newWidth > width) {
@@ -263,11 +280,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
         this.progressiBeamBar.setLayoutParams(lp);
         this.progressiBeamBar.bringToFront();
         this.progressiBeamBar.requestLayout();
-        loadBalanceBar();
-        this.budgetProgressBar.setVisibility(View.INVISIBLE);
-        this.reloadProgressBar.setVisibility(View.INVISIBLE);
-        this.budgetDisplay.setVisibility(View.VISIBLE);
-        this.theList.setVisibility(View.VISIBLE);
+
     }
 
     private void newBudget() {
