@@ -6,12 +6,13 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
-import com.example.smmoney.iAP.util.Base64;
-import com.example.smmoney.iAP.util.Base64DecoderException;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
+import com.example.smmoney.iAP.util.Base64;
+import com.example.smmoney.iAP.util.Base64DecoderException;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
@@ -19,6 +20,12 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.misc.TransactionTransferRetVals;
 import com.example.smmoney.views.desktopsync.PocketMoneySyncClass;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -33,11 +40,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class TransactionClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_TRANSACTIONS = "TRANSACTIONS";
@@ -582,7 +586,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return dup;
     }
 
-    public TransactionClass() { // TODO - figure out how this class works??? It is the constructor but how used??
+    public TransactionClass() {
         this.transactionID = 0;
         this.date = null;
         this.cleared = false;
@@ -613,7 +617,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         this.imageLocation = null;
     }
 
-    public TransactionClass(int pk) { //TODO Figure this out. It is the second constructor which takes an int input
+    public TransactionClass(int pk) {
         this.transactionID = 0;
         this.date = null;
         this.cleared = false;

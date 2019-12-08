@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
@@ -17,6 +18,12 @@ import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.views.repeating.LocalNotificationRepeatingReciever;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -26,10 +33,6 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class RepeatingTransactionClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
@@ -198,13 +201,16 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public String typeEveryAsString() {
+        if (Enums.repeatWeekly == this.type && this.frequency == 2) {
+            return Locales.kLOC_BUDGETS_BIWEEKLY;
+        }
         if (Enums.repeatWeekly == this.type && Enums.repeatWeekly < this.frequency) {
             return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY; // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
         }
         if (Enums.repeatMonthly == this.type && Enums.repeatWeekly == this.frequency) {
             return Locales.kLOC_BUDGETS_BIMONTHLY; // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
         }
-        if (Enums.repeatMonthly != this.type || Enums.repeatWeekly >= this.frequency) { //TODO repeating view always shows none SO: type must ALWAYS by 0. Code elsewhere must not be writing '0' as the type. Figure where this is happening and fix
+        if (Enums.repeatMonthly != this.type || Enums.repeatWeekly >= this.frequency) {
             return types()[this.type]; // type 3 = weekly thereofore if type is not monthly OR frequency > 2 this returns whatever 'type' is. That could be type = 0 = "None"; type = 1 = "Daily"; type = 4 = "Yearly"
         }
         return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY; // default if none of other conditions are met = "Monthly"
@@ -648,9 +654,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             case Enums.repeatDaily /*1*/:
                 return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000)) % getFrequency() == 0;
             case Enums.repeatWeekly /*2*/:
-                if (((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0)
-                    onDate = true;
-                else onDate = false;
+                onDate = ((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0;
                 if (!onDate) {
                     return onDate;
                 }
@@ -786,43 +790,43 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             }
             boolean wasDirty = this.dirty;
             curs.moveToFirst();
-            int col = 1; // col = 1
-            this.deleted = curs.getInt(0) == 1; // set this.deleted to 1 (ie true) if the selected RT is deleted
-            this.timestamp = new GregorianCalendar(); // set the timestamp to current time/date
-            int col2 = col + 1; // col2 = 2
-            this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000); // set timestamp = timestamp of the RT that has just been read from the database
-            GregorianCalendar cal = new GregorianCalendar(); // create new GC object called 'cal'. Initialise to current time/date (ie degault when new CG intantiated)
-            col = col2 + 1; // col = 3
-            cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000); // set 'cal' to the lastProcessedDate as just read from the database
-            setLastProcessedDate(cal); // set the lastProcessedDate of the RT object to the value of 'cal' (ie the lastProcessedDate just read from the database
-            col2 = col + 1; // col2 = 4
-            this.transactionID = curs.getInt(col); // set the transactionID of the RT object equal to the transactionID just read from the database for the RT
-            col = col2 + 1; // col = 5
-            setType(curs.getInt(col2)); // set the 'type' of the RT to the value just read from the database. See Enums line 223 et seq - eg 3 = monthlyLastWeekdatOfMonth
-            col2 = col + 1;  // col 2 = 6
-            double tempDate = curs.getDouble(col); // store the 'endDate' of the RT as just read from the database in tempDate
-            cal = new GregorianCalendar(); // re-set 'cal' to a new GC object, automatically instantiated with current time/date
-            cal.setTimeInMillis(((long) tempDate) * 1000); // change the 'cal' time to the value of tempDate (ie the endDate of the RT just read from database). NB If there is no endDate, that would be null
-            if (tempDate == 0.0d) { // check if there is no endDate
-                cal = null; // if so, set 'cal' to null
+            int col = 1;                                                                        // col = 1
+            this.deleted = curs.getInt(0) == 1;                                      // set this.deleted to 1 (ie true) if the selected RT is deleted
+            this.timestamp = new GregorianCalendar();                                           // set the timestamp to current time/date
+            int col2 = col + 1;                                                                 // col2 = 2
+            this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);                // set timestamp = timestamp of the RT that has just been read from the database
+            GregorianCalendar cal = new GregorianCalendar();                                    // create new GC object called 'cal'. Initialise to current time/date (ie degault when new CG intantiated)
+            col = col2 + 1;                                                                     // col = 3
+            cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000);                          // set 'cal' to the lastProcessedDate as just read from the database
+            setLastProcessedDate(cal);                                                          // set the lastProcessedDate of the RT object to the value of 'cal' (ie the lastProcessedDate just read from the database
+            col2 = col + 1;                                                                     // col2 = 4
+            this.transactionID = curs.getInt(col);                                              // set the transactionID of the RT object equal to the transactionID just read from the database for the RT
+            col = col2 + 1;                                                                     // col = 5
+            setType(curs.getInt(col2));                                                         // set the 'type' of the RT to the value just read from the database. See Enums line 223 et seq - eg 3 = monthlyLastWeekdatOfMonth
+            col2 = col + 1;                                                                     // col 2 = 6
+            double tempDate = curs.getDouble(col);                                              // store the 'endDate' of the RT as just read from the database in tempDate
+            cal = new GregorianCalendar();                                                      // re-set 'cal' to a new GC object, automatically instantiated with current time/date
+            cal.setTimeInMillis(((long) tempDate) * 1000);                                      // change the 'cal' time to the value of tempDate (ie the endDate of the RT just read from database). NB If there is no endDate, that would be null
+            if (tempDate == 0.0d) {                                                             // check if there is no endDate
+                cal = null;                                                                     // if so, set 'cal' to null
             }
-            setEndDate(cal); // set the endDate of the RT object to equal 'cal', as determined above
-            col = col2 + 1; // col = 7
-            setFrequency(curs.getInt(col2)); // set the frequency of the RT object to the frequency just read from the RT database table
-            col2 = col + 1; // col2 = 8
-            setRepeatOn(curs.getInt(col)); // set the 'repeatsOn' RT object param to the repeats.On of the RT just read from the database
-            col = col2 + 1; // col = 9
-            setStartOfWeek(curs.getInt(col2)); // set the startOfWeek to the RT startOfWeek just read from the database
-            col2 = col + 1; // col2 = 10
-            setNotifyDaysInAdvance(curs.getInt(col)); // set the notifyDaysInAdvance to the RT notifyDaysInAdvance just read from the database
-            col = col2 + 1; // col = 11
-            setSendLocalNotifications(curs.getInt(col2) == 1); // set the sendLocalNotifications RT param to the notifyDaysInAdvance of the RT just read from the database
-            col2 = col + 1; // col2 = 12
-            String str = curs.getString(col); // read the serverID of the RT just retrieved from the DB
+            setEndDate(cal);                                                                    // set the endDate of the RT object to equal 'cal', as determined above
+            col = col2 + 1;                                                                     // col = 7
+            setFrequency(curs.getInt(col2));                                                    // set the frequency of the RT object to the frequency just read from the RT database table
+            col2 = col + 1;                                                                     // col2 = 8
+            setRepeatOn(curs.getInt(col));                                                      // set the 'repeatsOn' RT object param to the repeats.On of the RT just read from the database
+            col = col2 + 1;                                                                     // col = 9
+            setStartOfWeek(curs.getInt(col2));                                                  // set the startOfWeek to the RT startOfWeek just read from the database
+            col2 = col + 1;                                                                     // col2 = 10
+            setNotifyDaysInAdvance(curs.getInt(col));                                           // set the notifyDaysInAdvance to the RT notifyDaysInAdvance just read from the database
+            col = col2 + 1;                                                                     // col = 11
+            setSendLocalNotifications(curs.getInt(col2) == 1);                                  // set the sendLocalNotifications RT param to the notifyDaysInAdvance of the RT just read from the database
+            col2 = col + 1;                                                                     // col2 = 12
+            String str = curs.getString(col);                                                   // read the serverID of the RT just retrieved from the DB
             if (str == null) {
                 str = "";
             }
-            setServerID(str); // set the serverID of the RT object to the above serverID
+            setServerID(str);                                                                   // set the serverID of the RT object to the above serverID
             hydrateTransaction();
             if (Enums.repeatWeekly/*2*/ == this.type && this.repeatOn == Enums.monthlyDayOfMonth/*0*/) {
                 setRepeatOn(this.transaction.getDate().get(Calendar.DAY_OF_WEEK) - 1);
@@ -945,7 +949,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             } else if (localName.equals("startOfWeek")) {
                 setStartOfWeek(Integer.valueOf(this.currentElementValue));
             } else if (localName.equals("transactionServerID")) {
-                this.transactionServerID = new String(this.currentElementValue);
+                this.transactionServerID = this.currentElementValue;
             } else if (localName.equals("transactionID")) {
                 this.transactionID = Integer.valueOf(this.currentElementValue);
             } else if (localName.equals("serverID")) {

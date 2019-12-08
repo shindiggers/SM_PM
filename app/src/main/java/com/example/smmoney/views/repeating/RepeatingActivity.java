@@ -26,6 +26,7 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
@@ -42,6 +43,7 @@ import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -171,7 +173,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private void reloadBalanceBar() {
         ArrayList<RepeatingTransactionClass> repeatingTransactions = TransactionDB.queryAllRepeatingTransactions();
         int days = Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD);
-        String text = Locales.kLOC_REPEATING_UPCOMING_LABEL + " " + days + Locales.kLOC_REPEATING_FREQUENCY_DAYS;
+        String text = Locales.kLOC_REPEATING_UPCOMING_LABEL + " " + days + " " + Locales.kLOC_REPEATING_FREQUENCY_DAYS;
         GregorianCalendar upcomingEndDate = CalExt.addDays(new GregorianCalendar(), days);
         double overdueAmount = 0.0d;
         double upcomingAmount = 0.0d;

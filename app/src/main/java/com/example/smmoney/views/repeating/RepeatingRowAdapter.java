@@ -8,11 +8,14 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Toast;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
+import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -26,10 +29,16 @@ class RepeatingRowAdapter extends BaseAdapter {
             RepeatingRowHolder holder = (RepeatingRowHolder) ((View) v.getParent().getParent()).getTag();
             holder.repeatingTransaction.hydrated = false;
             if (holder.repeatingTransaction.getTransaction() != null) {
-                Intent intent = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
-                intent.putExtra("repeatingTransaction", holder.repeatingTransaction);
-                intent.putExtra("Posting", true);
-                RepeatingRowAdapter.this.mContext.startActivity(intent);
+                RepeatingTransactionClass repeaterSM;
+                repeaterSM = new RepeatingTransactionClass(holder.repeatingTransaction.getTransaction());
+                repeaterSM.postAndAdvanceTransaction(repeaterSM.getTransaction().getSubTotal(), repeaterSM.getTransaction().getDate());
+                repeaterSM.saveToDatabase();
+                Toast.makeText(mContext, "Transaction posted", Toast.LENGTH_LONG).show();
+                holder.setTransaction(repeaterSM.getTransaction(), mContext);
+                //Intent intent = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
+                //intent.putExtra("repeatingTransaction", holder.repeatingTransaction);
+                //intent.putExtra("Posting", true);
+                //RepeatingRowAdapter.this.mContext.startActivity(intent);
             }
         }
     };
@@ -71,7 +80,7 @@ class RepeatingRowAdapter extends BaseAdapter {
         TransactionClass transaction = this.elements.get(position);
         RepeatingRowHolder holder;
         if (convertView == null) {
-            convertView = this.mInflater.inflate(R.layout.repeating_transaction_row, null);
+            convertView = this.mInflater.inflate(R.layout.repeating_transaction_row, parent, false);
             holder = new RepeatingRowHolder();
             ((Activity) this.mContext).registerForContextMenu(convertView);
             convertView.setOnClickListener(getBtnClickListener());

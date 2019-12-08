@@ -38,13 +38,11 @@ class RepeatingRowHolder {
         } else {
             this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_grey));
         }
-        // TODO The next line does not get correct date - date bears no obvious resemblence to next post date - to fix
         this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
         // TODO This scaling causes date not to display - to fix
         //        scaleTextField(this.date);
-        // TODO The next line seems to set frequency to "none" by default - to fix
         this.frequency.setText(this.repeatingTransaction.typeEveryAsString());
-// TODO This scaling causes frequency not to display - to fix
+        // TODO This scaling causes frequency not to display - to fix
         //        scaleTextField(this.frequency);
         if (this.transaction.isTransfer()) {
             this.payee.setText(this.transaction.getPayee() + " <" + this.transaction.getTransferToAccount() + ">");

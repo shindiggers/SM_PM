@@ -4,6 +4,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
@@ -599,31 +600,30 @@ public class TransactionDB {
         }
     }
 
-    // TODO Check original decompile for this method - always seems to produce i = 0. That doesn't seem right...
-    public static int getRepeatingTransactionFor(TransactionClass aTransaction) { // the transaction for which we want to get the repeating transaction
-        int i = 0; // the return value. It should be the ID of the repeating transaction that matches the passed on transaction
-        if (aTransaction.getAccount() == null || aTransaction.getAccount().length() == 0) { //check if the passed in transaction has a null/empty account ID. If so, it doesn't 'exist'
-            return 0; // there will be no repeating tranaction is the account ID is null/empty so return 0
+    public static int getRepeatingTransactionFor(TransactionClass aTransaction) {                              // the transaction for which we want to get the repeating transaction
+        int i = 0;                                                                                                      // the return value. It should be the ID of the repeating transaction that matches the passed on transaction
+        if (aTransaction.getAccount() == null || aTransaction.getAccount().length() == 0) {                             //check if the passed in transaction has a null/empty account ID. If so, it doesn't 'exist'
+            return 0;                                                                                                   // there will be no repeating tranaction is the account ID is null/empty so return 0
         }
-        int accountID = AccountDB.uniqueID(aTransaction.getAccount()); //set accountID to the accountID of the passed in transaction
+        int accountID = AccountDB.uniqueID(aTransaction.getAccount());                                                  //set accountID to the accountID of the passed in transaction
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables("transactions t INNER JOIN repeatingTransactions r ON t.transactionID = r.transactionID");
         Cursor curs = Database.query(qb, new String[]{"t.transactionID", "r.repeatingID"}, "t.deleted=0 AND t.type=5 AND t.accountID=" + accountID + " AND t.payee=" + Database.SQLFormat(aTransaction.getPayee()) + " AND t.subTotal=" + aTransaction.getSubTotal(), null, null, null, null); // This query returns a single line. It has the transactionID and repeatingID of the transaction that matches the accountID, payee and subtotal of the passed in transaction
         while (curs.moveToNext()) {
-            i = curs.getInt(0); // gets the transactionID of the line produced by the DB query
-            RepeatingTransactionClass repeatingTransaction = new RepeatingTransactionClass(curs.getInt(1)); //gets the repeating transaction with the repeatingID from the database query
-            repeatingTransaction.hydrate(); //populates the repeatingTransaction with all the RT fields from the database (via a further query on the RepeatingTransactions table using the repeatingID
-            if (repeatingTransaction.repeatsOnDate(aTransaction.getDate())) {//gets the date of the passed in transaction (ie the date it is recorded). Then, checks if the repeatingTransaction repeats on that date. If it does then the next code block is executed, otherwise not
-                TransactionClass transactionClass = new TransactionClass(i); //creates a new transactionClass object with a transactionID of i
-                transactionClass.hydrate(); //populates the new transactionClass object with the rest of the info from the database for the 'i'th transaction
-                if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) { //checks if the 'i'th transaction has the same number of splits as the passed in transaction
+            i = curs.getInt(0);                                                                             // gets the transactionID of the line produced by the DB query
+            RepeatingTransactionClass repeatingTransaction = new RepeatingTransactionClass(curs.getInt(1)); //get the repeatingID from the database query and pass it to the constructor of the RepeatingTransaction class to make a new RT object
+            repeatingTransaction.hydrate();                                                                            //populates the repeatingTransaction with all the RT fields from the database (via a further query on the RepeatingTransactions table using the repeatingID
+            if (repeatingTransaction.repeatsOnDate(aTransaction.getDate())) {                                          //gets the date of the passed in transaction (ie the date it is recorded). Then, checks if the repeatingTransaction repeats on that date. If it does then the next code block is executed, otherwise not
+                TransactionClass transactionClass = new TransactionClass(i);                                           //creates a new transactionClass object with a transactionID of i
+                transactionClass.hydrate();                                                                            //populates the new transactionClass object with the rest of the info from the database for the 'i'th transaction
+                if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) {                        //checks if the 'i'th transaction has the same number of splits as the passed in transaction
                     int splitIndex = 0;
                     Iterator it = transactionClass.getSplits().iterator();
-                    while (it.hasNext()) { //loop through each splitClass object
+                    while (it.hasNext()) {                                                                             //loop through each splitClass object
                         SplitsClass split = (SplitsClass) it.next();
                         SplitsClass matchSplit = aTransaction.getSplits().get(splitIndex);
-                        if (matchSplit.amountAsString().equals(split.amountAsString())) {//check if the amount of each split is the same and proceed if so
-                            if (matchSplit.getCategory().equals(split.getCategory())) {//check if the category is the same and proceed if so
+                        if (matchSplit.amountAsString().equals(split.amountAsString())) {                              //check if the amount of each split is the same and proceed if so
+                            if (matchSplit.getCategory().equals(split.getCategory())) {                                //check if the category is the same and proceed if so
                                 if (matchSplit.getTransferToAccount() != null && split.getTransferToAccount() != null && !matchSplit.getTransferToAccount().equalsIgnoreCase(split.getTransferToAccount())) {
                                     i = 0;
                                     break;
@@ -633,12 +633,15 @@ public class TransactionDB {
                                 i = 0;
                                 break;
                             }
+                        } else {
+                            i = 0;
+                            break;
                         }
-                        i = 0;
-                        break;
                     }
+                    //break;
+                } else {
+                    i = 0;
                 }
-                i = 0;
             } else {
                 i = 0;
             }
@@ -838,7 +841,7 @@ public class TransactionDB {
     }
 
     public static void deleteRepeatingRecordsFromAccount(String account) {
-        Database.execSQL("UPDATE repeatingTransactions SET deleted='1', timestamp=" + Long.toString(System.currentTimeMillis()) + " WHERE transactionID IN (SELECT transactionID FROM transactions WHERE deleted = 0 AND accountID IN (SELECT accountID FROM accounts WHERE account LIKE " + Database.SQLFormat(account) + " AND deleted = 0))");
+        Database.execSQL("UPDATE repeatingTransactions SET deleted='1', timestamp=" + System.currentTimeMillis() + " WHERE transactionID IN (SELECT transactionID FROM transactions WHERE deleted = 0 AND accountID IN (SELECT accountID FROM accounts WHERE account LIKE " + Database.SQLFormat(account) + " AND deleted = 0))");
     }
 
     public static void deleteRepetaingRecordsFromTransactionForAccount(String account) {
