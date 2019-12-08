@@ -13,7 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp"
         android:checked="true"
         android:clickable="true"
@@ -24,28 +23,24 @@
         android:layout_height="40dp"
         android:layout_centerVertical="true"
         android:layout_marginBottom="5dp"
-        android:layout_marginLeft="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
         android:layout_toEndOf="@+id/checked"
-        android:layout_toRightOf="@+id/checked"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/expensetextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_weight="1.0"
-            android:text="expense" />
+            android:text="@string/report_expense" />
 
         <TextView
             android:id="@+id/amounttextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
             android:layout_weight="1.0"
-            android:text="amount • " />
+            android:text="@string/report_amount" />
 
     </LinearLayout>
 
@@ -54,10 +49,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
-        android:layout_marginRight="5dp"
+        android:contentDescription="@string/content_description_image_of_a_calendar"
         android:src="@drawable/ic_date_range" />
 
 </RelativeLayout>

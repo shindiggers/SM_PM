@@ -18,7 +18,7 @@
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-            android:text="TITLE"
+            android:text="@string/title"
             android:textAppearance="@color/black_theme_text"
             android:textStyle="bold" />
 
@@ -60,7 +60,8 @@
                     android:layout_marginStart="120dp"
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:inputType="number"
-                    android:text="" />
+                    android:text=""
+                    android:importantForAutofill="no" />
 
                 <TextView
                     android:id="@+id/foreign_text_view"
@@ -68,14 +69,15 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="40dp"
-                    android:text="USD" />
+                    android:text="@string/usd" />
 
                 <ImageView
                     android:id="@+id/imageView1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
+                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:contentDescription="@string/content_description_select_currency" />
 
             </FrameLayout>
 
@@ -100,7 +102,9 @@
                     android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:layout_marginStart="120dp"
                     android:inputType="number"
-                    android:text="" />
+                    android:text="@string/accounts_view_net_worth"
+                    android:hint="@string/kLOC_GENERAL_EXCHANGERATE"
+                    android:importantForAutofill="no" />
 
                 <Button
                     android:id="@+id/invert_button"
@@ -131,7 +135,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="15dp"
-                    android:text="USD" />
+                    android:text="@string/usd" />
 
                 <EditText
                     android:id="@+id/account_amount_edit_text"
@@ -141,7 +145,8 @@
                     android:layout_marginStart="120dp"
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
                     android:inputType="number"
-                    android:text="" />
+                    android:text=""
+                    android:importantForAutofill="no" />
 
             </FrameLayout>
 

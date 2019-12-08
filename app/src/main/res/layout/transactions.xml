@@ -21,7 +21,7 @@
             android:background="@color/blue_theme_background_color"
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
-            android:text="+"
+            android:text="@string/add_symbol"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -42,7 +42,8 @@
             android:layout_height="40dp"
             android:hint="@string/kLOC_TOOLS_SEARCH"
             android:maxLines="1"
-            android:inputType="" />
+            android:inputType=""
+            android:importantForAutofill="no" />
 
         <com.example.makeramen.segmented.SegmentedRadioGroup
             android:id="@+id/radiogroup"

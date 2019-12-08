@@ -9,14 +9,14 @@
         android:id="@+id/the_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+        android:layout_gravity="top|center_horizontal">
 
         <TextView
             android:id="@+id/title_text_view"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-            android:text="TITLE"
+            android:gravity="center"
+            android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold"
             tools:text="Pocket Money" />
@@ -42,7 +42,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
             android:src="@drawable/leftarrow"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/content_description_left_arrow" />
 
         <ImageView
             android:id="@+id/rightarrow"
@@ -50,7 +50,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:src="@drawable/rightarrow"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/content_description_right_arrow" />
 
     </FrameLayout>
 
@@ -67,7 +67,7 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="10dp"
             android:src="@drawable/grapharrowright"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/content_description_choose_between_actual_budgeted_and_available" />
 
         <ProgressBar
             android:id="@+id/reloadprogressbar"

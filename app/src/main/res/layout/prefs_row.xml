@@ -16,8 +16,8 @@
         android:id="@+id/prefsrowimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="10dp"
         tools:src="@drawable/repeatingicon"
+        android:contentDescription="@string/content_description_image_of_a_calendar"
         android:layout_marginStart="10dp"/>
 
     <TextView
@@ -30,7 +30,6 @@
         tools:text="Preference 1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="60dp"
         android:layout_marginStart="60dp"/>
 
 </FrameLayout>

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -64,7 +65,8 @@
             android:layout_height="10dp"
             android:layout_weight="1.0"
             android:focusable="false"
-            android:orientation="horizontal">
+            android:orientation="horizontal"
+            tools:ignore="NestedWeights">
 
             <TextView
                 android:id="@+id/payeetextview"
@@ -73,7 +75,8 @@
                 android:layout_weight="1.0"
                 android:gravity="start|center_vertical"
                 android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_PAYEE" />
+                android:text="@string/kLOC_GENERAL_PAYEE"
+                tools:ignore="NestedWeights" />
 
             <TextView
                 android:id="@+id/amounttextview"

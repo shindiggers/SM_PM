@@ -15,7 +15,7 @@
         android:layout_height="40dp">
 
         <TextView
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold"
             android:layout_gravity="center_vertical|start"
             android:id="@+id/cancel_button"
@@ -30,7 +30,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="15dp"
-            android:text="Cancel" />
+            android:text="@string/kLOC_GENERAL_CANCEL" />
 
         <TextView
             android:textAppearance="?android:textAppearanceMedium"
@@ -42,7 +42,7 @@
             android:text="@string/kLOC_BUDGETS_EDIT_TITLE" />
 
         <TextView
-            android:textAppearance="?android:textAppearanceMedium"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold"
             android:layout_gravity="end|center_vertical"
             android:id="@+id/save_button"
@@ -57,7 +57,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="15dp"
-            android:text="Save" />
+            android:text="@string/transaction_edit_save" />
 
     </FrameLayout>
 
@@ -161,7 +161,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:contentDescription="TODO" />
+                    android:contentDescription="@string/kLOC_BUDGETS_TYPE" />
 
             </LinearLayout>
 
@@ -202,7 +202,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/kLOC_BUDGETS_PERIOD" />
 
     </LinearLayout>
 
@@ -232,10 +232,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginEnd="4dp"
-            android:hint="Amount"
+            android:hint="@string/kLOC_GENERAL_AMOUNT"
             android:singleLine="true"
             android:layout_weight="1.0"
-            android:inputType="numberDecimal" />
+            android:inputType="numberDecimal"
+            android:importantForAutofill="no" />
 
     </LinearLayout>
 
@@ -299,7 +300,7 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="10dp"
         android:layout_marginStart="10dp"
-        android:text="Enable Variable Budgets" />
+        android:text="@string/kLOC_BUDGET_ENABLE_VARIABLE" />
 
     <FrameLayout
         android:id="@+id/originalhistorycell"
@@ -317,7 +318,7 @@
             android:gravity="center_vertical"
             tools:visibility="visible"
             android:layout_marginStart="50dp"
-            android:text="date" />
+            android:text="@string/kLOC_GENERAL_DATE" />
 
         <TextView
             android:layout_gravity="end|center_vertical"
@@ -327,7 +328,7 @@
             android:gravity="center_vertical"
             android:layout_marginEnd="50dp"
             tools:visibility="visible"
-            android:text="budget" />
+            android:text="@string/kLOC_BUDGETS_AMOUNT" />
 
     </FrameLayout>
 
@@ -340,19 +341,20 @@
         android:minHeight="50dp">
 
         <TextView
-            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_gravity="center_vertical|end"
             android:id="@+id/addnewbudgettextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Budget" />
+            android:layout_marginEnd="50dp"
+            android:text="@string/kLOC_BUDGETS_NEW" />
 
         <ImageView
             android:layout_gravity="start|center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
+            android:layout_marginStart="50dp"
             android:src="@drawable/circleplus"
-            android:contentDescription="TODO" />
+            android:contentDescription="@string/kLOC_BUDGETS_NEW" />
 
     </FrameLayout>
 

@@ -10,6 +10,8 @@
         android:id="@+id/note_editor_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textCapSentences|textMultiLine|textAutoCorrect"/>
+        android:hint="@string/hint_add_a_note"
+        android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
+        android:importantForAutofill="no" />
 
 </LinearLayout>

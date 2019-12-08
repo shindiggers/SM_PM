@@ -729,4 +729,18 @@
     <string name="row_runningtotal">runningTotal</string>
     <string name="elipses">…:</string>
     <string name="contentDescription_image_for_account">Image for account</string>
+    <string name="hint_add_a_note">Add a note</string>
+    <string name="content_description_choose_between_actual_budgeted_and_available">Choose between actual, budgeted and available</string>
+    <string name="usd">USD</string>
+    <string name="content_description_select_currency">Select currency</string>
+    <string name="content_desctiption_select_filter">Select filter</string>
+    <string name="asterisk">*</string>
+    <string name="triple_x">xxx</string>
+    <string name="iap_button">IAP Button</string>
+    <string name="description">Description</string>
+    <string name="content_description_powered_by_google_logo">powered by Google logo</string>
+    <string name="report_expense">Expense</string>
+    <string name="report_amount">Amount •</string>
+    <string name="ip_address_placeholder">xxx.xxx.xxx.xxx</string>
+    <string name="add_symbol">+</string>
 </resources>

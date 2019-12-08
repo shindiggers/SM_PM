@@ -614,7 +614,8 @@
                     android:singleLine="true"
                     android:layout_weight="1.0"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/accounts_edit_open_keep_the_change_dialogue" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
@@ -702,7 +703,8 @@
                     android:singleLine="true"
                     android:layout_weight="1.0"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/hint_add_a_note" />
 
             </LinearLayout>
 

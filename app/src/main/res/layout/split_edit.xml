@@ -24,8 +24,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="3dp"
-            android:text="Cancel"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:text="@string/kLOC_GENERAL_CANCEL"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
 
         <TextView
@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="TITLE"
+            android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -48,8 +48,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="3dp"
-            android:text="Save"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:text="@string/transaction_edit_save"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
 
     </FrameLayout>
@@ -151,7 +151,7 @@
                     android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
                     android:gravity="start|center_vertical"
-                    android:text="TransTo" />
+                    android:text="@string/kLOC_EDIT_TRANSACTION_TRANS_TO" />
 
                 <TextView
                     android:id="@+id/transtotextview"
@@ -160,7 +160,7 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:layout_gravity="center_vertical"
-                    android:hint="TransTo"
+                    android:hint="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
                     android:singleLine="true" />
 
                 <ImageButton
@@ -168,6 +168,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
@@ -201,7 +202,7 @@
                     android:layout_weight="1.0"
                     android:inputType="textCapWords"
                     android:layout_gravity="center_vertical"
-                    android:hint="Category"
+                    android:hint="@string/kLOC_GENERAL_CATEGORY"
                     android:singleLine="true" />
 
                 <ImageButton
@@ -240,8 +241,9 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:layout_gravity="center_vertical"
-                    android:hint="Amount"
-                    android:inputType="numberDecimal" />
+                    android:hint="@string/kLOC_GENERAL_AMOUNT"
+                    android:inputType="numberDecimal"
+                    android:importantForAutofill="no" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
@@ -249,7 +251,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:singleLine="true"
-                    android:text="x xrate" />
+                    android:text="@string/transaction_edit_x_xrate" />
 
                 <ImageButton
                     android:id="@+id/amount_currency_button"
@@ -257,6 +259,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
@@ -294,7 +297,7 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:layout_gravity="center_vertical"
-                    android:hint="Class"
+                    android:hint="@string/kLOC_GENERAL_CLASS"
                     android:inputType="textCapWords"
                     android:singleLine="true" />
 
@@ -303,6 +306,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false" />
 
@@ -334,7 +338,9 @@
                     android:layout_weight="1.0"
                     android:layout_gravity="center_vertical"
                     android:singleLine="true"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/hint_add_a_note"
+                    android:importantForAutofill="no" />
 
             </LinearLayout>
 

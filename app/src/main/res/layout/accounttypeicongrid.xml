@@ -2,7 +2,7 @@
 
 <GridView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+    android:gravity="center"
     android:id="@+id/gridview"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -10,4 +10,5 @@
     android:verticalSpacing="10dp"
     android:stretchMode="columnWidth"
     android:columnWidth="46dp"
-    android:numColumns="auto_fit" />
+    android:numColumns="auto_fit"
+    android:padding="4dp" />

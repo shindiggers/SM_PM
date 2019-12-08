@@ -25,8 +25,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="3dp"
-            android:text="Cancel"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:text="@string/kLOC_GENERAL_CANCEL"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
 
         <TextView
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:text="TITLE"
+            android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -49,8 +49,8 @@
             android:paddingLeft="10dp"
             android:paddingRight="10dp"
             android:paddingTop="3dp"
-            android:text="Save"
-            android:textAppearance="?android:textAppearanceMedium"
+            android:text="@string/transaction_edit_save"
+            android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
 
     </FrameLayout>
@@ -91,7 +91,8 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_FILTER_NAME"
                     android:singleLine="true"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:importantForAutofill="no" />
 
             </FrameLayout>
 
@@ -127,6 +128,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_TRANSACTION_TYPE"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -158,6 +160,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_ACCOUNT_TYPE_TITLE"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -189,6 +192,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTER_DATES"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -215,7 +219,8 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_PAYEE_TITLE"
                     android:singleLine="true"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:importantForAutofill="no" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -223,6 +228,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_PAYEES"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -249,7 +255,8 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_ID_TITLE"
                     android:singleLine="true"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:importantForAutofill="no" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -257,6 +264,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_IDS"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -288,6 +296,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_GENERAL_CLEARED"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -312,7 +321,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/kLOC_GENERAL_CATEGORY"
+                    android:importantForAutofill="no" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -320,6 +331,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_CATEGORIES"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>
@@ -344,7 +356,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
-                    android:inputType="" />
+                    android:hint="@string/kLOC_GENERAL_CLASS"
+                    android:inputType=""
+                    android:importantForAutofill="no" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -352,6 +366,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
                     android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </FrameLayout>

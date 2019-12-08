@@ -72,10 +72,11 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
             android:layout_marginStart="10dp"
-            android:hint="xxx.xxx.xxx.xxx"
+            android:hint="@string/ip_address_placeholder"
             android:inputType="numberDecimal"
             android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt" />
+            android:textColorHint="@color/black_theme_text_alt"
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/iplabel"
@@ -93,7 +94,7 @@
             android:layout_marginStart="20dp"
             android:layout_toEndOf="@+id/iplabel"
             android:singleLine="true"
-            android:text="xxx.xxx.xxx.xxx"
+            android:text="@string/ip_address_placeholder"
             android:visibility="gone" />
 
         <EditText
@@ -105,7 +106,8 @@
             android:hint="@string/kLOC_FILETRANSFERS_PORT"
             android:singleLine="true"
             android:textColorHint="@color/black_theme_text_alt"
-            android:inputType="" />
+            android:inputType=""
+            android:importantForAutofill="no" />
 
         <TextView
             android:id="@+id/portlabel"

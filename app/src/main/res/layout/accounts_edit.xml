@@ -101,7 +101,8 @@
                     android:nextFocusDown="@+id/totalworthcb"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt"
-                    android:inputType="textCapWords" />
+                    android:inputType="textCapWords"
+                    android:importantForAutofill="no" />
 
             </LinearLayout>
 
@@ -612,7 +613,8 @@
                     android:singleLine="true"
                     android:layout_weight="1.0"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/accounts_edit_the_type" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
@@ -700,7 +702,8 @@
                     android:singleLine="true"
                     android:layout_weight="1.0"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType=""
+                    android:hint="@string/accounts_edit_open_keep_the_change_dialogue" />
 
             </LinearLayout>
 

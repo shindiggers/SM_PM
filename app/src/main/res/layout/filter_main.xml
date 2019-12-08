@@ -15,7 +15,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical|center_horizontal"
-            android:text="TITLE"
+            android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
 
@@ -66,6 +66,7 @@
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
                 android:focusable="true"
+                android:contentDescription="@string/content_desctiption_select_filter"
                 android:src="@drawable/ic_arrow_drop_down_circle" />
 
         </FrameLayout>

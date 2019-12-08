@@ -11,7 +11,6 @@
         android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginLeft="@dimen/place_autocomplete_separator_start"
         android:layout_marginStart="@dimen/place_autocomplete_separator_start" />
 
     <include
@@ -27,12 +26,11 @@
         android:id="@+id/place_autocomplete_powered_by_google"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:layout_marginLeft="@dimen/place_autocomplete_powered_by_google_start"
         android:src="@drawable/powered_by_google_light"
         android:scaleType="center"
-        android:layout_toRightOf="@+id/place_autocomplete_progress"
         android:layout_below="@+id/place_autocomplete_separator"
         android:layout_marginStart="@dimen/place_autocomplete_powered_by_google_start"
-        android:layout_toEndOf="@+id/place_autocomplete_progress" />
+        android:layout_toEndOf="@+id/place_autocomplete_progress"
+        android:contentDescription="@string/content_description_powered_by_google_logo" />
 
 </RelativeLayout>

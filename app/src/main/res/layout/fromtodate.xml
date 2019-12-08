@@ -58,7 +58,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:gravity="center"
-                    android:text="*" />
+                    android:text="@string/asterisk" />
 
             </FrameLayout>
 
@@ -83,7 +83,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal|center_vertical"
-            android:text="xxx" />
+            android:text="@string/triple_x" />
 
         <LinearLayout
             android:layout_width="130dp"
@@ -115,7 +115,7 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:gravity="center"
-                    android:text="*" />
+                    android:text="@string/asterisk" />
 
             </FrameLayout>
 
