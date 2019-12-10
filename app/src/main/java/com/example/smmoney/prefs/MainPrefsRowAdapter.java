@@ -18,12 +18,14 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.smmoney.SMMoney;
+
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountsActivity;
+
 import java.util.ArrayList;
 
 class MainPrefsRowAdapter extends BaseAdapter {
@@ -59,12 +61,17 @@ class MainPrefsRowAdapter extends BaseAdapter {
         } catch (NameNotFoundException e) {
             e.printStackTrace();
         }
-        final String theText = version + pInfo.versionName + text + (translations.length() > 0 ? "\n\n" + translations : "");
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                Toast.makeText(MainPrefsRowAdapter.this.context, theText, Toast.LENGTH_LONG).show();
-            }
-        });
+
+        if (pInfo != null) {
+            final String theText;
+            theText = version + pInfo.versionName + text + (translations.length() > 0 ? "\n\n" + translations : "");
+
+            this.listenerList.add(new OnClickListener() {
+                public void onClick(View v) {
+                    Toast.makeText(MainPrefsRowAdapter.this.context, theText, Toast.LENGTH_LONG).show();
+                }
+            });
+        }
         this.listenerList.add(new OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent("android.intent.action.VIEW");
@@ -188,13 +195,13 @@ class MainPrefsRowAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup arg2) {
         ViewHolder holder;
         if (convertView == null) {
-            convertView = this.inflater.inflate(R.layout.prefs_row, null);
+            convertView = this.inflater.inflate(R.layout.prefs_row, arg2, false);
             holder = new ViewHolder();
             holder.title = convertView.findViewById(R.id.prefsrowtext);
             holder.title.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             holder.image = convertView.findViewById(R.id.prefsrowimage);
             holder.theRow = (FrameLayout) holder.title.getParent();
-            //holder.theRow.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+            holder.theRow.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();

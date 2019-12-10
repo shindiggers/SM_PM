@@ -167,10 +167,9 @@ public class Prefs {
             Builder alt_bld = new Builder(this.val$cont);
             Builder cancelable = alt_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?").setCancelable(false);
             CharSequence charSequence = Locales.kLOC_GENERAL_YES;
-            final Context context = this.val$cont;
             cancelable.setPositiveButton(charSequence, new OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
-                    Prefs.importDB(context);
+                    Prefs.importDB(AnonymousClass1.this.val$cont);
                 }
             }).setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -202,7 +201,7 @@ public class Prefs {
     }
 
     public static void importDB(Context c) {
-        File dbBackupFile = new File(new StringBuilder(String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath())).append("/PocketMoneyBackup/SMMoneyDB.sql").toString());
+        File dbBackupFile = new File(new StringBuilder(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()).append("/PocketMoneyBackup/SMMoneyDB.sql").toString());
         if (!dbBackupFile.exists()) {
             Log.w(SMMoney.TAG, "Database backup file does not exist, cannot import.");
         } else if (!dbBackupFile.canRead()) {
@@ -238,17 +237,8 @@ public class Prefs {
     }
 
     public static void copyFile(File src, File dst) throws IOException {
-        FileChannel inChannel = new FileInputStream(src).getChannel();
-        FileChannel outChannel = new FileOutputStream(dst).getChannel();
-        try {
+        try (FileChannel inChannel = new FileInputStream(src).getChannel(); FileChannel outChannel = new FileOutputStream(dst).getChannel()) {
             inChannel.transferTo(0, inChannel.size(), outChannel);
-        } finally {
-            if (inChannel != null) {
-                inChannel.close();
-            }
-            if (outChannel != null) {
-                outChannel.close();
-            }
         }
     }
 
@@ -531,7 +521,7 @@ public class Prefs {
             disconnectTransferForTransactionU4(t, c.getInt(1));
             t.deleteFromDatabase();
         }
-        Database.execSQL("UPDATE repeatingTransactions SET deleted='1', timestamp=" + Long.toString(System.currentTimeMillis()) + " WHERE transactionID IN (SELECT transactionID " + "FROM transactions WHERE deleted = 0 AND accountID IN (" + "SELECT DISTINCT accountID FROM transactions " + "EXCEPT " + "SELECT DISTINCT accountID FROM accounts))");
+        Database.execSQL("UPDATE repeatingTransactions SET deleted='1', timestamp=" + System.currentTimeMillis() + " WHERE transactionID IN (SELECT transactionID " + "FROM transactions WHERE deleted = 0 AND accountID IN (" + "SELECT DISTINCT accountID FROM transactions " + "EXCEPT " + "SELECT DISTINCT accountID FROM accounts))");
         Database.execSQL("UPDATE transactions SET deleted='1', timestamp=" + System.currentTimeMillis() + " WHERE type=" + 5 + " AND accountID IN (" + "SELECT DISTINCT accountID FROM transactions " + "EXCEPT " + "SELECT DISTINCT accountID FROM accounts)");
     }
 }

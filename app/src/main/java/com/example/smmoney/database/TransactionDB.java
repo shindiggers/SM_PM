@@ -410,27 +410,25 @@ public class TransactionDB {
                 accountListings.put(transaction.getAccount(), new Hashtable());
                 accountRollup = accountListings.get(transaction.getAccount());
             }
-            Iterator it2 = transaction.getSplits().iterator();
-            while (it2.hasNext()) {
+            for (SplitsClass splitsClass : transaction.getSplits()) {
                 Double amount;
-                SplitsClass split = (SplitsClass) it2.next();
-                Hashtable<String, Double> categoryRollup = accountRollup.get(split.getCategory());
+                Hashtable<String, Double> categoryRollup = accountRollup.get(splitsClass.getCategory());
                 if (categoryRollup == null) {
-                    accountRollup.put(split.getCategory(), new Hashtable());
-                    categoryRollup = accountRollup.get(split.getCategory());
+                    accountRollup.put(splitsClass.getCategory(), new Hashtable());
+                    categoryRollup = accountRollup.get(splitsClass.getCategory());
                 }
                 if (transaction.getCleared()) {
                     amount = categoryRollup.get("cleared");
                     if (amount == null) {
                         amount = 0.0d;
                     }
-                    categoryRollup.put("cleared", amount + split.getAmount());
+                    categoryRollup.put("cleared", amount + splitsClass.getAmount());
                 } else {
                     amount = categoryRollup.get("uncleared");
                     if (amount == null) {
                         amount = 0.0d;
                     }
-                    categoryRollup.put("uncleared", amount + split.getAmount());
+                    categoryRollup.put("uncleared", amount + splitsClass.getAmount());
                 }
             }
             lastDate = transaction.getDate();
@@ -508,9 +506,7 @@ public class TransactionDB {
     }
 
     private static void disconnectionTransfersForTransaction(TransactionClass transaction) {
-        Iterator it = transaction.getSplits().iterator();
-        while (it.hasNext()) {
-            SplitsClass split = (SplitsClass) it.next();
+        for (SplitsClass split : transaction.getSplits()) {
             if (split.getTransferToAccount() != null && split.getTransferToAccount().length() > 0) {
                 if (AccountDB.recordFor(split.getTransferToAccount()) == null) {
                     split.setCategory(split.getTransferToAccount());
@@ -570,9 +566,7 @@ public class TransactionDB {
             while (curs.moveToNext()) {
                 int transactionID = curs.getInt(0);
                 int splitIndex = 0;
-                Iterator it = new TransactionClass(transactionID).getSplits().iterator();
-                while (it.hasNext()) {
-                    SplitsClass split = (SplitsClass) it.next();
+                for (SplitsClass split : new TransactionClass(transactionID).getSplits()) {
                     double diff = transAmount - split.getAmount();
                     if (CurrencyExt.amountAsCurrency(transAmount).equals(CurrencyExt.amountAsCurrency(split.getAmount()))) {
                         diff = 0.0d;
@@ -618,9 +612,7 @@ public class TransactionDB {
                 transactionClass.hydrate();                                                                            //populates the new transactionClass object with the rest of the info from the database for the 'i'th transaction
                 if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) {                        //checks if the 'i'th transaction has the same number of splits as the passed in transaction
                     int splitIndex = 0;
-                    Iterator it = transactionClass.getSplits().iterator();
-                    while (it.hasNext()) {                                                                             //loop through each splitClass object
-                        SplitsClass split = (SplitsClass) it.next();
+                    for (SplitsClass split : transactionClass.getSplits()) {                                                                             //loop through each splitClass object
                         SplitsClass matchSplit = aTransaction.getSplits().get(splitIndex);
                         if (matchSplit.amountAsString().equals(split.amountAsString())) {                              //check if the amount of each split is the same and proceed if so
                             if (matchSplit.getCategory().equals(split.getCategory())) {                                //check if the category is the same and proceed if so
@@ -654,9 +646,7 @@ public class TransactionDB {
     }
 
     public static void setupNotifications() {
-        Iterator it = queryAllRepeatingTransactions().iterator();
-        while (it.hasNext()) {
-            RepeatingTransactionClass repeatingTrans = (RepeatingTransactionClass) it.next();
+        for (RepeatingTransactionClass repeatingTrans : queryAllRepeatingTransactions()) {
             if (repeatingTrans.getSendLocalNotifications()) {
                 repeatingTrans.setupNotification(SMMoney.getAppContext());
             }
@@ -679,9 +669,7 @@ public class TransactionDB {
     private static boolean addRepeatingEventsThroughDate(GregorianCalendar checkDate, Context context, boolean ignoreRepeating) {
         boolean repeatingTransactionAdded = false;
         checkDate = CalExt.beginningOfDay(checkDate);
-        Iterator it = queryAllRepeatingTransactions().iterator();
-        while (it.hasNext()) {
-            RepeatingTransactionClass repeatingTransaction = (RepeatingTransactionClass) it.next();
+        for (RepeatingTransactionClass repeatingTransaction : queryAllRepeatingTransactions()) {
             if (repeatingTransaction.getTransaction() != null && repeatingTransaction.getTransaction().getDate() != null) {
                 GregorianCalendar lastDate = CalExt.beginningOfDay(repeatingTransaction.getLastProcessedDate());
                 repeatingTransaction.hydrate();

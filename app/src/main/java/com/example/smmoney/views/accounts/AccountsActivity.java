@@ -1091,7 +1091,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         menu.add(0, MENU_NEW, 0, Locales.kLOC_ACCOUNT_NEW).setIcon(R.drawable.abouticon);
         menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES).setIcon(R.drawable.abouticon);
         menu.add(0, MENU_TRANSFER, 0, Locales.kLOC_TOOLS_FILETRANSFERS).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_VIEW, 0, "View Options").setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_VIEW, 0, Locales.kLOC_VIEW_OPTIONS).setIcon(R.drawable.abouticon);
         menu.add(0, MENU_REPEATING, 0, Locales.kLOC_REPEATING_TRANSACTIONS).setIcon(R.drawable.abouticon);
         menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT).setIcon(R.drawable.abouticon);
         return true;

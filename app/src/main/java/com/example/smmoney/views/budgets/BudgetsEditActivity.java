@@ -317,7 +317,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.categoryEditText.setText(this.category.getCategory());
         this.budgetTypeTextView.setText(this.category.typeAsString());
         this.periodTextView.setText(this.category.periodAsString());
-        this.budgetEditText.setText(CurrencyExt.amountAsCurrency(this.category.getBudgetLimit()));
+        if (this.category.getBudgetLimit() != 0.00) {
+            this.budgetEditText.setText(CurrencyExt.amountAsCurrency(this.category.getBudgetLimit()));
+        }
         this.rolloverCheckBox.setChecked(this.category.getRollover());
         this.includeSubcategoriesCheckBox.setChecked(this.category.getIncludeSubcategories());
     }

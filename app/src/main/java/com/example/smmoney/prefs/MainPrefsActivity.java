@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
+
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PasswordActivity;
@@ -31,11 +32,12 @@ public class MainPrefsActivity extends ListActivity {
         } catch (NullPointerException e){
             e.printStackTrace();
         }
-        String dontShowPass = null;
+        String dontShowPass;
         try {
-            dontShowPass = getIntent().getExtras().getString("dontShowPass");
+            dontShowPass = Objects.requireNonNull(getIntent().getExtras()).getString("dontShowPass");
         } catch (NullPointerException e) {
             e.printStackTrace();
+            dontShowPass = null;
         }
         if (dontShowPass == null) {
             this.showPasswordScreen = true;
