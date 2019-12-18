@@ -237,9 +237,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             this.originalHistoryDateTextView.setText(CalExt.descriptionWithMediumDate(this.categoryBudgetItems.get(this.categoryBudgetItems.size() - 1).getDate()));
         }
         int i = 0;
-        Iterator it = this.categoryBudgetItems.iterator();
-        while (it.hasNext()) {
-            CategoryBudgetClass budgetItem = (CategoryBudgetClass) it.next();
+        for (CategoryBudgetClass budgetItem : this.categoryBudgetItems) {
             View v = vi.inflate(R.layout.budgets_variable_row, null);
             registerForContextMenu(v);
             v.setTag(budgetItem);
@@ -407,15 +405,13 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
-        switch (item.getItemId()) {
-            case CMENU_DELETE /*1*/:
-                this.categoryBudgetItems.remove(b.get("BudgetItem"));
-                this.deletedCategoryBudgetItems.add((CategoryBudgetClass) b.get("BudgetItem"));
-                reloadData();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
+        if (item.getItemId() == CMENU_DELETE) { /*1*/
+            this.categoryBudgetItems.remove(b.get("BudgetItem"));
+            this.deletedCategoryBudgetItems.add((CategoryBudgetClass) b.get("BudgetItem"));
+            reloadData();
+            return true;
         }
+        return super.onContextItemSelected(item);
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {

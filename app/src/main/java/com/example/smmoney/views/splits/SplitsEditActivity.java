@@ -18,6 +18,7 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
@@ -35,8 +36,8 @@ import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.exchangerates.ExchangeRateActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
+
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class SplitsEditActivity extends PocketMoneyActivity {
     private final int EDITSPLIT_AMOUNT = 2;
@@ -217,9 +218,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.memoEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View theView : theViews) {
+            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         this.titleTextView = findViewById(R.id.title_text_view);

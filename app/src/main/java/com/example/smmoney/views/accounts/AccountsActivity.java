@@ -906,7 +906,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                 for (AccountClass account : AccountsActivity.this.adapter.getElements()) {
                     filter.setAccount(account.getAccount());
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, new StringBuilder(fileDir).append("/PocketMoneyBackup/").append(account.getAccount()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).append(".qfx").toString());
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileDir + "/PocketMoneyBackup/" + account.getAccount() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx");
                     exportofx.accountNameBeingImported = account.getAccount();
                     exportofx.filter = filter;
                     exportofx.exportRecords(query);

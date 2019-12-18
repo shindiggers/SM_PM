@@ -743,4 +743,5 @@
     <string name="report_amount">Amount •</string>
     <string name="ip_address_placeholder">xxx.xxx.xxx.xxx</string>
     <string name="add_symbol">+</string>
+    <string name="equalscurrencysymbol">= %s</string>
 </resources>

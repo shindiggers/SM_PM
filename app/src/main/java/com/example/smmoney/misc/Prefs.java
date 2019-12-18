@@ -194,14 +194,13 @@ public class Prefs {
     }
 
     public static void processDataBase(Context context) {
-        Context cont = context;
-        Builder alt_bld = new Builder(cont);
-        alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing").setCancelable(false).setPositiveButton("Import", new AnonymousClass1(cont)).setNegativeButton("Export", new AnonymousClass2(cont));
+        Builder alt_bld = new Builder(context);
+        alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing").setCancelable(false).setPositiveButton("Import", new AnonymousClass1(context)).setNegativeButton("Export", new AnonymousClass2(context));
         alt_bld.create().show();
     }
 
     public static void importDB(Context c) {
-        File dbBackupFile = new File(new StringBuilder(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()).append("/PocketMoneyBackup/SMMoneyDB.sql").toString());
+        File dbBackupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/SMMoneyDB.sql");
         if (!dbBackupFile.exists()) {
             Log.w(SMMoney.TAG, "Database backup file does not exist, cannot import.");
         } else if (!dbBackupFile.canRead()) {
@@ -499,15 +498,14 @@ public class Prefs {
                     diff = 0.0d;
                 }
                 if (diff >= -9.0E-6d && diff <= 1.0E-6d && transFromAccountID == transToAccountID) {
-                    TransactionClass transferRec = otherTransaction;
-                    if (transferRec.getPayee() == null || transferRec.getPayee().length() == 0) {
-                        transferRec.setPayee("*accountID " + transToAccountID + " - missing account name*");
-                    } else if (transferRec.getCategoryAtIndex(splitIndex) == null || transferRec.getCategoryAtIndex(splitIndex).length() == 0) {
-                        transferRec.setCategoryAtIndex(transferRec.getTransferToAccountAtIndex(splitIndex), splitIndex);
+                    if (otherTransaction.getPayee() == null || otherTransaction.getPayee().length() == 0) {
+                        otherTransaction.setPayee("*accountID " + transToAccountID + " - missing account name*");
+                    } else if (otherTransaction.getCategoryAtIndex(splitIndex) == null || otherTransaction.getCategoryAtIndex(splitIndex).length() == 0) {
+                        otherTransaction.setCategoryAtIndex(otherTransaction.getTransferToAccountAtIndex(splitIndex), splitIndex);
                     }
-                    transferRec.setTransferToAccountAtIndex(null, splitIndex);
-                    transferRec.initType();
-                    transferRec.saveToDatabase();
+                    otherTransaction.setTransferToAccountAtIndex(null, splitIndex);
+                    otherTransaction.initType();
+                    otherTransaction.saveToDatabase();
                 }
                 splitIndex++;
             }

@@ -407,14 +407,14 @@ public class TransactionDB {
             TransactionClass transaction = (TransactionClass) it.next();
             Hashtable<String, Hashtable<String, Double>> accountRollup = accountListings.get(transaction.getAccount());
             if (accountRollup == null) {
-                accountListings.put(transaction.getAccount(), new Hashtable());
+                accountListings.put(transaction.getAccount(), new Hashtable<String, Hashtable<String, Double>>());
                 accountRollup = accountListings.get(transaction.getAccount());
             }
             for (SplitsClass splitsClass : transaction.getSplits()) {
                 Double amount;
                 Hashtable<String, Double> categoryRollup = accountRollup.get(splitsClass.getCategory());
                 if (categoryRollup == null) {
-                    accountRollup.put(splitsClass.getCategory(), new Hashtable());
+                    accountRollup.put(splitsClass.getCategory(), new Hashtable<String, Double>());
                     categoryRollup = accountRollup.get(splitsClass.getCategory());
                 }
                 if (transaction.getCleared()) {
@@ -820,9 +820,7 @@ public class TransactionDB {
     public static void deleteRecordsFromAccount(String act) {
         FilterClass filter = new FilterClass();
         filter.setAccount(act);
-        Iterator it = queryWithFilter(filter).iterator();
-        while (it.hasNext()) {
-            TransactionClass trans = (TransactionClass) it.next();
+        for (TransactionClass trans : queryWithFilter(filter)) {
             disconnectionTransfersForTransaction(trans);
             trans.deleteFromDatabase();
         }
@@ -883,7 +881,7 @@ public class TransactionDB {
         if (select_matching_statement == null) {
             select_matching_statement = "SELECT transactionID FROM transactions WHERE deleted=0 AND payee LIKE ? AND type<>? ORDER BY date DESC";
         }
-        Cursor c = Database.rawQuery(select_matching_statement, new String[]{new StringBuilder(String.valueOf(payee)).append("%").toString(), "5"});
+        Cursor c = Database.rawQuery(select_matching_statement, new String[]{payee + "%", "5"});
         int count = c.getCount();
         if (count > 0) {
             c.moveToFirst();
