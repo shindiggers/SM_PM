@@ -1,8 +1,10 @@
 package com.example.smmoney.misc;
 
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
+
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.text.ParseException;
@@ -128,17 +130,18 @@ public class CurrencyExt {
     public static String[] getCurrenciesWithSymbols() {
         int i = 0;
         String[] codes = getCurrencies();
-        String[] otherCodes = AccountDB.usedCurrencyCodes();
+        String[] otherCodes = AccountDB.usedCurrencyCodes();                // query accounts and find currnecy codes that have been used
         ArrayList<String> nameList = new ArrayList<>();
+        // loop through previously used currency codes and add them to the top of the list for easy access
         for (String loc : otherCodes) {
             try {
-                String loc2 = ""; //todo think "" should be loc? To test
-                nameList.add(Currency.getInstance(loc2).getCurrencyCode() + " - " + Currency.getInstance(loc2).getSymbol());
+                nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
         int length = codes.length;
+        // loop through all other currency codes and add them to the list
         while (i < length) {
             String loc2 = codes[i];
             try {

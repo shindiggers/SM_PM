@@ -16,8 +16,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import com.example.smmoney.SMMoney;
+
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
@@ -29,12 +30,14 @@ import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.Objects;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
@@ -137,80 +140,104 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) sv.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+
         ArrayList<View> theViews = new ArrayList<>();
+
         TextView tView = findViewById(R.id.account_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountName.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.total_worth_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_type_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.type.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_icon_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_expires_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.expires.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_number_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.routing_number_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.bankID.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_institution_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.institution.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_phone_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.phone.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_website_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.website.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_fee_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.fee.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_limit_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.limit.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_check_number_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.checkNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_currency_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.currency.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_exchangerate_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.exchangeRate.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_keep_the_change_account_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
+
+        TextView exchangeRateSuffix = findViewById(R.id.amount_xrate_text_view);
+        exchangeRateSuffix.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+
         this.keepTheChangeAccountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         View aView = (View) tView.getParent();
         aView.setTag(18);
         aView.setOnClickListener(getBtnClickListener());
         theViews.add(aView);
+
         tView = findViewById(R.id.account_keep_the_change_round_to_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.keepTheChangeRoundToEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add((View) tView.getParent());
+
         tView = findViewById(R.id.account_notes_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.notes.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add((View) tView.getParent());
+
         int i = 0;
         for (View theView : theViews) {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
@@ -266,7 +293,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         setNotesText(this.account.getNotes());
         this.currency.setText(this.account.getCurrencyCode());
         this.exchangeRate.setText(this.account.exchangeRateAsString());
-        exchangeRateSuffix.setText("=" + Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
+        exchangeRateSuffix.setText(String.format(getString(R.string.equalscurrencysymbol), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
         this.keepTheChangeAccountTextView.setText(this.account.getKeepTheChangeAccount() == null ? "None" : this.account.getKeepTheChangeAccount());
         this.keepTheChangeRoundToEditText.setText(this.account.keepChangeRoundToAsString());
         this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this.currentActivity);
@@ -325,7 +352,9 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                     AccountsEditActivity.this.exchangeRate.setText("1");
                     return;
                 }
-                AccountsEditActivity.this.exchangeRate.setText(Double.toString(rate));
+                Locale current = getResources().getConfiguration().locale;
+
+                AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", (Double) rate));
                 AccountsEditActivity.this.exchangeRate.invalidate();
             }
         });
