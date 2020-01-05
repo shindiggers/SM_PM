@@ -204,7 +204,7 @@ public class BudgetsRowHolder extends View {
         }
         p.setTextScaleX(xscale);
         p.setTextAlign(Align.CENTER);
-        p.setColor(this.touched ? -7829368 /*DARKISH GREY*/ : -16777216 /*BLACK*/);
+        p.setColor(this.touched ? -7829368 /*DARKISH GREY*/ : -1 /* WHITE*/ /*-16777216 BLACK*/);
         p.setAntiAlias(true);
         float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);
         canvas.drawText(this.categoryString, ((float) width) / 2.0f, y, p);
