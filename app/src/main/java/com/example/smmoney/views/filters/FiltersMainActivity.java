@@ -1,6 +1,7 @@
 package com.example.smmoney.views.filters;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -49,6 +50,8 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         }
         setupButtons();
         setTitle();
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onStart() {
@@ -58,8 +61,14 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     private void setTitle() {
         this.titleTextView.setText(Locales.kLOC_TOOLS_FILTERS);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_TOOLS_FILTERS);
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
     private void setupButtons() {
         ListView theList = findViewById(R.id.filterlist);
         this.theAdapter = new FilterRowAdapter(this, this.filter);
@@ -103,6 +112,9 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         tView = findViewById(R.id.user_defined_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         theViews.add((View) tView.getParent());
+        View separatorView = findViewById(R.id.filter_separator);
+        separatorView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        //theViews.add((View) separatorView);
         int i = 1;
         for (View theView : theViews) {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
@@ -115,7 +127,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             }
         });
         this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        //findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.actionBarColor());
     }
 
     public void filterSelected(FilterClass aFilter) {

@@ -70,6 +70,7 @@ import com.example.smmoney.views.reports.ClassReportDataSource;
 import com.example.smmoney.views.reports.PayeeReportDataSource;
 import com.example.smmoney.views.reports.ReportsActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -163,8 +164,13 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         //findViewById(R.id.adView).setVisibility(View.GONE);
 
         this.firstOpenOfView = true;
-        Objects.requireNonNull(getActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
-        getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        //if (this._filter.getType() == 4 && !this._filter.customFilter()){
+        //    Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_ALL_TRANSACTIONS);
+        //} else {
+        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount() == "" ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
+        //}
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     protected void onResume() {
@@ -180,6 +186,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
             this.firstOpenOfView = false;
         }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void setTitle(String title) {
@@ -215,6 +227,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.clearedButton = aView.findViewById(R.id.clearedbutton);
         this.allButton = aView.findViewById(R.id.allbutton);
         ((RadioGroup) aView).setOnCheckedChangeListener(getRadioChangedListener());
+        layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         layout.findViewById(R.id.add_button).setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 TransactionsActivity.this.newTransaction();
@@ -864,7 +877,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                             this._filter.setAccount(currentAccount);
                         }
-                        Objects.requireNonNull(getActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
                         return;
                     }
                     return;

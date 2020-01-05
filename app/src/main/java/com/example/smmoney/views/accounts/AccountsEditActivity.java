@@ -74,7 +74,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         loadInfo();
         setupButtons();
         setTitle();
-        Objects.requireNonNull(getActionBar()).hide();
+        Objects.requireNonNull(getSupportActionBar()).hide();
     }
 
     public void onResume() {

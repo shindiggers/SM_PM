@@ -86,8 +86,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         setupButtons();
         reloadData();
         setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
-        Objects.requireNonNull(getActionBar()).setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onResume() {
@@ -143,6 +144,13 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.saturdayCheck = findViewById(R.id.saturdaycheck);
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
+    }
+
+
     private void setupButtons() {
         ((View) this.frequencyTextView.getParent()).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -163,7 +171,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 if (hasFocus) {
                     RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString().replace(RepeatingEditActivity.this.suffix, ""));
                 } else {
-                    RepeatingEditActivity.this.everyTextView.setText(new StringBuilder(String.valueOf(RepeatingEditActivity.this.everyTextView.getText().toString())).append(RepeatingEditActivity.this.suffix).toString());
+                    RepeatingEditActivity.this.everyTextView.setText(new StringBuilder(RepeatingEditActivity.this.everyTextView.getText().toString()).append(RepeatingEditActivity.this.suffix).toString());
                 }
             }
         });

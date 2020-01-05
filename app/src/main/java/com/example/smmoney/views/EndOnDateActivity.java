@@ -17,7 +17,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
-//import com.catamount.pocketmoney.R;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Locales;
@@ -27,6 +27,8 @@ import com.example.smmoney.misc.Prefs;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+
+//import com.catamount.pocketmoney.R;
 
 public class EndOnDateActivity extends PocketMoneyActivity {
     public static int ENDONDATE_RESULT_DATESELECTED = 2;
@@ -53,7 +55,7 @@ public class EndOnDateActivity extends PocketMoneyActivity {
             this.theCheckbox.setChecked(true);
             this.theDateRow.setVisibility(View.VISIBLE);
         }
-        getActionBar().setTitle("End on Date");
+        getSupportActionBar().setTitle("End on Date");
     }
 
     private void setTitle(String title) {

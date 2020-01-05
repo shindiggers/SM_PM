@@ -36,19 +36,22 @@
     <color name="wallet_highlighted_text_holo_dark">#6633b5e5</color>
     <color name="wallet_holo_blue_light">#ff33b5e5</color>
     <color name="wallet_link_text_light">#0000ee</color>
+
     <color name="theme_red_label_color">#ffca1414</color>
     <color name="theme_red_label_color_on_black">#ffff6666</color>
     <color name="theme_orange_label_color">#ffff850b</color>
     <color name="theme_green_deposit_color">#ff4d9c26</color>
     <color name="theme_green_bar_color">#ff4d9c26</color>
     <color name="theme_red_bar_color">#ffca1414</color>
-    <color name="black_theme_primary_row_color">#ff000000</color>
+
+    <color name="black_theme_primary_row_color">#E6121212</color>
     <color name="black_theme_alternating_row_color">#ff333333</color>
     <color name="black_theme_tint_color">#ffb8b8b8</color>
-    <color name="black_theme_background_color">#ff000000</color>
+    <color name="black_theme_background_color">#000000</color>
     <color name="black_theme_field_label_color">#fff7f7f7</color>
     <color name="black_theme_text">#fff7f7f7</color>
     <color name="black_theme_text_alt">#ff939393</color>
+
     <color name="white_theme_primary_row_color">#ffffffff</color>
     <color name="white_theme_alternating_row_color">#ffe8e8e8</color>
     <color name="white_theme_tint_color">#ffb8b8b8</color>
@@ -56,6 +59,7 @@
     <color name="white_theme_field_label_color">#ff000000</color>
     <color name="white_theme_text">#ff000000</color>
     <color name="white_theme_text_alt">#ff939393</color>
+
     <color name="blue_theme_alternating_row_color">#f4f4fa</color>
     <color name="blue_theme_tint_color">#ff8ca4ba</color>
     <color name="blue_theme_field_label_color">#ff324f85</color>
@@ -64,6 +68,7 @@
     <color name="blue_theme_text">#ff000000</color>
     <color name="blue_theme_text_alt">#ff939393</color>
     <color name="blue_theme_hint_color">#FF888888</color>
+
     <color name="green_theme_alternating_row_color">#fff1f4ee</color>
     <color name="green_theme_tint_color">#ff7d9d5d</color>
     <color name="green_theme_field_label_color">#ff4d9c26</color>
@@ -71,20 +76,23 @@
     <color name="green_theme_highlighted_color">#ffcee3b9</color>
     <color name="green_theme_text">#ff000000</color>
     <color name="green_theme_text_alt">#ff939393</color>
-    <color name="purple_theme_alternating_row_color">#fbeaee</color>
+
+    <color name="purple_theme_alternating_row_color">#fffbeaee</color>
     <color name="purple_theme_tint_color">#ff7d375d</color>
     <color name="purple_theme_field_label_color">#ff7d375d</color>
     <color name="purple_theme_background_color">#fffbeaee</color>
     <color name="purple_theme_highlighted_color">#ffd8aab9</color>
     <color name="purple_theme_text">#ff000000</color>
     <color name="purple_theme_text_alt">#ff939393</color>
-    <color name="coffee_theme_alternating_row_color">#dcd2ae</color>
+
+    <color name="coffee_theme_alternating_row_color">#ffdcd2ae</color>
     <color name="coffee_theme_tint_color">#ff804000</color>
     <color name="coffee_theme_field_label_color">#ff804000</color>
     <color name="coffee_theme_background_color">#ffdcd2ae</color>
     <color name="coffee_theme_highlighted_color">#ff804000</color>
     <color name="coffee_theme_text">#ff000000</color>
     <color name="coffee_theme_text_alt">#ff939393</color>
+
     <color name="ruby_theme_alternating_row_color">#e584ab</color>
     <color name="ruby_theme_tint_color">#ffe0115f</color>
     <color name="ruby_theme_field_label_color">#ffff0044</color>
@@ -92,6 +100,7 @@
     <color name="ruby_theme_highlighted_color">#ffff0044</color>
     <color name="ruby_theme_text">#ff000000</color>
     <color name="ruby_theme_text_alt">#ff939393</color>
+
     <color name="gray_theme_alternating_row_color">#e6e6e6</color>
     <color name="gray_theme_tint_color">#ff7d7d7d</color>
     <color name="gray_theme_field_label_color">#ff7d7d7d</color>
@@ -99,7 +108,9 @@
     <color name="gray_theme_highlighted_color">#ff7d7d7d</color>
     <color name="gray_theme_text">#ff000000</color>
     <color name="gray_theme_text_alt">#ff939393</color>
+
     <color name="radio_text_color_unchecked">#000000</color>
     <color name="radio_text_color_checked">#ffffff</color>
     <color name="radio_text_color_pressed">#ffc8c8c8</color>
+    <color name="black">#000000</color>
 </resources>

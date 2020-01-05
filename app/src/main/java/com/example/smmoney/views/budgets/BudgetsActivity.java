@@ -84,7 +84,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
         setupView(layout);
         setContentView(layout);
         setTitle("SMMoney");
-        getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
     }
 
     public void onPause() {

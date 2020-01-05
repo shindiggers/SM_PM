@@ -12,7 +12,7 @@
     android:layout_width="match_parent"
     android:layout_height="58dp">
 
-    <CheckBox
+    <android.support.v7.widget.AppCompatCheckBox
         android:textColor="@color/blue_theme_text"
         android:textColorHint="@color/blue_theme_field_label_color"
         android:textColorLink="@color/blue_theme_field_label_color"

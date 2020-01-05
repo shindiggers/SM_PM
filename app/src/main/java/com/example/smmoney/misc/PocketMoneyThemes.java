@@ -2,37 +2,44 @@ package com.example.smmoney.misc;
 
 //import com.catamount.pocketmoney.R;
 
+import android.graphics.Color;
+
 import com.example.smmoney.R;
 
 public class PocketMoneyThemes {
     private static final int black_theme_alternating_row_color = -13421773;
     private static final int black_theme_background_color = -16777216;
     private static final int black_theme_field_label_color = -526345;
-    private static final int black_theme_primary_row_color = -16777216;
+    private static final int black_theme_primary_row_color = -435023342;//-16777216;
     private static final int black_theme_text = -526345;
     private static final int black_theme_text_alt = -7105645;
     private static final int black_theme_tint_color = -4671304;
+
     private static final int blue_theme_alternating_row_color = -723718;
     private static final int blue_theme_background_color = -3813931;
     private static final int blue_theme_field_label_color = -13480059;
-    private static final int blue_theme_highlighted_color = -7105645;
+    //private static final int blue_theme_highlighted_color = -7105645;
     private static final int blue_theme_hint_color = -7829368;
     private static final int blue_theme_tint_color = -7560006;
+
     private static final int coffee_theme_alternating_row_color = -2305362;
     private static final int coffee_theme_background_color = -2305362;
     private static final int coffee_theme_field_label_color = -8372224;
-    private static final int coffee_theme_highlighted_color = -8372224;
+    //private static final int coffee_theme_highlighted_color = -8372224;
     private static final int coffee_theme_tint_color = -8372224;
+
     private static final int gray_theme_alternating_row_color = -1644826;
     private static final int gray_theme_background_color = -3618616;
     private static final int gray_theme_field_label_color = -8553091;
-    private static final int gray_theme_highlighted_color = -8553091;
+    //private static final int gray_theme_highlighted_color = -8553091;
     private static final int gray_theme_tint_color = -8553091;
+
     private static final int green_theme_alternating_row_color = -920338;
     private static final int green_theme_background_color = -2433589;
     private static final int green_theme_field_label_color = -11690970;
-    private static final int green_theme_highlighted_color = -3218503;
+    //private static final int green_theme_highlighted_color = -3218503;
     private static final int green_theme_tint_color = -8544931;
+
     public static final int kThemeBlack = 0;
     private static final int kThemeBlue = 1;
     private static final int kThemeCoffee = 5;
@@ -41,15 +48,17 @@ public class PocketMoneyThemes {
     private static final int kThemePurple = 3;
     private static final int kThemeRuby = 6;
     private static final int kThemeWhite = 7;
+
     private static final int purple_theme_alternating_row_color = -267538;
     private static final int purple_theme_background_color = -267538;
     private static final int purple_theme_field_label_color = -8571043;
-    private static final int purple_theme_highlighted_color = -2577735;
+    //private static final int purple_theme_highlighted_color = -2577735;
     private static final int purple_theme_tint_color = -8571043;
+
     private static final int ruby_theme_alternating_row_color = -1735509;
     private static final int ruby_theme_background_color = -1400136;
     private static final int ruby_theme_field_label_color = -65468;
-    private static final int ruby_theme_highlighted_color = -65468;
+    //private static final int ruby_theme_highlighted_color = -65468;
     private static final int ruby_theme_tint_color = -7560006;
 
     private static final int theme_green_bar_color = -11690970;
@@ -58,6 +67,7 @@ public class PocketMoneyThemes {
     private static final int theme_red_bar_color = -3533804;
     private static final int theme_red_label_color = -3533804;
     private static final int theme_red_label_color_on_black = -39322;
+
     private static final int white_theme_alternating_row_color = -1513240;
     private static final int white_theme_background_color = -1;
     private static final int white_theme_field_label_color = -16777216;
@@ -75,9 +85,9 @@ public class PocketMoneyThemes {
     private static int getTheme() {
         if (theme == white_theme_primary_row_color) {
             String themeStr = Prefs.getStringPref(Prefs.THEME_COLOR);
-            if (themeStr.equals("Black")) {
+            if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLACK)) {
                 theme = kThemeBlack;
-            } else if (themeStr.equals("Blue")) {
+            } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLUE)) {
                 theme = kThemeBlue;
             } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_GREEN)) {
                 theme = kThemeGreen;
@@ -92,10 +102,34 @@ public class PocketMoneyThemes {
         return theme;
     }
 
+    public static int actionBarColor() {
+        switch (getTheme()) {
+            case kThemeBlack /*0*/:
+                return black_theme_primary_row_color;
+            case kThemeBlue /*1*/:
+                return blue_theme_tint_color;
+            case kThemeGreen /*2*/:
+                return green_theme_tint_color;
+            case kThemePurple /*3*/:
+                return purple_theme_tint_color;
+            case kThemeGray /*4*/:
+                return gray_theme_tint_color;
+            case kThemeCoffee /*5*/:
+                return coffee_theme_tint_color;
+            case kThemeRuby /*6*/:
+                return ruby_theme_tint_color;
+            default:
+                return white_theme_tint_color;
+        }
+    }
+
+
     public static int currentTintColor() {
         switch (getTheme()) {
+            case kThemeBlack /*0*/:
+                return black_theme_tint_color;
             case kThemeBlue /*1*/:
-                return ruby_theme_tint_color;
+                return blue_theme_tint_color;
             case kThemeGreen /*2*/:
                 return green_theme_tint_color;
             case kThemePurple /*3*/:
@@ -113,6 +147,8 @@ public class PocketMoneyThemes {
 
     public static int groupTableViewBackgroundColor() {
         switch (getTheme()) {
+            case kThemeBlack /*0*/:
+                return black_theme_background_color;
             case kThemeBlue /*1*/:
                 return blue_theme_background_color;
             case kThemeGreen /*2*/:
@@ -126,7 +162,7 @@ public class PocketMoneyThemes {
             case kThemeRuby /*6*/:
                 return ruby_theme_background_color;
             default:
-                return white_theme_text;
+                return white_theme_background_color;
         }
     }
 
@@ -156,11 +192,11 @@ public class PocketMoneyThemes {
             case kThemeGreen /*2*/:
                 return green_theme_alternating_row_color;
             case kThemePurple /*3*/:
-                return purple_theme_background_color;
+                return purple_theme_alternating_row_color;
             case kThemeGray /*4*/:
                 return gray_theme_alternating_row_color;
             case kThemeCoffee /*5*/:
-                return coffee_theme_background_color;
+                return coffee_theme_alternating_row_color;
             case kThemeRuby /*6*/:
                 return ruby_theme_alternating_row_color;
             case kThemeWhite /*7*/:
@@ -175,19 +211,19 @@ public class PocketMoneyThemes {
             case kThemeBlue /*1*/:
                 return blue_theme_field_label_color;
             case kThemeGreen /*2*/:
-                return theme_green_deposit_color;
+                return green_theme_field_label_color;
             case kThemePurple /*3*/:
-                return purple_theme_tint_color;
+                return purple_theme_field_label_color;
             case kThemeGray /*4*/:
-                return gray_theme_tint_color;
+                return gray_theme_field_label_color;
             case kThemeCoffee /*5*/:
-                return coffee_theme_tint_color;
+                return coffee_theme_field_label_color;
             case kThemeRuby /*6*/:
-                return ruby_theme_highlighted_color;
+                return ruby_theme_field_label_color;
             case kThemeWhite /*7*/:
-                return white_theme_text;
+                return white_theme_field_label_color;
             default:
-                return black_theme_text;
+                return black_theme_field_label_color;
         }
     }
 
@@ -213,7 +249,7 @@ public class PocketMoneyThemes {
     }
 
     public static int toolbarTextColor() {
-        return white_theme_primary_row_color;
+        return white_theme_text;
     }
 
     public static int currentTintToolbarButtonDrawable() {
@@ -256,8 +292,17 @@ public class PocketMoneyThemes {
 
     public static int alternateCellTextColor() {
         switch (getTheme()) {
+            case kThemeBlue /*1*/:
+            case kThemeGreen /*2*/:
+            case kThemePurple /*3*/:
+            case kThemeGray /*4*/:
+            case kThemeCoffee /*5*/:
+            case kThemeRuby /*6*/:
+            case kThemeWhite /*7*/:
+                return white_theme_text_alt;
+            default:
+                return black_theme_text_alt;
         }
-        return white_theme_text_alt;
     }
 
     public static int primaryEditTextColor() {
@@ -380,5 +425,49 @@ public class PocketMoneyThemes {
 
     public static int redBarColor() {
         return theme_red_bar_color;
+    }
+
+    public static int chkBoxColorChecked() {
+        switch (getTheme()) {
+            case kThemeBlack /*0*/:
+                return theme_green_deposit_color;
+            case kThemeBlue /*1*/:
+                return blue_theme_tint_color;
+            case kThemeGreen /*2*/:
+                return green_theme_tint_color;
+            case kThemePurple /*3*/:
+                return purple_theme_tint_color;
+            case kThemeGray /*4*/:
+                return gray_theme_tint_color;
+            case kThemeCoffee /*5*/:
+                return coffee_theme_tint_color;
+            case kThemeRuby /*6*/:
+                return ruby_theme_tint_color;
+            default:
+                return white_theme_tint_color;
+        }
+
+    }
+
+    public static int chkBoxColorUnchecked() {
+        switch (getTheme()) {
+            case kThemeBlack /*0*/:
+                return Color.WHITE;
+            case kThemeBlue /*1*/:
+                return blue_theme_tint_color;
+            case kThemeGreen /*2*/:
+                return green_theme_tint_color;
+            case kThemePurple /*3*/:
+                return purple_theme_tint_color;
+            case kThemeGray /*4*/:
+                return gray_theme_tint_color;
+            case kThemeCoffee /*5*/:
+                return coffee_theme_tint_color;
+            case kThemeRuby /*6*/:
+                return ruby_theme_tint_color;
+            default:
+                return white_theme_tint_color;
+        }
+
     }
 }

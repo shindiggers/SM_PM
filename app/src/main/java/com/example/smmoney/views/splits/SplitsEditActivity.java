@@ -110,7 +110,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         setupButtons();
         loadCells();
         setTitle(Locales.kLOC_EDIT_SPLIT_TITLE);
-        getActionBar().hide();
+        getSupportActionBar().hide();
     }
 
     public void onResume() {

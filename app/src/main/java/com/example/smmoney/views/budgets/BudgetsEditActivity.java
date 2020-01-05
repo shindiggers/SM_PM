@@ -91,7 +91,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         setupButtons();
         loadCells();
         setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-        getActionBar().hide();
+        getSupportActionBar().hide();
     }
 
     protected void onResume() {

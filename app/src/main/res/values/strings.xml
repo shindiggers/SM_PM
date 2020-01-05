@@ -461,6 +461,8 @@
     <string name="kLOC_PREFS_VIEWOPTIONS_BUDGETS">Budgets</string>
     <string name="kLOC_PREFS_VIEWOPTIONS_REGISTER">Transaction Register</string>
     <string name="kLOC_PREFS_SHAKE_CHARTS">Shake to show charts</string>
+    <string name="kLOC_THEME_COLOR_BLACK">Black</string>
+    <string name="kLOC_THEME_COLOR_BLUE">Blue</string>
     <string name="kLOC_THEME_COLOR_GREEN">Green</string>
     <string name="kLOC_THEME_COLOR_PURPLE">Purple</string>
     <string name="kLOC_THEME_COLOR_GRAY">Gray</string>

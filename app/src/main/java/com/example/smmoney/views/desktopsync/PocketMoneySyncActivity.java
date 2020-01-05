@@ -83,7 +83,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         setContentView(R.layout.sync);
         setupViews();
         this.wakelock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "PocketMoneySyncActivity:DoNotDimScreen");
-        Objects.requireNonNull(getActionBar()).setTitle(Locales.kLOC_DESKTOPSYNC_TITLE);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_DESKTOPSYNC_TITLE);
     }
 
     protected void onResume() {

@@ -1,7 +1,7 @@
 package com.example.smmoney.misc;
 
-import com.example.smmoney.SMMoney;
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 
 public class Locales {
     public static final String KLOC_TOOLS_DELETERESTORE = SMMoney.getAppContext().getString(R.string.KLOC_TOOLS_DELETERESTORE);
@@ -509,6 +509,8 @@ public class Locales {
     public static final String kLOC_THEME_BLACK_DEPOSITS = SMMoney.getAppContext().getString(R.string.kLOC_THEME_BLACK_DEPOSITS);
     public static final String kLOC_THEME_CLASSIC_UI = SMMoney.getAppContext().getString(R.string.kLOC_THEME_CLASSIC_UI);
     public static final String kLOC_THEME_COLOR = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR);
+    public static final String kLOC_THEME_COLOR_BLACK = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR_BLACK);
+    public static final String kLOC_THEME_COLOR_BLUE = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR_BLUE);
     public static final String kLOC_THEME_COLOR_COFFEE = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR_COFFEE);
     public static final String kLOC_THEME_COLOR_GRAY = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR_GRAY);
     public static final String kLOC_THEME_COLOR_GREEN = SMMoney.getAppContext().getString(R.string.kLOC_THEME_COLOR_GREEN);

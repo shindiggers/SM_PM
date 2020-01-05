@@ -33,7 +33,7 @@ class FilterRowAdapter extends BaseAdapter {
 
     public void reloadData() {
         this.filterList.clear();
-        ArrayList arrayList = new ArrayList();
+        new ArrayList();
         ArrayList<FilterClass> fList = FilterClass.query();
         ArrayList<String> nameList = new ArrayList<>();
         for (FilterClass filter : fList) {
@@ -60,7 +60,7 @@ class FilterRowAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup arg2) {
         FilterRowHolder holder;
         if (convertView == null) {
-            convertView = this.inflater.inflate(R.layout.filter_row, null);
+            convertView = this.inflater.inflate(R.layout.filter_row, arg2, false);
             holder = new FilterRowHolder();
             holder.title = convertView.findViewById(R.id.filterfiltername);
             holder.theRow = (FrameLayout) holder.title.getParent();
@@ -74,6 +74,7 @@ class FilterRowAdapter extends BaseAdapter {
         }
         holder.setFilter(this.filterList.get(position));
         holder.title.setText(holder.filter.getFilterName());
+        holder.title.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         if (position % 2 == 0) {
             convertView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         } else {

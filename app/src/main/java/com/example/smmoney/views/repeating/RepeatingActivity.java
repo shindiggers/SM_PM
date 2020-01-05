@@ -114,7 +114,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
         setContentView(R.layout.repeating);
         setupView();
         setTitle();
-        Objects.requireNonNull(getActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
     }
 
     public void onResume() {
@@ -124,7 +124,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
     private void setTitle() {
         this.titleTextView.setText(Locales.kLOC_REPEATING_TRANSACTIONS);
-        Objects.requireNonNull(getActionBar()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
     }
 
     private void setupView() {

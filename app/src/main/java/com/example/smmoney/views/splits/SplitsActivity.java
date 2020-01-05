@@ -94,7 +94,8 @@ public class SplitsActivity extends PocketMoneyActivity {
 
     private void setTitle() {
         this.titleTextView.setText(Locales.kLOC_EDIT_SPLITS_TITLE);
-        if (getActionBar() != null) getActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
+        if (getSupportActionBar() != null)
+            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
     }
 
     protected void onResume() {

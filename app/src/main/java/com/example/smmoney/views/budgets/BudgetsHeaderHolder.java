@@ -26,7 +26,7 @@ public class BudgetsHeaderHolder extends View {
     private String xofy;
     Rect r = new Rect(0, 0, 0, 0);
     Paint p = new Paint();
-    PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.currentTintColor(), Mode.SCREEN);
+    PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.actionBarColor(), Mode.DARKEN);
     Bitmap catBarBitmap;
     Bitmap collBarBitmap;
 
@@ -61,7 +61,7 @@ public class BudgetsHeaderHolder extends View {
         int spSize = 14;
         float scaledSizeInPixels = spSize * getResources().getDisplayMetrics().scaledDensity;
         p.setTextSize(scaledSizeInPixels);
-        p.setColor(-16777216);
+        p.setColor(getResources().getColor(R.color.black_theme_text));
         p.setTypeface(Typeface.SANS_SERIF);
         p.setAntiAlias(true);
         float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);

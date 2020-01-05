@@ -288,8 +288,8 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         setContentView(layout);
         setupView(layout);
         setResult(ACCOUNT_REQUEST_FILTER);
-        getActionBar().setTitle("SMMoney");
-        getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        getSupportActionBar().setTitle("SM Money");
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
     }
 
     protected void onResume() {
@@ -640,7 +640,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         });
         ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        //listView.setBackgroundColor(PocketMoneyThemes.currentTintColor());
         this.titleTextView = layout.findViewById(R.id.title_text_view);
         this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
         //this.titleTextView.setTextSize(COMPLEX_UNIT_SP, 50);

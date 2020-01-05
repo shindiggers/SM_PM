@@ -3,6 +3,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <FrameLayout
@@ -29,12 +30,13 @@
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_marginTop="40dp"
         android:layout_marginBottom="50dp"
+        tools:listitem="@layout/repeating_transaction_row"
         android:fadingEdge="vertical" />
 
     <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+        android:layout_gravity="top" />
 
 </FrameLayout>

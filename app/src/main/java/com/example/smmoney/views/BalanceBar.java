@@ -8,12 +8,10 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 public class BalanceBar extends FrameLayout {
     public TextView balanceAmountTextView;
@@ -34,8 +32,8 @@ public class BalanceBar extends FrameLayout {
         setBackgroundResource(R.drawable.singlebalancebar);
         LinearLayout layout1 = new LinearLayout(context);
         this.balanceView = new LinearLayout(context);
-        this.balanceView.setLayoutParams(new LayoutParams(-1, -1, 1));
-        LayoutParams lp = new LayoutParams(-1, -1, 1);
+        this.balanceView.setLayoutParams(new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/));
+        LayoutParams lp = new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/);
         layout1.setOrientation(LinearLayout.HORIZONTAL);
         LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, -1, 1.0f);
         this.previousButton = new View(context);
@@ -54,7 +52,7 @@ public class BalanceBar extends FrameLayout {
         this.balanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_CURRENT);
         this.balanceTypeTextView.setGravity(17);
         this.balanceAmountTextView = new TextView(context);
-        this.balanceAmountTextView.setText("0.00");
+        this.balanceAmountTextView.setText(R.string.accounts_view_net_worth);
         this.balanceAmountTextView.setGravity(17);
         llp.setMargins(10, 0, 0, 0);
         this.innerLinearLayout.addView(this.balanceTypeTextView, innerllp);
@@ -65,11 +63,11 @@ public class BalanceBar extends FrameLayout {
         this.seperatorImage.setVisibility(GONE);
         this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 0.0f));
         this.secondBalanceTypeTextView = new TextView(context);
-        this.secondBalanceTypeTextView.setText("Second Balance");
+        this.secondBalanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_2NDLINE);
         this.secondBalanceTypeTextView.setVisibility(GONE);
         this.secondBalanceTypeTextView.setGravity(17);
         this.secondBalanceAmountTextView = new TextView(context);
-        this.secondBalanceAmountTextView.setText("0.00");
+        this.secondBalanceAmountTextView.setText(R.string.accounts_view_net_worth);
         this.secondBalanceAmountTextView.setVisibility(GONE);
         this.secondBalanceAmountTextView.setGravity(17);
         llp.setMargins(10, 0, 0, 0);
@@ -131,26 +129,26 @@ public class BalanceBar extends FrameLayout {
             case Enums.kBalanceTypeAvailableFunds /*3*/:
                 return Enums.kBalanceTypeAvailableCredit /*4*/;
             case Enums.kBalanceTypeAvailableCredit /*4*/:
-                return 1;
+                return Enums.kBalanceTypeCleared/*1*/;
             default:
-                return 2;
+                return Enums.kBalanceTypeCurrent/*2*/;
         }
     }
 
     public int nextBalanceTypeBefore(int type) {
         switch (type) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                return 2;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return (this.filter == null || !this.filter.customFilter()) ? 4 : 5;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                return 1;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-                return 0;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                return 3;
+            case Enums.kBalanceTypeFuture /*0*/:
+                return Enums.kBalanceTypeCurrent/*2*/;
+            case Enums.kBalanceTypeCleared /*1*/:
+                return (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeAvailableCredit/*4*/ : Enums.kBalanceTypeFiltered/*5*/;
+            case Enums.kBalanceTypeCurrent /*2*/:
+                return Enums.kBalanceTypeCleared/*1*/;
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
+                return Enums.kBalanceTypeFuture/*0*/;
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
+                return Enums.kBalanceTypeAvailableFunds/*3*/;
             default:
-                return 4;
+                return Enums.kBalanceTypeAvailableCredit/*4*/;
         }
     }
 }

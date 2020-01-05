@@ -2,7 +2,8 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <FrameLayout
         android:id="@+id/the_tool_bar"
@@ -25,7 +26,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
         android:orientation="vertical">
 
         <FrameLayout
@@ -39,6 +39,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
+                android:minHeight="40dp"
+                android:gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
                 android:text="@string/kLOC_FILTERS_RESET" />
 
@@ -54,6 +56,8 @@
                 android:id="@+id/current_filter_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:minHeight="40dp"
+                android:gravity="start|center_vertical"
                 android:layout_gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
                 android:text="@string/kLOC_FILTERS_CURRENT" />
@@ -80,11 +84,18 @@
                 android:id="@+id/user_defined_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                android:layout_gravity="start|center_vertical"
+                android:gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
                 android:text="@string/kLOC_FILTERS_USERDEFINED" />
 
         </FrameLayout>
+
+        <View
+            android:id="@+id/filter_separator"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/black_theme_background_color" />
 
     </LinearLayout>
 
@@ -93,6 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="120dp" />
+        tools:listitem="@layout/filter_row"
+        android:layout_marginTop="122dp" />
 
 </FrameLayout>

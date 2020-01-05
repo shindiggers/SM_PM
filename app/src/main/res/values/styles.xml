@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.IAPTheme" parent="@android:style/Theme">
+    <style name="Theme.IAPTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
@@ -10,7 +10,7 @@
         <item name="android:backgroundDimEnabled">false</item>
     </style>
 
-    <style name="Theme.Transparent" parent="@android:style/Theme">
+    <style name="Theme.Transparent" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowBackground">@android:color/transparent</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowIsFloating">true</item>
@@ -35,13 +35,14 @@
         <item name="android:shouldDisableView">false</item>
     </style>
 
-    <style name="MyTheme" parent="@android:style/Theme">
+    <style name="MyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:preferenceCategoryStyle">@style/Category</item>
     </style>
 
     <style name="MyTheme.Black" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/black_theme_tint_color</item>
+        <item name="android:background">@color/black_theme_background_color</item>
         <item name="android:textColorPrimary">@color/black_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/black_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>

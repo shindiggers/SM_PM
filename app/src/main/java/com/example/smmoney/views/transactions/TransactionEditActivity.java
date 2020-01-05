@@ -288,8 +288,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 setupButtons();
                 setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
                 this.balanceBar.setVisibility(View.GONE);
-                getActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-                getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+                getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             }
         }
         if (data == null) {
@@ -310,8 +310,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         setupButtons();
         setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
         this.balanceBar.setVisibility(View.GONE);
-        getActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-        getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+        getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     public void onResume() {
@@ -337,6 +338,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     public void onDestroy() {
         super.onDestroy();
         this.clearTimer.cancel();
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
+        return true;
     }
 
     private void handleIReceipt(Uri data) {

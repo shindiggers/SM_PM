@@ -1,9 +1,10 @@
 package com.example.smmoney.views;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.budgets.BudgetsActivity;
@@ -11,7 +12,7 @@ import com.example.smmoney.views.budgets.BudgetsActivity;
 import static android.view.KeyEvent.KEYCODE_BACK;
 import static android.view.KeyEvent.KEYCODE_HOME;
 
-public abstract class PocketMoneyActivity extends Activity {
+public abstract class PocketMoneyActivity extends AppCompatActivity {
     private boolean isStartingActivity = false;
     private boolean showPasswordScreen = false;
     protected boolean skipPasswordScreen = false;
@@ -51,14 +52,14 @@ public abstract class PocketMoneyActivity extends Activity {
     public void startActivityForResult(Intent i, int req) {
         this.showPasswordScreen = false;
         this.isStartingActivity = true;
-        i.putExtra("dontShowPass", new String());
+        i.putExtra("dontShowPass", "");
         super.startActivityForResult(i, req);
     }
 
     public void startActivity(Intent i) {
         this.showPasswordScreen = false;
         this.isStartingActivity = true;
-        i.putExtra("dontShowPass", new String());
+        i.putExtra("dontShowPass", "");
         super.startActivityForResult(i, 9999);
     }
 

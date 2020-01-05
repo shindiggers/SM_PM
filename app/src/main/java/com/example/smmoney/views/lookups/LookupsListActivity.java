@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -24,6 +25,7 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.SectionIndexer;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.Locales;
@@ -37,6 +39,7 @@ import com.example.smmoney.records.IDClass;
 import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.views.PocketMoneyActivity;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -153,6 +156,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
         this.currentType = Objects.requireNonNull(getIntent().getExtras()).getInt("type");
         setupView();
         setupList();
+        Objects.requireNonNull(getSupportActionBar()).setTitle("Select item"); // Todo Move String to Locales/String
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
     }
 
     public void onResume() {
