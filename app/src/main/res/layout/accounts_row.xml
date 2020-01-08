@@ -104,7 +104,7 @@
             android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:srcCompat="@drawable/ic_add_circle_outline_black_24dp_svg"
+            app:srcCompat="@drawable/ic_add_circle_outline_white_24dp_svg"
             android:contentDescription="@string/contentDescription_image_for_account" />
 
     </LinearLayout>
