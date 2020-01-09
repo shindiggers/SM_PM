@@ -214,6 +214,7 @@ class AccountRowAdapter extends BaseAdapter {
             holder.selected = convertView.findViewById(R.id.selected);
             holder.selected.setOnCheckedChangeListener(getCheckListener());
             holder.newtransbutton = convertView.findViewById(R.id.accountsnewtransbutton);
+            holder.newtransbutton.setColorFilter(PocketMoneyThemes.currentTintColor());
             holder.newtransbutton.setOnClickListener(new OnClickListener() {
                 public void onClick(View v) {
                     AccountRowHolder holder = (AccountRowHolder) ((View) v.getParent().getParent()).getTag();

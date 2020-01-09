@@ -1699,8 +1699,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
         menu.add(0, MENU_DELETE /*5*/, 0, Locales.kLOC_GENERAL_DELETE).setIcon(R.drawable.ic_arrow_drop_down_circle);
         MenuItem item = menu.add(0, MENU_SAVE /*6*/, 0, "Save");
-//        item.setIcon(R.drawable.circleplus);
-        item.setShowAsAction(2);
+        item.setIcon(R.drawable.ic_save_white_24dp);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS /*2*/);
         return true;
     }
 
