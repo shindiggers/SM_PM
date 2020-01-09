@@ -2,11 +2,14 @@ package com.example.smmoney.records;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.res.Resources;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.util.TypedValue;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
@@ -16,6 +19,11 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountTypeIconGridActivity;
 
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -24,11 +32,8 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class AccountClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_ACCOUNTS = "ACCOUNTS";
@@ -237,7 +242,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     this.iconFileName = "checkbook.png";
                     break;
                 case Enums.kAccountTypeCreditCard /*2*/:
-                    this.iconFileName = "visa.png";
+                    this.iconFileName = "ic_visa.xml";
                     break;
                 case Enums.kAccountTypeAsset /*3*/:
                     this.iconFileName = "asset.png";
@@ -257,11 +262,23 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     }
 
     public void setIconFileNameFromResourceWithContext(int res, Context aContext) {
-        setIconFileName(AccountTypeIconGridActivity.replaceIconNameWithUppercase(aContext.getResources().getResourceEntryName(res).concat(".png")));
+        //setIconFileName(AccountTypeIconGridActivity.replaceIconNameWithUppercase(aContext.getResources().getResourceEntryName(res).concat(".png")));
+        setIconFileName(AccountTypeIconGridActivity.replaceIconNameWithUppercase(aContext.getResources().getResourceEntryName(res).concat(getIconResourceFileNameExtension(res))));
+    }
+
+    public String getIconResourceFileNameExtension(int res) {
+        Resources resources = SMMoney.getAppContext().getResources();
+        TypedValue value = new TypedValue();
+        resources.getValue(res, value, true);
+        String[] fullFileName = value.string.toString().split("\\.(?=[^\\.]+$)");
+        return "." + fullFileName[1];
     }
 
     public int getIconFileNameResourceIDUsingContext(Context aContext) {
-        return aContext.getResources().getIdentifier(getIconFileName().replace(".png", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase(), "drawable", aContext.getPackageName());
+        String modifiedFileName = getIconFileName().replace(".png", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase();
+        String modifiedFileName2 = modifiedFileName.replace(".xml", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase();
+        return aContext.getResources().getIdentifier(modifiedFileName2, "drawable", aContext.getPackageName());
+        //return aContext.getResources().getIdentifier(getIconFileName().replace("([^\\s]+(\\.(?i)(.xml|.png))$)", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase(), "drawable", aContext.getPackageName());
     }
 
     public void setUrl(String aString) {
