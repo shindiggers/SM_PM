@@ -173,9 +173,10 @@
                         </option>
                         <option name="values">
                           <map>
+                            <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_save_black_24dp" />
-                            <entry key="sourceFile" value="C:\Users\seanm" />
+                            <entry key="outputName" value="ic_mastercard" />
+                            <entry key="sourceFile" value="C:\Users\seanm\Downloads\mastercard.svg" />
                           </map>
                         </option>
                       </PersistentState>
