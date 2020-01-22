@@ -1,8 +1,6 @@
 package com.example.smmoney.views.reports;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog.Builder;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnKeyListener;
@@ -13,6 +11,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -40,9 +39,8 @@ import com.example.smmoney.views.charts.views.ChartView;
 
 import java.util.Objects;
 
-public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate {
+public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate, ReportDialog.ReportDialogListner {
     public static boolean processData = false;
-    private final int MENU_PERIOD = 1;
     private final int MENU_VIEW = 1;
     @SuppressWarnings("FieldCanBeLocal")
     private final int MSG_PROGRESS_FINISH = 0;
@@ -141,8 +139,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.periodButton = findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                //noinspection deprecation
-                ReportsActivity.this.showDialog(MENU_PERIOD);
+                openDialog();
             }
         });
         this.previousPeriodView = findViewById(R.id.lefttarrow);
@@ -220,12 +217,13 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
         processData = true;
         updateProgressBar(0);
-        new AsyncTask() {
+        new AsyncTask<Object, Void, Object>() {
             protected Object doInBackground(Object... arg0) {
                 ReportsActivity.this.datasource.reloadData(ReportsActivity.this);
                 if (ReportsActivity.this.datasource.data == null) {
                     ReportsActivity.this.finishProgressBar();
                 } else if (!(ReportsActivity.this.chartView == null || SMMoney.isLiteVersion())) {
+                    Log.i("ReportsActivity", "Charts || isLiteVersion");
 
                 }
                 return null;
@@ -264,41 +262,17 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.theList.setSelection(this.adapter.getElements().indexOf(((ReportChartItem) chartItem).reportItem));
     }
 
-    protected Dialog onCreateDialog(int id) {
-        CharSequence[] items = new CharSequence[]{Locales.kLOC_REPORTS_ONEMONTH, Locales.kLOC_REPORTS_TWOMONTHS, Locales.kLOC_REPORTS_THREEMONTHS, Locales.kLOC_REPORTS_SIXMONTHS, Locales.kLOC_REPORTS_ONEYEAR, Locales.kLOC_PREFERENCES_SHOW_ALL};
-        Builder builder = new Builder(this);
-        builder.setTitle(Locales.kLOC_BUDGETS_PERIOD);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                int periodType;
-                switch (item) {
-                    case Enums.kReportPeriodOneMonth /*0*/:
-                        periodType = Enums.kReportPeriodOneMonth;
-                        break;
-                    case Enums.kReportPeriodTwoMonths /*1*/:
-                        periodType = Enums.kReportPeriodTwoMonths;
-                        break;
-                    case Enums.kReportPeriodThreeMonths /*2*/:
-                        periodType = Enums.kReportPeriodThreeMonths;
-                        break;
-                    case Enums.kReportPeriodSixMonths /*3*/:
-                        periodType = Enums.kReportPeriodSixMonths;
-                        break;
-                    case Enums.kReportPeriodOneYear /*4*/:
-                        periodType = Enums.kReportPeriodOneYear;
-                        break;
-                    default:
-                        periodType = Enums.kReportPeriodAll /*5*/;
-                        break;
-                }
-                Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
-                ReportsActivity.this.datasource.currentPeriod = periodType;
-                ReportsActivity.this.datasource.data = null;
-                dialog.dismiss();
-                ReportsActivity.this.reloadData();
-            }
-        });
-        return builder.create();
+    public void openDialog() {
+        ReportDialog reportDialog = new ReportDialog();
+        reportDialog.show(getSupportFragmentManager(), "reportDialog");
+    }
+
+    @Override
+    public void applyPeriodType(int periodType) {
+        Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
+        ReportsActivity.this.datasource.currentPeriod = periodType;
+        ReportsActivity.this.datasource.data = null;
+        ReportsActivity.this.reloadData();
     }
 
     public void updateProgressBar(int progress) {
