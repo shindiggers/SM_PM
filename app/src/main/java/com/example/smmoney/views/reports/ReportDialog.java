@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
@@ -17,10 +18,11 @@ public class ReportDialog extends AppCompatDialogFragment {
     private ReportDialogListner reportDialogListner;
 
     @Override
+    @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_REPORTS_ONEMONTH, Locales.kLOC_REPORTS_TWOMONTHS, Locales.kLOC_REPORTS_THREEMONTHS, Locales.kLOC_REPORTS_SIXMONTHS, Locales.kLOC_REPORTS_ONEYEAR, Locales.kLOC_PREFERENCES_SHOW_ALL};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), new DialogInterface.OnClickListener() {
                     @Override
