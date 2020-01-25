@@ -3,9 +3,6 @@ package com.example.smmoney.views.budgets;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -13,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.support.v4.app.DialogFragment;
 import android.util.TypedValue;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -46,14 +44,12 @@ import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
-public class BudgetsActivity extends PocketMoneyActivity {
+public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPeriodDialog.BudgetsDialogListner, DatePickerDialog.OnDateSetListener {
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
-    private final int DIALOG_GOTODATE = 2;
-    private final int DIALOG_PERIOD = 1;
     private final int MENU_GOTODATE = 3;
     private final int MENU_NEW = 1;
     private final int MENU_PREFS = 2;
@@ -63,13 +59,6 @@ public class BudgetsActivity extends PocketMoneyActivity {
     private BalanceBar balanceBar;
     private TextView budgetDisplay;
     private ProgressBar budgetProgressBar;
-    private Context context;
-    private OnDateSetListener mDateSetListener = new OnDateSetListener() {
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            BudgetsActivity.this.adapter.currentDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-            BudgetsActivity.this.reloadData();
-        }
-    };
     private Button periodButton;
     private View progressiBeamBar;
     private ProgressBar reloadProgressBar;
@@ -78,13 +67,12 @@ public class BudgetsActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.wakeLock = ((PowerManager) getSystemService(POWER_SERVICE)).newWakeLock(26, "BudgetsActivity:DoNotDimScreen");
-        this.context = this;
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.budgets, null);
+        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "BudgetsActivity:DoNotDimScreen");
+        FrameLayout layout = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.budgets, new FrameLayout(this)/*null*/, false);
         setupView(layout);
         setContentView(layout);
         setTitle("SMMoney");
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
     }
 
     public void onPause() {
@@ -94,7 +82,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
 
     public void onResume() {
         super.onResume();
-        this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
         reloadData();
     }
 
@@ -105,13 +93,13 @@ public class BudgetsActivity extends PocketMoneyActivity {
                 BudgetsActivity.this.openOptionsMenu();
             }
         });
-        titleTextView.setText("SMMoney");
+        titleTextView.setText(R.string.app_name);
         ImageView leftArrow = layout.findViewById(R.id.lefttarrow);
         ImageView rightArrow = layout.findViewById(R.id.rightarrow);
         this.periodButton = layout.findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
-                BudgetsActivity.this.showDialog(DIALOG_PERIOD /*1*/);
+                openBudgetPeriodDialog();
             }
         });
         leftArrow.setOnClickListener(new OnClickListener() {
@@ -155,7 +143,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
             public void onClick(View v) {
                 if (Enums.kBudgetDisplayExpenseBudgeted == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
                     Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseAvailable);
-                } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) ==Enums.kBudgetDisplayExpenseAvailable) {
+                } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable) {
                     Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseOver);
                 } else {
                     Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseBudgeted);
@@ -241,7 +229,7 @@ public class BudgetsActivity extends PocketMoneyActivity {
         if (this.budgetProgressBar.getVisibility() == View.INVISIBLE) {
             this.reloadProgressBar.setVisibility(View.VISIBLE);
         }
-        new AsyncTask() {
+        new AsyncTask<Object, Void, Object>() {
             protected Object doInBackground(Object... params) {
                 BudgetsActivity.this.adapter.reloadData();
                 return null;
@@ -332,7 +320,8 @@ public class BudgetsActivity extends PocketMoneyActivity {
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
             case MENU_GOTODATE /*3*/:
-                showDialog(DIALOG_GOTODATE /*2*/);
+                DialogFragment datePicker = new BudgetsDatePickerDialog();
+                datePicker.show(getSupportFragmentManager(), "date picker");
                 return true;
             case MENU_VIEW /*4*/:
                 startActivity(new Intent(this, BudgetsViewOptionsActivity.class));
@@ -360,11 +349,15 @@ public class BudgetsActivity extends PocketMoneyActivity {
         switch (item.getItemId()) {
             case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
-                anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
+                if (b != null) {
+                    anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
+                }
                 startActivity(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
-                deleteBudget((CategoryClass) b.get("Category"));
+                if (b != null) {
+                    deleteBudget((CategoryClass) b.get("Category"));
+                }
                 reloadData();
                 return true;
             default:
@@ -372,57 +365,23 @@ public class BudgetsActivity extends PocketMoneyActivity {
         }
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_PERIOD /*1*/:
-                CharSequence[] items = new CharSequence[]{Locales.kLOC_REPEATING_FREQUENCY_DAILY, Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_BUDGETS_BIWEEKLY, Locales.kLOC_BUDGETS_4WEEKS, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY, Locales.kLOC_BUDGETS_BIMONTHLY, Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY, Locales.kLOC_BUDGETS_HALFYEAR, Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
-                Builder builder = new Builder(this);
-                builder.setTitle(Locales.kLOC_BUDGETS_PERIOD);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        int periodType = -1;
-                        switch (item) {
-                            case 0 /*0*/:
-                                periodType = Enums.kBudgetPeriodDay;
-                                break;
-                            case 1 /*1*/:
-                                periodType = Enums.kBudgetPeriodWeek;
-                                break;
-                            case 2 /*2*/:
-                                periodType = Enums.kBudgetPeriodBiweekly;
-                                break;
-                            case 3 /*3*/:
-                                periodType = Enums.kBudgetPeriod4Weeks;
-                                break;
-                            case 4 /*4*/:
-                                periodType = Enums.kBudgetPeriodMonth;
-                                break;
-                            case 5 /*5*/:
-                                periodType = Enums.kBudgetPeriodBimonthly;
-                                break;
-                            case 6 /*6*/:
-                                periodType = Enums.kBudgetPeriodQuarter;
-                                break;
-                            case 7 /*7*/:
-                                periodType = Enums.kBudgetPeriodHalfYear;
-                                break;
-                            case 8 /*8*/:
-                                periodType = Enums.kBudgetPeriodYear;
-                                break;
-                        }
-                        Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
-                        BudgetsActivity.this.adapter.currentPeriod = periodType;
-                        dialog.dismiss();
-                        BudgetsActivity.this.reloadData();
-                    }
-                });
-                return builder.create();
-            case DIALOG_GOTODATE /*2*/:
-                GregorianCalendar theDate = this.adapter.currentDate;
-                return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            default:
-                return null;
-        }
+    @Override
+    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+
+        BudgetsActivity.this.adapter.currentDate = new GregorianCalendar(year, month, dayOfMonth);
+        BudgetsActivity.this.reloadData();
+    }
+
+    public void openBudgetPeriodDialog() {
+        BudgetsPeriodDialog budgetsPeriodDialog = new BudgetsPeriodDialog();
+        budgetsPeriodDialog.show(getSupportFragmentManager(), "budgetsPeriodDialog");
+    }
+
+    @Override
+    public void applyPeriodType2(int periodType) {
+        Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
+        BudgetsActivity.this.adapter.currentPeriod = periodType;
+        BudgetsActivity.this.reloadData();
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
