@@ -2,7 +2,9 @@ package com.example.smmoney.views;
 
 import android.content.Context;
 import android.util.AttributeSet;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -29,13 +31,13 @@ public class BalanceBar extends FrameLayout {
 
     public BalanceBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setBackgroundResource(R.drawable.singlebalancebar);
+        setBackgroundResource(R.drawable.balance_bar2);
         LinearLayout layout1 = new LinearLayout(context);
         this.balanceView = new LinearLayout(context);
         this.balanceView.setLayoutParams(new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/));
         LayoutParams lp = new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/);
         layout1.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, -1, 1.0f);
+        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 1.0f);
         this.previousButton = new View(context);
         this.nextButton = new View(context);
         layout1.addView(this.previousButton, llp);
@@ -46,14 +48,14 @@ public class BalanceBar extends FrameLayout {
         this.secondInnerLinearLayout = new LinearLayout(context);
         this.secondInnerLinearLayout.setOrientation(LinearLayout.VERTICAL);
         this.secondInnerLinearLayout.setVisibility(GONE);
-        LinearLayout.LayoutParams innerllp = new LinearLayout.LayoutParams(-1, -1, 1.0f);
-        lp = new LayoutParams(-2, -2, 17);
+        LinearLayout.LayoutParams innerllp = new LinearLayout.LayoutParams(/*width*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 1.0f);
+        lp = new LayoutParams(/*width*/ ViewGroup.LayoutParams.WRAP_CONTENT /*-2*/, /*height*/ ViewGroup.LayoutParams.WRAP_CONTENT /*-2*/, Gravity.CENTER /*17*/);
         this.balanceTypeTextView = new TextView(context);
         this.balanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_CURRENT);
-        this.balanceTypeTextView.setGravity(17);
+        this.balanceTypeTextView.setGravity(Gravity.CENTER /*17*/);
         this.balanceAmountTextView = new TextView(context);
         this.balanceAmountTextView.setText(R.string.accounts_view_net_worth);
-        this.balanceAmountTextView.setGravity(17);
+        this.balanceAmountTextView.setGravity(Gravity.CENTER /*17*/);
         llp.setMargins(10, 0, 0, 0);
         this.innerLinearLayout.addView(this.balanceTypeTextView, innerllp);
         this.innerLinearLayout.addView(this.balanceAmountTextView, innerllp);
@@ -61,7 +63,7 @@ public class BalanceBar extends FrameLayout {
         this.seperatorImage = new ImageView(context);
         this.seperatorImage.setBackgroundResource(R.drawable.seperatorline);
         this.seperatorImage.setVisibility(GONE);
-        this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(0, -1, 0.0f));
+        this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(0, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 0.0f));
         this.secondBalanceTypeTextView = new TextView(context);
         this.secondBalanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_2NDLINE);
         this.secondBalanceTypeTextView.setVisibility(GONE);
@@ -69,7 +71,7 @@ public class BalanceBar extends FrameLayout {
         this.secondBalanceAmountTextView = new TextView(context);
         this.secondBalanceAmountTextView.setText(R.string.accounts_view_net_worth);
         this.secondBalanceAmountTextView.setVisibility(GONE);
-        this.secondBalanceAmountTextView.setGravity(17);
+        this.secondBalanceAmountTextView.setGravity(Gravity.CENTER /*17*/);
         llp.setMargins(10, 0, 0, 0);
         this.secondInnerLinearLayout.addView(this.secondBalanceTypeTextView, innerllp);
         this.secondInnerLinearLayout.addView(this.secondBalanceAmountTextView, innerllp);
@@ -88,28 +90,28 @@ public class BalanceBar extends FrameLayout {
         this.secondBalanceAmountTextView.setVisibility(enable ? VISIBLE : GONE);
         TextView textView = this.secondBalanceTypeTextView;
         if (enable) {
-            i = 0;
+            i = VISIBLE /*0*/;
         } else {
-            i = 8;
+            i = GONE /*8*/;
         }
         textView.setVisibility(i);
         ImageView imageView = this.seperatorImage;
         if (enable) {
-            i = 0;
+            i = VISIBLE /*0*/;
         } else {
-            i = 8;
+            i = GONE /*8*/;
         }
         imageView.setVisibility(i);
         LinearLayout linearLayout = this.innerLinearLayout;
         if (enable) {
-            i = 1;
+            i = LinearLayout.VERTICAL /*1*/;
         } else {
-            i = 0;
+            i = LinearLayout.HORIZONTAL /*0*/;
         }
         linearLayout.setOrientation(i);
         LinearLayout linearLayout2 = this.secondInnerLinearLayout;
         if (!enable) {
-            i2 = 8;
+            i2 = GONE /*8*/;
         }
         linearLayout2.setVisibility(i2);
     }
