@@ -253,8 +253,10 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.balanceLabelView.setText(Locales.kLOC_REPORT_EXPENSETOTAL);
         if (amount < 0.0d) {
             this.balanceLabelView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
+            this.balanceAmountView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         } else {
-            this.balanceLabelView.setTextColor(-1);
+            this.balanceLabelView.setTextColor(getResources().getColor(R.color.black_theme_text));
+            this.balanceAmountView.setTextColor(PocketMoneyThemes.greenDepositColor());
         }
     }
 

@@ -27,7 +27,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
         android:orientation="vertical"
         android:scrollbarStyle="insideOverlay">
 
@@ -40,7 +39,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:orientation="vertical">
 
@@ -62,6 +61,7 @@
                     android:singleLine="true" />
 
                 <ImageView
+                    android:id="@+id/frequency_ic_calendar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
@@ -78,7 +78,7 @@
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:orientation="vertical">
 
@@ -97,6 +97,7 @@
                     android:layout_centerVertical="true"
                     android:layout_marginStart="100dp"
                     tools:text="1"
+                    android:gravity="center"
                     android:hint="@string/_0_hint"
                     android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
                     android:singleLine="true"
@@ -115,7 +116,8 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="58dp"
+                android:minHeight="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:orientation="vertical">
 
@@ -137,6 +139,7 @@
                     android:singleLine="true" />
 
                 <ImageView
+                    android:id="@+id/repeting_edit_ic_calendar"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
@@ -148,7 +151,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:orientation="vertical">
 
@@ -165,13 +168,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp" />
+                    android:layout_marginEnd="18dp" />
 
             </FrameLayout>
 
             <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_height="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:orientation="horizontal"
                 android:visibility="gone"
@@ -191,6 +194,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="100dp"
+                    android:gravity="center"
                     android:hint="@string/_0_hint"
                     android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
                     android:singleLine="true"
@@ -249,7 +253,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     android:src="@drawable/btn_check_buttonless_on"
                     tools:visibility="visible"
                     android:visibility="gone"
@@ -276,7 +280,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
@@ -303,7 +307,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
@@ -330,7 +334,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
@@ -357,7 +361,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
@@ -384,7 +388,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
@@ -411,7 +415,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
+                    android:layout_marginEnd="18dp"
                     tools:visibility="visible"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"

@@ -52,6 +52,6 @@
         android:layout_centerVertical="true"
         android:layout_marginEnd="5dp"
         android:contentDescription="@string/content_description_image_of_a_calendar"
-        android:src="@drawable/ic_date_range" />
+        android:src="@drawable/ic_arrow_drop_down_circle" />
 
 </RelativeLayout>

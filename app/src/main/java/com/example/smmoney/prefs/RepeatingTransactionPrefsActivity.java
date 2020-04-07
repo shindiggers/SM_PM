@@ -1,6 +1,7 @@
 package com.example.smmoney.prefs;
 
 import android.content.res.Resources;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -11,6 +12,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -26,9 +28,11 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LayoutInflater.from(this).inflate(R.layout.prefs_repeating, null));
-        setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+        getSupportActionBar().setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.postCheckBox = findViewById(R.id.postcheckbox);
-        this.postCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
+        this.postCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
         this.postEditText = findViewById(R.id.postedittext);
         this.postView = (RelativeLayout) this.postEditText.getParent();
         this.suffix = Locales.kLOC_PREFERENCES_DAYS;
@@ -66,11 +70,17 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != 4) {
+        if (keyCode != KeyEvent.KEYCODE_BACK) {
             return super.onKeyDown(keyCode, event);
         }
         save();
         finish();
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        onBackPressed();
         return true;
     }
 }

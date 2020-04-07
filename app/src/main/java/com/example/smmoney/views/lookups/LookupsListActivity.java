@@ -102,7 +102,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             String category = (String) getItem(pos);
             if (convertView == null) {
                 convertView = this.inflator.inflate(this.layoutResId, null);
-               // ((TextView) convertView.findViewById(R.id.the_list)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
+                ((TextView) convertView).setTextColor(PocketMoneyThemes.primaryCellTextColor());
             }
             ((TextView) convertView).setText(category);
             return convertView;
@@ -184,7 +184,6 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 LookupsListActivity.this.openOptionsMenu();
             }
         });
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.theList = findViewById(R.id.the_list);
         this.theList.setFastScrollEnabled(true);
         this.theList.setOnItemClickListener(new OnItemClickListener() {

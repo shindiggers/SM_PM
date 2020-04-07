@@ -14,10 +14,12 @@
             android:id="@+id/title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal|center_vertical"
+            android:layout_gravity="start|center_vertical"
+            android:gravity="center_vertical"
+            android:layout_marginStart="8dp"
             android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
+            android:textStyle="normal" />
 
     </FrameLayout>
 

@@ -211,11 +211,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         protected void onPostExecute(Object result) {
             Log.d("ACCOUNTSACTIVITY", "onPostExecute(Object result) has just been triggered");
             AccountsActivity.this.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-            AccountsActivity.this.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? -65536 /*RED*/ : -1 /*WHITE*/);
+            AccountsActivity.this.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? getResources().getColor(R.color.theme_red_label_color_on_black) : getResources().getColor(R.color.black_theme_text /*WHITE*/));
             AccountsActivity.this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
             AccountsActivity.this.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
             AccountsActivity.this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
-            AccountsActivity.this.balanceBar.balanceTypeTextView.setTextColor(-1);
+            AccountsActivity.this.balanceBar.balanceTypeTextView.setTextColor(getResources().getColor(R.color.black_theme_text));
             AccountsActivity.this.balanceBar.progressBar.setVisibility(View.GONE);
             synchronized (AccountsActivity.this.adapter) {
                 AccountsActivity.this.reloadData();

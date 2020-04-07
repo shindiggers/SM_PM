@@ -135,8 +135,12 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.transToLayout = findViewById(R.id.transtobutton);
         this.transToTitleTextView = findViewById(R.id.transtolabel);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
-        this.categoryEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
-        this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
+        //this.categoryEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
+        // TODO Customise the simple_list_item_1 so that it looks how it should. Just used here to make code work as original code above does not point to a TextView and therefore crashes!!
+        this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CategoryClass.allCategoryNamesInDatabase()));
+        //this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
+        // TODO Customise as for above category class adapter
+        this.classEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ClassNameClass.allClassNamesInDatabase()));
         ((RadioGroup) this.withdrawalButton.getParent()).setOnCheckedChangeListener(getRadioChangedListener());
         ((LinearLayout) this.memoEditText.getParent()).setOnClickListener(new OnClickListener() {
             public void onClick(View view) {

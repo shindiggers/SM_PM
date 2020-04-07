@@ -8,9 +8,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatDialogFragment;
 
-import com.example.smmoney.R;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
 public class ReportDialog extends AppCompatDialogFragment {
@@ -22,7 +22,8 @@ public class ReportDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_REPORTS_ONEMONTH, Locales.kLOC_REPORTS_TWOMONTHS, Locales.kLOC_REPORTS_THREEMONTHS, Locales.kLOC_REPORTS_SIXMONTHS, Locales.kLOC_REPORTS_ONEYEAR, Locales.kLOC_PREFERENCES_SHOW_ALL};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        int theme = PocketMoneyThemes.dialogTheme();
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), theme);
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), new DialogInterface.OnClickListener() {
                     @Override

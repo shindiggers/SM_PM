@@ -24,6 +24,18 @@
                                             <option name="values">
                                               <map>
                                                 <entry key="color" value="000000" />
+                                                <entry key="opacityPercent" value="80" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                      <entry key="clipartAsset">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="url" value="jar:file:/C:/Program%20Files/Android/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_expand_more_black_24dp.xml" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -45,8 +57,8 @@
                                   </option>
                                   <option name="values">
                                     <map>
-                                      <entry key="assetType" value="IMAGE" />
-                                      <entry key="imageAsset" value="C:\Users\seanm\Downloads\arrow_right-black-android\res\drawable\baseline_arrow_right_24.xml" />
+                                      <entry key="imageAsset" value="C:\Users\seanm\Desktop\Balance_bar.png" />
+                                      <entry key="outputName" value="ic_expand_more" />
                                       <entry key="theme" value="HOLO_DARK" />
                                       <entry key="themeColor" value="ffffff" />
                                     </map>
@@ -175,8 +187,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_mastercard" />
-                            <entry key="sourceFile" value="C:\Users\seanm\Downloads\mastercard.svg" />
+                            <entry key="outputName" value="ic_arrow_drop_down_circle_white_36dp" />
+                            <entry key="sourceFile" value="C:\Users\seanm\Downloads\ic_arrow_drop_down_circle-white-36dp.svg" />
                           </map>
                         </option>
                       </PersistentState>

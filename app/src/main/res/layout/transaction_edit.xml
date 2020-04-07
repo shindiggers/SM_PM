@@ -193,7 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_date_range"
+                    android:src="@drawable/ic_date_range"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_gravity="center"
@@ -485,8 +485,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
+                    android:layout_marginEnd="4dp"
                     android:nextFocusDown="@+id/classedittext"
                     android:nextFocusUp="@+id/idedittext" />
 

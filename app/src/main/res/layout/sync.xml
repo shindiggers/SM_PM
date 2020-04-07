@@ -73,7 +73,7 @@
             android:layout_marginEnd="15dp"
             android:layout_marginStart="10dp"
             android:hint="@string/ip_address_placeholder"
-            android:inputType="numberDecimal"
+            android:inputType="text"
             android:singleLine="true"
             android:textColorHint="@color/black_theme_text_alt"
             android:importantForAutofill="no" />

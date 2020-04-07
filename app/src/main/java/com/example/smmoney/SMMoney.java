@@ -51,7 +51,7 @@ public class SMMoney extends Application {
     }
 
         public static boolean hasCamera() {
-            return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA);
+            return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
         }
 
         public static String getTempPocketMoneyDirectory(){

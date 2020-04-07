@@ -7,13 +7,13 @@ import android.graphics.Color;
 import com.example.smmoney.R;
 
 public class PocketMoneyThemes {
-    private static final int black_theme_alternating_row_color = -13421773;
-    private static final int black_theme_background_color = -16777216;
-    private static final int black_theme_field_label_color = -526345;
-    private static final int black_theme_primary_row_color = -435023342;//-16777216;
-    private static final int black_theme_text = -526345;
-    private static final int black_theme_text_alt = -7105645;
-    private static final int black_theme_tint_color = -4671304;
+    private static final int black_theme_alternating_row_color = Color.parseColor("#ff333333");
+    private static final int black_theme_background_color = Color.parseColor("#ff212121");
+    private static final int black_theme_field_label_color = Color.parseColor("#fff7f7f7");
+    private static final int black_theme_primary_row_color = Color.parseColor("#E6121212");
+    private static final int black_theme_text = Color.parseColor("#fff7f7f7");
+    private static final int black_theme_text_alt = Color.parseColor("#ff939393");
+    private static final int black_theme_tint_color = Color.parseColor("#ffb8b8b8");
 
     private static final int blue_theme_alternating_row_color = -723718;
     private static final int blue_theme_background_color = -3813931;
@@ -248,8 +248,67 @@ public class PocketMoneyThemes {
         }
     }
 
+    public static int datePickerTheme() {
+        switch (getTheme()) {
+            case kThemeBlue /*1*/:
+                return R.style.DatePicker_Blue;
+            case kThemeGreen /*2*/:
+                return R.style.DatePicker_Green;
+            case kThemePurple /*3*/:
+                return R.style.DatePicker_Purple;
+            case kThemeGray /*4*/:
+                return R.style.DatePicker_Gray;
+            case kThemeCoffee /*5*/:
+                return R.style.DatePicker_Coffee;
+            case kThemeRuby /*6*/:
+                return R.style.DatePicker_Ruby;
+            case kThemeWhite /*7*/:
+                return R.style.DatePicker_White;
+            default:
+                return R.style.DatePicker_Black;
+        }
+    }
+
+    public static int dialogTheme() {
+        switch (getTheme()) {
+            case kThemeBlue /*1*/:
+                return R.style.DialogTheme_Blue;
+            case kThemeGreen /*2*/:
+                return R.style.DialogTheme_Green;
+            case kThemePurple /*3*/:
+                return R.style.DialogTheme_Purple;
+            case kThemeGray /*4*/:
+                return R.style.DialogTheme_Gray;
+            case kThemeCoffee /*5*/:
+                return R.style.DialogTheme_Coffee;
+            case kThemeRuby /*6*/:
+                return R.style.DialogTheme_Ruby;
+            case kThemeWhite /*7*/:
+                return R.style.DialogTheme_White;
+            default:
+                return R.style.DialogTheme_Black;
+        }
+    }
+
     public static int toolbarTextColor() {
-        return white_theme_text;
+        switch (getTheme()) {
+            case kThemeBlue /*1*/:
+                return blue_theme_field_label_color;
+            case kThemeGreen /*2*/:
+                return green_theme_field_label_color;
+            case kThemePurple /*3*/:
+                return purple_theme_field_label_color;
+            case kThemeGray /*4*/:
+                return gray_theme_field_label_color;
+            case kThemeCoffee /*5*/:
+                return coffee_theme_field_label_color;
+            case kThemeRuby /*6*/:
+                return ruby_theme_field_label_color;
+            case kThemeWhite /*7*/:
+                return white_theme_field_label_color;
+            default:
+                return black_theme_field_label_color;
+        }
     }
 
     public static int currentTintToolbarButtonDrawable() {
@@ -430,7 +489,7 @@ public class PocketMoneyThemes {
     public static int chkBoxColorChecked() {
         switch (getTheme()) {
             case kThemeBlack /*0*/:
-                return theme_green_deposit_color;
+                return black_theme_text_alt;
             case kThemeBlue /*1*/:
                 return blue_theme_tint_color;
             case kThemeGreen /*2*/:
@@ -452,7 +511,7 @@ public class PocketMoneyThemes {
     public static int chkBoxColorUnchecked() {
         switch (getTheme()) {
             case kThemeBlack /*0*/:
-                return Color.WHITE;
+                return black_theme_text_alt;
             case kThemeBlue /*1*/:
                 return blue_theme_tint_color;
             case kThemeGreen /*2*/:

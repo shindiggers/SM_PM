@@ -6,9 +6,12 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -127,7 +130,19 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.suffixTextView = findViewById(R.id.suffixtextview);
         this.notifyDaysInAdvanceTextView = findViewById(R.id.daysinadvancetextview);
         this.notifyCheckBox = findViewById(R.id.notifycheckbox);
-        this.notifyCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
+        this.notifyCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
+        int[][] states = new int[][]{
+                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                /*new int[] { android.R.attr.state_pressed},*/  // pressed
+                new int[]{android.R.attr.state_enabled} // enabled
+        };
+        int[] colors = new int[]{
+                PocketMoneyThemes.chkBoxColorUnchecked(),
+                PocketMoneyThemes.chkBoxColorChecked()
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
+        CompoundButtonCompat.setButtonTintList(this.notifyCheckBox, colorStateList);
         this.sunday = this.daysOfWeek[Calendar.SUNDAY /*1*/];
         this.monday = this.daysOfWeek[Calendar.MONDAY /*2*/];
         this.tuesdayTextView.setText(this.daysOfWeek[Calendar.TUESDAY /*3*/]);
@@ -192,6 +207,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         sv.setVerticalScrollBarEnabled(false);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         View aView = (View) this.frequencyTextView.getParent();
+        ImageView frequencyDateIcon = findViewById(R.id.frequency_ic_calendar);
+        frequencyDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.frequency_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.frequencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add(aView);
@@ -200,16 +217,18 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.everyTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         theViews.add(aView);
         aView = (View) this.endOnTextView.getParent();
+        ImageView theDateIcon = findViewById(R.id.repeting_edit_ic_calendar);
+        theDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.end_on_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add(aView);
         aView = (View) this.notifyCheckBox.getParent();
         ((TextView) findViewById(R.id.notifylabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         theViews.add(aView);
-        this.notifyDaysInAdvanceTextView.setTextColor(-16777216);
+        this.notifyDaysInAdvanceTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         aView = (View) this.notifyDaysInAdvanceTextView.getParent();
-        ((TextView) findViewById(R.id.daysinadvancelabel)).setTextColor(-16777216);
-        ((TextView) findViewById(R.id.daysinadvancesuffixtextview)).setTextColor(-16777216);
+        ((TextView) findViewById(R.id.daysinadvancelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+        ((TextView) findViewById(R.id.daysinadvancesuffixtextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add(aView);
         aView = (View) this.repeatOnTextView.getParent();

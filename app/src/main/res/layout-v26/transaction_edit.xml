@@ -193,7 +193,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_date_range"
+                    android:src="@drawable/ic_date_range"
                     android:clickable="true"
                     android:focusable="true"
                     android:layout_gravity="center"
@@ -234,6 +234,7 @@
                     android:text="@string/transaction_edit_the_account" />
 
                 <ImageButton
+                    android:id="@+id/account_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
@@ -528,7 +529,9 @@
                     android:layout_weight="1.0"
                     android:clickable="false"
                     android:focusable="false"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    tools:visibility="visible"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_vertical"
                     android:visibility="gone" />
 
                 <AutoCompleteTextView

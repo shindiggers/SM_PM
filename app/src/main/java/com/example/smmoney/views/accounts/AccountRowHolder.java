@@ -2,8 +2,8 @@ package com.example.smmoney.views.accounts;
 
 import android.content.Context;
 import android.content.res.ColorStateList;
+import android.content.res.Resources;
 import android.support.v4.widget.CompoundButtonCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 import android.widget.ImageView;
@@ -12,13 +12,9 @@ import android.widget.TextView;
 
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
-
-//import android.content.res.Resources;
-//import android.widget.CheckBox;
 
 class AccountRowHolder {
     public AccountClass account;
@@ -35,10 +31,8 @@ class AccountRowHolder {
         this.accountname.setText(this.account.getAccount());
         this.accountname.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.icon_image.setImageResource(this.account.getIconFileNameResourceIDUsingContext(mContext));
-        PMGlobal.programaticUpdate = true;
         this.selected.setChecked(this.account.getTotalWorth());
-        //this.selected.setButtonDrawable(Resources.getSystem().getIdentifier("abc_btn_check_material", "drawable", "android.support.v7"));
-        this.selected.setButtonDrawable(AppCompatResources.getDrawable(mContext, android.support.v7.appcompat.R.drawable.abc_btn_check_material));
+        this.selected.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
         int[][] states = new int[][]{
                 /*new int[] {-android.R.attr.state_enabled},*/ // disabled
                 new int[]{-android.R.attr.state_checked}, // unchecked
@@ -51,7 +45,6 @@ class AccountRowHolder {
         };
         ColorStateList colorStateList = new ColorStateList(states, colors);
         CompoundButtonCompat.setButtonTintList(this.selected, colorStateList);
-        PMGlobal.programaticUpdate = false;
         updateBalanceLabel();
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             this.exchangeRate.setVisibility(View.VISIBLE);

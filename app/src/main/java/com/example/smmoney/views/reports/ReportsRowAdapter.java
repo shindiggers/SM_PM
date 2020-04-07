@@ -2,7 +2,9 @@ package com.example.smmoney.views.reports;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -14,6 +16,7 @@ import android.widget.CompoundButton.OnCheckedChangeListener;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.transactions.TransactionsActivity;
+
 import java.util.ArrayList;
 
 class ReportsRowAdapter extends BaseAdapter {
@@ -47,7 +50,7 @@ class ReportsRowAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -61,7 +64,19 @@ class ReportsRowAdapter extends BaseAdapter {
             holder.checked.setOnCheckedChangeListener(getCheckListener());
             holder.expense = convertView.findViewById(R.id.expensetextview);
             holder.amount = convertView.findViewById(R.id.amounttextview);
-            holder.checked.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
+            holder.checked.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
+            int[][] states = new int[][]{
+                    /*new int[] {-android.R.attr.state_enabled},*/ // disabled
+                    new int[]{-android.R.attr.state_checked}, // unchecked
+                    /*new int[] { android.R.attr.state_pressed},*/  // pressed
+                    new int[]{android.R.attr.state_enabled} // enabled
+            };
+            int[] colors = new int[]{
+                    PocketMoneyThemes.chkBoxColorUnchecked(),
+                    PocketMoneyThemes.chkBoxColorChecked()
+            };
+            ColorStateList colorStateList = new ColorStateList(states, colors);
+            CompoundButtonCompat.setButtonTintList(holder.checked, colorStateList);
             convertView.setTag(holder);
         } else {
             holder = (ReportsRowHolder) convertView.getTag();

@@ -95,7 +95,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         }
 
         public long getItemId(int arg0) {
-            return (long) arg0;
+            return arg0;
         }
 
         public View getView(int pos, View convertView, ViewGroup arg2) {
@@ -133,7 +133,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 CategoryLookupListActivity.this.openOptionsMenu();
             }
         });
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        findViewById(R.id.the_tool_bar).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.adapter = new CatPayeeRowAdapter();
         this.listView = findViewById(R.id.listView);
         this.listView.setAdapter(this.adapter);

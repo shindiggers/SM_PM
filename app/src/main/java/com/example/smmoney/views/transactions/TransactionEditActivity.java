@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
@@ -14,17 +13,21 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
+import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.CompoundButtonCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.format.DateFormat;
@@ -76,6 +79,7 @@ import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
+import com.example.smmoney.views.budgets.BudgetsDatePickerDialog;
 import com.example.smmoney.views.exchangerates.ExchangeRateActivity;
 import com.example.smmoney.views.lookups.CategoryLookupListActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -94,9 +98,8 @@ import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
-public class TransactionEditActivity extends PocketMoneyActivity {
+public class TransactionEditActivity extends PocketMoneyActivity implements DatePickerDialog.OnDateSetListener {
     public static final int REQUEST_PHOTO_OPTION = 37;
-    private final int DATE_DIALOG_ID = 1;
     private final int DIALOG_CAMERA = 8;
     private final int DIALOG_DELETECONFIRM = 2;
     private final int DIALOG_DUPLICATE = 3;
@@ -145,47 +148,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private boolean isLocalNotification = false;
     private TextView keepTheChangeButton;
     private FrameLayout keyboardToolBar;
-    private OnDateSetListener mDateSetListener = new OnDateSetListener() {
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            TransactionEditActivity.this.dateTextView.setText(CalExt.descriptionWithMediumDate(new GregorianCalendar(year, monthOfYear, dayOfMonth)));
-            if ((TransactionEditActivity.this.repeatingDateChangedAlert != null && TransactionEditActivity.this.repeatingDateChangedAlert.isShowing()) || TransactionEditActivity.this.transaction.isRepeatingTransaction || TransactionEditActivity.this.repeatingTransaction == null || !TransactionEditActivity.this.repeatingTransaction.isRepeating()) {
-                return;
-            }
-            if (TransactionEditActivity.this.transaction.transactionID == 0) {
-                TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
-                return;
-            }
-            Builder b = new Builder(TransactionEditActivity.this);
-            b.setTitle("Date");
-            b.setMessage("Change the date of the transaction and repeating event, or change the date of this transaction only?");
-            b.setPositiveButton("Both", new OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    TransactionEditActivity.this.getCells();
-                    if (!(TransactionEditActivity.this.repeatingTransaction.getTransaction() == null || (TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.repeatingTransaction.getTransaction().getDate()) && TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.transaction.getDate())))) {
-                        Builder b = new Builder(TransactionEditActivity.this);
-                        b.setTitle("");
-                        b.setMessage("Please ensure that the start date selected follows the rules of the repeating transaction. If you are changing an existing repeating transaction you may have to update the repeating settings in the repeating edit screen.");
-                        b.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        });
-                        b.create().show();
-                    }
-                    TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
-                    dialog.dismiss();
-                }
-            });
-            b.setNegativeButton("This item only", new OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeSeparateTransactionFromRepeating /*1*/;
-                    dialog.dismiss();
-                }
-            });
-            TransactionEditActivity.this.repeatingDateChangedAlert = b.create();
-            TransactionEditActivity.this.repeatingDateChangedAlert.show();
-        }
-    };
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -382,7 +344,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         theViews.add(aView);
         aView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TransactionEditActivity.this.showDialog(DATE_DIALOG_ID /*1*/);
+                GregorianCalendar theDate = CalExt.dateFromDescriptionWithMediumDate(dateTextView.getText().toString());
+                long datelong = theDate.getTimeInMillis();
+                Bundle args = new Bundle();
+                args.putLong("dateInt", datelong);
+                DialogFragment datePicker = new BudgetsDatePickerDialog();
+                datePicker.setArguments(args);
+                datePicker.show(getSupportFragmentManager(), "date picker");
             }
         });
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -396,6 +364,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             }
         });
         this.repeatingImageView = aView.findViewById(R.id.repeatingimageview);
+        repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         this.repeatingImageView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (!AccountsActivity.isLite(TransactionEditActivity.this) || TransactionDB.queryAllRepeatingTransactions().size() < 2) {
@@ -562,7 +531,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.idEditText.setEnabled(Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_ID_FIELD));
         ((TextView) outterView.findViewById(R.id.id_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.clearedCheckBox = outterView.findViewById(R.id.clearedcheckbox);
-        this.clearedCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
+        this.clearedCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
         aView = (View) this.clearedCheckBox.getParent();
         if (Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLEARED_FIELD)) {
             aView.setVisibility(View.VISIBLE);
@@ -571,6 +540,18 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             aView.setVisibility(View.GONE);
         }
         this.clearedCheckBox.setEnabled(Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLEARED_FIELD));
+        int[][] states = new int[][]{
+                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
+                new int[]{-android.R.attr.state_checked}, // unchecked
+                /*new int[] { android.R.attr.state_pressed},*/  // pressed
+                new int[]{android.R.attr.state_enabled} // enabled
+        };
+        int[] colors = new int[]{
+                PocketMoneyThemes.chkBoxColorUnchecked(),
+                PocketMoneyThemes.chkBoxColorChecked()
+        };
+        ColorStateList colorStateList = new ColorStateList(states, colors);
+        CompoundButtonCompat.setButtonTintList(this.clearedCheckBox, colorStateList);
         ((TextView) outterView.findViewById(R.id.cleared_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         aView = outterView.findViewById(R.id.classbutton);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -986,12 +967,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.balanceBar.balanceAmountTextView.setText(account.formatAmountAsCurrency(account.balanceOfType(balanceType)));
         }
         if (account == null || !account.balanceExceedsLimit()) {
-            this.balanceBar.balanceAmountTextView.setTextColor(-1);
+            this.balanceBar.balanceAmountTextView.setTextColor(getResources().getColor(R.color.black_theme_text)/*Original value -1 = white*/);
         } else {
-            this.balanceBar.balanceAmountTextView.setTextColor(-65536);
+            this.balanceBar.balanceAmountTextView.setTextColor(getResources().getColor(R.color.theme_red_label_color_on_black)/*Original color -65536*/);
         }
         this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(balanceType));
-        this.balanceBar.balanceTypeTextView.setTextColor(-1);
+        this.balanceBar.balanceTypeTextView.setTextColor(getResources().getColor(R.color.black_theme_text)/* Original value -1 = white*/);
     }
 
     private void editTransactionDelete() {
@@ -1604,9 +1585,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     protected Dialog onCreateDialog(int id) {
         Builder builder;
         switch (id) {
-            case DATE_DIALOG_ID /*1*/:
-                GregorianCalendar theDate = this.transaction.getDate();
-                return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
             case DIALOG_DELETECONFIRM /*2*/:
                 builder = new Builder(this);
                 builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
@@ -1834,5 +1812,46 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             deleteNewlyAddedImages();
         }
         return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+        TransactionEditActivity.this.dateTextView.setText(CalExt.descriptionWithMediumDate(new GregorianCalendar(year, monthOfYear, dayOfMonth)));
+        if ((TransactionEditActivity.this.repeatingDateChangedAlert != null && TransactionEditActivity.this.repeatingDateChangedAlert.isShowing()) || TransactionEditActivity.this.transaction.isRepeatingTransaction || TransactionEditActivity.this.repeatingTransaction == null || !TransactionEditActivity.this.repeatingTransaction.isRepeating()) {
+            return;
+        }
+        if (TransactionEditActivity.this.transaction.transactionID == 0) {
+            TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
+            return;
+        }
+        Builder b = new Builder(TransactionEditActivity.this);
+        b.setTitle("Date");
+        b.setMessage("Change the date of the transaction and repeating event, or change the date of this transaction only?");
+        b.setPositiveButton("Both", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                TransactionEditActivity.this.getCells();
+                if (!(TransactionEditActivity.this.repeatingTransaction.getTransaction() == null || (TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.repeatingTransaction.getTransaction().getDate()) && TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.transaction.getDate())))) {
+                    Builder b = new Builder(TransactionEditActivity.this);
+                    b.setTitle("");
+                    b.setMessage("Please ensure that the start date selected follows the rules of the repeating transaction. If you are changing an existing repeating transaction you may have to update the repeating settings in the repeating edit screen.");
+                    b.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    });
+                    b.create().show();
+                }
+                TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
+                dialog.dismiss();
+            }
+        });
+        b.setNegativeButton("This item only", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeSeparateTransactionFromRepeating /*1*/;
+                dialog.dismiss();
+            }
+        });
+        TransactionEditActivity.this.repeatingDateChangedAlert = b.create();
+        TransactionEditActivity.this.repeatingDateChangedAlert.show();
     }
 }

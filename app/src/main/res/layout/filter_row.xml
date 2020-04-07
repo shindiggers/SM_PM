@@ -2,7 +2,7 @@
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="50dp"
     xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/list_selector_bg_blue_alt">
 

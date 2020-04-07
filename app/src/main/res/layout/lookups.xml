@@ -8,7 +8,7 @@
         android:id="@+id/the_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+        android:layout_gravity="top|center_vertical">
 
         <TextView
             android:id="@+id/title_text_view"
@@ -17,6 +17,7 @@
             android:paddingStart="6dp"
             android:paddingEnd="6dp"
             android:layout_gravity="start|center_vertical"
+            android:gravity="center_vertical"
             android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium" />
 
