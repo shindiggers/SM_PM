@@ -1,6 +1,7 @@
 package com.example.smmoney.views.desktopsync;
 
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.Enums;
@@ -14,15 +15,18 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.accounts.AccountsActivity;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.ArrayList;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
 
 public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
     private ArrayList<AccountClass> accounts;
@@ -32,7 +36,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         if (this.asyncSocket != null) {
             return false;
         }
-        this.currentState = 3;
+        this.currentState = Enums.kDesktopSyncStateTriggerManual/*3*/;
         this.delegate.desktopSyncWithState(this, this.currentState);
         try {
             this.asyncSocket = new Socket(this.host, this.port);
@@ -227,11 +231,11 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
         if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT) || localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION) || localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY) || localName.equals(PayeeClass.XML_RECORDTAG_PAYEE) || localName.equals(IDClass.XML_RECORDTAG_ID) || localName.equals(ClassNameClass.XML_RECORDTAG_CLASS) || localName.equals(FilterClass.XML_RECORDTAG_FILTER) || localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION) || localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
-            this.currentElementValue = new String("<" + localName + ">");
+            this.currentElementValue = "<" + localName + ">";
         } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
             this.accounts = new ArrayList<>();
         } else if (this.currentElementValue == null) {
-            this.currentElementValue = new String("<" + localName + ">");
+            this.currentElementValue = "<" + localName + ">";
         } else {
             this.currentElementValue += "<" + localName + ">";
         }
@@ -239,7 +243,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
 
     public void endElement(String namespaceURI, String localName, String qName) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String("</" + localName + ">");
+            this.currentElementValue = "</" + localName + ">";
         } else {
             this.currentElementValue += "</" + localName + ">";
         }
@@ -291,7 +295,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
 
     public void characters(char[] ch, int start, int length) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String(new String(ch, start, length).trim());
+            this.currentElementValue = new String(ch, start, length).trim();
         } else {
             this.currentElementValue += new String(ch, start, length);
         }

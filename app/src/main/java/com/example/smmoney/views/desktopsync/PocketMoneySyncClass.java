@@ -2,9 +2,10 @@ package com.example.smmoney.views.desktopsync;
 
 import android.os.Environment;
 import android.util.Log;
-import com.example.smmoney.iAP.util.Base64;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
+import com.example.smmoney.iAP.util.Base64;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -17,6 +18,9 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.PocketMoneyRecordClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
+
+import org.xml.sax.helpers.DefaultHandler;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
@@ -35,7 +39,6 @@ import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Iterator;
-import org.xml.sax.helpers.DefaultHandler;
 
 public class PocketMoneySyncClass extends DefaultHandler {
     Socket asyncSocket;
@@ -55,7 +58,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
     int syncVersion = 0;
     String udid;
 
-    class AnonymousClass1TempTransAccountClass {
+    static class AnonymousClass1TempTransAccountClass {
         String account;
         String serverID;
 
@@ -65,7 +68,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    class AnonymousClass2TempTransAccountClass {
+    static class AnonymousClass2TempTransAccountClass {
         String account;
         String serverID;
 
@@ -75,7 +78,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    class AnonymousClass3TempTransAccountClass {
+    static class AnonymousClass3TempTransAccountClass {
         String account;
         String serverID;
 
@@ -564,7 +567,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
 
     void getPhotoHeader() {
         setCurrentState(Enums.kDesktopSyncStateReceivingPhotoHeader/*33*/);
-        readInHeaderSize(34);
+        readInHeaderSize(Enums.kDesktopSyncStatePhotoHeaderReceived/*34*/);
     }
 
     void getPhotos() {

@@ -91,7 +91,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         try {
             displayInfoUpdate(getLocalIpAddresses());
         } catch (SocketException e) {
-            showDialog(9);
+            showDialog(DIALOG_WIFI/*9*/);
         }
         this.wakelock.acquire(10*60*1000L /*10 minutes*/);
     }
