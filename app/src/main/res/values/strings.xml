@@ -746,4 +746,8 @@
     <string name="ip_address_placeholder">xxx.xxx.xxx.xxx</string>
     <string name="add_symbol">+</string>
     <string name="equalscurrencysymbol">= %s</string>
+    <string name="permission_explanation_message">SM Money will now request permission to access photos, media and files on your device. \n\nWe will only use this permission to store a temporary copy of your data so that it can be emailed securely.\n\nClick OK and you will be able to make your permission choice.</string>
+    <string name="permission_dialog_title">Photos, media and files permission</string>
+    <string name="permissions_declined_permission_message"><![CDATA[We understand your privacy choice.<br><br>We can\'t send your data without this permission.<br><br>You can update your choice at any time in <b>App Settings -> Permissions</b>.<br><br>You can go there now and select <b>Permissions</b> to change your choice. If you\'re sure then confirm your previous choice]]></string>
+    <string name="permissions_declined_permission_dialog_title">Permission declined</string>
 </resources>

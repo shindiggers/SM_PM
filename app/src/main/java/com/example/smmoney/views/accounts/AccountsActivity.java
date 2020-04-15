@@ -1,5 +1,6 @@
 package com.example.smmoney.views.accounts;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -9,6 +10,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -18,7 +20,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
+import android.text.Spanned;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -85,6 +91,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 
+import static android.support.v4.content.FileProvider.getUriForFile;
 import static com.example.smmoney.SMMoney.TAG;
 
 //import com.android.vending.licensing.LicenseChecker;
@@ -129,6 +136,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private final int MENU_VIEW = 4;
     private final int MENU_WIFITRANSFERS = 2;
     private final int MENU_WIFI_EXPORT = 4;
+    private final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 100;
     public final int REQUEST_EDIT = 2;
     public final int REQUEST_NEW = 1;
     private RadioButton accountRadioButton;
@@ -1076,7 +1084,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         Intent emailIntent = new Intent("android.intent.action.SEND");
         emailIntent.setType("text/plain");
         Prefs.exportDB(this);
-        emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/SMMoneyDB.sql"));
+        File existingDB = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+        File sharedDB = new File(existingDB, "SMMoneyDB.sql");
+        Uri contentUri = getUriForFile(this, "com.example.fileprovider", sharedDB);
+        emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        emailIntent.putExtra("android.intent.extra.STREAM", contentUri);
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney Backup File");
         int i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
         Object[] objArr = new Object[ACCOUNT_REQUEST_BUDGET];
@@ -1188,7 +1200,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                                 AccountsActivity.this.generateOFXForEmail();
                                 return;
                             case 4 /*Backup file*/:
-                                AccountsActivity.this.generateBackupForEmail();
+                                showWriteExternalStoraageStatePermission();
                                 return;
                             default:
                         }
@@ -1656,5 +1668,78 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
 
     public static boolean isLite(Context c) {
         return c.getPackageName().toLowerCase().contains("lite");
+    }
+
+    private void showWriteExternalStoraageStatePermission() {
+        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                showPermissionExplanationAlertDialog(getString(R.string.permission_dialog_title), getString(R.string.permission_explanation_message), Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+            } else {
+                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+            }
+        } else {
+            Toast.makeText(AccountsActivity.this, "Permission (already) Granted!", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private void showPermissionExplanationAlertDialog(String title, String message, final String permission, final int permissionRequestCode) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
+        builder.setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        requestPermission(permission, permissionRequestCode);
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void showPermissionDeclinedAlertDialog(String title, Spanned message) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
+        builder.setTitle(title)
+                .setMessage(message)
+
+                .setNegativeButton("Open app settings", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Uri uri = Uri.fromParts("package", getPackageName(), null);
+                        intent.setData(uri);
+                        startActivity(intent);
+                    }
+                })
+                .setPositiveButton("I'm sure", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                });
+        builder.create().show();
+    }
+
+    private void requestPermission(String permissionName, int permissionRequestCode) {
+        ActivityCompat.requestPermissions(this,
+                new String[]{permissionName}, permissionRequestCode);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted
+                    generateBackupForEmail();
+                } else {
+                    // permission denied. Disable the functionality that depends on this permission.
+                    showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
+                }
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request.
+        }
     }
 }

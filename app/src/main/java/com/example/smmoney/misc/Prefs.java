@@ -221,7 +221,8 @@ public class Prefs {
     public static void exportDB(Context c) {
         File dbFile = new File(Environment.getDataDirectory() + "/data/" + c.getPackageName() + "/databases/SMMoneyDB.sql");
         if (SMMoney.IsExternalStorageWritable()) {
-            File exportDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PocketMoneyBackup");
+            //File exportDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PocketMoneyBackup");
+            File exportDir = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
             exportDir.mkdirs();
             File file = new File(exportDir, dbFile.getName());
             try {

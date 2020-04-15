@@ -79,6 +79,7 @@
     <style name="DialogTheme.Black" parent="DialogTheme">
         <item name="android:background">@color/black_theme_dialog_background_color</item>
         <item name="android:textColor">@color/black_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/black_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/black_theme_field_label_color</item>
         <item name="android:colorAccent">@color/black_theme_field_label_color</item>
     </style>
@@ -101,6 +102,7 @@
     <style name="DialogTheme.Blue" parent="DialogTheme">
         <item name="android:background">@color/black_theme_text</item>
         <item name="android:textColor">@color/blue_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/blue_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/blue_theme_field_label_color</item>
         <item name="android:colorAccent">@color/blue_theme_field_label_color</item>
     </style>
@@ -127,6 +129,7 @@
     <style name="DialogTheme.Green" parent="DialogTheme">
         <item name="android:background">@color/green_theme_background_color</item>
         <item name="android:textColor">@color/green_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/green_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/green_theme_field_label_color</item>
         <item name="android:colorAccent">@color/green_theme_field_label_color</item>
     </style>
@@ -148,6 +151,7 @@
     <style name="DialogTheme.Purple" parent="DialogTheme">
         <item name="android:background">@color/purple_theme_background_color</item>
         <item name="android:textColor">@color/purple_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/purple_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/purple_theme_field_label_color</item>
         <item name="android:colorAccent">@color/purple_theme_field_label_color</item>
     </style>
@@ -169,6 +173,7 @@
     <style name="DialogTheme.Coffee" parent="DialogTheme">
         <item name="android:background">@color/coffee_theme_background_color</item>
         <item name="android:textColor">@color/coffee_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/coffee_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/coffee_theme_field_label_color</item>
         <item name="android:colorAccent">@color/coffee_theme_field_label_color</item>
     </style>
@@ -190,6 +195,7 @@
     <style name="DialogTheme.Ruby" parent="DialogTheme">
         <item name="android:background">@color/ruby_theme_background_color</item>
         <item name="android:textColor">@color/ruby_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/ruby_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/ruby_theme_field_label_color</item>
         <item name="android:colorAccent">@color/ruby_theme_field_label_color</item>
     </style>
@@ -211,6 +217,7 @@
     <style name="DialogTheme.Gray" parent="DialogTheme">
         <item name="android:background">@color/gray_theme_background_color</item>
         <item name="android:textColor">@color/gray_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/gray_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/gray_theme_field_label_color</item>
         <item name="android:colorAccent">@color/gray_theme_field_label_color</item>
     </style>
@@ -232,6 +239,7 @@
     <style name="DialogTheme.White" parent="DialogTheme">
         <item name="android:background">@color/white_theme_background_color</item>
         <item name="android:textColor">@color/white_theme_field_label_color</item>
+        <item name="android:textColorPrimary">@color/white_theme_text_alt</item>
         <item name="android:textColorSecondary">@color/white_theme_field_label_color</item>
         <item name="android:colorAccent">@color/white_theme_field_label_color</item>
     </style>
