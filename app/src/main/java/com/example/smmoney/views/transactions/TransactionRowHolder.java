@@ -1,9 +1,6 @@
 package com.example.smmoney.views.transactions;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.support.v4.widget.CompoundButtonCompat;
-import android.support.v7.content.res.AppCompatResources;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
@@ -18,6 +15,7 @@ import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.TransactionClass;
+import com.example.smmoney.views.CheckBoxTint;
 
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -100,20 +98,7 @@ class TransactionRowHolder {
         this.category.setTextColor(PocketMoneyThemes.alternateCellTextColor());
         PMGlobal.programaticUpdate = true;
         this.selected.setChecked(this.transaction.getCleared());
-        //this.selected.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
-        this.selected.setButtonDrawable(AppCompatResources.getDrawable(context, android.support.v7.appcompat.R.drawable.abc_btn_check_material));
-        int[][] states = new int[][]{
-                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                /*new int[] { android.R.attr.state_pressed},*/  // pressed
-                new int[]{android.R.attr.state_enabled} // enabled
-        };
-        int[] colors = new int[]{
-                PocketMoneyThemes.chkBoxColorUnchecked(),
-                PocketMoneyThemes.chkBoxColorChecked()
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-        CompoundButtonCompat.setButtonTintList(this.selected, colorStateList);
+        CheckBoxTint.colorCheckBox(this.selected);
         PMGlobal.programaticUpdate = false;
     }
 
