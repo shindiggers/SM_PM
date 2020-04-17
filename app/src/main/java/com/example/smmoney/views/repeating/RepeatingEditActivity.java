@@ -6,12 +6,9 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +30,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -130,19 +128,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.suffixTextView = findViewById(R.id.suffixtextview);
         this.notifyDaysInAdvanceTextView = findViewById(R.id.daysinadvancetextview);
         this.notifyCheckBox = findViewById(R.id.notifycheckbox);
-        this.notifyCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
-        int[][] states = new int[][]{
-                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                /*new int[] { android.R.attr.state_pressed},*/  // pressed
-                new int[]{android.R.attr.state_enabled} // enabled
-        };
-        int[] colors = new int[]{
-                PocketMoneyThemes.chkBoxColorUnchecked(),
-                PocketMoneyThemes.chkBoxColorChecked()
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-        CompoundButtonCompat.setButtonTintList(this.notifyCheckBox, colorStateList);
+        CheckBoxTint.colorCheckBox(this.notifyCheckBox);
         this.sunday = this.daysOfWeek[Calendar.SUNDAY /*1*/];
         this.monday = this.daysOfWeek[Calendar.MONDAY /*2*/];
         this.tuesdayTextView.setText(this.daysOfWeek[Calendar.TUESDAY /*3*/]);

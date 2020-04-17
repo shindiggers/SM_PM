@@ -13,8 +13,6 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -27,7 +25,6 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.text.Editable;
 import android.text.Html;
 import android.text.format.DateFormat;
@@ -76,6 +73,7 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
@@ -531,7 +529,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.idEditText.setEnabled(Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_ID_FIELD));
         ((TextView) outterView.findViewById(R.id.id_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.clearedCheckBox = outterView.findViewById(R.id.clearedcheckbox);
-        this.clearedCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
         aView = (View) this.clearedCheckBox.getParent();
         if (Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLEARED_FIELD)) {
             aView.setVisibility(View.VISIBLE);
@@ -540,18 +537,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             aView.setVisibility(View.GONE);
         }
         this.clearedCheckBox.setEnabled(Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLEARED_FIELD));
-        int[][] states = new int[][]{
-                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                /*new int[] { android.R.attr.state_pressed},*/  // pressed
-                new int[]{android.R.attr.state_enabled} // enabled
-        };
-        int[] colors = new int[]{
-                PocketMoneyThemes.chkBoxColorUnchecked(),
-                PocketMoneyThemes.chkBoxColorChecked()
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-        CompoundButtonCompat.setButtonTintList(this.clearedCheckBox, colorStateList);
+        CheckBoxTint.colorCheckBox(this.clearedCheckBox);
         ((TextView) outterView.findViewById(R.id.cleared_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         aView = outterView.findViewById(R.id.classbutton);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());

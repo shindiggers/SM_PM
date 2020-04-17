@@ -29,6 +29,7 @@ import com.example.smmoney.views.repeating.RepeatingActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 import com.example.smmoney.views.transactions.TransactionsActivity;
+
 import java.util.ArrayList;
 import java.util.List;
 

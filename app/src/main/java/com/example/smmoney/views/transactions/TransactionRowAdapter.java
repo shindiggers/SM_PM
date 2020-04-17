@@ -10,16 +10,19 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-//import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
-//import android.widget.LinearLayout;
-//import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.TransactionClass;
+
 import java.util.ArrayList;
+
+//import android.widget.CheckBox;
+//import android.widget.LinearLayout;
+//import android.widget.TextView;
 
 class TransactionRowAdapter extends BaseAdapter {
     private ArrayList<TransactionClass> elements = new ArrayList<>();
@@ -53,7 +56,7 @@ class TransactionRowAdapter extends BaseAdapter {
 
     @Override
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     @NonNull

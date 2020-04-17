@@ -2,13 +2,10 @@ package com.example.smmoney.views;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -46,10 +43,10 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         setContentView(LayoutInflater.from(this).inflate(R.layout.endondate, null));
         setupView();
         String previousDate = Objects.requireNonNull(getIntent().getExtras()).getString("Date");
-        Log.d("ENDONDATEACTIVITY","String previous date = " + previousDate);
+        Log.d("ENDONDATEACTIVITY", "String previous date = " + previousDate);
         assert previousDate != null;
         if (!previousDate.equals(Locales.kLOC_EDIT_REPEATING_ENDONNONE)) { //kLOC_EDIT_REPEATING_ENDONNONE = "No end Date"
-            Log.d("ENDONDATEACTIVITY","String previousDate != "+ Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+            Log.d("ENDONDATEACTIVITY", "String previousDate != " + Locales.kLOC_EDIT_REPEATING_ENDONNONE);
             this.prevDate = CalExt.dateFromDescriptionWithMediumDate(previousDate);
 
             this.theDate.setText(previousDate);
@@ -63,19 +60,7 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
 
     private void setupView() {
         this.theCheckbox = findViewById(R.id.endondatecheckbox);
-        this.theCheckbox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
-        int[][] states = new int[][]{
-                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                /*new int[] { android.R.attr.state_pressed},*/  // pressed
-                new int[]{android.R.attr.state_enabled} // enabled
-        };
-        int[] colors = new int[]{
-                PocketMoneyThemes.chkBoxColorUnchecked(),
-                PocketMoneyThemes.chkBoxColorChecked()
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-        CompoundButtonCompat.setButtonTintList(this.theCheckbox, colorStateList);
+        CheckBoxTint.colorCheckBox(this.theCheckbox);
         this.theDate = findViewById(R.id.endondatedate);
         ImageView theDateIcon = findViewById(R.id.endondate_ic_calendar);
         this.theDateRow = (FrameLayout) this.theDate.getParent();
@@ -138,14 +123,13 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         if (this.theCheckbox.isChecked()) {
             Intent i = new Intent();
             i.putExtra("Date", this.theDate.getText().toString());
-            Log.d("ENDONDATEACT","PutExtra out of this method = "+ this.theDate.getText().toString());
+            Log.d("ENDONDATEACT", "PutExtra out of this method = " + this.theDate.getText().toString());
             setResult(ENDONDATE_RESULT_DATESELECTED, i);
         } else {
             setResult(ENDONDATE_RESULT_NODATESELECTED);
         }
         finish();
     }
-
 
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

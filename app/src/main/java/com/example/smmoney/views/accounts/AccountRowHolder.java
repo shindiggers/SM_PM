@@ -1,9 +1,6 @@
 package com.example.smmoney.views.accounts;
 
 import android.content.Context;
-import android.content.res.ColorStateList;
-import android.content.res.Resources;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 import android.widget.ImageView;
@@ -15,6 +12,7 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
+import com.example.smmoney.views.CheckBoxTint;
 
 class AccountRowHolder {
     public AccountClass account;
@@ -32,19 +30,7 @@ class AccountRowHolder {
         this.accountname.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.icon_image.setImageResource(this.account.getIconFileNameResourceIDUsingContext(mContext));
         this.selected.setChecked(this.account.getTotalWorth());
-        this.selected.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
-        int[][] states = new int[][]{
-                /*new int[] {-android.R.attr.state_enabled},*/ // disabled
-                new int[]{-android.R.attr.state_checked}, // unchecked
-                /*new int[] { android.R.attr.state_pressed},*/  // pressed
-                new int[]{android.R.attr.state_enabled} // enabled
-        };
-        int[] colors = new int[]{
-                PocketMoneyThemes.chkBoxColorUnchecked(),
-                PocketMoneyThemes.chkBoxColorChecked()
-        };
-        ColorStateList colorStateList = new ColorStateList(states, colors);
-        CompoundButtonCompat.setButtonTintList(this.selected, colorStateList);
+        CheckBoxTint.colorCheckBox(this.selected);
         updateBalanceLabel();
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             this.exchangeRate.setVisibility(View.VISIBLE);

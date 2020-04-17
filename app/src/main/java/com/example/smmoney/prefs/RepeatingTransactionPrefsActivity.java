@@ -1,6 +1,5 @@
 package com.example.smmoney.prefs;
 
-import android.content.res.Resources;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -17,6 +16,7 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.PocketMoneyActivity;
 
 public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
@@ -32,7 +32,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         this.postCheckBox = findViewById(R.id.postcheckbox);
-        this.postCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
+        CheckBoxTint.colorCheckBox(this.postCheckBox);
         this.postEditText = findViewById(R.id.postedittext);
         this.postView = (RelativeLayout) this.postEditText.getParent();
         this.suffix = Locales.kLOC_PREFERENCES_DAYS;

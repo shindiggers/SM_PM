@@ -33,6 +33,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.TransactionClass;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -156,6 +157,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.budgetCell.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         ((TextView) this.outterView.findViewById(R.id.budgetlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.rolloverCheckBox = this.outterView.findViewById(R.id.rollovercheckbox);
+        CheckBoxTint.colorCheckBox(this.rolloverCheckBox);
         aView = (View) this.rolloverCheckBox.getParent();
         ((TextView) this.outterView.findViewById(R.id.rolloverlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.rolloverCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
@@ -164,6 +166,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             }
         });
         this.includeSubcategoriesCheckBox = this.outterView.findViewById(R.id.includesubcategoriescheckbox);
+        CheckBoxTint.colorCheckBox(this.includeSubcategoriesCheckBox);
         this.includeSubcategoriesCell = (View) this.includeSubcategoriesCheckBox.getParent();
         ((TextView) this.outterView.findViewById(R.id.includesubcategorieslabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         TextView button = findViewById(R.id.save_button);

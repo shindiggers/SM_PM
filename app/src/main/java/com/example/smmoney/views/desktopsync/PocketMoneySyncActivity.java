@@ -3,7 +3,6 @@ package com.example.smmoney.views.desktopsync;
 import android.app.AlertDialog.Builder;
 import android.app.Dialog;
 import android.content.DialogInterface;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -30,6 +29,7 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 
@@ -120,7 +120,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.spinningWheel = aView.findViewById(R.id.spinningwheel);
         this.restoreTextView = aView.findViewById(R.id.restorelabel);
         this.restoreCheckBox = aView.findViewById(R.id.restorecheckbox);
-        this.restoreCheckBox.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_holo_light", "drawable", "android"));
+        CheckBoxTint.colorCheckBox(this.restoreCheckBox);
         this.ipaddressEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.ipaddressTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.ipaddressTextView.setOnClickListener(new OnClickListener() {
