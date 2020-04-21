@@ -473,8 +473,8 @@
     <string name="kLOC_FILETRANSFERS_MODE">Transfer Mode</string>
     <string name="kLOC_FILETRANSFERS_SYNCDOCS">SyncDocs</string>
     <string name="kLOC_FILETRANSFERS_HTTP">Web Browser</string>
-    <string name="kLOC_FILETRANSFERS_EMAIL_SUBJECT">PocketMoney %1$s file</string>
-    <string name="kLOC_FILETRANSFERS_EMAIL_BODY">%1$s file sent from PocketMoney at %2$s</string>
+    <string name="kLOC_FILETRANSFERS_EMAIL_SUBJECT">SMMoney %1$s file</string>
+    <string name="kLOC_FILETRANSFERS_EMAIL_BODY">%1$s file sent from SMMoney at %2$s</string>
     <string name="kLOC_TIP_GETTINGSTARTED">Tap Edit to create and manage your accounts.</string>
     <string name="kLOC_TIP_GETTINGSTARTED_NEW">Tap + to create a new account.</string>
     <string name="kLOC_FILTER_DATES_LAST30DAYS">Last 30 days</string>

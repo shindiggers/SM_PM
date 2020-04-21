@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
@@ -18,6 +19,7 @@ import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.HandlerActivity;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -59,7 +61,7 @@ public class ImportExportTDF {
         String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
         BufferedReader CSVReader = null;
         try {
-            CSVReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new StringBuilder(String.valueOf(pmExternalPath)).append(filePath).toString())), encodingStr));
+            CSVReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new StringBuilder(pmExternalPath).append(filePath).toString())), encodingStr));
         } catch (FileNotFoundException e) {
             displayError("Error reading QIF file: " + e.toString(), false);
             Log.v("FileReader", "File Not Found");
@@ -236,7 +238,7 @@ public class ImportExportTDF {
                 SplitsClass split = (SplitsClass) it2.next();
                 if (this.filter != null && this.filter.isValidSplit(split)) {
                     String str;
-                    StringBuilder stringBuilder = new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(TDFData)).append(transaction.getAccount()).append("\t").toString())).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString())).append(transaction.getCheckNumber()).append("\t").toString())).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString())).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString())).append(split.getMemo().replace("\n", "<br>")).append("\t").toString())).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString()));
+                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(TDFData).append(transaction.getAccount()).append("\t").toString()).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString()).append(transaction.getCheckNumber()).append("\t").toString()).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString()).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString()).append(split.getMemo().replace("\n", "<br>")).append("\t").toString()).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString());
                     if (transaction.getCleared()) {
                         str = "*";
                     } else {
@@ -245,7 +247,7 @@ public class ImportExportTDF {
                     TDFData = stringBuilder.append(str).append("\n").toString();
                 }
             }
-            returnStr = new StringBuilder(String.valueOf(returnStr)).append(TDFData).toString();
+            returnStr = new StringBuilder(returnStr).append(TDFData).toString();
         }
         return returnStr;
     }
@@ -255,7 +257,7 @@ public class ImportExportTDF {
         IOException e;
         String TDFData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.txt").toString();
@@ -302,7 +304,7 @@ public class ImportExportTDF {
                 SplitsClass split = (SplitsClass) it2.next();
                 if (this.filter != null && this.filter.isValidSplit(split)) {
                     String str;
-                    StringBuilder stringBuilder = new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(TDFData)).append(transaction.getAccount()).append("\t").toString())).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString())).append(transaction.getCheckNumber()).append("\t").toString())).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString())).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString())).append(split.getMemo().replace("\n", "<br>")).append("\t").toString())).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString()));
+                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(TDFData).append(transaction.getAccount()).append("\t").toString()).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString()).append(transaction.getCheckNumber()).append("\t").toString()).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString()).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString()).append(split.getMemo().replace("\n", "<br>")).append("\t").toString()).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString());
                     if (transaction.getCleared()) {
                         str = "*";
                     } else {
@@ -311,7 +313,7 @@ public class ImportExportTDF {
                     TDFData = stringBuilder.append(str).append("\n").toString();
                 }
             }
-            returnStr = new StringBuilder(String.valueOf(returnStr)).append(TDFData).toString();
+            returnStr = new StringBuilder(returnStr).append(TDFData).toString();
         }
         return returnStr;
     }

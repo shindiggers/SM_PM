@@ -5,6 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
@@ -18,6 +19,7 @@ import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.HandlerActivity;
+
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -259,7 +261,7 @@ public class ImportExportCSV {
             while (it2.hasNext()) {
                 SplitsClass split = (SplitsClass) it2.next();
                 if (this.filter != null && this.filter.isValidSplit(split)) {
-                    StringBuilder stringBuilder = new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString())).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString())).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString())).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString())).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString())).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString())).append(transaction.getCleared() ? "*" : "").append("\",\"").toString())).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString()));
+                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString()).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString()).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString()).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString()).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString()).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString()).append(transaction.getCleared() ? "*" : "").append("\",\"").toString()).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString());
                     if (multipleCurrencies) {
                         exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
                     } else {
@@ -268,7 +270,7 @@ public class ImportExportCSV {
                     CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
                 }
             }
-            returnStr = new StringBuilder(String.valueOf(returnStr)).append(CSVData).toString();
+            returnStr = new StringBuilder(returnStr).append(CSVData).toString();
             exchangeRateAsString = "";
         }
         return returnStr;
@@ -278,7 +280,7 @@ public class ImportExportCSV {
         IOException e;
         String CSVData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.csv").toString();
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
@@ -326,7 +328,7 @@ public class ImportExportCSV {
             while (it2.hasNext()) {
                 SplitsClass split = (SplitsClass) it2.next();
                 if (this.filter != null && this.filter.isValidSplit(split)) {
-                    StringBuilder stringBuilder = new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf(new StringBuilder(String.valueOf("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString())).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString())).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString())).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString())).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString())).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString())).append(transaction.getCleared() ? "*" : "").append("\",\"").toString())).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString()));
+                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString()).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString()).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString()).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString()).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString()).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString()).append(transaction.getCleared() ? "*" : "").append("\",\"").toString()).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString());
                     if (multipleCurrencies) {
                         exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
                     } else {
@@ -335,7 +337,7 @@ public class ImportExportCSV {
                     CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
                 }
             }
-            returnStr = new StringBuilder(String.valueOf(returnStr)).append(CSVData).toString();
+            returnStr = new StringBuilder(returnStr).append(CSVData).toString();
             exchangeRateAsString = "";
         }
         return returnStr;
@@ -345,7 +347,7 @@ public class ImportExportCSV {
         IOException e;
         String CSVData = generateData(transactions);
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.csv").toString();
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
@@ -390,7 +392,7 @@ public class ImportExportCSV {
             return null;
         }
         int i;
-        Vector<String> store = new Vector();
+        Vector<String> store = new Vector<>();
         StringBuffer curVal = new StringBuffer();
         boolean inquotes = false;
         for (i = 0; i < line.length(); i++) {

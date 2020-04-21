@@ -14,6 +14,7 @@ import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -116,6 +117,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private final int EMAIL_OFX = 3;
     private final int EMAIL_QIF = 0;
     private final int EMAIL_TDF = 1;
+    private final int EMAIL_BACKUP = 4;
     private final int IMPORT_PROGRESS_DIALOG = 9;
     private final int LISCENSING = 8;
     private final int MENU_EMAILTRANSFERS = 3;
@@ -136,7 +138,11 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     private final int MENU_VIEW = 4;
     private final int MENU_WIFITRANSFERS = 2;
     private final int MENU_WIFI_EXPORT = 4;
-    private final int REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE = 100;
+    private final int PERMISSION_EMAIL_QIF = 100;
+    private final int PERMISSION_TDF_BACKUP = 101;
+    private final int PERMISSION_CSV_BACKUP = 102;
+    private final int PERMISSION_OFX_BACKUP = 103;
+    private final int PERMISSION_EMAIL_BACKUP = 104;
     public final int REQUEST_EDIT = 2;
     public final int REQUEST_NEW = 1;
     private RadioButton accountRadioButton;
@@ -273,7 +279,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
 
     public void dontAllow() {
         if (!AccountsActivity.this.isFinishing()) {
-            AccountsActivity.this.showDialog(LISCENSING /*8*/ );
+            AccountsActivity.this.showDialog(LISCENSING /*8*/);
         }
     }
 
@@ -936,9 +942,9 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         alert.show();
     }
 
-    private void generateCSVForEmail() {
-        String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-        this.msgEmail = ACCOUNT_REQUEST_BUDGET;
+    void generateCSVForEmail() {
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        this.msgEmail = EMAIL_CSV;
         this.shouldEmail = true;
         this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.csv";
         final String fl3 = this.emailFileLocation;
@@ -953,7 +959,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     }
 
     private void generateTDFForEmail() {
-        String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         this.msgEmail = ACCOUNT_REQUEST_FILTER;
         this.shouldEmail = true;
         this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
@@ -1180,7 +1186,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                     }
                 });
                 return builder.create();
-            case ACCOUNT_REQUEST_EMAIL /*3*/:
+            case MENU_EMAILTRANSFERS /*3*/:
                 CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX", Locales.kLOC_TOOLS_BACKUPFILES};
                 builder = new AlertDialog.Builder(this);
                 builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL);
@@ -1191,16 +1197,16 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                                 AccountsActivity.this.generateQIFForEmail();
                                 return;
                             case EMAIL_TDF /*1*/:
-                                AccountsActivity.this.generateTDFForEmail();
+                                showWriteExternalStoraageStatePermission(PERMISSION_TDF_BACKUP);
                                 return;
                             case EMAIL_CSV /*2*/:
-                                AccountsActivity.this.generateCSVForEmail();
+                                showWriteExternalStoraageStatePermission(PERMISSION_CSV_BACKUP);
                                 return;
                             case EMAIL_OFX /*3*/:
                                 AccountsActivity.this.generateOFXForEmail();
                                 return;
-                            case 4 /*Backup file*/:
-                                showWriteExternalStoraageStatePermission();
+                            case EMAIL_BACKUP /*4*/ /*Email database backup file*/:
+                                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_BACKUP);
                                 return;
                             default:
                         }
@@ -1541,7 +1547,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                             int i;
                             Object[] objArr;
                             switch (AccountsActivity.this.msgEmail) {
-                                case PocketMoneyThemes.kThemeBlack /*0*/:
+                                case EMAIL_QIF /*0*/:
                                     emailIntent.setType("text/qif");
                                     emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + AccountsActivity.this.emailFileLocation));
                                     Log.i("QQQQQQQQ  ", AccountsActivity.this.emailFileLocation);
@@ -1558,9 +1564,13 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                                     emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
                                     AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
                                     break;
-                                case AccountsActivity.ACCOUNT_REQUEST_FILTER /*1*/:
+                                case EMAIL_TDF /*1*/:
                                     emailIntent.setType("text/txt");
-                                    emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + AccountsActivity.this.emailFileLocation));
+                                    File txtFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File sharedTxtFile = new File(txtFile, "SMMoney.txt");
+                                    Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
+                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
@@ -1574,9 +1584,13 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                                     emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
-                                case AccountsActivity.ACCOUNT_REQUEST_BUDGET /*2*/:
+                                case EMAIL_CSV /*2*/:
                                     emailIntent.setType("text/csv");
-                                    emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + AccountsActivity.this.emailFileLocation));
+                                    File csvFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File sharedCsvFile = new File(csvFile, "SMMoney.csv");
+                                    Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
+                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
@@ -1590,7 +1604,7 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
                                     emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
-                                case AccountsActivity.ACCOUNT_REQUEST_EMAIL /*3*/:
+                                case EMAIL_OFX /*3*/:
                                     emailIntent.setType("text/ofx");
                                     emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + AccountsActivity.this.emailFileLocation));
                                     accountsActivity = AccountsActivity.this;
@@ -1670,16 +1684,28 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
         return c.getPackageName().toLowerCase().contains("lite");
     }
 
-    private void showWriteExternalStoraageStatePermission() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                showPermissionExplanationAlertDialog(getString(R.string.permission_dialog_title), getString(R.string.permission_explanation_message), Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+    private void showWriteExternalStoraageStatePermission(int requestCode) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    showPermissionExplanationAlertDialog(getString(R.string.permission_dialog_title), getString(R.string.permission_explanation_message), Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode);
+                } else {
+                    requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, requestCode);
+                }
             } else {
-                requestPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE, REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE);
+                switch (requestCode) {
+                    case PERMISSION_EMAIL_BACKUP: {
+                        generateBackupForEmail();
+                    }
+                    case PERMISSION_CSV_BACKUP: {
+                        AccountsActivity.this.generateCSVForEmail();
+                    }
+                    case PERMISSION_TDF_BACKUP: {
+                        AccountsActivity.this.generateTDFForEmail();
+                    }
+                }
             }
-        } else {
-            Toast.makeText(AccountsActivity.this, "Permission (already) Granted!", Toast.LENGTH_LONG).show();
         }
     }
 
@@ -1725,21 +1751,25 @@ public class AccountsActivity extends PocketMoneyActivity implements HandlerActi
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case REQUEST_PERMISSION_WRITE_EXTERNAL_STORAGE: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    // permission was granted
+        // If request is cancelled, the result arrays are empty.
+        if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+            // permission was granted
+            switch (requestCode) {
+                case PERMISSION_EMAIL_BACKUP: {
                     generateBackupForEmail();
-                } else {
-                    // permission denied. Disable the functionality that depends on this permission.
-                    showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
+                }
+                case PERMISSION_CSV_BACKUP: {
+                    generateCSVForEmail();
+                }
+                case PERMISSION_TDF_BACKUP: {
+                    generateTDFForEmail();
                 }
             }
 
-            // other 'case' lines to check for other
-            // permissions this app might request.
+        } else {
+            // permission denied. Disable the functionality that depends on this permission.
+            showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
         }
     }
+
 }
