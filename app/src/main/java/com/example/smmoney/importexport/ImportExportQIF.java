@@ -607,7 +607,7 @@ public class ImportExportQIF {
         IOException e;
         String QIFData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = pmExternalPath + "/PocketMoneyBackup/" + fileName;
@@ -641,7 +641,7 @@ public class ImportExportQIF {
         IOException e;
         String QIFData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.qif";
@@ -700,7 +700,7 @@ public class ImportExportQIF {
         Log.i("** IO-QIF", "IO-QIF");
         String QIFData = generateData(transactions);
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = this.QIFPath == null ? pmExternalPath + "/PocketMoneyBackup/" + "SMMoney" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif" : this.QIFPath;
@@ -713,7 +713,9 @@ public class ImportExportQIF {
             try {
                 QIFWriter.write(QIFData);
                 QIFWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileDir.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
+                if (!Prefs.getBooleanPref(Prefs.QIF_EXPORT_SEPERATELY)) {
+                    ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileDir.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
+                }
                 bufferedWriter = QIFWriter;
                 return true;
             } catch (IOException e2) {
@@ -828,7 +830,9 @@ public class ImportExportQIF {
                 if (!lastAccount.equals(transaction.getAccount())) {
                     String accountQIFType = accountTypeToQIFType(AccountDB.recordFor(transaction.getAccount()).getType());
                     if (!this.qifOld) {
-                        AccountClass account = (AccountClass) it.next();
+                        String accountName = transaction.getAccount();
+                        AccountClass account = new AccountClass(AccountClass.idForAccount(accountName));
+                        //AccountClass account = (AccountClass) it.next();
                         addToStringBuffer(strBuff, "!Account\n");
                         addToStringBuffer(strBuff, formatAccount(account));
                     }

@@ -200,7 +200,7 @@ public class Prefs {
     }
 
     public static void importDB(Context c) {
-        File dbBackupFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath() + "/PocketMoneyBackup/SMMoneyDB.sql");
+        File dbBackupFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup/SMMoneyDB.sql");
         if (!dbBackupFile.exists()) {
             Log.w(SMMoney.TAG, "Database backup file does not exist, cannot import.");
         } else if (!dbBackupFile.canRead()) {

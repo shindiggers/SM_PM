@@ -137,20 +137,23 @@ public class ImportExportCSV {
 
     private void importTransaction(String[] tokens) {
         if (tokens[0].length() != 0) {
-            if (AccountClass.idForAccount(tokens[0].substring(1)) == 0) {
+            if (AccountClass.idForAccount(tokens[0]) == 0) {
                 AccountClass account = new AccountClass();
-                int accountID = AccountClass.idForAccountElseAddIfMissing(tokens[0].substring(1), true);
+                int accountID = AccountClass.idForAccountElseAddIfMissing(tokens[0], true);
                 account.setTotalWorth(true);
                 account.setNoLimit(true);
                 account.saveToDatabase();
             }
             TransactionClass transaction = new TransactionClass();
-            transaction.setAccount(tokens[0].substring(1));
-            transaction.setDate(CalExt.dateFromDescriptionWithShortDate(tokens[1]));
+            transaction.setAccount(tokens[0]);
+            //todo: Date does not parse correctly. Need to handle all differently formatted date/time combos. Current parser gets date from dd MMM YYYY but does not get time
+            //transaction.setDate(CalExt.dateFromDescriptionWithShortDate(tokens[1]));
+            transaction.setDate(CalExt.dateFromDescriptionWithMediumDate(tokens[1]));
+            //transaction.setDate(CalExt.dateFromDescriptionWithTime(tokens[1]));
             transaction.setCheckNumber(tokens[2]);
             transaction.setPayee(tokens[3]);
             if (tokens[3].endsWith(">") && tokens[3].startsWith("<")) {
-                transaction.setTransferToAccount(tokens[3].substring(1, tokens[3].length() - 2));
+                transaction.setTransferToAccount(tokens[3].substring(1, tokens[3].length() - 1));
                 transaction.setPayee("");
             }
             transaction.setCategory(tokens[4]);
@@ -261,7 +264,37 @@ public class ImportExportCSV {
             while (it2.hasNext()) {
                 SplitsClass split = (SplitsClass) it2.next();
                 if (this.filter != null && this.filter.isValidSplit(split)) {
-                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString()).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString()).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString()).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString()).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString()).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString()).append(transaction.getCleared() ? "*" : "").append("\",\"").toString()).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString());
+                    StringBuilder stringBuilder;
+                    stringBuilder = new StringBuilder(
+                            new StringBuilder(
+                                    new StringBuilder(
+                                            new StringBuilder(
+                                                    new StringBuilder(
+                                                            new StringBuilder(
+                                                                    new StringBuilder(
+                                                                            new StringBuilder(
+                                                                                    new StringBuilder(
+                                                                                            "\"" + CSVData + escapeDoubleQuote(transaction.getAccount())
+                                                                                                    + "\",\""
+                                                                                                    + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())))
+                                                                                            .append("\",\"")
+                                                                                            .append(escapeDoubleQuote(transaction.getCheckNumber()))
+                                                                                            .append("\",\"").toString())
+                                                                                    .append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()))
+                                                                                    .append("\",\"").toString())
+                                                                            .append(escapeDoubleQuote(split.getCategory()))
+                                                                            .append("\",\"").toString())
+                                                                    .append(escapeDoubleQuote(split.getClassName()))
+                                                                    .append("\",\"").toString())
+                                                            .append(escapeDoubleQuote(split.getMemo()))
+                                                            .append("\",\"").toString())
+                                                    .append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount())))
+                                                    .append("\",\"").toString())
+                                            .append(transaction.getCleared() ? "*" : "")
+                                            .append("\",\"").toString())
+                                    .append(escapeDoubleQuote(split.getCurrencyCode()))
+                                    .append("\",\"").toString()
+                    );
                     if (multipleCurrencies) {
                         exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
                     } else {
@@ -408,7 +441,11 @@ public class ImportExportCSV {
                 if (curVal.length() > 0) {
                     curVal.append('\"');
                 }
+                // todo: when parsing a txt file, this method truncates amounts which include a comma separator. Need to figure a workaround
             } else if (ch == ',') {
+                store.add(curVal.toString());
+                curVal = new StringBuffer();
+            } else if (ch == '\t') {
                 store.add(curVal.toString());
                 curVal = new StringBuffer();
             } else {
