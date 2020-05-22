@@ -206,157 +206,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private TextView titleTextView;
     private WakeLock wakeLock;
 
-    @Override
-    public void onFinishEmailDialog(int EmailType) {
-        switch (EmailType) {
-            case EMAIL_QIF:
-                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_QIF);
-                break;
-            case EMAIL_TDF:
-                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_TDF);
-                break;
-            case EMAIL_CSV:
-                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_CSV);
-                break;
-            case EMAIL_OFX:
-                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_OFX);
-                break;
-            case EMAIL_BACKUP:
-                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_DB);
-                break;
-        }
-    }
-
-    @Override
-    public void onFinishFileTransferDialog(int transferType) {
-        switch (transferType) {
-
-            case 0 /*Email Transferss...*/:
-                FragmentManager fragmentManagerEmail = getSupportFragmentManager();
-                DialogFragmentEmailTransfers dialogFragmentEmailTransfers = new DialogFragmentEmailTransfers();
-                dialogFragmentEmailTransfers.show(fragmentManagerEmail, "fragment_dialog_email");
-                break;
-            case 1 /*Local Storage Trasnfers...*/:
-                FragmentManager fragmentManagerLocalStorage = getSupportFragmentManager();
-                DialogFragmentLocalStorageTransfers dialogFragmentLocalStorageTransfers = new DialogFragmentLocalStorageTransfers();
-                dialogFragmentLocalStorageTransfers.show(fragmentManagerLocalStorage, "fragment_dialog_local");
-                break;
-            case 2 /*SMMoney Sync...*/:
-                AccountsActivity.this.context.startActivity(new Intent(AccountsActivity.this.context, PocketMoneySyncActivity.class));
-                break;
-        }
-    }
-
-    @Override
-    public void onFinishLocalStorageTransferDialog(int transferType) {
-        switch (transferType) {
-            case 0 /*Backup...*/:
-                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_DB);
-                break;
-            case 1 /*Restore...*/:
-                showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_DB);
-                break;
-            case 2 /*Import...*/:
-                FragmentManager fragmentManagerSdImport = getSupportFragmentManager();
-                DialogFragmentSdImport dialogFragmentSdImport = new DialogFragmentSdImport();
-                dialogFragmentSdImport.show(fragmentManagerSdImport, "fragment_dialog");
-                break;
-            //AccountsActivity.this.showDialog(MENU_SD_IMPORT /*6*/);
-            case 3 /*Export*/:
-                FragmentManager fragmentManagerSdExport = getSupportFragmentManager();
-                DialogFragmentSdExport dialogFragmentSdExport = new DialogFragmentSdExport();
-                dialogFragmentSdExport.show(fragmentManagerSdExport, "fragment_dialog");
-                break;
-            //AccountsActivity.this.showDialog(MENU_SD_EXPORT /*7*/);
-        }
-    }
-
-    @Override
-    public void onFinishSdImportDialog(int importType) {
-        switch (importType) {
-            case 0 /*QIF*/:
-                FragmentManager fragmentManagerSdImportQIF = getSupportFragmentManager();
-                DialogFragmentSdImportQIF dialogFragmentSdImportQIF = new DialogFragmentSdImportQIF();
-                dialogFragmentSdImportQIF.show(fragmentManagerSdImportQIF, "fragment_dialog");
-                break;
-            case 1 /*TDF*/:
-                FragmentManager fragmentManagerSdImportTDF = getSupportFragmentManager();
-                DialogFragmentSdImportTDF dialogFragmentSdImportTDF = new DialogFragmentSdImportTDF();
-                dialogFragmentSdImportTDF.show(fragmentManagerSdImportTDF, "fragment_dialog");
-                break;
-//                AccountsActivity.this.showDialog(MENU_SD_IMPORT_TDF /*12*/);
-//                break;
-            case 2 /*CSV*/:
-                FragmentManager fragmentManagerSdImportCSV = getSupportFragmentManager();
-                DialogFragmentSdImportCSV dialogFragmentSdImportCSV = new DialogFragmentSdImportCSV();
-                dialogFragmentSdImportCSV.show(fragmentManagerSdImportCSV, "fragment_dialog");
-                break;
-//                AccountsActivity.this.showDialog(MENU_SD_IMPORT_CSV /*11*/);
-//                break;
-            case 3 /*OFX/QFX*/:
-                FragmentManager fragmentManagerSdImportOFX = getSupportFragmentManager();
-                DialogFragmentSdImportOFX dialogFragmentSdImportOFX = new DialogFragmentSdImportOFX();
-                dialogFragmentSdImportOFX.show(fragmentManagerSdImportOFX, "fragment_dialog");
-                break;
-//                AccountsActivity.this.showDialog(MENU_SD_IMPORT_OFX /*14*/);
-//                break;
-        }
-    }
-
-    @Override
-    public void onFinishSdExportDialog(int exportType) {
-        switch (exportType) {
-            case 0 /*QIF*/:
-                AccountsActivity.this.exportQIFToSD();
-                break;
-            case 1 /*TDF*/:
-                AccountsActivity.this.exportTDFToSD();
-                break;
-            case 2 /*CSV*/:
-                AccountsActivity.this.exportCSVToSD();
-                break;
-            case 3 /*OFX/QFX*/:
-                AccountsActivity.this.exportOFXToSD();
-                break;
-        }
-    }
-
-    @Override
-    public void onFinishSdImportQIFDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportQIFDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            AccountsActivity.this.importQIFFromSD();
-        }
-    }
-
-    @Override
-    public void onFinishSdImportTDFDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportTDFDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            AccountsActivity.this.importTDFFromSD();
-        }
-    }
-
-    @Override
-    public void onFinishSdImportCVSDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportCSVDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            AccountsActivity.this.importCSVFromSD();
-        }
-    }
-
-    @Override
-    public void onFinishSdImportOFXDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportOFXDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            AccountsActivity.this.importOFXFromSD();
-        }
-    }
-
     static class AnonymousClass49 implements OnClickListener {
         private final /* synthetic */ Activity val$c;
 
@@ -375,12 +224,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
             this.val$c.startActivity(new Intent(str2, Uri.parse(str)));
         }
     }
-
     private static class BalanceTask extends AsyncTask {
         private int pref;
         private double totalWorth;
         private WeakReference<AccountsActivity> accountsActivityWeakReference;
-
         private BalanceTask(AccountsActivity context) {
             this.totalWorth = 0.0d;
             this.pref = 0;
@@ -1818,10 +1665,152 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     break;
                 }
             }
-
         } else {
             // permission denied. Disable the functionality that depends on this permission.
             showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
+        }
+    }
+
+    @Override
+    public void onFinishEmailDialog(int EmailType) {
+        switch (EmailType) {
+            case EMAIL_QIF:
+                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_QIF);
+                break;
+            case EMAIL_TDF:
+                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_TDF);
+                break;
+            case EMAIL_CSV:
+                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_CSV);
+                break;
+            case EMAIL_OFX:
+                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_OFX);
+                break;
+            case EMAIL_BACKUP:
+                showWriteExternalStoraageStatePermission(PERMISSION_EMAIL_DB);
+                break;
+        }
+    }
+
+    @Override
+    public void onFinishFileTransferDialog(int transferType) {
+        switch (transferType) {
+
+            case 0 /*Email Transferss...*/:
+                FragmentManager fragmentManagerEmail = getSupportFragmentManager();
+                DialogFragmentEmailTransfers dialogFragmentEmailTransfers = new DialogFragmentEmailTransfers();
+                dialogFragmentEmailTransfers.show(fragmentManagerEmail, "fragment_dialog_email");
+                break;
+            case 1 /*Local Storage Trasnfers...*/:
+                FragmentManager fragmentManagerLocalStorage = getSupportFragmentManager();
+                DialogFragmentLocalStorageTransfers dialogFragmentLocalStorageTransfers = new DialogFragmentLocalStorageTransfers();
+                dialogFragmentLocalStorageTransfers.show(fragmentManagerLocalStorage, "fragment_dialog_local");
+                break;
+            case 2 /*SMMoney Sync...*/:
+                AccountsActivity.this.context.startActivity(new Intent(AccountsActivity.this.context, PocketMoneySyncActivity.class));
+                break;
+        }
+    }
+
+    @Override
+    public void onFinishLocalStorageTransferDialog(int transferType) {
+        switch (transferType) {
+            case 0 /*Backup...*/:
+                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_DB);
+                break;
+            case 1 /*Restore...*/:
+                showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_DB);
+                break;
+            case 2 /*Import...*/:
+                FragmentManager fragmentManagerSdImport = getSupportFragmentManager();
+                DialogFragmentSdImport dialogFragmentSdImport = new DialogFragmentSdImport();
+                dialogFragmentSdImport.show(fragmentManagerSdImport, "fragment_dialog");
+                break;
+            case 3 /*Export*/:
+                FragmentManager fragmentManagerSdExport = getSupportFragmentManager();
+                DialogFragmentSdExport dialogFragmentSdExport = new DialogFragmentSdExport();
+                dialogFragmentSdExport.show(fragmentManagerSdExport, "fragment_dialog");
+                break;
+        }
+    }
+
+    @Override
+    public void onFinishSdImportDialog(int importType) {
+        switch (importType) {
+            case 0 /*QIF*/:
+                FragmentManager fragmentManagerSdImportQIF = getSupportFragmentManager();
+                DialogFragmentSdImportQIF dialogFragmentSdImportQIF = new DialogFragmentSdImportQIF();
+                dialogFragmentSdImportQIF.show(fragmentManagerSdImportQIF, "fragment_dialog");
+                break;
+            case 1 /*TDF*/:
+                FragmentManager fragmentManagerSdImportTDF = getSupportFragmentManager();
+                DialogFragmentSdImportTDF dialogFragmentSdImportTDF = new DialogFragmentSdImportTDF();
+                dialogFragmentSdImportTDF.show(fragmentManagerSdImportTDF, "fragment_dialog");
+                break;
+            case 2 /*CSV*/:
+                FragmentManager fragmentManagerSdImportCSV = getSupportFragmentManager();
+                DialogFragmentSdImportCSV dialogFragmentSdImportCSV = new DialogFragmentSdImportCSV();
+                dialogFragmentSdImportCSV.show(fragmentManagerSdImportCSV, "fragment_dialog");
+                break;
+            case 3 /*OFX/QFX*/:
+                FragmentManager fragmentManagerSdImportOFX = getSupportFragmentManager();
+                DialogFragmentSdImportOFX dialogFragmentSdImportOFX = new DialogFragmentSdImportOFX();
+                dialogFragmentSdImportOFX.show(fragmentManagerSdImportOFX, "fragment_dialog");
+                break;
+        }
+    }
+
+    @Override
+    public void onFinishSdExportDialog(int exportType) {
+        switch (exportType) {
+            case 0 /*QIF*/:
+                AccountsActivity.this.exportQIFToSD();
+                break;
+            case 1 /*TDF*/:
+                AccountsActivity.this.exportTDFToSD();
+                break;
+            case 2 /*CSV*/:
+                AccountsActivity.this.exportCSVToSD();
+                break;
+            case 3 /*OFX/QFX*/:
+                AccountsActivity.this.exportOFXToSD();
+                break;
+        }
+    }
+
+    @Override
+    public void onFinishSdImportQIFDialog(String okCancel) {
+        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportQIFDialog just ran", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            AccountsActivity.this.importQIFFromSD();
+        }
+    }
+
+    @Override
+    public void onFinishSdImportTDFDialog(String okCancel) {
+        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportTDFDialog just ran", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            AccountsActivity.this.importTDFFromSD();
+        }
+    }
+
+    @Override
+    public void onFinishSdImportCVSDialog(String okCancel) {
+        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportCSVDialog just ran", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            AccountsActivity.this.importCSVFromSD();
+        }
+    }
+
+    @Override
+    public void onFinishSdImportOFXDialog(String okCancel) {
+        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportOFXDialog just ran", Snackbar.LENGTH_LONG);
+            snackbar.show();
+            AccountsActivity.this.importOFXFromSD();
         }
     }
 
