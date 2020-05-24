@@ -118,6 +118,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int ACCOUNT_REQUEST_BUDGET = 2;
     private static final int ACCOUNT_REQUEST_EMAIL = 3;
     private static final int ACCOUNT_REQUEST_FILTER = 1;
+    private static final int PERMISSION_BACKUP_QIF = 107;
+    private static final int PERMISSION_BACKUP_TDF = 108;
+    private static final int PERMISSION_BACKUP_CSV = 109;
+    private static final int PERMISSION_BACKUP_OFX = 110;
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static boolean DEBUG = false;
     public static boolean IS_GOOGLE_MARKET = false;
@@ -954,13 +958,26 @@ public class AccountsActivity extends PocketMoneyActivity implements
         pd.show();
         new Thread() {
             public void run() {
-                String fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath();
                 FilterClass filter = new FilterClass();
-                for (AccountClass account : AccountsActivity.this.adapter.getElements()) {
-                    filter.setAccount(account.getAccount());
+                final ArrayList<Uri> fileNames = new ArrayList<>();
+                ArrayList<String> accNames = new ArrayList<>();
+                ArrayList<AccountClass> accounts = AccountsActivity.this.adapter.getElements();
+                for (AccountClass account : accounts) {
+                    try {
+                        accNames.add(account.getAccount());
+                    } catch (Exception exAcc) {
+                        Log.i("***** Doing this ERROR:", exAcc.toString());
+                    }
+                }
+                String[] array = accNames.toArray(new String[0]);
+                for (String item : array) {
+                    filter.setAccount(item);
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileDir + "/PocketMoneyBackup/" + account.getAccount() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx");
-                    exportofx.accountNameBeingImported = account.getAccount();
+                    String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
+                    fileNames.add(Uri.parse("file://" + fileName));
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileName);
+                    exportofx.accountNameBeingImported = item;
                     exportofx.filter = filter;
                     exportofx.exportRecords(query);
                 }
@@ -1378,7 +1395,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         break;
                     case HandlerActivity.MSG_PROGRESS_FINISH /*5*/:
                         if (!AccountsActivity.this.shouldEmail && msg.obj.getClass().equals(String.class)) {
-                            Toast.makeText(AccountsActivity.this.context, (String) msg.obj, Toast.LENGTH_LONG).show();
+                            Snackbar.make(findViewById(R.id.accounts_root_view), (CharSequence) msg.obj, Snackbar.LENGTH_LONG).show();
                         }
                         try {
                             AccountsActivity.this.wakeLock.release();
@@ -1588,6 +1605,22 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         restoreFromSD();
                         break;
                     }
+                    case PERMISSION_BACKUP_QIF: {
+                        exportQIFToSD();
+                        break;
+                    }
+                    case PERMISSION_BACKUP_TDF: {
+                        exportTDFToSD();
+                        break;
+                    }
+                    case PERMISSION_BACKUP_CSV: {
+                        exportCSVToSD();
+                        break;
+                    }
+                    case PERMISSION_BACKUP_OFX: {
+                        exportOFXToSD();
+                        break;
+                    }
                 }
             }
         }
@@ -1664,6 +1697,22 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 }
                 case PERMISSION_RESTORE_DB: {
                     restoreFromSD();
+                    break;
+                }
+                case PERMISSION_BACKUP_QIF: {
+                    exportQIFToSD();
+                    break;
+                }
+                case PERMISSION_BACKUP_TDF: {
+                    exportTDFToSD();
+                    break;
+                }
+                case PERMISSION_BACKUP_CSV: {
+                    exportCSVToSD();
+                    break;
+                }
+                case PERMISSION_BACKUP_OFX: {
+                    exportOFXToSD();
                     break;
                 }
             }
@@ -1766,16 +1815,16 @@ public class AccountsActivity extends PocketMoneyActivity implements
     public void onFinishSdExportDialog(int exportType) {
         switch (exportType) {
             case 0 /*QIF*/:
-                AccountsActivity.this.exportQIFToSD();
+                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_QIF);
                 break;
             case 1 /*TDF*/:
-                AccountsActivity.this.exportTDFToSD();
+                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_TDF);
                 break;
             case 2 /*CSV*/:
-                AccountsActivity.this.exportCSVToSD();
+                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_CSV);
                 break;
             case 3 /*OFX/QFX*/:
-                AccountsActivity.this.exportOFXToSD();
+                showWriteExternalStoraageStatePermission(PERMISSION_BACKUP_OFX);
                 break;
         }
     }

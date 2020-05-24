@@ -2,13 +2,17 @@ package com.example.smmoney.importexport.ofx;
 
 import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.os.Message;
 import android.text.format.DateFormat;
 import android.util.Log;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
+import com.example.smmoney.views.HandlerActivity;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -25,6 +29,7 @@ public class ImportExportOFX {
     List data;
     private DateFormat dateFormatter;
     private String defaultCurrencyCode;
+    private HandlerActivity act;
     public FilterClass filter;
     private boolean isURL;
     List lines;
@@ -41,8 +46,8 @@ public class ImportExportOFX {
         this.numberFormatter = null;
     }
 
-    public ImportExportOFX(Context var1, String var2) {
-        this.context = var1;
+    public ImportExportOFX(Context context, String var2) {
+        this.context = context;
         this.path = var2;
         this.defaultCurrencyCode = Prefs.getStringPref("prefscurrencyhomecurrency");
         this.dateFormatter = null;
@@ -167,45 +172,51 @@ public class ImportExportOFX {
         // $FF: Couldn't be decompiled
     }
 
-    public boolean exportRecords(List var1) {
-        String var2 = this.generateData(var1);
-        String var3 = this.path;
+    public boolean exportRecords(List transactions) {
+        String transactionListAsString = this.generateData(transactions);
+        String fileDir = this.path;
 
-        IOException var4;
+        IOException ioException;
         label26: {
-            BufferedWriter var8;
+            BufferedWriter bufferedWriter;
             try {
-                String var6 = Prefs.getStringPref("prefsdatatransfersfileencoding");
-                File var7 = new File(var3.substring(0, 1 + var3.lastIndexOf("/")));
-                if(!var7.exists()) {
-                    var7.mkdirs();
+                String ofxEncoding = Prefs.getStringPref("prefsdatatransfersfileencoding");
+                File file = new File(fileDir.substring(0, 1 + fileDir.lastIndexOf("/")));
+                if (!file.exists()) {
+                    file.mkdirs();
                 }
 
-                var8 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(var3), var6));
-            } catch (IOException var10) {
-                var4 = var10;
+                bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), ofxEncoding));
+            } catch (IOException e) {
+                ioException = e;
                 break label26;
             }
 
             try {
-                var8.write(var2);
-                var8.close();
+                bufferedWriter.write(transactionListAsString);
+                bufferedWriter.close();
+                ((HandlerActivity) this.context).getHandler().
+                        sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).
+                                        getHandler(),
+                                5,
+                                "File '" + fileDir.substring(fileDir.lastIndexOf("/") + 1) + "' placed in Download/PocketMoneyBackup"),
+                                500);
                 return true;
             } catch (IOException var9) {
-                var4 = var9;
+                ioException = var9;
             }
         }
 
-        Log.v("Export writing error", var4.toString());
-        this.displayError(var4.toString());
+        Log.v("Export writing error", ioException.toString());
+        this.displayError(ioException.toString());
         return false;
     }
 
-    private String generateData(List var1) {
-        if(var1.size() > 0) {
-            OFXClass var2 = new OFXClass();
-            var2.transactions = var1;
-            return var2.toString();
+    private String generateData(List transactions) {
+        if (transactions.size() > 0) {
+            OFXClass ofxClass = new OFXClass();
+            ofxClass.transactions = transactions;
+            return ofxClass.toString();
         } else {
             return "";
         }
