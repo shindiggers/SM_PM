@@ -7,10 +7,10 @@ import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
+
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 public class CategoryReportDataSource extends ReportDataSource {
     public CategoryReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
@@ -39,7 +39,7 @@ public class CategoryReportDataSource extends ReportDataSource {
             if (this.filter.getCategory().endsWith("%")) {
                 index = category.indexOf(this.filter.getCategory().replace("%", ":"));
             } else {
-                index = category.indexOf(new StringBuilder(String.valueOf(this.filter.getCategory())).append(":").toString());
+                index = category.indexOf(new StringBuilder(this.filter.getCategory()).append(":").toString());
             }
             if (index == -1) {
                 return category;
@@ -78,9 +78,7 @@ public class CategoryReportDataSource extends ReportDataSource {
                 if (multipleCurrencies && allAccounts) {
                     xrate = new AccountClass(AccountDB.uniqueID(transaction.getAccount())).getExchangeRate();
                 }
-                Iterator it = transaction.getSplits().iterator();
-                while (it.hasNext()) {
-                    SplitsClass split = (SplitsClass) it.next();
+                for (SplitsClass split : transaction.getSplits()) {
                     if (this.filter.isValidSplit(split)) {
                         double tAmt;
                         String key = caseInsensitiveKeys.get(stripSubcategories(split.getCategory()).toUpperCase());
@@ -101,7 +99,7 @@ public class CategoryReportDataSource extends ReportDataSource {
                         if (reportItem != null) {
                             reportItem.amount += tAmt;
 
-                        reportItem.count++;
+                            reportItem.count++;
                         }
                     }
                 }

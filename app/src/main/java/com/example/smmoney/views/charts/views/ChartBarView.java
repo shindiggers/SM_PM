@@ -8,8 +8,8 @@ import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Point;
 import android.util.AttributeSet;
+
 import com.example.smmoney.views.charts.items.ChartItem;
-import java.util.ArrayList;
 
 public class ChartBarView extends ChartView {
     private Paint mBgPaints = new Paint();
@@ -41,7 +41,7 @@ public class ChartBarView extends ChartView {
             if (posNegVector != 0.0f) {
                 d = this.positiveMaxValue / ((double) posNegVector);
             } else {
-                d = (double) (this.positiveMaxValue != 0.0d ? 0.0f : 0.5f);
+                d = this.positiveMaxValue != 0.0d ? 0.0f : 0.5f;
             }
             float ratioPosNeg = (float) d;
             float verticalScale = posNegVector != 0.0f ? chartHeight / posNegVector : 0.0f;

@@ -6,62 +6,54 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+
     <LinearLayout
-        android:id="@+id/widget33"
-        android:layout_width="match_parent"
-        android:baselineAligned="false"
-        android:layout_height="wrap_content">
+        android:id="@+id/widget34"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <LinearLayout
-            android:id="@+id/widget34"
+        <ImageView
+            android:id="@+id/image"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="2.0"
-            android:orientation="vertical">
+            android:layout_height="50dp"
+            android:layout_gravity="center_horizontal|top"
+            android:contentDescription="@string/content_description_image_of_a_calendar"
+            tools:background="@drawable/ic_date_range" />
 
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="wrap_content"
-                android:layout_height="50dp"
-                tools:background="@drawable/ic_date_range"
-                android:contentDescription="@string/content_description_image_of_a_calendar"
-                android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end" />
-
-            <Button
-                android:id="@+id/button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:text="@string/iap_button" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/widget36"
+        <Button
+            android:id="@+id/button"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1.0"
-            android:orientation="vertical">
-
-            <TextView
-                android:id="@+id/title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:text="@string/accounts_edit_title"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/description"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:maxWidth="200dp"
-                android:minLines="7"
-                android:text="@string/description" />
-
-        </LinearLayout>
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal|bottom"
+            android:text="@string/iap_button" />
 
     </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/widget36"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:text="@string/accounts_edit_title"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:maxWidth="200dp"
+            android:minLines="7"
+            android:text="@string/description" />
+
+    </LinearLayout>
+
 
 </GridLayout>

@@ -9,8 +9,9 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
-import com.example.smmoney.SMMoney;
+
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
@@ -20,10 +21,10 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.PocketMoneyRecordClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
+
 import java.io.BufferedWriter;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Random;
 import java.util.UUID;
 
@@ -596,9 +597,7 @@ public class Database {
         if (transaction.getPayee() != null && transaction.getPayee().length() > 0 && PayeeClass.idForPayee(transaction.getPayee()) == 0) {
             PayeeClass.insertIntoDatabase(transaction.getPayee());
         }
-            Iterator it = transaction.getSplits().iterator();
-        while (it.hasNext()) {
-            SplitsClass split = (SplitsClass) it.next();
+        for (SplitsClass split : transaction.getSplits()) {
             if (!split.isTransfer()) {
                 if (ClassNameClass.idForClass(split.getClassName()) == 0 && split.getClassName() != null && split.getClassName().length() > 0) {
                     ClassNameClass.insertIntoDatabase(split.getClassName());
@@ -757,10 +756,9 @@ public class Database {
         if (foundRecords.size() > 0) {
             PocketMoneyRecordClass[] returnRecords = new PocketMoneyRecordClass[foundRecords.size()];
             int i = 0;
-            Iterator it = foundRecords.iterator();
-            while (it.hasNext()) {
+            for (PocketMoneyRecordClass foundRecord : foundRecords) {
                 int i2 = i + 1;
-                returnRecords[i] = (PocketMoneyRecordClass) it.next();
+                returnRecords[i] = foundRecord;
                 i = i2;
             }
             c.close();

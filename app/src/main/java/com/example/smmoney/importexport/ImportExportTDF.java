@@ -35,17 +35,16 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ImportExportTDF {
     public String CSVPath;
-    String accountNameBeingImported;
+    //String accountNameBeingImported;
     private Context context;
-    Boolean csvOld = Boolean.FALSE;
+    //Boolean csvOld = Boolean.FALSE;
     private int currentLine;
     private FilterClass filter;
     private boolean importFileExists = false;
-    boolean invalidCSV;
+    //boolean invalidCSV;
     private ArrayList<String> lines = new ArrayList<>();
     private int numberOfLines;
     private int oldNumber = -1;
@@ -57,11 +56,10 @@ public class ImportExportTDF {
     public ImportExportTDF(String filePath, Context context) {
         this.context = context;
         this.CSVPath = filePath;
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
         String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
         BufferedReader CSVReader = null;
         try {
-            CSVReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(new StringBuilder(pmExternalPath).append(filePath).toString())), encodingStr));
+            CSVReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(filePath)), encodingStr));
         } catch (FileNotFoundException e) {
             displayError("Error reading QIF file: " + e.toString(), false);
             Log.v("FileReader", "File Not Found");
@@ -222,23 +220,36 @@ public class ImportExportTDF {
 
     private String generateData() {
         boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-        String returnStr = "Account\tDate\tChkNum\tPayee\tCategory\tClass\tMemo\tAmount\tCleared\n";
+        StringBuilder returnStr = new StringBuilder("Account\tDate\tChkNum\tPayee\tCategory\tClass\tMemo\tAmount\tCleared\n");
         ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(new FilterClass());
         this.numberOfLines = transactions.size();
         this.currentLine = 0;
         this.oldNumber = -1;
-        Iterator it = transactions.iterator();
-        while (it.hasNext()) {
-            TransactionClass transaction = (TransactionClass) it.next();
+        for (TransactionClass transaction : transactions) {
             this.currentLine++;
             updateProgressBar();
             String TDFData = "";
-            Iterator it2 = transaction.getSplits().iterator();
-            while (it2.hasNext()) {
-                SplitsClass split = (SplitsClass) it2.next();
+            for (SplitsClass split : transaction.getSplits()) {
                 if (this.filter != null && this.filter.isValidSplit(split)) {
                     String str;
-                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(TDFData).append(transaction.getAccount()).append("\t").toString()).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString()).append(transaction.getCheckNumber()).append("\t").toString()).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString()).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString()).append(split.getMemo().replace("\n", "<br>")).append("\t").toString()).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString());
+                    StringBuilder stringBuilder = new StringBuilder(
+                            TDFData
+                                    + transaction.getAccount()
+                                    + "\t"
+                                    + (Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))
+                                    + "\t"
+                                    + transaction.getCheckNumber()
+                                    + "\t"
+                                    + (split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())
+                                    + "\t"
+                                    + split.getCategory()
+                                    + "\t"
+                                    + split.getClassName()
+                                    + "\t"
+                                    + split.getMemo().replace("\n", "<br>")
+                                    + "\t"
+                                    + (multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount()))
+                                    + "\t");
                     if (transaction.getCleared()) {
                         str = "*";
                     } else {
@@ -247,34 +258,32 @@ public class ImportExportTDF {
                     TDFData = stringBuilder.append(str).append("\n").toString();
                 }
             }
-            returnStr = new StringBuilder(returnStr).append(TDFData).toString();
+            returnStr.append(TDFData);
         }
-        return returnStr;
+        return returnStr.toString();
     }
 
     public boolean exportRecords() {
-        BufferedWriter bufferedWriter;
         IOException e;
         String TDFData = generateData();
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.txt").toString();
+            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
             File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
             if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             }
-            BufferedWriter TDFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
+            BufferedWriter tdfWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
             try {
-                TDFWriter.write(TDFData);
-                TDFWriter.close();
+                tdfWriter.write(TDFData);
+                tdfWriter.close();
                 ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"));
-                bufferedWriter = TDFWriter;
                 return true;
             } catch (IOException e2) {
                 e = e2;
-                bufferedWriter = TDFWriter;
                 Log.i("Export writing error-0", e.toString());
                 displayError(e.toString(), false);
                 return false;
@@ -289,22 +298,35 @@ public class ImportExportTDF {
 
     private String generateData(ArrayList<TransactionClass> transactions) {
         boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-        String returnStr = "Account\tDate\tChkNum\tPayee\tCategory\tClass\tMemo\tAmount\tCleared\n";
+        StringBuilder returnStr = new StringBuilder("Account\tDate\tChkNum\tPayee\tCategory\tClass\tMemo\tAmount\tCleared\n");
         this.numberOfLines = transactions.size();
         this.currentLine = 0;
         this.oldNumber = -1;
-        Iterator it = transactions.iterator();
-        while (it.hasNext()) {
-            TransactionClass transaction = (TransactionClass) it.next();
+        for (TransactionClass transaction : transactions) {
             this.currentLine++;
             updateProgressBar();
             String TDFData = "";
-            Iterator it2 = transaction.getSplits().iterator();
-            while (it2.hasNext()) {
-                SplitsClass split = (SplitsClass) it2.next();
+            for (SplitsClass split : transaction.getSplits()) {
                 if (this.filter != null && this.filter.isValidSplit(split)) {
                     String str;
-                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(TDFData).append(transaction.getAccount()).append("\t").toString()).append(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())).append("\t").toString()).append(transaction.getCheckNumber()).append("\t").toString()).append(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()).append("\t").toString()).append(split.getCategory()).append("\t").append(split.getClassName()).append("\t").toString()).append(split.getMemo().replace("\n", "<br>")).append("\t").toString()).append(multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount())).append("\t").toString());
+                    StringBuilder stringBuilder = new StringBuilder(
+                            TDFData
+                                    + transaction.getAccount()
+                                    + "\t"
+                                    + (Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))
+                                    + "\t"
+                                    + transaction.getCheckNumber()
+                                    + "\t"
+                                    + (split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())
+                                    + "\t"
+                                    + split.getCategory()
+                                    + "\t"
+                                    + split.getClassName()
+                                    + "\t"
+                                    + split.getMemo().replace("\n", "<br>")
+                                    + "\t"
+                                    + (multipleCurrencies ? split.amountAsCurrency() : CurrencyExt.amountAsString(split.getAmount()))
+                                    + "\t");
                     if (transaction.getCleared()) {
                         str = "*";
                     } else {
@@ -313,22 +335,22 @@ public class ImportExportTDF {
                     TDFData = stringBuilder.append(str).append("\n").toString();
                 }
             }
-            returnStr = new StringBuilder(returnStr).append(TDFData).toString();
+            returnStr.append(TDFData);
         }
-        return returnStr;
+        return returnStr.toString();
     }
 
     public boolean exportRecords(ArrayList<TransactionClass> transactions) {
-        BufferedWriter bufferedWriter;
         IOException e;
         String TDFData = generateData(transactions);
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.txt").toString();
+            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
             File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
             if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             }
             BufferedWriter TDFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
@@ -336,11 +358,9 @@ public class ImportExportTDF {
                 TDFWriter.write(TDFData);
                 TDFWriter.close();
                 ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
-                bufferedWriter = TDFWriter;
                 return true;
             } catch (IOException e2) {
                 e = e2;
-                bufferedWriter = TDFWriter;
                 Log.i("Export writing error", e.toString());
                 displayError(e.toString(), false);
                 return false;

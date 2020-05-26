@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
@@ -13,6 +14,13 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.splits.SplitsActivity;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -21,13 +29,9 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class FilterClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_FILTERS = "FILTERS";
@@ -198,62 +202,62 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     private double internalDateAsDateUsingFromDate(boolean isFromDate) {
         if (Locales.kLOC_FILTER_DATES_ALL.equals(this.date)) {
-            return (double) Enums.kDateRangeNone; /*0.0d*/
+            return Enums.kDateRangeNone; /*0.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_TODAY.equals(this.date)) {
-            return (double) Enums.kDateRangeToday; /*1.0d*/
+            return Enums.kDateRangeToday; /*1.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_YESTERDAY.equals(this.date)) {
-            return (double) Enums.kDateRangeYesterday ; /*2.0d*/
+            return Enums.kDateRangeYesterday; /*2.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST30DAYS.equals(this.date)) {
-            return (double) Enums.kDateRangeLast30Days; /*15.0d*/
+            return Enums.kDateRangeLast30Days; /*15.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST60DAYS.equals(this.date)) {
-            return (double) Enums.kDateRangeLast60Days; /*16.0d*/
+            return Enums.kDateRangeLast60Days; /*16.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LAST90DAYS.equals(this.date)) {
-            return (double) Enums.kDateRangeLast90Days; /*17.0d*/
+            return Enums.kDateRangeLast90Days; /*17.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISWEEK.equals(this.date)) {
-            return (double) Enums.kDateRangeCurrentWeek; /*3.0d*/
+            return Enums.kDateRangeCurrentWeek; /*3.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTWEEK.equals(this.date)) {
-            return (double) Enums.kDateRangeLastWeek; /*4.0d*/
+            return Enums.kDateRangeLastWeek; /*4.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISMONTH.equals(this.date)) {
-            return (double) Enums.kDateRangeCurrentMonth; /*5.0d*/
+            return Enums.kDateRangeCurrentMonth; /*5.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTMONTH.equals(this.date)) {
-            return (double) Enums.kDateRangeLastMonth; /*6.0d*/
+            return Enums.kDateRangeLastMonth; /*6.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISQUARTER.equals(this.date)) {
-            return (double) Enums.kDateRangeCurrentQuarter; /*7.0d*/
+            return Enums.kDateRangeCurrentQuarter; /*7.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTQUARTER.equals(this.date)) {
-            return (double) Enums.kDateRangeLastQuarter; /*8.0d*/
+            return Enums.kDateRangeLastQuarter; /*8.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_THISYEAR.equals(this.date)) {
-            return (double) Enums.kDateRangeCurrentYear; /*9.0d*/
+            return Enums.kDateRangeCurrentYear; /*9.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_LASTYEAR.equals(this.date)) {
-            return (double) Enums.kDateRangeLastYear; /*10.0d*/
+            return Enums.kDateRangeLastYear; /*10.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_RECENTLYCHANGED.equals(this.date)) {
-            return (double) Enums.kDateRangeRecentChanges; /*11.0d*/
+            return Enums.kDateRangeRecentChanges; /*11.0d*/
         }
         if (Locales.kLOC_FILTER_DATES_MODIFIEDTODAY.equals(this.date)) {
-            return (double) Enums.kDateRangeModifiedToday; /*14.0d*/
+            return Enums.kDateRangeModifiedToday; /*14.0d*/
         }
         if (isFromDate) {
             if (this.dateFrom != null) {
                 return (double) (this.dateFrom.getTimeInMillis() / 1000);
             }
-            return (double) Enums.kDateRangeNoFromDate; /*12.0d*/
+            return Enums.kDateRangeNoFromDate; /*12.0d*/
         } else if (this.dateTo != null) {
             return (double) (this.dateTo.getTimeInMillis() / 1000);
         } else {
-            return (double) Enums.kDateRangeNoToDate; /*13.0d*/
+            return Enums.kDateRangeNoToDate; /*13.0d*/
         }
     }
 
@@ -904,7 +908,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         }
         switch (localName) {
             case "filterID":
-                this.filterID = Integer.valueOf(this.currentElementValue);
+                this.filterID = Integer.parseInt(this.currentElementValue);
                 break;
             case "timestamp":
                 this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
@@ -914,16 +918,16 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 setDeleted(z);
                 break;
             case "dateFrom":
-                this.internalFromDate = Double.valueOf(this.currentElementValue);
+                this.internalFromDate = Double.parseDouble(this.currentElementValue);
                 break;
             case "dateTo":
-                this.internalToDate = Double.valueOf(this.currentElementValue);
+                this.internalToDate = Double.parseDouble(this.currentElementValue);
                 break;
             case "type":
-                setType(Integer.valueOf(this.currentElementValue));
+                setType(Integer.parseInt(this.currentElementValue));
                 break;
             case "cleared":
-                setCleared(Integer.valueOf(this.currentElementValue));
+                setCleared(Integer.parseInt(this.currentElementValue));
                 break;
             case "account":
                 if (this.currentElementValue == null) {

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/therow"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:background="@color/blue_theme_background_color"
     android:clickable="true"
     android:focusable="true">
@@ -12,34 +12,36 @@
         android:id="@+id/checked"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginStart="5dp"
         android:checked="true"
         android:clickable="true"
         android:focusable="true" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="40dp"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
         android:layout_marginBottom="5dp"
         android:layout_marginStart="5dp"
         android:layout_marginTop="5dp"
-        android:layout_toEndOf="@+id/checked"
         android:orientation="vertical">
 
         <TextView
             android:id="@+id/expensetextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
+            android:ellipsize="end"
+            android:maxWidth="300dp"
             android:text="@string/report_expense" />
 
         <TextView
             android:id="@+id/amounttextview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1.0"
+            android:ellipsize="end"
+            android:maxWidth="300dp"
             android:text="@string/report_amount" />
 
     </LinearLayout>
@@ -48,10 +50,9 @@
         android:id="@+id/icon_image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
+        android:layout_gravity="center_vertical"
         android:layout_marginEnd="5dp"
         android:contentDescription="@string/content_description_image_of_a_calendar"
         android:src="@drawable/ic_arrow_drop_down_circle" />
 
-</RelativeLayout>
+</LinearLayout>

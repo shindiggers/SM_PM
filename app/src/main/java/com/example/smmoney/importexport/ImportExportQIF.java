@@ -42,7 +42,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -606,13 +605,14 @@ public class ImportExportQIF {
         BufferedWriter bufferedWriter;
         IOException e;
         String QIFData = generateData();
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = pmExternalPath + "/PocketMoneyBackup/" + fileName;
             File dir = new File(fileDir.substring(0, fileDir.indexOf("/SMMoney/") + "/SMMoney/".length()));
             if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             }
             BufferedWriter QIFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), encodingStr));
@@ -620,11 +620,9 @@ public class ImportExportQIF {
                 QIFWriter.write(QIFData);
                 QIFWriter.close();
                 ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileDir.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
-                bufferedWriter = QIFWriter;
                 return true;
             } catch (IOException e2) {
                 e = e2;
-                bufferedWriter = QIFWriter;
                 Log.v("Export writing error", e.toString());
                 displayError(e.toString(), false);
                 return false;
@@ -640,26 +638,24 @@ public class ImportExportQIF {
     public boolean exportRecords() {
         IOException e;
         String QIFData = generateData();
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.qif";
             File dir = new File(fileDir.substring(0, fileDir.indexOf("/SMMoney/") + "/SMMoney/".length()));
             if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 dir.mkdirs();
             }
-            BufferedWriter QIFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), encodingStr));
-            BufferedWriter bufferedWriter;
+            BufferedWriter qifWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), encodingStr));
             try {
-                QIFWriter.write(QIFData);
-                QIFWriter.close();
+                qifWriter.write(QIFData);
+                qifWriter.close();
                 ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileDir.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
-                bufferedWriter = QIFWriter;
                 return true;
             } catch (IOException e2) {
                 e = e2;
-                bufferedWriter = QIFWriter;
                 Log.v("Export writing error", e.toString());
                 displayError(e.toString(), false);
                 return false;
@@ -695,12 +691,11 @@ public class ImportExportQIF {
     }
 
     public boolean exportRecords(ArrayList<TransactionClass> transactions) {
-        BufferedWriter bufferedWriter;
         IOException e;
         Log.i("** IO-QIF", "IO-QIF");
         String QIFData = generateData(transactions);
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
         try {
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             String fileDir = this.QIFPath == null ? pmExternalPath + "/PocketMoneyBackup/" + "SMMoney" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif" : this.QIFPath;
@@ -709,18 +704,16 @@ public class ImportExportQIF {
             Log.i("** Made it here - 2", "2");
             OutputStreamWriter out = new OutputStreamWriter(fos, encodingStr);
             Log.i("** Made it here - 3", "3");
-            BufferedWriter QIFWriter = new BufferedWriter(out);
+            BufferedWriter qifWriter = new BufferedWriter(out);
             try {
-                QIFWriter.write(QIFData);
-                QIFWriter.close();
+                qifWriter.write(QIFData);
+                qifWriter.close();
                 if (!Prefs.getBooleanPref(Prefs.QIF_EXPORT_SEPERATELY)) {
                     ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileDir.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
                 }
-                bufferedWriter = QIFWriter;
                 return true;
             } catch (IOException e2) {
                 e = e2;
-                bufferedWriter = QIFWriter;
                 Log.i("Export writing error", e.toString());
                 displayError(e.toString(), false);
                 return false;
@@ -813,15 +806,13 @@ public class ImportExportQIF {
 
     private String formatTransactions(ArrayList<TransactionClass> transactions) {
         String lastAccount = "";
-        String returnStr = "";
+        //String returnStr = "";
         StringBuffer buffBuff = new StringBuffer();
         StringBuilder retBuff = new StringBuilder();
         StringBuffer strBuff = new StringBuffer();
         StringBuffer splitBuff = new StringBuffer();
-        long startTime = System.currentTimeMillis();
-        Iterator it = transactions.iterator();
-        while (it.hasNext()) {
-            TransactionClass transaction = (TransactionClass) it.next();
+        //long startTime = System.currentTimeMillis();
+        for (TransactionClass transaction : transactions) {
             this.currentLine++;
             updateProgressBar();
             strBuff.setLength(0);

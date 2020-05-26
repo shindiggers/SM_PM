@@ -1009,7 +1009,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
         switch (localName) {
             case "transactionid":
-                this.transactionID = Integer.valueOf(this.currentElementValue);
+                this.transactionID = Integer.parseInt(this.currentElementValue);
                 break;
             case "deleted":
                 if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
@@ -1025,7 +1025,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 break;
             case "subTotal":
             case "subtotal":
-                setSubTotal(Double.valueOf(this.currentElementValue));
+                setSubTotal(Double.parseDouble(this.currentElementValue));
                 break;
             case "imagedata":
                 try {
@@ -1070,17 +1070,17 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 setCleared(z);
                 break;
             case "type":
-                setType(Integer.valueOf(this.currentElementValue));
+                setType(Integer.parseInt(this.currentElementValue));
                 break;
             case "split":
                 getSplits().add(this.parserSplit);
                 this.parserSplit = null;
                 break;
             case "amount":
-                this.parserSplit.setAmount(Double.valueOf(this.currentElementValue));
+                this.parserSplit.setAmount(Double.parseDouble(this.currentElementValue));
                 break;
             case "xrate":
-                this.parserSplit.setXrate(Double.valueOf(this.currentElementValue));
+                this.parserSplit.setXrate(Double.parseDouble(this.currentElementValue));
                 break;
             case "image":
                 if (!(this.currentElementValue == null || this.currentElementValue.length() <= 0 || this.currentElementValue.contains("\n"))) {

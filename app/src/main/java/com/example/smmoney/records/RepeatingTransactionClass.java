@@ -939,19 +939,19 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             } else if (localName.equals("lastProcessedDate")) {
                 setLastProcessedDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
             } else if (localName.equals("type")) {
-                setType(Integer.valueOf(this.currentElementValue));
+                setType(Integer.parseInt(this.currentElementValue));
             } else if (localName.equals("endDate")) {
                 setEndDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
             } else if (localName.equals("frequency")) {
-                setFrequency(Integer.valueOf(this.currentElementValue));
+                setFrequency(Integer.parseInt(this.currentElementValue));
             } else if (localName.equals("repeatOn")) {
-                setRepeatOn(Integer.valueOf(this.currentElementValue));
+                setRepeatOn(Integer.parseInt(this.currentElementValue));
             } else if (localName.equals("startOfWeek")) {
-                setStartOfWeek(Integer.valueOf(this.currentElementValue));
+                setStartOfWeek(Integer.parseInt(this.currentElementValue));
             } else if (localName.equals("transactionServerID")) {
                 this.transactionServerID = this.currentElementValue;
             } else if (localName.equals("transactionID")) {
-                this.transactionID = Integer.valueOf(this.currentElementValue);
+                this.transactionID = Integer.parseInt(this.currentElementValue);
             } else if (localName.equals("serverID")) {
                 setServerID(this.currentElementValue);
             } else if (localName.equals("sendLocalNotifications")) {
@@ -960,7 +960,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 }
                 setSendLocalNotifications(z);
             } else if (localName.equals("notifyDaysInAdvance")) {
-                setNotifyDaysInAdvance(Integer.valueOf(this.currentElementValue));
+                setNotifyDaysInAdvance(Integer.parseInt(this.currentElementValue));
             } else if (localName.equals("transactionServerID")) {
                 Class<?> c = getClass();
                 try {

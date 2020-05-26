@@ -122,6 +122,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_BACKUP_TDF = 108;
     private static final int PERMISSION_BACKUP_CSV = 109;
     private static final int PERMISSION_BACKUP_OFX = 110;
+    private static final int PERMISSION_RESTORE_CSV = 111;
+    private static final int PERMISSION_RESTORE_TDF = 112;
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static boolean DEBUG = false;
     public static boolean IS_GOOGLE_MARKET = false;
@@ -157,7 +159,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @SuppressWarnings("FieldCanBeLocal")
     private final int MENU_TRANSFER = 3;
     private final int MENU_VIEW = 4;
-    @SuppressWarnings("FieldCanBeLocal")
     //private final int MENU_WIFITRANSFERS = 2;
     //private final int MENU_WIFI_EXPORT = 4;
     private final int PERMISSION_EMAIL_QIF = 100;
@@ -788,7 +789,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void importTDFFromSD() {
-        final ImportExportCSV importtdf = new ImportExportCSV(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup/" + "SMMoney.txt", this);
+        final ImportExportTDF importtdf = new ImportExportTDF(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup/" + "SMMoney.txt", this);
         if (importtdf.hasFile()) {
             new Thread() {
                 public void run() {
@@ -1605,6 +1606,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         restoreFromSD();
                         break;
                     }
+                    case PERMISSION_RESTORE_TDF: {
+                        importTDFFromSD();
+                        break;
+                    }
+                    case PERMISSION_RESTORE_CSV: {
+                        importCSVFromSD();
+                        break;
+                    }
                     case PERMISSION_BACKUP_QIF: {
                         exportQIFToSD();
                         break;
@@ -1697,6 +1706,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 }
                 case PERMISSION_RESTORE_DB: {
                     restoreFromSD();
+                    break;
+                }
+                case PERMISSION_RESTORE_TDF: {
+                    importTDFFromSD();
+                    break;
+                }
+                case PERMISSION_RESTORE_CSV: {
+                    importCSVFromSD();
                     break;
                 }
                 case PERMISSION_BACKUP_QIF: {
@@ -1843,7 +1860,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
             Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportTDFDialog just ran", Snackbar.LENGTH_LONG);
             snackbar.show();
-            AccountsActivity.this.importTDFFromSD();
+            showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_TDF);
+            //AccountsActivity.this.importTDFFromSD();
         }
     }
 
@@ -1852,7 +1870,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
             Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportCSVDialog just ran", Snackbar.LENGTH_LONG);
             snackbar.show();
-            AccountsActivity.this.importCSVFromSD();
+            showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_CSV);
+            //AccountsActivity.this.importCSVFromSD();
         }
     }
 

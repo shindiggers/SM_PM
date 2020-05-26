@@ -35,18 +35,17 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Vector;
 
 public class ImportExportCSV {
     public String CSVPath;
-    String accountNameBeingImported;
+    //String accountNameBeingImported;
     private Context context;
-    Boolean csvOld = Boolean.FALSE;
+    //Boolean csvOld = Boolean.FALSE;
     private int currentLine;
     private FilterClass filter;
     private boolean importFileExists = false;
-    boolean invalidCSV;
+    //boolean invalidCSV;
     private ArrayList<String> lines = new ArrayList<>();
     private int numberOfLines;
     private int oldNumber = -1;
@@ -243,183 +242,6 @@ public class ImportExportCSV {
         return text == null ? "" : text.replace("\"", "\"\"");
     }
 
-    private String generateData() {
-        boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-        String returnStr = "\"Account\",\"Date\",\"ChkNum\",\"Payee\",\"Category\",\"Class\",\"Memo\",\"Amount\",\"Cleared\",\"CurrencyCode\",\"ExchangeRate\"\n";
-        ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(new FilterClass());
-        this.currentLine = 0;
-        this.oldNumber = -1;
-        this.numberOfLines = transactions.size();
-        if (this.numberOfLines == 0) {
-            return "";
-        }
-        Iterator it = transactions.iterator();
-        while (it.hasNext()) {
-            String exchangeRateAsString;
-            TransactionClass transaction = (TransactionClass) it.next();
-            this.currentLine++;
-            updateProgressBar();
-            String CSVData = "";
-            Iterator it2 = transaction.getSplits().iterator();
-            while (it2.hasNext()) {
-                SplitsClass split = (SplitsClass) it2.next();
-                if (this.filter != null && this.filter.isValidSplit(split)) {
-                    StringBuilder stringBuilder;
-                    stringBuilder = new StringBuilder(
-                            new StringBuilder(
-                                    new StringBuilder(
-                                            new StringBuilder(
-                                                    new StringBuilder(
-                                                            new StringBuilder(
-                                                                    new StringBuilder(
-                                                                            new StringBuilder(
-                                                                                    new StringBuilder(
-                                                                                            "\"" + CSVData + escapeDoubleQuote(transaction.getAccount())
-                                                                                                    + "\",\""
-                                                                                                    + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate())))
-                                                                                            .append("\",\"")
-                                                                                            .append(escapeDoubleQuote(transaction.getCheckNumber()))
-                                                                                            .append("\",\"").toString())
-                                                                                    .append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee()))
-                                                                                    .append("\",\"").toString())
-                                                                            .append(escapeDoubleQuote(split.getCategory()))
-                                                                            .append("\",\"").toString())
-                                                                    .append(escapeDoubleQuote(split.getClassName()))
-                                                                    .append("\",\"").toString())
-                                                            .append(escapeDoubleQuote(split.getMemo()))
-                                                            .append("\",\"").toString())
-                                                    .append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount())))
-                                                    .append("\",\"").toString())
-                                            .append(transaction.getCleared() ? "*" : "")
-                                            .append("\",\"").toString())
-                                    .append(escapeDoubleQuote(split.getCurrencyCode()))
-                                    .append("\",\"").toString()
-                    );
-                    if (multipleCurrencies) {
-                        exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
-                    } else {
-                        exchangeRateAsString = "1.0";
-                    }
-                    CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
-                }
-            }
-            returnStr = new StringBuilder(returnStr).append(CSVData).toString();
-            exchangeRateAsString = "";
-        }
-        return returnStr;
-    }
-
-    public boolean exportRecords() {
-        IOException e;
-        String CSVData = generateData();
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        try {
-            String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.csv").toString();
-            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            BufferedWriter CSVWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
-            BufferedWriter bufferedWriter;
-            try {
-                CSVWriter.write(CSVData);
-                CSVWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"));
-                bufferedWriter = CSVWriter;
-                return true;
-            } catch (IOException e2) {
-                e = e2;
-                bufferedWriter = CSVWriter;
-                Log.v("Export writing error", e.toString());
-                displayError(e.toString(), false);
-                return false;
-            }
-        } catch (IOException e3) {
-            e = e3;
-            Log.v("Export writing error", e.toString());
-            displayError(e.toString(), false);
-            return false;
-        }
-    }
-
-    private String generateData(ArrayList<TransactionClass> transactions) {
-        boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-        String returnStr = "\"Account\",\"Date\",\"ChkNum\",\"Payee\",\"Category\",\"Class\",\"Memo\",\"Amount\",\"Cleared\",\"CurrencyCode\",\"ExchangeRate\"\n";
-        this.currentLine = 0;
-        this.oldNumber = -1;
-        this.numberOfLines = transactions.size();
-        Iterator it = transactions.iterator();
-        while (it.hasNext()) {
-            String exchangeRateAsString;
-            TransactionClass transaction = (TransactionClass) it.next();
-            this.currentLine++;
-            updateProgressBar();
-            String CSVData = "";
-            Iterator it2 = transaction.getSplits().iterator();
-            while (it2.hasNext()) {
-                SplitsClass split = (SplitsClass) it2.next();
-                if (this.filter != null && this.filter.isValidSplit(split)) {
-                    StringBuilder stringBuilder = new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder(new StringBuilder("\"" + CSVData + escapeDoubleQuote(transaction.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transaction.getDate()) : CalExt.descriptionWithShortDate(transaction.getDate()))).append("\",\"").append(escapeDoubleQuote(transaction.getCheckNumber())).append("\",\"").toString()).append(escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transaction.getPayee())).append("\",\"").toString()).append(escapeDoubleQuote(split.getCategory())).append("\",\"").toString()).append(escapeDoubleQuote(split.getClassName())).append("\",\"").toString()).append(escapeDoubleQuote(split.getMemo())).append("\",\"").toString()).append(escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))).append("\",\"").toString()).append(transaction.getCleared() ? "*" : "").append("\",\"").toString()).append(escapeDoubleQuote(split.getCurrencyCode())).append("\",\"").toString());
-                    if (multipleCurrencies) {
-                        exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
-                    } else {
-                        exchangeRateAsString = "1.0";
-                    }
-                    CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
-                }
-            }
-            returnStr = new StringBuilder(returnStr).append(CSVData).toString();
-            exchangeRateAsString = "";
-        }
-        return returnStr;
-    }
-
-    public boolean exportRecords(ArrayList<TransactionClass> transactions) {
-        IOException e;
-        String CSVData = generateData(transactions);
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
-        try {
-            String filePath = new StringBuilder(String.valueOf(pmExternalPath)).append("/PocketMoneyBackup/").append("SMMoney.csv").toString();
-            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            BufferedWriter CSVWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
-            BufferedWriter bufferedWriter;
-            try {
-                CSVWriter.write(CSVData);
-                CSVWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
-                bufferedWriter = CSVWriter;
-                return true;
-            } catch (IOException e2) {
-                e = e2;
-                bufferedWriter = CSVWriter;
-                Log.v("Export writing error", e.toString());
-                displayError(e.toString(), false);
-                return false;
-            }
-        } catch (IOException e3) {
-            e = e3;
-            Log.v("Export writing error", e.toString());
-            displayError(e.toString(), false);
-            return false;
-        }
-    }
-
-    private void displayError(String msg, boolean fromBackgroundThread) {
-        try {
-            Database.currentDB().endTransaction();
-        } catch (IllegalStateException e) {
-            e.printStackTrace();
-        }
-        ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
-    }
-
     private static String[] parseLine(String line) {
         if (line == null) {
             return null;
@@ -441,11 +263,7 @@ public class ImportExportCSV {
                 if (curVal.length() > 0) {
                     curVal.append('\"');
                 }
-                // todo: when parsing a txt file, this method truncates amounts which include a comma separator. Need to figure a workaround
             } else if (ch == ',') {
-                store.add(curVal.toString());
-                curVal = new StringBuffer();
-            } else if (ch == '\t') {
                 store.add(curVal.toString());
                 curVal = new StringBuffer();
             } else {
@@ -455,12 +273,169 @@ public class ImportExportCSV {
         store.add(curVal.toString());
         String[] retVal = new String[store.size()];
         i = 0;
-        Iterator it = store.iterator();
-        while (it.hasNext()) {
+        for (String s : store) {
             int i2 = i + 1;
-            retVal[i] = (String) it.next();
+            retVal[i] = s;
             i = i2;
         }
         return retVal;
+    }
+
+    private String generateData() {
+        boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
+        StringBuilder returnStr = new StringBuilder("\"Account\",\"Date\",\"ChkNum\",\"Payee\",\"Category\",\"Class\",\"Memo\",\"Amount\",\"Cleared\",\"CurrencyCode\",\"ExchangeRate\"\n");
+        ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(new FilterClass());
+        this.currentLine = 0;
+        this.oldNumber = -1;
+        this.numberOfLines = transactions.size();
+        if (this.numberOfLines == 0) {
+            return "";
+        }
+        for (TransactionClass transactionClass : transactions) {
+            String exchangeRateAsString;
+            this.currentLine++;
+            updateProgressBar();
+            String CSVData = "";
+            for (SplitsClass split : transactionClass.getSplits()) {
+                if (this.filter != null && this.filter.isValidSplit(split)) {
+                    StringBuilder stringBuilder;
+                    stringBuilder = new StringBuilder(
+                            "\""
+                                    + CSVData + escapeDoubleQuote(transactionClass.getAccount())
+                                    + "\",\""
+                                    + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transactionClass.getDate()) : CalExt.descriptionWithShortDate(transactionClass.getDate()))
+                                    + "\",\""
+                                    + escapeDoubleQuote(transactionClass.getCheckNumber())
+                                    + "\",\""
+                                    + escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transactionClass.getPayee())
+                                    + "\",\""
+                                    + escapeDoubleQuote(split.getCategory())
+                                    + "\",\""
+                                    + escapeDoubleQuote(split.getClassName())
+                                    + "\",\""
+                                    + escapeDoubleQuote(split.getMemo())
+                                    + "\",\""
+                                    + escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount()))
+                                    + "\",\""
+                                    + (transactionClass.getCleared() ? "*" : "")
+                                    + "\",\""
+                                    + escapeDoubleQuote(split.getCurrencyCode())
+                                    + "\",\""
+                    );
+                    if (multipleCurrencies) {
+                        exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
+                    } else {
+                        exchangeRateAsString = "1.0";
+                    }
+                    CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
+                }
+            }
+            returnStr.append(CSVData);
+            exchangeRateAsString = "";
+        }
+        return returnStr.toString();
+    }
+
+    public boolean exportRecords() {
+        IOException e;
+        String CSVData = generateData();
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        try {
+            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.csv";
+            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
+            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
+            if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                dir.mkdirs();
+            }
+            BufferedWriter csvWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
+            try {
+                csvWriter.write(CSVData);
+                csvWriter.close();
+                ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"));
+                return true;
+            } catch (IOException e2) {
+                e = e2;
+                Log.v("Export writing error", e.toString());
+                displayError(e.toString(), false);
+                return false;
+            }
+        } catch (IOException e3) {
+            e = e3;
+            Log.v("Export writing error", e.toString());
+            displayError(e.toString(), false);
+            return false;
+        }
+    }
+
+    private String generateData(ArrayList<TransactionClass> transactions) {
+        boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
+        StringBuilder returnStr = new StringBuilder("\"Account\",\"Date\",\"ChkNum\",\"Payee\",\"Category\",\"Class\",\"Memo\",\"Amount\",\"Cleared\",\"CurrencyCode\",\"ExchangeRate\"\n");
+        this.currentLine = 0;
+        this.oldNumber = -1;
+        this.numberOfLines = transactions.size();
+        for (TransactionClass transactionClass : transactions) {
+            String exchangeRateAsString;
+            this.currentLine++;
+            updateProgressBar();
+            String CSVData = "";
+            for (SplitsClass split : transactionClass.getSplits()) {
+                if (this.filter != null && this.filter.isValidSplit(split)) {
+                    StringBuilder stringBuilder = new StringBuilder("\"" + CSVData + escapeDoubleQuote(transactionClass.getAccount()) + "\",\"" + escapeDoubleQuote(Prefs.getBooleanPref(Prefs.SHOWTIME) ? CalExt.descriptionWithDateTime(transactionClass.getDate()) : CalExt.descriptionWithShortDate(transactionClass.getDate())) + "\",\"" + escapeDoubleQuote(transactionClass.getCheckNumber()) + "\",\"" + escapeDoubleQuote(split.isTransfer() ? "<" + split.getTransferToAccount() + ">" : transactionClass.getPayee()) + "\",\"" + escapeDoubleQuote(split.getCategory()) + "\",\"" + escapeDoubleQuote(split.getClassName()) + "\",\"" + escapeDoubleQuote(split.getMemo()) + "\",\"" + escapeDoubleQuote(CurrencyExt.amountAsString(split.getAmount())) + "\",\"" + (transactionClass.getCleared() ? "*" : "") + "\",\"" + escapeDoubleQuote(split.getCurrencyCode()) + "\",\"");
+                    if (multipleCurrencies) {
+                        exchangeRateAsString = CurrencyExt.exchangeRateAsString(split.getXrate());
+                    } else {
+                        exchangeRateAsString = "1.0";
+                    }
+                    CSVData = stringBuilder.append(escapeDoubleQuote(exchangeRateAsString)).append("\"\n").toString();
+                }
+            }
+            returnStr.append(CSVData);
+            exchangeRateAsString = "";
+        }
+        return returnStr.toString();
+    }
+
+    private void displayError(String msg, boolean fromBackgroundThread) {
+        try {
+            Database.currentDB().endTransaction();
+        } catch (IllegalStateException e) {
+            e.printStackTrace();
+        }
+        ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
+    }
+
+    public boolean exportRecords(ArrayList<TransactionClass> transactions) {
+        IOException e;
+        String CSVData = generateData(transactions);
+        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        try {
+            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.csv";
+            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
+            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
+            if (!dir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
+                dir.mkdirs();
+            }
+            BufferedWriter csvWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
+            try {
+                csvWriter.write(CSVData);
+                csvWriter.close();
+                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
+                return true;
+            } catch (IOException e2) {
+                e = e2;
+                Log.v("Export writing error", e.toString());
+                displayError(e.toString(), false);
+                return false;
+            }
+        } catch (IOException e3) {
+            e = e3;
+            Log.v("Export writing error", e.toString());
+            displayError(e.toString(), false);
+            return false;
+        }
     }
 }

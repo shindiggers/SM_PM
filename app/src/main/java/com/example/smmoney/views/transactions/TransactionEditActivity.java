@@ -92,7 +92,6 @@ import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -586,9 +585,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         }
         ((TextView) outterView.findViewById(R.id.memo_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         int i = 0;
-        Iterator it = theViews.iterator();
-        while (it.hasNext()) {
-            ((View) it.next()).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+        for (View view : theViews) {
+            view.setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
         for (i = 1; i < selectableViews.size(); i++) {

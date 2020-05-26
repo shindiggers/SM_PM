@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
@@ -12,6 +13,12 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.budgets.BudgetsRowAdapter;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
@@ -21,11 +28,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.List;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class CategoryClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_CATEGORIES = "CATEGORIES";
@@ -646,18 +650,18 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         for (CategoryBudgetClass budgetItem : CategoryBudgetClass.budgetItems(this.category, startDate, endDate)) {
             double days;
             if (isNonVariableBudgetPeriod(this.budgetPeriod)) {
-                daysInPeriod = (double) daysInNonvariableBudgetPeriod(this.budgetPeriod);
+                daysInPeriod = daysInNonvariableBudgetPeriod(this.budgetPeriod);
             } else {
                 periodInfo = endOfBudgetPeriod(this.budgetPeriod, currentDate);
-                days = (double) periodInfo.daysLeft;
-                daysInPeriod = (double) periodInfo.daysInPeriod;
+                days = periodInfo.daysLeft;
+                daysInPeriod = periodInfo.daysInPeriod;
                 nextDate = periodInfo.date;
                 while (nextDate.before(CalExt.beginningOfDay(budgetItem.getDate()))) {
                     newBudgetLimit += (limit / daysInPeriod) * days;
                     currentDate = CalExt.addSecond((GregorianCalendar) nextDate.clone());
                     periodInfo = endOfBudgetPeriod(this.budgetPeriod, currentDate);
-                    days = (double) periodInfo.daysLeft;
-                    daysInPeriod = (double) periodInfo.daysInPeriod;
+                    days = periodInfo.daysLeft;
+                    daysInPeriod = periodInfo.daysInPeriod;
                     nextDate = periodInfo.date;
                 }
             }
@@ -666,18 +670,18 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             limit = budgetItem.getBudgetLimit();
         }
         if (isNonVariableBudgetPeriod(this.budgetPeriod)) {
-            daysInPeriod = (double) daysInNonvariableBudgetPeriod(this.budgetPeriod);
+            daysInPeriod = daysInNonvariableBudgetPeriod(this.budgetPeriod);
         } else {
             periodInfo = endOfBudgetPeriod(this.budgetPeriod, currentDate);
-            double days = (double) periodInfo.daysLeft;
-            daysInPeriod = (double) periodInfo.daysInPeriod;
+            double days = periodInfo.daysLeft;
+            daysInPeriod = periodInfo.daysInPeriod;
             nextDate = periodInfo.date;
             while (nextDate.before(CalExt.beginningOfDay(endDate))) {
                 newBudgetLimit += (limit / daysInPeriod) * days;
                 currentDate = CalExt.addSecond((GregorianCalendar) nextDate.clone());
                 periodInfo = endOfBudgetPeriod(this.budgetPeriod, currentDate);
-                days = (double) periodInfo.daysLeft;
-                daysInPeriod = (double) periodInfo.daysInPeriod;
+                days = periodInfo.daysLeft;
+                daysInPeriod = periodInfo.daysInPeriod;
                 nextDate = periodInfo.date;
             }
         }
@@ -900,7 +904,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         }
         switch (localName) {
             case "categoryID":
-                this.categoryID = Integer.valueOf(this.currentElementValue);
+                this.categoryID = Integer.parseInt(this.currentElementValue);
                 break;
             case "timestamp":
                 this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
@@ -918,13 +922,13 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                 setRollover(z);
                 break;
             case "type":
-                setType(Integer.valueOf(this.currentElementValue));
+                setType(Integer.parseInt(this.currentElementValue));
                 break;
             case Prefs.DISPLAY_BUDGETPERIOD:
-                setBudgetPeriod(Integer.valueOf(this.currentElementValue));
+                setBudgetPeriod(Integer.parseInt(this.currentElementValue));
                 break;
             case "budgetLimit":
-                setBudgetLimit(Double.valueOf(this.currentElementValue));
+                setBudgetLimit(Double.parseDouble(this.currentElementValue));
                 break;
             case "includeSubcategories":
                 if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {

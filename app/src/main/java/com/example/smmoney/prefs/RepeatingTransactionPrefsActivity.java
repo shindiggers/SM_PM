@@ -9,7 +9,7 @@ import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.EditText;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.smmoney.R;
@@ -22,7 +22,7 @@ import com.example.smmoney.views.PocketMoneyActivity;
 public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
     private CheckBox postCheckBox;
     private EditText postEditText;
-    private RelativeLayout postView;
+    private LinearLayout postView;
     private String suffix;
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +34,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
         this.postCheckBox = findViewById(R.id.postcheckbox);
         CheckBoxTint.colorCheckBox(this.postCheckBox);
         this.postEditText = findViewById(R.id.postedittext);
-        this.postView = (RelativeLayout) this.postEditText.getParent();
+        this.postView = (LinearLayout) this.postEditText.getParent();
         this.suffix = Locales.kLOC_PREFERENCES_DAYS;
         setupViews();
     }

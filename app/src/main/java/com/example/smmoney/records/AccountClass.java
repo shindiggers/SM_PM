@@ -1123,7 +1123,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             this.currentElementValue = "";
         }
         if (localName.equals("accountID")) {
-            this.accountID = Integer.valueOf(this.currentElementValue);
+            this.accountID = Integer.parseInt(this.currentElementValue);
         } else if (localName.equals("timestamp")) {
             this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
         } else if (localName.equals("deleted")) {
@@ -1132,19 +1132,19 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             }
             setDeleted(z);
         } else if (localName.equals("displayOrder")) {
-            setDisplayOrder(Integer.valueOf(this.currentElementValue));
+            setDisplayOrder(Integer.parseInt(this.currentElementValue));
         } else if (localName.equals(Prefs.BALANCETYPE)) {
-            setBalanceType(Integer.valueOf(this.currentElementValue));
+            setBalanceType(Integer.parseInt(this.currentElementValue));
         } else if (localName.equals("type")) {
-            setType(Integer.valueOf(this.currentElementValue));
+            setType(Integer.parseInt(this.currentElementValue));
         } else if (localName.equals("fee")) {
-            setFee(Double.valueOf(this.currentElementValue));
+            setFee(Double.parseDouble(this.currentElementValue));
         } else if (localName.equals("fixedPercent")) {
-            setFixedPercent(Integer.valueOf(this.currentElementValue));
+            setFixedPercent(Integer.parseInt(this.currentElementValue));
         } else if (localName.equals("limitAmount")) {
-            setLimit(Double.valueOf(this.currentElementValue));
+            setLimit(Double.parseDouble(this.currentElementValue));
         } else if (localName.equals("keepChangeRoundTo")) {
-            setKeepChangeRoundTo(Double.valueOf(this.currentElementValue));
+            setKeepChangeRoundTo(Double.parseDouble(this.currentElementValue));
         } else if (localName.equals("noLimit")) {
             if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
                 z = true;
@@ -1156,7 +1156,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             }
             setTotalWorth(z);
         } else if (localName.equals("exchangeRate")) {
-            setExchangeRate(Double.valueOf(this.currentElementValue));
+            setExchangeRate(Double.parseDouble(this.currentElementValue));
         } else if (!localName.equals("customIcon")) {
             switch (localName) {
                 case "iconFileName":

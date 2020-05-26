@@ -1,23 +1,26 @@
 package com.example.smmoney.views.reports;
 
 import android.widget.CheckBox;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
-import com.example.smmoney.records.FilterClass;
+
 import java.text.DecimalFormat;
+
+//import com.example.smmoney.records.FilterClass;
 
 class ReportsRowHolder {
     public TextView amount;
     public CheckBox checked;
     TextView expense;
-    private FilterClass filter;
+    //private FilterClass filter;
     ReportItem report;
-    RelativeLayout theRow;
+    LinearLayout theRow;
 
     void setReport(ReportItem aReport) {
         this.report = null;

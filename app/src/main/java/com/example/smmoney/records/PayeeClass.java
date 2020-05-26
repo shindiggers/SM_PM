@@ -5,20 +5,24 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
+
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.XMLReader;
+import org.xmlpull.v1.XmlSerializer;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
+
 import javax.xml.parsers.SAXParserFactory;
-import org.xml.sax.Attributes;
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-import org.xmlpull.v1.XmlSerializer;
 
 public class PayeeClass extends PocketMoneyRecordClass {
     public static final String XML_LISTTAG_PAYEES = "PAYEES";
@@ -300,7 +304,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         }
         switch (localName) {
             case "payeeID":
-                this.payeeID = Integer.valueOf(this.currentElementValue);
+                this.payeeID = Integer.parseInt(this.currentElementValue);
                 break;
             case "timestamp":
                 this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);

@@ -2,9 +2,9 @@ package com.example.smmoney.importexport.ofx;
 
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.TransactionClass;
+
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Iterator;
 import java.util.List;
 
 class OFX_Statement {
@@ -51,10 +51,9 @@ class OFX_Statement {
     String bankTransactionListMessage() {
         String var1 = OFXClass.dateAsString(new GregorianCalendar());
         StringBuilder var2 = new StringBuilder(10000);
-        Iterator var3 = this.transactions.iterator();
 
-        while(var3.hasNext()) {
-            var2.append((new OFX_TransactionClass((TransactionClass)var3.next(), this.tags)).toString());
+        for (Object transaction : this.transactions) {
+            var2.append((new OFX_TransactionClass((TransactionClass) transaction, this.tags)).toString());
         }
 
         return "\t\t\t\t" + this.tags.bankTransListBegin + "\n" + "\t\t\t\t\t" + this.tags.dateStartBegin + var1 + this.tags.dateStartEnd + "\n" + "\t\t\t\t\t" + this.tags.dateEndBegin + var1 + this.tags.dateEndEnd + "\n" + var2.toString() + "\t\t\t\t" + this.tags.bankTransListEnd + "\n";

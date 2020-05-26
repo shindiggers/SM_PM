@@ -338,7 +338,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
                 setServerID(this.currentElementValue);
                 break;
             case "budgetLimit":
-                setBudgetLimit(Double.valueOf(this.currentElementValue));
+                setBudgetLimit(Double.parseDouble(this.currentElementValue));
                 break;
         }
         this.currentElementValue = null;
