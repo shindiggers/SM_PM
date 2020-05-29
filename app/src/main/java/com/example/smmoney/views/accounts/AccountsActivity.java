@@ -124,6 +124,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_BACKUP_OFX = 110;
     private static final int PERMISSION_RESTORE_CSV = 111;
     private static final int PERMISSION_RESTORE_TDF = 112;
+    private static final int PERMISSION_RESTORE_QIF = 113;
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static boolean DEBUG = false;
     public static boolean IS_GOOGLE_MARKET = false;
@@ -812,13 +813,27 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 Log.i("Q File Path = ", file.getAbsolutePath());
                 final ImportExportQIF importqif = new ImportExportQIF(file.getAbsolutePath(), this);
                 if (importqif.hasFile()) {
-                    new Thread() {
+                    new Thread(new Runnable() {
+                        @Override
                         public void run() {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             importqif.importIntoDatabase(AccountsActivity.this);
                             //noinspection ResultOfMethodCallIgnored
-                            new File(importqif.QIFPath).delete();
+                            //new File(importqif.QIFPath).delete();
                         }
-                    }.start();
+//                    })
+//                    {
+//                        public void run() {
+//                            Log.i("QIFDEBUG","importQIFFromSD() -> inside Thread->run() -> about to call importqif.importIntoDatabase()");
+//                            importqif.importIntoDatabase(AccountsActivity.this);
+
+                        //new File(importqif.QIFPath).delete();
+//                        }
+                    }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
                 }
@@ -1606,6 +1621,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         restoreFromSD();
                         break;
                     }
+                    case PERMISSION_RESTORE_QIF: {
+                        importQIFFromSD();
+                        break;
+                    }
                     case PERMISSION_RESTORE_TDF: {
                         importTDFFromSD();
                         break;
@@ -1706,6 +1725,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 }
                 case PERMISSION_RESTORE_DB: {
                     restoreFromSD();
+                    break;
+                }
+                case PERMISSION_RESTORE_QIF: {
+                    importQIFFromSD();
                     break;
                 }
                 case PERMISSION_RESTORE_TDF: {
@@ -1849,9 +1872,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @Override
     public void onFinishSdImportQIFDialog(String okCancel) {
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportQIFDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
-            AccountsActivity.this.importQIFFromSD();
+            //Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportQIFDialog just ran", Snackbar.LENGTH_LONG);
+            //snackbar.show();
+            showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_QIF);
+            //AccountsActivity.this.importQIFFromSD();
         }
     }
 
