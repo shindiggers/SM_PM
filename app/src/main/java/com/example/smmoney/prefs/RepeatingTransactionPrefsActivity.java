@@ -28,9 +28,11 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LayoutInflater.from(this).inflate(R.layout.prefs_repeating, null));
-        getSupportActionBar().setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
         this.postCheckBox = findViewById(R.id.postcheckbox);
         CheckBoxTint.colorCheckBox(this.postCheckBox);
         this.postEditText = findViewById(R.id.postedittext);
