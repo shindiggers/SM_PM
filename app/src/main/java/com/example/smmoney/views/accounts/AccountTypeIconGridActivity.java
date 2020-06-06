@@ -130,7 +130,7 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
             "store.png",
             "textbooks.png"};
 
-    class ImageAdapter extends BaseAdapter {
+    static class ImageAdapter extends BaseAdapter {
         private Context mContext;
         // The order of this array determines display order in AccountTypeIconGridActivity.java
         private Integer[] mThumbIds = new Integer[]{

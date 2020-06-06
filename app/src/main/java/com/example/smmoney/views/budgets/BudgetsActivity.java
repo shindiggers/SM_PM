@@ -210,11 +210,10 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             this.balanceBar.balanceTypeTextView.setTextColor(-1);
             if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
                 this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_SAVED);
-                return;
             } else {
                 this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_BEATBUDGET);
-                return;
             }
+            return;
         }
         this.balanceBar.balanceTypeTextView.setTextColor(-1);
         if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {

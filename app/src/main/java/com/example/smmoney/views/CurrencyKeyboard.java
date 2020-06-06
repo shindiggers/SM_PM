@@ -33,7 +33,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     private View toolbar;
     private boolean toolbarEnabled = true;
 
-    private class MyScanner {
+    private static class MyScanner {
         String amount = null;
         int end;
         int index = 0;

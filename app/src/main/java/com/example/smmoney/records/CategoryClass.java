@@ -49,7 +49,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     public double spent;
     private int type;
 
-    private class BudgetPeriodInfo {
+    private static class BudgetPeriodInfo {
         GregorianCalendar date;
         int daysInPeriod;
         int daysLeft;
