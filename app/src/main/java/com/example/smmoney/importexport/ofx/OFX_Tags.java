@@ -59,12 +59,12 @@ class OFX_Tags {
     String transactionTypeBegin;
     String transactionTypeEnd;
 
-    OFX_Tags(OFX_DataFormatType var1, String var2) {
-        this.lineEnding = var2;
-        this.setFormat(var1);
+    OFX_Tags(OFX_DataFormatType theFormat, String lineEnding) {
+        this.lineEnding = lineEnding;
+        this.setFormat(theFormat);
     }
 
-    private void setFormat(OFX_DataFormatType var1) {
+    private void setFormat(OFX_DataFormatType aFormat) {
         this.bankStatementTransmissionBegin = "<STMTRS>";
         this.bankStatementTransmissionEnd = "</STMTRS>";
         this.creditCardStatementTransmissionBegin = "<CCSTMTRS>";
@@ -121,7 +121,7 @@ class OFX_Tags {
         this.transactionDatePostedEnd = "";
         this.transactionDateUserEnteredBegin = "<DTUSER>";
         this.transactionDateUserEnteredEnd = "";
-        if(OFX_DataFormatType.OFX_DataFormatXML10 == var1 || OFX_DataFormatType.OFX_DataFormatXML20 == var1) {
+        if (OFX_DataFormatType.OFX_DataFormatXML10 == aFormat || OFX_DataFormatType.OFX_DataFormatXML20 == aFormat) {
             this.currencyEnd = "</CURDEF>";
             this.dateStartEnd = "</DTSTART>";
             this.dateEndEnd = "</DTEND>";

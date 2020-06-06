@@ -125,6 +125,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_RESTORE_CSV = 111;
     private static final int PERMISSION_RESTORE_TDF = 112;
     private static final int PERMISSION_RESTORE_QIF = 113;
+    private static final int PERMISSION_RESTORE_OFX = 114;
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static boolean DEBUG = false;
     public static boolean IS_GOOGLE_MARKET = false;
@@ -825,14 +826,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             //noinspection ResultOfMethodCallIgnored
                             //new File(importqif.QIFPath).delete();
                         }
-//                    })
-//                    {
-//                        public void run() {
-//                            Log.i("QIFDEBUG","importQIFFromSD() -> inside Thread->run() -> about to call importqif.importIntoDatabase()");
-//                            importqif.importIntoDatabase(AccountsActivity.this);
-
-                        //new File(importqif.QIFPath).delete();
-//                        }
                     }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
@@ -853,8 +846,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
             for (File file : qifList) {
                 if (file.exists()) {
                     final ImportExportOFX importofx = new ImportExportOFX(this, file.getAbsolutePath());
-                    new Thread() {
+                    new Thread(new Runnable() {
+                        @Override
                         public void run() {
+                            try {
+                                Thread.sleep(200);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
                             importofx.importIntoDatabase();
                             File importedFile = new File(importofx.path);
                             AccountsActivity.this.runOnUiThread(new Runnable() {
@@ -863,7 +862,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                 }
                             });
                         }
-                    }.start();
+                    }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
                 }
@@ -949,7 +948,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     //int length = array.length;
                     for (String item : array) {
                         filter.setAccount(item);
-                        ArrayList query = TransactionDB.queryWithFilter(filter);
+                        ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
                         String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
                         ImportExportQIF exportqif = new ImportExportQIF(AccountsActivity.this);
                         exportqif.QIFPath = fileName;
@@ -1633,6 +1632,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         importCSVFromSD();
                         break;
                     }
+                    case PERMISSION_RESTORE_OFX: {
+                        importOFXFromSD();
+                        break;
+                    }
                     case PERMISSION_BACKUP_QIF: {
                         exportQIFToSD();
                         break;
@@ -1737,6 +1740,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 }
                 case PERMISSION_RESTORE_CSV: {
                     importCSVFromSD();
+                    break;
+                }
+                case PERMISSION_RESTORE_OFX: {
+                    importOFXFromSD();
                     break;
                 }
                 case PERMISSION_BACKUP_QIF: {
@@ -1904,7 +1911,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
             Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportOFXDialog just ran", Snackbar.LENGTH_LONG);
             snackbar.show();
-            AccountsActivity.this.importOFXFromSD();
+            showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_OFX);
+            //AccountsActivity.this.importOFXFromSD();
         }
     }
 }
