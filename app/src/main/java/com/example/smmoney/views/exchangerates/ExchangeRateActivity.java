@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
@@ -27,6 +28,7 @@ import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
+
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -45,7 +47,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     private RadioButton foreignAmountRadioButton;
     private String foreignCurrency;
     private TextView foreignCurrencyTextView;
-    private Button invertButton;
+    @SuppressWarnings("unused")
     private OnFocusChangeListener mFocusChangedListener = new OnFocusChangeListener() {
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus) {
@@ -79,45 +81,72 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     };
     private Runnable onFocusChangedRunnableAccountAmount = new Runnable() {
         public void run() {
+            foreignAmountRadioButton.setVisibility(View.VISIBLE);
+            exchangeRateRadioButton.setVisibility(View.VISIBLE);
+            accountAmountRadioButton.setVisibility(View.VISIBLE);
             ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
             ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (ExchangeRateActivity.this.accountAmountRadioButton.isChecked()) {
-                ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
+            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
+                exchangeRateRadioButton.setChecked(true);
             }
+            if (ExchangeRateActivity.this.accountAmountRadioButton.isChecked()) {
+                ExchangeRateActivity.this.exchangeRateRadioButton.setChecked(true);
+            }
+            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Change\nForeign Amount");
+            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Change\nExchange Rate");
+            ExchangeRateActivity.this.accountAmountRadioButton.setText("Account\nAmount");
             ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(false);
             ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(50);
         }
     };
     private Runnable onFocusChangedRunnableExchangeAmount = new Runnable() {
         public void run() {
+            foreignAmountRadioButton.setVisibility(View.VISIBLE);
+            exchangeRateRadioButton.setVisibility(View.VISIBLE);
+            accountAmountRadioButton.setVisibility(View.VISIBLE);
             ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
             ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
+            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
+                foreignAmountRadioButton.setChecked(true);
+            }
             if (ExchangeRateActivity.this.exchangeRateRadioButton.isChecked()) {
                 ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
             }
+            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Change\nForeign Amount");
+            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Exchange\nRate");
+            ExchangeRateActivity.this.accountAmountRadioButton.setText("Change\nAccount Amount");
             ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(false);
             ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(50);
         }
     };
     private Runnable onFocusChangedRunnableForeignAmount = new Runnable() {
         public void run() {
+            foreignAmountRadioButton.setVisibility(View.VISIBLE);
+            exchangeRateRadioButton.setVisibility(View.VISIBLE);
+            accountAmountRadioButton.setVisibility(View.VISIBLE);
             ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
             ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
             ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
             ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (ExchangeRateActivity.this.foreignAmountRadioButton.isChecked()) {
+            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
+                exchangeRateRadioButton.setChecked(true);
+            }
+            if (ExchangeRateActivity.this.foreignAmountRadioButton.isChecked() || exchangeRateRadioButton.isChecked()) {
                 ExchangeRateActivity.this.exchangeRateRadioButton.setChecked(true);
             }
+            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Foreign\nAmount");
+            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Change\nExchange Rate");
+            ExchangeRateActivity.this.accountAmountRadioButton.setText("Change\nAccount Amount");
             ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(false);
             ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(50);
         }
@@ -136,11 +165,9 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         }
 
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            int i = 1;
         }
 
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            int i = 1;
         }
     }
 
@@ -165,14 +192,14 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             if (s != null) {
                 xrate = s.getXrate();
 
-            setExchangeRate(xrate);
-            setAccountAmount(s.getAmount());
-            if (xrate != 0.0d) {
-                d = s.getAmount() / xrate;
-            }
+                setExchangeRate(xrate);
+                setAccountAmount(s.getAmount());
+                if (xrate != 0.0d) {
+                    d = s.getAmount() / xrate;
+                }
 
-            setForeignAmount(d);
-            this.foreignCurrency = s.getCurrencyCode();
+                setForeignAmount(d);
+                this.foreignCurrency = s.getCurrencyCode();
             }
         } catch (NullPointerException e2) {
             this.exchangeRate = 1.0d;
@@ -182,11 +209,11 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         setContentView(R.layout.exchangerate);
         setupButtons();
         loadCells();
-        setTitle(Locales.kLOC_GENERAL_EXCHANGERATE);
+        setTitle();
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
+    private void setTitle() {
+        this.titleTextView.setText(Locales.kLOC_GENERAL_EXCHANGERATE);
     }
 
     private void setExchangeRate(double n) {
@@ -212,12 +239,15 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.exchangeRateEditText = findViewById(R.id.exchange_rate_edit_text);
         this.accountAmountEditText = findViewById(R.id.account_amount_edit_text);
         this.accountCurrencyTextView = findViewById(R.id.account_currency_text_view);
-        this.invertButton = findViewById(R.id.invert_button);
+        Button invertButton = findViewById(R.id.invert_button);
         this.foreignAmountRadioButton = findViewById(R.id.foreign_amount_segmented);
         this.exchangeRateRadioButton = findViewById(R.id.exchange_rate_segmented);
         this.accountAmountRadioButton = findViewById(R.id.account_amount_segmented);
-        this.invertButton.setOnClickListener(new OnClickListener() {
+        invertButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
+                if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
+                    accountAmountRadioButton.setChecked(true);
+                }
                 ExchangeRateActivity.this.saveXrate();
                 ExchangeRateActivity.this.exchangeRateEditText.setText(CurrencyExt.exchangeRateAsString(1.0d / ExchangeRateActivity.this.exchangeRate));
             }
@@ -273,6 +303,11 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         }
         this.titleTextView = findViewById(R.id.title_text_view);
         this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
+        if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
+            foreignAmountRadioButton.setVisibility(View.INVISIBLE);
+            exchangeRateRadioButton.setVisibility(View.INVISIBLE);
+            accountAmountRadioButton.setVisibility(View.INVISIBLE);
+        }
         findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 

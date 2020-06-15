@@ -9,6 +9,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
@@ -75,15 +76,21 @@ public class LocalNotificationAlertActivitiy extends Activity {
             GregorianCalendar newDate = CalExt.addHours(LocalNotificationAlertActivitiy.this.date, hours);
             Intent intent = new Intent(LocalNotificationAlertActivitiy.this.context, LocalNotificationRepeatingReciever.class);
             String body = Locales.kLOC_REPEATING_NOTIFY_DUE;
+            //<string name="kLOC_REPEATING_NOTIFY_DUE">%1$sRepeating Transaction due\n%2$s %3$s➜%4$s</string>
+            //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
             body.replaceFirst("%1$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.isOverdueOnDate(newDate) ? Locales.kLOC_REPEATING_OVERDUE : "");
+            //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored,ResultOfMethodCallIgnored
             body.replaceFirst("%2$s", CalExt.descriptionWithMediumDate(LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getDate()));
+            //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored,ResultOfMethodCallIgnored
             body.replaceFirst("%3$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getAccount());
+            //noinspection RegExpUnexpectedAnchor
             String str = "%4$s";
             if (LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().isTransfer()) {
                 transferToAccount = LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getTransferToAccount();
             } else {
                 transferToAccount = LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getPayee();
             }
+            //noinspection ResultOfMethodCallIgnored
             body.replaceFirst(str, transferToAccount);
             intent.putExtra("body", body);
             intent.putExtra("date", LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getDate());

@@ -180,18 +180,18 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
                     int i = CurrencyKeyboard.this.getVisibility();
                     if (i == View.INVISIBLE || i == View.GONE) {
                         CurrencyKeyboard.this.setVisibility(VISIBLE);
-                        CurrencyKeyboard.this.setToolbarVisibility(0);
+                        CurrencyKeyboard.this.setToolbarVisibility(VISIBLE);
                     }
                 }
             }
-        }, 300);
+        }, 150);
     }
 
     public boolean hide() {
         boolean isShowing = getVisibility() == VISIBLE;
         if (isShowing) {
             setVisibility(GONE);
-            setToolbarVisibility(8);
+            setToolbarVisibility(GONE);
         }
         return isShowing;
     }
@@ -306,11 +306,11 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     }
 
     public void onKey(int primaryCode, int[] keyCodes) {
-        if (primaryCode == 70) {
+        if (primaryCode == 70 /*'=' key*/) {
             processMath();
-        } else if (primaryCode == 28) {
+        } else if (primaryCode == 28 /*'C' key */) {
             this.editText.setText("");
-        } else if (primaryCode == 67) {
+        } else if (primaryCode == 67 /*'del' key*/) {
             if (this.editText.getText().toString().length() > 0) {
                 int i = this.editText.getSelectionStart();
                 String theText = this.editText.getText().toString();
@@ -326,11 +326,14 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
                 this.editText.setText(firstHalf + theText.substring(i));
                 this.editText.setSelection(i - 1);
             }
-        } else if (primaryCode == 66) {
+        } else if (primaryCode == 66 /*'Next' key*/) {
             View v = this.editText.focusSearch(FOCUS_DOWN);
             if (v != null) {
                 v.requestFocus();
-                ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
+                ((EditText) v).setSelection(((EditText) v).getText().length());
+                if (!(((EditText) v).getInputType() == 8194)) { /*8194 = HEX2002 = numberDecimal type see https://developer.android.com/reference/android/widget/TextView.html#attr_android%3AinputType*/
+                    ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
+                }
                 return;
             }
             hide();

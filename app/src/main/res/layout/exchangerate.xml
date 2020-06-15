@@ -2,6 +2,7 @@
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -13,13 +14,15 @@
         android:layout_height="40dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
 
+        <!--            android:textAppearance="@color/black_theme_text"-->
         <TextView
             android:id="@+id/title_text_view"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_marginStart="16dp"
             android:text="@string/title"
-            android:textAppearance="@color/black_theme_text"
+            android:gravity="start|center_vertical"
+            app:fontFamily="sans-serif-medium"
             android:textStyle="bold" />
 
     </FrameLayout>
@@ -42,6 +45,8 @@
                 android:id="@+id/FrameLayout01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:layout_weight="1.0">
 
                 <TextView
@@ -54,12 +59,15 @@
 
                 <EditText
                     android:id="@+id/foreign_amount_edit_text"
-                    android:layout_width="120dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_horizontal"
+                    android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="120dp"
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/exchange_rate_edit_text"
+
+                    android:textColorHint="@color/blue_theme_text_alt"
                     android:text=""
                     android:importantForAutofill="no" />
 
@@ -68,7 +76,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="40dp"
+                    android:layout_marginEnd="50dp"
                     android:text="@string/usd" />
 
                 <ImageView
@@ -85,6 +93,8 @@
                 android:id="@+id/FrameLayout02"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:layout_weight="1.0">
 
                 <TextView
@@ -99,9 +109,11 @@
                     android:id="@+id/exchange_rate_edit_text"
                     android:layout_width="145dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="120dp"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@id/account_amount_edit_text"
+                    android:textIsSelectable="true"
                     android:text="@string/accounts_view_net_worth"
                     android:hint="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:importantForAutofill="no" />
@@ -120,6 +132,8 @@
                 android:id="@+id/FrameLayout03"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:layout_weight="1.0">
 
                 <TextView
@@ -141,10 +155,10 @@
                     android:id="@+id/account_amount_edit_text"
                     android:layout_width="145dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:layout_gravity="start|center_horizontal"
                     android:layout_marginStart="120dp"
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
-                    android:inputType="number"
+                    android:inputType="numberDecimal"
                     android:text=""
                     android:importantForAutofill="no" />
 
@@ -153,50 +167,56 @@
             <com.example.makeramen.segmented.SegmentedRadioGroup
                 android:id="@+id/radioGroup1"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1.0"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
                 android:orientation="horizontal">
 
                 <RadioButton
                     android:id="@+id/foreign_amount_segmented"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1.0"
                     android:button="@null"
                     android:gravity="center"
-                    android:minHeight="40dp"
+                    android:maxLines="2"
                     android:minWidth="70dp"
+                    android:minHeight="50dp"
+                    android:textColor="@drawable/segment_radio_text_color"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/radio_text_color_unchecked" />
+                    tools:text="Change\nForeign Amount" />
 
                 <RadioButton
                     android:id="@+id/exchange_rate_segmented"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="0dp"
+                    android:layout_height="50dp"
                     android:layout_weight="1.0"
                     android:button="@null"
+                    android:layout_gravity="top"
                     android:gravity="center"
-                    android:minHeight="40dp"
+                    android:maxLines="2"
                     android:minWidth="70dp"
+                    android:minHeight="50dp"
+                    android:textColor="@drawable/segment_radio_text_color"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/radio_text_color_unchecked" />
+                    tools:text="Change\nExchange Rate" />
 
                 <RadioButton
                     android:id="@+id/account_amount_segmented"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1.0"
-                    android:checked="true"
                     android:button="@null"
-                    android:gravity="center"
-                    android:minHeight="40dp"
+                    android:layout_gravity="top"
+                    android:gravity="center_horizontal|center_vertical"
+                    android:maxLines="2"
                     android:minWidth="70dp"
+                    android:minHeight="50dp"
+                    android:textColor="@drawable/segment_radio_text_color"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@color/radio_text_color_unchecked" />
+                    tools:text="Change\nAccount Amount" />
 
             </com.example.makeramen.segmented.SegmentedRadioGroup>
 

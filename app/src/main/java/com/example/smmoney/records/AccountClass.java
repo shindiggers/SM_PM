@@ -270,7 +270,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         Resources resources = SMMoney.getAppContext().getResources();
         TypedValue value = new TypedValue();
         resources.getValue(res, value, true);
-        String[] fullFileName = value.string.toString().split("\\.(?=[^\\.]+$)");
+        String[] fullFileName = value.string.toString().split("\\.(?=[^.]+$)");
         return "." + fullFileName[1];
     }
 

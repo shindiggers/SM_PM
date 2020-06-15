@@ -823,7 +823,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                 e.printStackTrace();
                             }
                             importqif.importIntoDatabase(AccountsActivity.this);
-                            //noinspection ResultOfMethodCallIgnored
                             //new File(importqif.QIFPath).delete();
                         }
                     }).start();

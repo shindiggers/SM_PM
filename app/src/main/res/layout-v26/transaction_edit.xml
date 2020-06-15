@@ -21,12 +21,12 @@
             android:layout_marginStart="15dp"
             android:background="@color/blue_theme_background_color"
             android:focusable="true"
-            android:nextFocusDown="@+id/withdrawalbutton"
             android:nextFocusRight="@+id/save_button"
-            android:paddingBottom="3dp"
+            android:nextFocusDown="@+id/withdrawalbutton"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/transaction_edit_cancel"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
@@ -48,12 +48,12 @@
             android:layout_marginEnd="15dp"
             android:background="@color/blue_theme_background_color"
             android:focusable="true"
-            android:nextFocusDown="@+id/withdrawalbutton"
             android:nextFocusLeft="@+id/cancel_button"
-            android:paddingBottom="3dp"
+            android:nextFocusDown="@+id/withdrawalbutton"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/transaction_edit_save"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />
@@ -95,15 +95,15 @@
                         android:id="@+id/withdrawalbutton"
                         android:layout_width="0dp"
                         android:layout_height="58dp"
-                        android:layout_weight="1.0"
-                        android:checked="true"
                         android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_weight="1.0"
                         android:button="@null"
-                        android:minHeight="40dp"
+                        android:checked="true"
+                        android:gravity="center_vertical|center_horizontal"
                         android:minWidth="40dp"
-                        android:nextFocusDown="@+id/datebutton"
+                        android:minHeight="40dp"
                         android:nextFocusUp="@+id/save_button"
+                        android:nextFocusDown="@+id/datebutton"
                         android:text="@string/kLOC_GENERAL_WITHDRAWAL"
                         android:textColor="@drawable/segment_radio_text_color" />
 
@@ -111,14 +111,14 @@
                         android:id="@+id/depositbutton"
                         android:layout_width="0dp"
                         android:layout_height="58dp"
-                        android:layout_weight="1.0"
                         android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:minHeight="40dp"
+                        android:layout_weight="1.0"
                         android:button="@null"
+                        android:gravity="center_vertical|center_horizontal"
                         android:minWidth="40dp"
-                        android:nextFocusDown="@+id/datebutton"
+                        android:minHeight="40dp"
                         android:nextFocusUp="@+id/save_button"
+                        android:nextFocusDown="@+id/datebutton"
                         android:text="@string/kLOC_GENERAL_DEPOSIT"
                         android:textColor="@drawable/segment_radio_text_color" />
 
@@ -126,14 +126,14 @@
                         android:id="@+id/transferbutton"
                         android:layout_width="0dp"
                         android:layout_height="58dp"
-                        android:layout_weight="1.0"
                         android:layout_gravity="center_vertical"
-                        android:gravity="center_vertical|center_horizontal"
+                        android:layout_weight="1.0"
                         android:button="@null"
-                        android:minHeight="40dp"
+                        android:gravity="center_vertical|center_horizontal"
                         android:minWidth="40dp"
-                        android:nextFocusDown="@+id/datebutton"
+                        android:minHeight="40dp"
                         android:nextFocusUp="@+id/save_button"
+                        android:nextFocusDown="@+id/datebutton"
                         android:text="@string/kLOC_GENERAL_TRANSFER"
                         android:textColor="@drawable/segment_radio_text_color" />
 
@@ -154,8 +154,8 @@
                 android:baselineAligned="false"
                 android:focusable="true"
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/accountbutton"
                 android:nextFocusRight="@+id/repeatingimageview"
+                android:nextFocusDown="@+id/accountbutton"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -163,8 +163,8 @@
                     android:id="@+id/date_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_DATE" />
 
@@ -192,14 +192,14 @@
                     android:id="@+id/repeatingimageview"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:src="@drawable/ic_date_range"
-                    android:clickable="true"
-                    android:focusable="true"
                     android:layout_gravity="center"
-                    tools:background="@drawable/ic_date_range"
+                    android:layout_marginEnd="4dp"
+                    android:clickable="true"
+                    android:contentDescription="@string/transaction_edit_open_repeating_transaction_dialogue"
+                    android:focusable="true"
                     android:nextFocusLeft="@+id/datebutton"
-                    android:contentDescription="@string/transaction_edit_open_repeating_transaction_dialogue" />
+                    android:src="@drawable/ic_date_range"
+                    tools:background="@drawable/ic_date_range" />
 
             </LinearLayout>
 
@@ -219,8 +219,8 @@
                     android:id="@+id/account_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_ACCOUNT" />
 
@@ -237,8 +237,8 @@
                     android:id="@+id/account_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/content_description_open_account_pick_list" />
@@ -253,9 +253,9 @@
                 android:baselineAligned="false"
                 android:focusable="true"
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/amountedittext"
                 android:nextFocusLeft="@+id/payeetextview"
                 android:nextFocusUp="@+id/categoryedittext"
+                android:nextFocusDown="@+id/amountedittext"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -263,8 +263,8 @@
                     android:id="@+id/payeelabeltextview"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_PAYEE" />
 
@@ -272,26 +272,26 @@
                     android:id="@+id/payeetextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_PAYEE"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@+id/amountedittext"
                     android:nextFocusRight="@+id/payeebutton"
                     android:nextFocusUp="@+id/categoryedittext"
+                    android:nextFocusDown="@+id/amountedittext"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/content_description_open_payee_pick_list"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    android:contentDescription="@string/content_description_open_payee_pick_list" />
 
             </LinearLayout>
 
@@ -303,8 +303,8 @@
                 android:baselineAligned="false"
                 android:focusable="true"
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/payeetextview"
                 android:nextFocusLeft="@+id/categoryedittext"
+                android:nextFocusDown="@+id/payeetextview"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -312,8 +312,8 @@
                     android:id="@+id/category_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_CATEGORY" />
 
@@ -321,35 +321,35 @@
                     android:id="@+id/categorytextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:clickable="false"
                     android:focusable="false"
-                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    tools:visibility="visible"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <AutoCompleteTextView
                     android:id="@+id/categoryedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_CATEGORY"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@+id/payeetextview"
                     android:nextFocusRight="@+id/categorybutton"
+                    android:nextFocusDown="@+id/payeetextview"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
@@ -369,8 +369,8 @@
                     android:id="@+id/amount_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_AMOUNT" />
 
@@ -378,33 +378,51 @@
                     android:id="@+id/amountedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_AMOUNT"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
-                    android:nextFocusDown="@+id/idedittext"
                     android:nextFocusRight="@+id/idedittext"
                     android:nextFocusUp="@+id/payeetextview"
+                    android:nextFocusDown="@+id/idedittext"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt" />
 
-                <TextView
-                    android:id="@+id/amount_xrate_text_view"
-                    android:layout_width="50dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:singleLine="true"
-                    android:text="@string/transaction_edit_x_xrate" />
+                <LinearLayout
+                    android:layout_width="150dp"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/foreign_amount_text_view"
+                        android:layout_width="150dp"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
+
+                    <TextView
+                        android:id="@+id/amount_xrate_text_view"
+                        android:layout_width="150dp"
+                        android:layout_height="0dp"
+                        android:layout_gravity="center_vertical"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:singleLine="true"
+                        android:text="@string/transaction_edit_x_xrate" />
+                </LinearLayout>
 
                 <ImageButton
                     android:id="@+id/amount_currency_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue" />
@@ -424,9 +442,9 @@
                 android:baselineAligned="false"
                 android:focusable="true"
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/clearedcheckbox"
                 android:nextFocusLeft="@+id/idedittext"
                 android:nextFocusUp="@+id/amountedittext"
+                android:nextFocusDown="@+id/clearedcheckbox"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -434,8 +452,8 @@
                     android:id="@+id/id_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_ID" />
 
@@ -443,24 +461,24 @@
                     android:id="@+id/idedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:inputType="text"
-                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_ID"
                     android:imeOptions="actionNext"
-                    android:nextFocusDown="@+id/clearedcheckbox"
+                    android:inputType="text"
                     android:nextFocusRight="@+id/idbutton"
                     android:nextFocusUp="@+id/amountedittext"
+                    android:nextFocusDown="@+id/clearedcheckbox"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_id_pick_list" />
@@ -475,8 +493,8 @@
                     android:id="@+id/cleared_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_CLEARED" />
 
@@ -486,10 +504,10 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_centerVertical="true"
-                    android:paddingEnd="8dp"
-                    android:paddingStart="8dp"
+                    android:nextFocusUp="@+id/idedittext"
                     android:nextFocusDown="@+id/classedittext"
-                    android:nextFocusUp="@+id/idedittext" />
+                    android:paddingStart="8dp"
+                    android:paddingEnd="8dp" />
 
             </RelativeLayout>
 
@@ -506,9 +524,9 @@
                 android:baselineAligned="false"
                 android:focusable="true"
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/memobutton"
                 android:nextFocusLeft="@+id/classedittext"
                 android:nextFocusUp="@+id/clearedcheckbox"
+                android:nextFocusDown="@+id/memobutton"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -516,8 +534,8 @@
                     android:id="@+id/class_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_CLASS" />
 
@@ -525,37 +543,37 @@
                     android:id="@+id/classtextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:clickable="false"
                     android:focusable="false"
-                    tools:visibility="visible"
-                    android:layout_gravity="center_vertical"
                     android:gravity="center_vertical"
-                    android:visibility="gone" />
+                    android:visibility="gone"
+                    tools:visibility="visible" />
 
                 <AutoCompleteTextView
                     android:id="@+id/classedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:inputType="text"
                     android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_CLASS"
                     android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious"
-                    android:nextFocusDown="@+id/memobutton"
+                    android:inputType="text"
                     android:nextFocusRight="@+id/classbutton"
                     android:nextFocusUp="@+id/clearedcheckbox"
+                    android:nextFocusDown="@+id/memobutton"
                     android:singleLine="true"
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_class_pick_list" />
@@ -572,15 +590,15 @@
                 android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                 android:nextFocusUp="@+id/classedittext"
                 android:orientation="horizontal"
-                android:weightSum="1.0"
-                android:padding="0dp">
+                android:padding="0dp"
+                android:weightSum="1.0">
 
                 <TextView
                     android:id="@+id/memo_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_NOTE" />
 
@@ -588,11 +606,11 @@
                     android:id="@+id/memotextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:ellipsize="end"
+                    android:gravity="start|center_vertical"
                     android:maxLines="2"
                     android:singleLine="false" />
 
@@ -650,10 +668,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="6dp"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:paddingTop="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="3dp"
                     android:text="@string/kLOC_GENERAL_KEEP_CHANGE"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textStyle="bold"
@@ -665,16 +683,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="6dp"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:paddingTop="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="3dp"
                     android:text="@string/kLOC_GENERAL_CONTACTS"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:textColor="@color/black_theme_text" />
+                    tools:textColor="@color/black_theme_text"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/next_check_number_toolbar_button"
@@ -682,16 +700,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="6dp"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:paddingTop="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="3dp"
                     android:text="@string/kLOC_CHECKNUMBER_NEXT"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:textColor="@color/black_theme_text" />
+                    tools:textColor="@color/black_theme_text"
+                    tools:visibility="visible" />
 
                 <TextView
                     android:id="@+id/subcategory_toolbar_button"
@@ -699,16 +717,16 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="6dp"
-                    android:paddingBottom="3dp"
                     android:paddingLeft="3dp"
-                    android:paddingRight="3dp"
                     android:paddingTop="3dp"
+                    android:paddingRight="3dp"
+                    android:paddingBottom="3dp"
                     android:text="@string/elipses"
                     android:textAppearance="?android:textAppearanceMedium"
                     android:textStyle="bold"
                     android:visibility="gone"
-                    tools:visibility="visible"
-                    tools:textColor="@color/black_theme_text" />
+                    tools:textColor="@color/black_theme_text"
+                    tools:visibility="visible" />
 
             </LinearLayout>
 

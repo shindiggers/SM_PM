@@ -125,7 +125,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private final int TIME_DIALOG_ID = 5;
     private TextView accountTextView;
     private EditText amountEditText;
-    private TextView amountXrateTextView;
+    private TextView foreignAmountTextView;
+    private TextView xRateTextView;
     private BalanceBar balanceBar;
     private AutoCompleteTextView categoryEditText;
     private TextView categoryTextView;
@@ -482,8 +483,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 TransactionEditActivity.this.editTextDidFinishChanging(3);
             }
         });
-        this.amountXrateTextView = outterView.findViewById(R.id.amount_xrate_text_view);
-        this.amountXrateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.foreignAmountTextView = outterView.findViewById(R.id.foreign_amount_text_view);
+        this.foreignAmountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.xRateTextView = outterView.findViewById(R.id.amount_xrate_text_view);
+        this.xRateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         aView = (View) this.amountEditText.getParent();
         theViews.add(aView);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -503,7 +506,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             });
         } else {
             outterView.findViewById(R.id.amount_currency_button).setVisibility(View.GONE);
-            this.amountXrateTextView.setVisibility(View.GONE);
+            this.foreignAmountTextView.setVisibility(View.GONE);
+            this.xRateTextView.setVisibility(View.GONE);
         }
         ((TextView) outterView.findViewById(R.id.amount_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         aView = outterView.findViewById(R.id.idbutton);
@@ -1132,39 +1136,55 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             AccountClass a1 = AccountDB.recordFor(this.transaction.getTransferToAccount());
             this.transaction.setXrate(xrateFromAccountToAccount(this.transaction.getAccount(), a1.getAccount()));
             this.transaction.setCurrencyCode(a1.getCurrencyCode());
-            this.amountXrateTextView.setText("x" + this.transaction.getXrate());
+            //this.amountXrateTextView.setText("x" + this.transaction.getXrate());
+            Double xRate = this.transaction.getXrate();
+            String currencyCode = this.transaction.getCurrencyCode();
+            String tempFxString = "1" + Prefs.getStringPref(Prefs.HOMECURRENCYCODE) + " = " + currencyCode + xRate;
+            this.foreignAmountTextView.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
             if (this.transaction.getSubTotal() == 0.0d) {
                 this.amountEditText.setText("");
             } else {
-                this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
+                //this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
+                this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal()), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
             }
             this.amountEditText.invalidate();
-            this.amountXrateTextView.setVisibility(View.VISIBLE);
-            this.amountXrateTextView.invalidate();
+            this.foreignAmountTextView.setVisibility(View.VISIBLE);
+            this.foreignAmountTextView.invalidate();
         }
     }
 
     private void loadAmountXrateValues() {
         try {
             if (AccountDB.recordFor(this.transaction.getAccount()).getCurrencyCode().equals(this.transaction.getCurrencyCode())) {
-                this.amountXrateTextView.setVisibility(View.GONE);
+                this.foreignAmountTextView.setVisibility(View.GONE);
+                this.xRateTextView.setVisibility(View.GONE);
             }
         } catch (NullPointerException e) {
-            this.amountXrateTextView.setVisibility(View.GONE);
+            this.foreignAmountTextView.setVisibility(View.GONE);
+            this.xRateTextView.setVisibility(View.GONE);
         }
         if (this.transaction.getSubTotal() == 0.0d) {
             this.amountEditText.setText("");
         } else if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
-            this.amountXrateTextView.setVisibility(View.VISIBLE);
-            this.amountXrateTextView.setText("x" + CurrencyExt.exchangeRateAsString(this.transaction.getXrate()));
+            Double xRate = this.transaction.getXrate();
+            String currencyCode = this.transaction.getCurrencyCode();
+            String tempFxString = "1 " + Prefs.getStringPref(Prefs.HOMECURRENCYCODE) + " = " + xRate + " " + currencyCode;
+
+            this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal()), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
+            this.foreignAmountTextView.setVisibility(View.VISIBLE);
+            this.xRateTextView.setVisibility(View.VISIBLE);
+
+            //this.amountXrateTextView.setText("x" + CurrencyExt.exchangeRateAsString(this.transaction.getXrate()));
+            this.foreignAmountTextView.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
+            this.xRateTextView.setText(tempFxString);
         } else {
             this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal())));
         }
     }
 
     private void saveAmountXrates() {
-        double amount = CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), this.transaction.getCurrencyCode());
+        //double amount = CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), this.transaction.getCurrencyCode());
+        double amount = CurrencyExt.amountFromString(this.amountEditText.getText().toString());
         double multiplier = 1.0d;
         if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             multiplier = -1.0d;
@@ -1172,7 +1192,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             multiplier *= this.transaction.getXrate();
         }
-        this.transaction.setSubTotal(Math.abs(amount) * multiplier);
+        //this.transaction.setSubTotal(Math.abs(amount) * multiplier);
+        this.transaction.setSubTotal(Math.abs(amount) * 1);
         if (this.transaction.getNumberOfSplits() <= 1) {
             this.transaction.setAmount(this.transaction.getSubTotal());
         }
