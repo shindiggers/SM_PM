@@ -300,7 +300,7 @@ public class ImportExportOFX {
             Log.e(SMMoney.TAG, "import encoding " + encodingStr + " not supported");
             e2.printStackTrace();
         }
-        StringBuffer strBuff = new StringBuffer(10000);
+        StringBuilder strBuff = new StringBuilder(10000);
         while (true) {
             try {
                 String readLine = null;

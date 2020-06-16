@@ -34,8 +34,8 @@ public class ClassReportDataSource extends ReportDataSource {
     }
 
     public void generateReport() {
-        Hashtable<String, ReportItem> scratchReport = new Hashtable();
-        Hashtable<String, String> caseInsensitiveKeys = new Hashtable();
+        Hashtable<String, ReportItem> scratchReport = new Hashtable<>();
+        Hashtable<String, String> caseInsensitiveKeys = new Hashtable<>();
         double xrate = 1.0d;
         boolean multipleCurrencies = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
         boolean allAccounts = this.filter.allAccounts();

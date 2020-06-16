@@ -1,11 +1,12 @@
 package com.example.smmoney.views.accounts;
 
 import android.content.Context;
-import android.support.v7.widget.AppCompatCheckBox;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import androidx.appcompat.widget.AppCompatCheckBox;
 
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;

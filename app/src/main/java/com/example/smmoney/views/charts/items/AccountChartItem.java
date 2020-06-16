@@ -2,6 +2,7 @@ package com.example.smmoney.views.charts.items;
 
 import com.example.smmoney.records.AccountClass;
 
+@SuppressWarnings("unused")
 class AccountChartItem extends ChartItem {
     AccountClass account;
 

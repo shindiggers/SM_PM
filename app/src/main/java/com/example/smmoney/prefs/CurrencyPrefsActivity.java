@@ -5,12 +5,14 @@ import android.preference.CheckBoxPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.Preference.OnPreferenceChangeListener;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+
 import java.util.ArrayList;
 import java.util.Currency;
 
@@ -21,7 +23,7 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.layout.prefs_currency);
+        addPreferencesFromResource(R.xml.prefs_currency);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
         getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -42,7 +44,7 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
         this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
         for (String loc : codeList) {
             try {
-                nameList.add(String.valueOf(Currency.getInstance(loc).getCurrencyCode()) + " - " + Currency.getInstance(loc).getSymbol());
+                nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
                 codeNameList.add(Currency.getInstance(loc).getCurrencyCode());
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();

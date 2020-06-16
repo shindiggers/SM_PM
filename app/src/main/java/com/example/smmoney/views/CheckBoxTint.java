@@ -1,8 +1,9 @@
 package com.example.smmoney.views;
 
 import android.content.res.ColorStateList;
-import android.support.v4.widget.CompoundButtonCompat;
 import android.widget.CheckBox;
+
+import androidx.core.widget.CompoundButtonCompat;
 
 import com.example.smmoney.misc.PocketMoneyThemes;
 

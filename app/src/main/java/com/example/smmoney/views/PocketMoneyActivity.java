@@ -2,8 +2,9 @@ package com.example.smmoney.views;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.KeyEvent;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountsActivity;

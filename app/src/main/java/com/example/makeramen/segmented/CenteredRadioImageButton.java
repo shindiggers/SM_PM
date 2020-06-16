@@ -4,7 +4,8 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
-import android.support.v7.widget.AppCompatRadioButton;
+
+import androidx.appcompat.widget.AppCompatRadioButton;
 
 import com.example.smmoney.R;
 

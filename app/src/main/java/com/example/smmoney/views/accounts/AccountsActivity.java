@@ -22,11 +22,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.content.ContextCompat;
 import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
@@ -50,6 +45,11 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentManager;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -87,6 +87,7 @@ import com.example.smmoney.views.reports.ClassReportDataSource;
 import com.example.smmoney.views.reports.PayeeReportDataSource;
 import com.example.smmoney.views.reports.ReportsActivity;
 import com.example.smmoney.views.transactions.TransactionsActivity;
+import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -95,7 +96,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Objects;
 
-import static android.support.v4.content.FileProvider.getUriForFile;
+import static androidx.core.content.FileProvider.getUriForFile;
 import static com.example.smmoney.SMMoney.TAG;
 
 //import com.android.vending.licensing.LicenseChecker;

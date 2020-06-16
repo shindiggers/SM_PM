@@ -24,7 +24,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.text.Html;
 import android.text.format.DateFormat;
@@ -50,6 +49,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+
+import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
