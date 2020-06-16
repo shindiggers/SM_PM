@@ -931,9 +931,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
-
-            act.setKeepTheChangeAccount(tempAct.account);
-            act.saveToDatabase();
+                act.setKeepTheChangeAccount(tempAct.account);
+                act.saveToDatabase();
             }
         }
         it = overdraftAccounts.iterator();
@@ -942,9 +941,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
-
-            act.setOverdraftAccount(tempAct.account);
-            act.saveToDatabase();
+                act.setOverdraftAccount(tempAct.account);
+                act.saveToDatabase();
             }
         }
     }
@@ -992,9 +990,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
-
-            act.setKeepTheChangeAccount(tempAct.account);
-            act.saveToDatabase();
+                act.setKeepTheChangeAccount(tempAct.account);
+                act.saveToDatabase();
             }
         }
         it = overdraftAccounts.iterator();
@@ -1003,9 +1000,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
-
-            act.setOverdraftAccount(tempAct.account);
-            act.saveToDatabase();
+                act.setOverdraftAccount(tempAct.account);
+                act.saveToDatabase();
             }
         }
     }

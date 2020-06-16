@@ -23,17 +23,17 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 
 public class BudgetsRowHolder extends View {
-    private String actualString;
-    private String budgetedString;
     public CategoryClass category;
-    private String categoryString;
-    private Context context;
-    private boolean touched = false;
     Rect bounds = new Rect(0, 0, 0, 0);
     Rect firstBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
     Rect secondBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
     Rect rect = new Rect(bounds.left, bounds.top, bounds.right, bounds.bottom);
     Paint p = new Paint();
+    private String actualString;
+    private String budgetedString;
+    private String categoryString;
+    private Context context;
+    private boolean touched = false;
 
     public BudgetsRowHolder(Context context) {
         super(context);
@@ -129,8 +129,8 @@ public class BudgetsRowHolder extends View {
     }
 
     protected void onDraw(Canvas canvas) {
-        double height = (double) getHeight();
-        double width = (double) getWidth();
+        double height = getHeight();
+        double width = getWidth();
         double spent = ((double) Math.round(this.category.spent * 100.0d)) / 100.0d;
         double budget = this.category.budget;
         if (this.category.getType() == Enums.kCategoryExpense/*0*/) {

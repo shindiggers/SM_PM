@@ -1,51 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <Preference
-        android:title="@string/kLOC_PREFERENCES_ABOUT_TITLE"
-        android:key="prefsabout" />
+        android:key="prefsabout"
+        android:title="@string/kLOC_PREFERENCES_ABOUT_TITLE" />
 
     <Preference
-        android:title="@string/kLOC_PREFERENCES_HELP_TITLE"
-        android:key="prefshelpbutton" />
+        android:key="prefshelpbutton"
+        android:title="@string/kLOC_PREFERENCES_HELP_TITLE" />
 
-    <PreferenceCategory
-        android:title="">
-
-        <Preference
-            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
-            android:key="CurrencyPrefs" />
+    <PreferenceCategory android:title="">
 
         <Preference
-            android:title="@string/kLOC_PREFS_SECURITY"
-            android:key="SecurityPrefs" />
+            android:key="CurrencyPrefs"
+            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL" />
+
+        <Preference
+            android:key="SecurityPrefs"
+            android:title="@string/kLOC_PREFS_SECURITY" />
 
         <Preference
             android:icon="@drawable/gold"
-            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
-            android:key="CurrencyPrefs" />
+            android:key="CurrencyPrefs"
+            android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL" />
 
         <Preference
-            android:title="@string/kLOC_PREFS_DATATRANFER"
-            android:key="DataTransfersPrefs" />
+            android:key="DataTransfersPrefs"
+            android:title="@string/kLOC_PREFS_DATATRANFER" />
 
         <Preference
-            android:title="@string/kLOC_PREFS_VIEWOPTIONS"
-            android:key="DisplayOptionsPrefs" />
+            android:key="DisplayOptionsPrefs"
+            android:title="@string/kLOC_PREFS_VIEWOPTIONS" />
 
         <Preference
-            android:title="@string/kLOC_PREFS_MANAGEDLISTS"
-            android:key="ManagedListsPrefs" />
+            android:key="ManagedListsPrefs"
+            android:title="@string/kLOC_PREFS_MANAGEDLISTS" />
 
         <Preference
-            android:title="@string/kLOC_REPEATING_TRANSACTIONS"
-            android:key="RepeatingTransactionsPrefs" />
+            android:key="RepeatingTransactionsPrefs"
+            android:title="@string/kLOC_REPEATING_TRANSACTIONS" />
 
         <Preference
-            android:title="@string/kLOC_TOOLS_RECONCILE_CATEGORY"
-            android:key="MiscellaneousPrefs" />
+            android:key="MiscellaneousPrefs"
+            android:title="@string/kLOC_TOOLS_RECONCILE_CATEGORY" />
 
     </PreferenceCategory>
 

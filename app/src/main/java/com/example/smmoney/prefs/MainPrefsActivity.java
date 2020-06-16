@@ -29,7 +29,7 @@ public class MainPrefsActivity extends ListActivity {
         setResult(0);
         try {
             Objects.requireNonNull(getActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
         String dontShowPass;

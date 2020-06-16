@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/the_tool_bar"
@@ -17,9 +17,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
             android:text="@string/title"
-            tools:text="Edit Splits"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:text="Edit Splits" />
 
     </FrameLayout>
 
@@ -28,11 +28,11 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginBottom="90dp"
         android:layout_marginTop="0dp"
+        android:layout_marginBottom="90dp"
         android:drawSelectorOnTop="true"
-        tools:listitem="@layout/split_row"
-        android:fadingEdge="vertical" />
+        android:fadingEdge="vertical"
+        tools:listitem="@layout/split_row" />
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -48,8 +48,8 @@
                 android:id="@+id/splitssplitstotaltitle"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="75dp"
                 android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="75dp"
                 android:gravity="start|center_vertical"
                 android:text="@string/kLOC_EDIT_SPLITS_SPLITOTAL" />
 
@@ -59,8 +59,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="10dp"
-                tools:text="£75.00"
-                android:text="@string/accounts_view_net_worth" />
+                android:text="@string/accounts_view_net_worth"
+                tools:text="£75.00" />
 
         </FrameLayout>
 
@@ -72,8 +72,8 @@
                 android:id="@+id/splitsremaindertitle"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="75dp"
                 android:layout_gravity="end|center_vertical"
+                android:layout_marginEnd="75dp"
                 android:gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
                 android:text="@string/kLOC_EDIT_SPLITS_REMAINDER" />
 
@@ -82,9 +82,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end|center_vertical"
-                tools:text="£25.00"
                 android:layout_marginEnd="10dp"
-                android:text="@string/accounts_view_net_worth" />
+                android:text="@string/accounts_view_net_worth"
+                tools:text="£25.00" />
 
         </FrameLayout>
 
@@ -113,9 +113,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_vertical|end"
-                tools:text="£100.00"
                 android:layout_marginEnd="10dp"
-                android:text="@string/accounts_view_net_worth" />
+                android:text="@string/accounts_view_net_worth"
+                tools:text="£100.00" />
 
         </FrameLayout>
 

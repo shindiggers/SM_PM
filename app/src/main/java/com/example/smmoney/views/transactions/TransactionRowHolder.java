@@ -23,14 +23,14 @@ import java.util.Objects;
 class TransactionRowHolder {
     public TextView amount;
     public TextView category;
-    TextView checkNumber;
     public TextView date;
-    LinearLayout dateAndChecknumberLayout;
     public TextView payee;
-    TextView runningTotal;
     public CheckBox selected;
     public LinearLayout therow;
     public TransactionClass transaction;
+    TextView checkNumber;
+    LinearLayout dateAndChecknumberLayout;
+    TextView runningTotal;
 
     void setTransaction(TransactionClass trans, Context context) {
         this.transaction = trans;

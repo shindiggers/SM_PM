@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/the_tool_bar"
@@ -19,12 +19,12 @@
             android:layout_marginStart="15dp"
             android:background="@color/blue_theme_background_color"
             android:focusable="true"
-            android:nextFocusDown="@+id/withdrawalbutton"
             android:nextFocusRight="@+id/save_button"
-            android:paddingBottom="3dp"
+            android:nextFocusDown="@+id/withdrawalbutton"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/kLOC_GENERAL_CANCEL"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
@@ -45,10 +45,10 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="15dp"
             android:background="@color/blue_theme_background_color"
-            android:paddingBottom="3dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/transaction_edit_save"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
@@ -90,9 +90,9 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_FILTER_NAME"
-                    android:singleLine="true"
+                    android:importantForAutofill="no"
                     android:inputType=""
-                    android:importantForAutofill="no" />
+                    android:singleLine="true" />
 
             </FrameLayout>
 
@@ -218,9 +218,9 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_PAYEE_TITLE"
-                    android:singleLine="true"
+                    android:importantForAutofill="no"
                     android:inputType=""
-                    android:importantForAutofill="no" />
+                    android:singleLine="true" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -254,9 +254,9 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_ID_TITLE"
-                    android:singleLine="true"
+                    android:importantForAutofill="no"
                     android:inputType=""
-                    android:importantForAutofill="no" />
+                    android:singleLine="true" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -321,9 +321,9 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
-                    android:inputType=""
                     android:hint="@string/kLOC_GENERAL_CATEGORY"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -357,8 +357,8 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_CLASS"
-                    android:inputType=""
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    android:inputType="" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -381,7 +381,7 @@
         android:layout_height="40dp"
         android:layout_gravity="bottom"
         android:background="#000000"
-        tools:visibility="visible"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="visible" />
 
 </FrameLayout>

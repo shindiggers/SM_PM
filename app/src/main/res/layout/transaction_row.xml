@@ -7,8 +7,8 @@
     android:clickable="true"
     android:focusable="true"
     android:minHeight="58dp"
-    android:nextFocusDown="@+id/transtherow"
     android:nextFocusLeft="@+id/selected"
+    android:nextFocusDown="@+id/transtherow"
     android:orientation="horizontal">
 
     <CheckBox
@@ -19,8 +19,8 @@
         android:layout_marginStart="6dp"
         android:checked="true"
         android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-        android:nextFocusDown="@+id/checkboxlayout"
-        android:nextFocusRight="@+id/therow" />
+        android:nextFocusRight="@+id/therow"
+        android:nextFocusDown="@+id/checkboxlayout" />
 
     <LinearLayout
         android:id="@+id/dateandchecknumberlayout"

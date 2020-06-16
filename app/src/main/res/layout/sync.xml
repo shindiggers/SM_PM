@@ -39,8 +39,8 @@
             android:button="@null"
             android:checked="true"
             android:gravity="center_vertical|center_horizontal"
-            android:minHeight="40dp"
             android:minWidth="40dp"
+            android:minHeight="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_CLIENT"
             android:textColor="@color/radio_text_color_unchecked" />
 
@@ -51,8 +51,8 @@
             android:layout_weight="1.0"
             android:button="@null"
             android:gravity="center_vertical|center_horizontal"
-            android:minHeight="40dp"
             android:minWidth="40dp"
+            android:minHeight="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_SERVER"
             android:textColor="@color/radio_text_color_unchecked" />
 
@@ -70,13 +70,13 @@
             android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginEnd="15dp"
             android:layout_marginStart="10dp"
+            android:layout_marginEnd="15dp"
             android:hint="@string/ip_address_placeholder"
+            android:importantForAutofill="no"
             android:inputType="text"
             android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt"
-            android:importantForAutofill="no" />
+            android:textColorHint="@color/black_theme_text_alt" />
 
         <TextView
             android:id="@+id/iplabel"
@@ -101,13 +101,13 @@
             android:id="@+id/port"
             android:layout_width="165dp"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/ipaddress"
             android:layout_below="@+id/ipaddress"
+            android:layout_alignStart="@+id/ipaddress"
             android:hint="@string/kLOC_FILETRANSFERS_PORT"
-            android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt"
+            android:importantForAutofill="no"
             android:inputType=""
-            android:importantForAutofill="no" />
+            android:singleLine="true"
+            android:textColorHint="@color/black_theme_text_alt" />
 
         <TextView
             android:id="@+id/portlabel"
@@ -161,8 +161,8 @@
             android:id="@+id/restorecheckbox"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignStart="@+id/ipaddress"
-            android:layout_below="@+id/spinningwheel" />
+            android:layout_below="@+id/spinningwheel"
+            android:layout_alignStart="@+id/ipaddress" />
 
         <TextView
             android:id="@+id/restorelabel"

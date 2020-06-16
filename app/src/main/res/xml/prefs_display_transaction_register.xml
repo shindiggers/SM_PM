@@ -1,60 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER">
 
     <CheckBoxPreference
-        android:title="@string/kLOC_GENERAL_ID"
+        android:defaultValue="true"
         android:key="prefsdisplayregisterid"
-        android:defaultValue="true" />
+        android:title="@string/kLOC_GENERAL_ID" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_GENERAL_CATEGORY"
+        android:defaultValue="true"
         android:key="prefsdisplayregistercategory"
-        android:defaultValue="true" />
+        android:title="@string/kLOC_GENERAL_CATEGORY" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_GENERAL_DATE"
+        android:defaultValue="true"
         android:key="prefsdisplayregisterdate"
-        android:defaultValue="true" />
+        android:title="@string/kLOC_GENERAL_DATE" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_GENERAL_NOTE"
+        android:defaultValue="false"
         android:key="prefsdisplayregistermemo"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_GENERAL_NOTE" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_GENERAL_CLASS"
+        android:defaultValue="false"
         android:key="prefsdisplayregisterclass"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_GENERAL_CLASS" />
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_SHOW_BALANCES_CURRENT"
+            android:defaultValue="true"
             android:key="prefsdisplayregistercurrentbalance"
-            android:defaultValue="true" />
+            android:title="@string/kLOC_SHOW_BALANCES_CURRENT" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_TRUNCATE_ID"
+            android:defaultValue="true"
             android:key="prefsdisplayregistertruncateid"
-            android:defaultValue="true" />
+            android:title="@string/kLOC_TRUNCATE_ID" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
-            android:key="prefsdisplayregisterforeignamount" />
+            android:key="prefsdisplayregisterforeignamount"
+            android:title="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
 
     </PreferenceCategory>
 

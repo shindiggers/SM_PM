@@ -50,79 +50,79 @@ public class SMMoney extends Application {
         return udid;
     }
 
-        public static boolean hasCamera() {
-            return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
-        }
+    public static boolean hasCamera() {
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
+    }
 
-        public static String getTempPocketMoneyDirectory(){
-            File cacheDir = context.getExternalCacheDir();
-            if (cacheDir == null) {
-                context.getCacheDir();
-            }
-            return cacheDir.getAbsolutePath();
+    public static String getTempPocketMoneyDirectory() {
+        File cacheDir = context.getExternalCacheDir();
+        if (cacheDir == null) {
+            context.getCacheDir();
         }
+        return cacheDir.getAbsolutePath();
+    }
 
-        public static String getExternalPocketMoneyDirectory () {
-            File dir = new File(Prefs.getStringPref(Prefs.EXPORT_STOREDEVICE).concat("/data/SMMoney/"));
-            if (!dir.exists()) {
-                dir.mkdirs();
-            }
-            return dir.toString() + "/";
+    public static String getExternalPocketMoneyDirectory() {
+        File dir = new File(Prefs.getStringPref(Prefs.EXPORT_STOREDEVICE).concat("/data/SMMoney/"));
+        if (!dir.exists()) {
+            dir.mkdirs();
         }
+        return dir.toString() + "/";
+    }
 
-        public static String[] getExternalMounts () {
+    public static String[] getExternalMounts() {
+        try {
+            ArrayList<String> out = new ArrayList<>();
+            String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
+            StringBuilder s = new StringBuilder();
             try {
-                ArrayList<String> out = new ArrayList<>();
-                String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
-                StringBuilder s = new StringBuilder();
-                try {
-                    Process process = new ProcessBuilder().command("mount").redirectErrorStream(true).start();
-                    process.waitFor();
-                    InputStream is = process.getInputStream();
-                    byte[] buffer = new byte[1024];
-                    while (is.read(buffer) != -1) {
-                        s.append(new String(buffer));
-                    }
-                    is.close();
-                } catch (Exception e) {
-                    e.printStackTrace();
+                Process process = new ProcessBuilder().command("mount").redirectErrorStream(true).start();
+                process.waitFor();
+                InputStream is = process.getInputStream();
+                byte[] buffer = new byte[1024];
+                while (is.read(buffer) != -1) {
+                    s.append(new String(buffer));
                 }
-                for (String line : s.toString().split("\n")) {
-                    if (!line.toLowerCase(Locale.US).contains("asec") && line.matches(reg)) {
-                        for (String part : line.split(" ")) {
-                            if (part.startsWith("/") && !part.toLowerCase(Locale.US).contains("vold")) {
-                                out.add(part);
-                            }
+                is.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            for (String line : s.toString().split("\n")) {
+                if (!line.toLowerCase(Locale.US).contains("asec") && line.matches(reg)) {
+                    for (String part : line.split(" ")) {
+                        if (part.startsWith("/") && !part.toLowerCase(Locale.US).contains("vold")) {
+                            out.add(part);
                         }
                     }
                 }
-                String[] ret = new String[out.size()];
-                Iterator it = out.iterator();
-                int i = 0;
-                while (it.hasNext()) {
-                    int i2 = i + 1;
-                    ret[i] = (String) it.next();
-                    i = i2;
-                }
-                return ret;
-            } catch (Exception e2) {
-                return new String[]{Environment.getExternalStorageDirectory().getAbsolutePath()};
             }
-        }
-
-        public static String getTempFile () {
-            String dir;
-            dir = Environment.getDataDirectory() + "/data/" + getAppContext().getPackageName() + "/";
-            new File(dir).mkdirs();
-            try {
-                new File(dir + "temp.data").createNewFile();
-            } catch (IOException e) {
-                e.printStackTrace();
+            String[] ret = new String[out.size()];
+            Iterator it = out.iterator();
+            int i = 0;
+            while (it.hasNext()) {
+                int i2 = i + 1;
+                ret[i] = (String) it.next();
+                i = i2;
             }
-            return dir + "temp.data";
-        }
-
-        public static boolean IsExternalStorageWritable () {
-            return "mounted".equals(Environment.getExternalStorageState());
+            return ret;
+        } catch (Exception e2) {
+            return new String[]{Environment.getExternalStorageDirectory().getAbsolutePath()};
         }
     }
+
+    public static String getTempFile() {
+        String dir;
+        dir = Environment.getDataDirectory() + "/data/" + getAppContext().getPackageName() + "/";
+        new File(dir).mkdirs();
+        try {
+            new File(dir + "temp.data").createNewFile();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return dir + "temp.data";
+    }
+
+    public static boolean IsExternalStorageWritable() {
+        return "mounted".equals(Environment.getExternalStorageState());
+    }
+}

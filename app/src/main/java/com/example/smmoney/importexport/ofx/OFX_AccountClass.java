@@ -95,7 +95,7 @@ class OFX_AccountClass {
     }
 
     String accountTypeAsString() {
-        switch($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
+        switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
             case 1:
                 return "CHECKING";
             case 2:

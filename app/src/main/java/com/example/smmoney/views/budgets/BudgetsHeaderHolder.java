@@ -21,14 +21,14 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class BudgetsHeaderHolder extends View {
-    private Context context;
     public String label;
-    private String xofy;
     Rect r = new Rect(0, 0, 0, 0);
     Paint p = new Paint();
     PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.actionBarColor(), Mode.DARKEN);
     Bitmap catBarBitmap;
     Bitmap collBarBitmap;
+    private Context context;
+    private String xofy;
 
     public BudgetsHeaderHolder(Context context, String label, String xofy) {
         super(context);

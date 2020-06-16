@@ -52,6 +52,11 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private ChartBarView barChartView;
     private ChartView chartView;
     private ReportDataSource datasource;
+    private View nextPeriodView;
+    private Button periodButton;
+    private ChartPieView pieChartView;
+    private View previousPeriodView;
+    private ProgressDialog progressDialog = null;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -92,11 +97,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
             }
         }
     };
-    private View nextPeriodView;
-    private Button periodButton;
-    private ChartPieView pieChartView;
-    private View previousPeriodView;
-    private ProgressDialog progressDialog = null;
     @SuppressWarnings("unused")
     private ProgressDialog progressSpinnerDialog;
     private ListView theList;
@@ -120,7 +120,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
 
     public void onResume() {
         super.onResume();
-        this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
+        this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
         this.datasource.data = null;
         reloadData();
     }

@@ -66,37 +66,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private RadioButton transferButton;
     private RadioButton withdrawalButton;
 
-    private class MyKeyListener implements KeyListener {
-        private int editTextCode;
-        KeyListener original;
-
-        private MyKeyListener(KeyListener orig, int code) {
-            this.original = orig;
-            this.editTextCode = code;
-        }
-
-        public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
-            SplitsEditActivity.this.editTextDidChange(this.editTextCode);
-            return this.original.onKeyDown(view, text, keyCode, event);
-        }
-
-        public void clearMetaKeyState(View arg0, Editable arg1, int arg2) {
-            this.original.clearMetaKeyState(arg0, arg1, arg2);
-        }
-
-        public int getInputType() {
-            return this.original.getInputType();
-        }
-
-        public boolean onKeyOther(View arg0, Editable arg1, KeyEvent arg2) {
-            return this.original.onKeyOther(arg0, arg1, arg2);
-        }
-
-        public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-            return this.original.onKeyUp(view, text, keyCode, event);
-        }
-    }
-
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
@@ -476,5 +445,36 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                 }
             }
         };
+    }
+
+    private class MyKeyListener implements KeyListener {
+        KeyListener original;
+        private int editTextCode;
+
+        private MyKeyListener(KeyListener orig, int code) {
+            this.original = orig;
+            this.editTextCode = code;
+        }
+
+        public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+            SplitsEditActivity.this.editTextDidChange(this.editTextCode);
+            return this.original.onKeyDown(view, text, keyCode, event);
+        }
+
+        public void clearMetaKeyState(View arg0, Editable arg1, int arg2) {
+            this.original.clearMetaKeyState(arg0, arg1, arg2);
+        }
+
+        public int getInputType() {
+            return this.original.getInputType();
+        }
+
+        public boolean onKeyOther(View arg0, Editable arg1, KeyEvent arg2) {
+            return this.original.onKeyOther(arg0, arg1, arg2);
+        }
+
+        public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+            return this.original.onKeyUp(view, text, keyCode, event);
+        }
     }
 }

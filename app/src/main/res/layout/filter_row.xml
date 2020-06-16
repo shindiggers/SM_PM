@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="50dp"
-    xmlns:tools="http://schemas.android.com/tools"
     android:background="@drawable/list_selector_bg_blue_alt">
 
     <TextView
@@ -11,10 +11,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="10dp"
         android:gravity="start|center_vertical"
-        tools:text="User filter"
         android:minHeight="40dp"
-        android:layout_marginStart="10dp" />
+        tools:text="User filter" />
 
     <ImageView
         android:id="@+id/filterroweditimage"
@@ -22,7 +22,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|center_vertical"
         android:layout_marginEnd="10dp"
-        android:src="@drawable/ic_arrow_drop_down_circle"
-        android:contentDescription="@string/open_filter_edit_dialogue" />
+        android:contentDescription="@string/open_filter_edit_dialogue"
+        android:src="@drawable/ic_arrow_drop_down_circle" />
 
 </FrameLayout>

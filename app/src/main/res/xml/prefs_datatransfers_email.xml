@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE"
-    android:key="datatransferemailprefs">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="datatransferemailprefs"
+    android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE">
 
     <CheckBoxPreference
-        android:title="@string/kLOC_EMAILPARTNEROPTIONS_ENABLE"
+        android:defaultValue="false"
         android:key="emailpartner"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_EMAILPARTNEROPTIONS_ENABLE" />
 
     <EditTextPreference
-        android:title="@string/kLOC_EMAILPARTNEROPTIONS_EMAIL"
+        android:contentDescription="partners_email@me.com"
         android:key="emailpartneremail"
-        android:contentDescription="partners_email@me.com" />
+        android:title="@string/kLOC_EMAILPARTNEROPTIONS_EMAIL" />
 
 </PreferenceScreen>

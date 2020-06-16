@@ -1,111 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
+    android:layout_width="match_parent"
+    android:layout_height="58dp"
+    android:clickable="true"
     android:focusable="true"
     android:nextFocusLeft="@+id/selected"
-    android:nextFocusRight="@+id/accountsnewtransbutton"
-    android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="58dp">
+    android:nextFocusRight="@+id/accountsnewtransbutton">
 
     <androidx.appcompat.widget.AppCompatCheckBox
-        android:textColor="@color/blue_theme_text"
-        android:textColorHint="@color/blue_theme_field_label_color"
-        android:textColorLink="@color/blue_theme_field_label_color"
         android:id="@+id/selected"
-        android:focusable="true"
-        android:nextFocusRight="@+id/therow"
-        android:clickable="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginStart="5dp"
         android:checked="true"
-        android:layout_centerVertical="true" />
+        android:clickable="true"
+        android:focusable="true"
+        android:nextFocusRight="@+id/therow"
+        android:textColor="@color/blue_theme_text"
+        android:textColorHint="@color/blue_theme_field_label_color"
+        android:textColorLink="@color/blue_theme_field_label_color" />
 
     <ImageView
         android:id="@+id/icon_image"
-        android:focusable="false"
-        android:clickable="false"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_marginStart="5dp"
         android:layout_toEndOf="@+id/selected"
-        tools:src="@drawable/checkbook"
-        android:layout_centerVertical="true"
-        android:contentDescription="@string/contentDescription_image_for_account" />
+        android:clickable="false"
+        android:contentDescription="@string/contentDescription_image_for_account"
+        android:focusable="false"
+        tools:src="@drawable/checkbook" />
 
     <LinearLayout
-        android:orientation="horizontal"
-        android:focusable="false"
         android:layout_width="match_parent"
         android:layout_height="58dp"
+        android:layout_centerVertical="true"
         android:layout_toEndOf="@+id/icon_image"
-        android:layout_centerVertical="true">
+        android:focusable="false"
+        android:orientation="horizontal">
 
         <TextView
-            android:layout_gravity="center_vertical"
             android:id="@+id/account_name"
-            android:focusable="false"
-            android:clickable="false"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:layout_marginStart="5dp"
-            android:text="@string/accounts_edit_account_name"
-            tools:text="First Direct Current"
+            android:layout_weight="1.0"
+            android:clickable="false"
+            android:focusable="false"
             android:singleLine="true"
-            android:layout_weight="1.0" />
+            android:text="@string/accounts_edit_account_name"
+            tools:text="First Direct Current" />
 
         <FrameLayout
-            android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
             <!--android:textAppearance="@color/black_theme_text"-->
             <TextView
-                app:fontFamily="sans-serif-medium"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_gravity="center_vertical|center_horizontal"
                 android:id="@+id/total_worth"
-                android:focusable="false"
-                android:clickable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical|center_horizontal"
+                android:singleLine="true"
                 android:text="@string/kLOC_GENERAL_TOTALWORTH"
-                tools:text="£1,000.00"
-                android:singleLine="true"/>
+                app:fontFamily="sans-serif-medium"
+                tools:text="£1,000.00" />
 
             <!--android:textAppearance="@color/black_theme_text"-->
             <TextView
-                app:fontFamily="sans-serif-medium"
-                android:gravity="center_vertical|center_horizontal"
-                android:layout_gravity="bottom|center_horizontal"
                 android:id="@+id/exchange_rate"
-                android:focusable="false"
-                android:clickable="false"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center_horizontal"
+                android:clickable="false"
+                android:focusable="false"
+                android:gravity="center_vertical|center_horizontal"
+                android:singleLine="true"
                 android:text="@string/kLOC_GENERAL_EXCHANGERATE"
-                tools:text="£1.00 = $1.50"
-                android:singleLine="true"/>
+                app:fontFamily="sans-serif-medium"
+                tools:text="£1.00 = $1.50" />
 
         </FrameLayout>
 
         <ImageView
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
             android:id="@+id/accountsnewtransbutton"
-            android:paddingStart="8dp"
-            android:paddingEnd="5dp"
-            android:focusable="true"
-            android:nextFocusLeft="@+id/therow"
-            android:clickable="true"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            app:srcCompat="@drawable/ic_add_circle_outline_white_24dp_svg"
-            android:contentDescription="@string/contentDescription_image_for_account" />
+            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+            android:clickable="true"
+            android:contentDescription="@string/contentDescription_image_for_account"
+            android:focusable="true"
+            android:nextFocusLeft="@+id/therow"
+            android:paddingStart="8dp"
+            android:paddingEnd="5dp"
+            app:srcCompat="@drawable/ic_add_circle_outline_white_24dp_svg" />
 
     </LinearLayout>
 

@@ -253,7 +253,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         content.put("timestamp", System.currentTimeMillis() / 1000);
         content.put("category", cat);
         content.put("type", Enums.kTransactionTypeWithdrawal /*0*/);
-        content.put(Prefs.DISPLAY_BUDGETPERIOD,Enums.kBudgetPeriodMonth /*2*/);
+        content.put(Prefs.DISPLAY_BUDGETPERIOD, Enums.kBudgetPeriodMonth /*2*/);
         content.put("serverID", Database.newServerID());
         long id = Database.replace(Database.CATEGORIES_TABLE_NAME, null, content);
         if (id != -1) {

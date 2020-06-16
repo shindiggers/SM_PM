@@ -3,11 +3,13 @@ package com.example.smmoney.records;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
+
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
+
 import java.io.Serializable;
 
 public class SplitsClass implements Serializable {

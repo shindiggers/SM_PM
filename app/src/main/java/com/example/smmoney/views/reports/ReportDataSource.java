@@ -18,6 +18,7 @@ import com.example.smmoney.views.charts.items.ReportChartItem;
 import com.example.smmoney.views.charts.views.ChartView;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -26,6 +27,11 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 public abstract class ReportDataSource implements ChartViewDataSource, Serializable {
+    public ArrayList<ReportItem> data;
+    int currentAction = 0;
+    int currentPeriod;
+    FilterClass filter;
+    int totalActions = 0;
     private Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
         public int compare(ReportItem o1, ReportItem o2) {
             int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
@@ -48,19 +54,8 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
             return retVal > 0.0d ? 1 : 0;
         }
     };
-    int currentAction = 0;
     private GregorianCalendar currentDate;
-    int currentPeriod;
-    public ArrayList<ReportItem> data;
     private ReportsActivity delegate;
-    FilterClass filter;
-    int totalActions = 0;
-
-    protected abstract void generateReport();
-
-    public abstract FilterClass newFilterBasedOnSelectedRow(String str);
-
-    public abstract String title();
 
     ReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
         this.filter = theFilter;
@@ -71,6 +66,12 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
             this.currentDate = theTrans.get(theTrans.size() - 1).getDate();
         }
     }
+
+    protected abstract void generateReport();
+
+    public abstract FilterClass newFilterBasedOnSelectedRow(String str);
+
+    public abstract String title();
 
     private ArrayList<ReportItem> calculatePercentagesAndColors(ArrayList<ReportItem> array) {
         double negativeTotal = 0.0d;

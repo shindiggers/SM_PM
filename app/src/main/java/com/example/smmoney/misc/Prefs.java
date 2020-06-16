@@ -382,7 +382,7 @@ public class Prefs {
             setPref(PASSWORD, "");
             setPref(PASSWORD_DELAY_LAST, new GregorianCalendar().getTimeInMillis());
             setPref(PASSWORD_DELAY, Locales.kLOC_GENERAL_NONE);
-            setPref(BALANCEONDATE,0L);
+            setPref(BALANCEONDATE, 0L);
             setPref(VIEWACCOUNTS, Enums.kViewAccountsAll/*0*/);
             setPref(NEWESTTRANSACTIONFIRST, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
             setPref(QIF_NUMBERFORMAT, Locales.kLOC_GENERAL_DEFAULT);

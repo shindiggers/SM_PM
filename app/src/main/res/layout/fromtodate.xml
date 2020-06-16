@@ -70,8 +70,8 @@
                     android:id="@+id/fromtodatelefttoday"
                     android:layout_width="80dp"
                     android:layout_height="wrap_content"
-                    android:gravity="start"
                     android:layout_gravity="bottom|center_horizontal"
+                    android:gravity="start"
                     android:text="@string/kLOC_FILTER_DATES_TODAY" />
 
             </FrameLayout>

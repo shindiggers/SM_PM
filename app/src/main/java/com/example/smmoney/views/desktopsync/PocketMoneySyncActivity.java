@@ -93,7 +93,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         } catch (SocketException e) {
             showDialog(DIALOG_WIFI/*9*/);
         }
-        this.wakelock.acquire(10*60*1000L /*10 minutes*/);
+        this.wakelock.acquire(10 * 60 * 1000L /*10 minutes*/);
     }
 
     private void setTitle(String title) {

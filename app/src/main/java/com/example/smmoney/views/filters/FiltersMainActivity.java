@@ -69,6 +69,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         onBackPressed();
         return true;
     }
+
     private void setupButtons() {
         ListView theList = findViewById(R.id.filterlist);
         this.theAdapter = new FilterRowAdapter(this, this.filter);

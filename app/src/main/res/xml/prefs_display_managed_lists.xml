@@ -1,35 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <PreferenceCategory
-        android:name="">
+    <PreferenceCategory android:name="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_PREFERENCES_AUTOADD_TITLE"
-            android:key="prefsmanagedlistsautoadd" />
+            android:key="prefsmanagedlistsautoadd"
+            android:title="@string/kLOC_PREFERENCES_AUTOADD_TITLE" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:name="">
+    <PreferenceCategory android:name="">
 
         <Preference
-            android:title="@string/kLOC_GENERAL_PAYEE_TITLE"
-            android:key="PayeeManagedListsPref" />
+            android:key="PayeeManagedListsPref"
+            android:title="@string/kLOC_GENERAL_PAYEE_TITLE" />
 
         <Preference
-            android:title="@string/kLOC_GENERAL_CATEGORY_TITLE"
-            android:key="CategoryManagedListsPref" />
+            android:key="CategoryManagedListsPref"
+            android:title="@string/kLOC_GENERAL_CATEGORY_TITLE" />
 
         <Preference
-            android:title="@string/kLOC_GENERAL_CLASSES"
-            android:key="ClassManagedListsPref" />
+            android:key="ClassManagedListsPref"
+            android:title="@string/kLOC_GENERAL_CLASSES" />
 
         <Preference
-            android:title="@string/kLOC_GENERAL_ID_TITLE"
-            android:key="IDManagedListsPref" />
+            android:key="IDManagedListsPref"
+            android:title="@string/kLOC_GENERAL_ID_TITLE" />
 
     </PreferenceCategory>
 

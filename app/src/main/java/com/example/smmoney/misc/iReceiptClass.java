@@ -1,7 +1,9 @@
 package com.example.smmoney.misc;
 
 import android.net.Uri;
+
 import com.example.smmoney.records.TransactionClass;
+
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 

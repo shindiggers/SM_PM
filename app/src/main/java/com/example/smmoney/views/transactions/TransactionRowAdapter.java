@@ -66,7 +66,7 @@ class TransactionRowAdapter extends BaseAdapter {
         TransactionRowHolder holder;
         TransactionClass transaction = this.elements.get(position);
         if (convertView == null) {
-            convertView = this.mInflater.inflate(R.layout.transaction_row, parent,false);
+            convertView = this.mInflater.inflate(R.layout.transaction_row, parent, false);
             holder = new TransactionRowHolder();
             ((Activity) this.mContext).registerForContextMenu(convertView);
             convertView.setOnClickListener(getBtnClickListener());

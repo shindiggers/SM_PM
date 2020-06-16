@@ -761,8 +761,8 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 this.date = new GregorianCalendar();
                 col2 = col + 1;
                 long tempdate = (long) curs.getDouble(col);
-                Log.d("@@@@@@@@@@@@@@@@@@@"," before x 1000 = "+tempdate);
-                Log.d("@@@@@@@@@@@@@@@@@@@"," after x 1000 = "+(tempdate*1000));
+                Log.d("@@@@@@@@@@@@@@@@@@@", " before x 1000 = " + tempdate);
+                Log.d("@@@@@@@@@@@@@@@@@@@", " after x 1000 = " + (tempdate * 1000));
                 this.date.setTimeInMillis(1000 * ((long) curs.getDouble(col)));
                 col = col2 + 1;
                 setCleared(curs.getInt(col2) == 1);

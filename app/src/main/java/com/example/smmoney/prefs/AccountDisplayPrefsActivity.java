@@ -1,6 +1,7 @@
 package com.example.smmoney.prefs;
 
 import android.os.Bundle;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;

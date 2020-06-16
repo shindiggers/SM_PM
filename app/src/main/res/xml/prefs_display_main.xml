@@ -1,45 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ListPreference
-        android:title="@string/kLOC_INAPPPURCHASES_THEMESTITLE"
+        android:defaultValue="Black"
         android:key="themecolor"
-        android:defaultValue="Black" />
+        android:title="@string/kLOC_INAPPPURCHASES_THEMESTITLE" />
 
-    <PreferenceCategory
-        android:name="">
-
-        <Preference
-            android:title="@string/kLOC_GENERAL_ACCOUNTS"
-            android:key="AccountDisplayPrefs" />
+    <PreferenceCategory android:name="">
 
         <Preference
-            android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER"
-            android:key="TransactionRegisterDisplayPrefs" />
+            android:key="AccountDisplayPrefs"
+            android:title="@string/kLOC_GENERAL_ACCOUNTS" />
 
         <Preference
-            android:title="@string/kLOC_GENERAL_BUDGETS"
-            android:key="BudgetsPrefs" />
+            android:key="TransactionRegisterDisplayPrefs"
+            android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER" />
 
         <Preference
-            android:title="@string/kLOC_EDIT_TRANSACTION_TITLE"
-            android:key="EditTransactionPrefs" />
+            android:key="BudgetsPrefs"
+            android:title="@string/kLOC_GENERAL_BUDGETS" />
 
         <Preference
-            android:title="@string/kLOC_GENERAL_REPORTS"
-            android:key="ReportsPrefs" />
+            android:key="EditTransactionPrefs"
+            android:title="@string/kLOC_EDIT_TRANSACTION_TITLE" />
+
+        <Preference
+            android:key="ReportsPrefs"
+            android:title="@string/kLOC_GENERAL_REPORTS" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:name="">
+    <PreferenceCategory android:name="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_SAVE_BALANCES_BAR_UNIFIED"
+            android:defaultValue="true"
             android:key="balancebarunified"
-            android:defaultValue="true" />
+            android:title="@string/kLOC_SAVE_BALANCES_BAR_UNIFIED" />
 
     </PreferenceCategory>
 

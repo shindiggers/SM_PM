@@ -5,11 +5,11 @@
     android:id="@+id/therow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minHeight="58dp"
     android:clickable="true"
     android:focusable="true"
-    android:nextFocusDown="@+id/transtherow"
+    android:minHeight="58dp"
     android:nextFocusLeft="@+id/selected"
+    android:nextFocusDown="@+id/transtherow"
     android:orientation="horizontal">
 
     <CheckBox
@@ -20,8 +20,8 @@
         android:layout_marginStart="6dp"
         android:checked="true"
         android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-        android:nextFocusDown="@+id/checkboxlayout"
-        android:nextFocusRight="@+id/therow" />
+        android:nextFocusRight="@+id/therow"
+        android:nextFocusDown="@+id/checkboxlayout" />
 
     <LinearLayout
         android:id="@+id/dateandchecknumberlayout"
@@ -129,10 +129,10 @@
             android:layout_width="55dp"
             android:layout_height="35dp"
             android:layout_gravity="center"
-            android:layout_marginEnd="6dp"
             android:layout_marginStart="6dp"
-            android:textSize="12sp"
-            android:text="@string/post" />
+            android:layout_marginEnd="6dp"
+            android:text="@string/post"
+            android:textSize="12sp" />
 
     </FrameLayout>
 

@@ -1,36 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL"
-    android:key="CurrencyPrefs"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:key="CurrencyPrefs"
+    android:title="@string/kLOC_ACCOUNT_CURRENCY_LABEL">
 
     <ListPreference
-        android:title="@string/kLOC_PREFERENCES_HOME_CURRENCY_TITLE"
-        android:key="prefscurrencyhomecurrency" android:defaultValue="USD"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:defaultValue="USD"
+        android:key="prefscurrencyhomecurrency"
+        android:title="@string/kLOC_PREFERENCES_HOME_CURRENCY_TITLE" />
 
     <PreferenceCategory
-        android:title=""
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:title="">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_PREFERENCES_MULTIPLE_CURRENCIES_TITLE"
-            android:key="prefscurrencymultiplecurrencies"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:defaultValue="false"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:key="prefscurrencymultiplecurrencies"
+            android:title="@string/kLOC_PREFERENCES_MULTIPLE_CURRENCIES_TITLE" />
 
         <CheckBoxPreference
-            android:title="@string/kLOC_PREFS_UPDATEEXCHANGERATES"
-            android:key="prefscurrencyupdatexrates"
-            android:defaultValue="true"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:defaultValue="true"
+            android:key="prefscurrencyupdatexrates"
+            android:title="@string/kLOC_PREFS_UPDATEEXCHANGERATES" />
 
     </PreferenceCategory>
 

@@ -11,8 +11,8 @@ public class ReportItem {
     public boolean checked = true;
     public int color;
     public int count;
-    String expense;
     public FilterClass filter;
+    String expense;
     double percent;
 
     public ReportItem(String anExpense, double anAmount) {

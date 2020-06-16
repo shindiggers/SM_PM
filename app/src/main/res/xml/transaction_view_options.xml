@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="">
 
     <ListPreference
-        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON"
+        android:defaultValue="@string/kLOC_GENERAL_DATE"
         android:key="prefstransactionviewoptionssorton"
-        android:defaultValue="@string/kLOC_GENERAL_DATE" />
+        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON" />
 
     <ListPreference
-        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTORDER"
+        android:defaultValue="@string/kLOC_TRANSACTIONS_OPTIONS_ASCENDING"
         android:key="prefstransactionviewoptionssortorder"
-        android:defaultValue="@string/kLOC_TRANSACTIONS_OPTIONS_ASCENDING" />
+        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTORDER" />
 
 </PreferenceScreen>

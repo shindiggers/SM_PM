@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/the_tool_bar"
@@ -39,9 +39,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:minHeight="58dp"
-                android:gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
+                android:gravity="start|center_vertical"
+                android:minHeight="58dp"
                 android:text="@string/kLOC_FILTERS_RESET" />
 
         </FrameLayout>
@@ -56,10 +56,10 @@
                 android:id="@+id/current_filter_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:minHeight="40dp"
-                android:gravity="start|center_vertical"
                 android:layout_gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
+                android:gravity="start|center_vertical"
+                android:minHeight="40dp"
                 android:text="@string/kLOC_FILTERS_CURRENT" />
 
             <ImageView
@@ -69,8 +69,8 @@
                 android:layout_gravity="end|center_vertical"
                 android:layout_marginEnd="10dp"
                 android:clickable="true"
-                android:focusable="true"
                 android:contentDescription="@string/content_desctiption_select_filter"
+                android:focusable="true"
                 android:src="@drawable/ic_arrow_drop_down_circle" />
 
         </FrameLayout>
@@ -85,8 +85,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="start|center_vertical"
-                android:gravity="start|center_vertical"
                 android:layout_marginStart="10dp"
+                android:gravity="start|center_vertical"
                 android:text="@string/kLOC_FILTERS_USERDEFINED" />
 
         </FrameLayout>
@@ -104,7 +104,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        tools:listitem="@layout/filter_row"
-        android:layout_marginTop="176dp" />
+        android:layout_marginTop="176dp"
+        tools:listitem="@layout/filter_row" />
 
 </FrameLayout>

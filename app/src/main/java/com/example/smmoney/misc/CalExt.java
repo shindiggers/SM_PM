@@ -1,6 +1,7 @@
 package com.example.smmoney.misc;
 
 import android.text.format.DateFormat;
+
 import com.example.smmoney.SMMoney;
 
 import java.text.DateFormatSymbols;
@@ -25,7 +26,7 @@ public class CalExt {
 
     /**
      * Constructs a GregorianCalendar with today's date (default for empty constructor)
-     *
+     * <p>
      * Set HOUR_OF_DAY to 0
      * Set MINUTE to 0
      * Set SECOND to 0
@@ -41,9 +42,10 @@ public class CalExt {
         newCal.set(Calendar.MILLISECOND, 0);
         return newCal;
     }
+
     /**
      * Constructs a GregorianCalendar with today's date (default for empty constructor)
-     *
+     * <p>
      * Set HOUR_OF_DAY to 23
      * Set MINUTE to 59
      * Set SECOND to 59

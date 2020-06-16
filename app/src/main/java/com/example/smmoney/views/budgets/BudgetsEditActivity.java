@@ -62,6 +62,14 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private Button enableVariableBudgetCell;
     private View includeSubcategoriesCell;
     private CheckBox includeSubcategoriesCheckBox;
+    private String oldCategory;
+    private TextView originalHistoryBudgetTextView;
+    private View originalHistoryCell;
+    private TextView originalHistoryDateTextView;
+    private ViewGroup outterView;
+    private TextView periodTextView;
+    private CheckBox rolloverCheckBox;
+    private CategoryBudgetClass selectedBudgetItem;
     private OnDateSetListener mDateSetListener = new OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
@@ -73,14 +81,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             BudgetsEditActivity.this.reloadData();
         }
     };
-    private String oldCategory;
-    private TextView originalHistoryBudgetTextView;
-    private View originalHistoryCell;
-    private TextView originalHistoryDateTextView;
-    private ViewGroup outterView;
-    private TextView periodTextView;
-    private CheckBox rolloverCheckBox;
-    private CategoryBudgetClass selectedBudgetItem;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

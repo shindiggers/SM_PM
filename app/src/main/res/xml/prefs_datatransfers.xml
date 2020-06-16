@@ -1,43 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_PREFS_DATATRANFER"
-    android:key="DataTransferPrefs">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="DataTransferPrefs"
+    android:title="@string/kLOC_PREFS_DATATRANFER">
 
     <ListPreference
-        android:title="@string/kLOC_FILETRANSFERS_MODE"
+        android:defaultValue="0"
         android:key="prefsdatatransferstransfermode"
         android:summary="SDCard"
-        android:defaultValue="0" />
+        android:title="@string/kLOC_FILETRANSFERS_MODE" />
 
     <ListPreference
-        android:title="Storage Device"
+        android:defaultValue="0"
         android:key="prefsdatatransferssdcard"
         android:summary=""
-        android:defaultValue="0" />
+        android:title="Storage Device" />
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <ListPreference
-            android:title="@string/kLOC_PREFERENCES_ENCODING"
+            android:defaultValue="ISO-8859-1"
             android:key="prefsdatatransfersfileencoding"
             android:summary="Western (ISO Latin 1)"
-            android:defaultValue="ISO-8859-1" />
+            android:title="@string/kLOC_PREFERENCES_ENCODING" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <Preference
-            android:title="@string/kLOC_QIFOPTIONS_TITLE"
-            android:key="prefsdatatransfersqifoptions" />
+            android:key="prefsdatatransfersqifoptions"
+            android:title="@string/kLOC_QIFOPTIONS_TITLE" />
 
         <Preference
-            android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE"
-            android:key="datatransferemailprefs" />
+            android:key="datatransferemailprefs"
+            android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE" />
 
     </PreferenceCategory>
 

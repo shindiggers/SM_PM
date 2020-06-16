@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools">
+    android:layout_height="match_parent">
 
     <FrameLayout
         android:id="@+id/the_tool_bar"
@@ -57,8 +57,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="100dp"
-                    tools:text="Daily"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    tools:text="Daily" />
 
                 <ImageView
                     android:id="@+id/frequency_ic_calendar"
@@ -66,8 +66,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_date_range"
-                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+                    android:contentDescription="@string/content_description_image_of_a_calendar"
+                    android:src="@drawable/ic_date_range" />
 
             </FrameLayout>
 
@@ -96,12 +96,12 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="100dp"
-                    tools:text="1"
                     android:gravity="center"
                     android:hint="@string/_0_hint"
+                    android:importantForAutofill="no"
                     android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
                     android:singleLine="true"
-                    android:importantForAutofill="no" />
+                    tools:text="1" />
 
                 <TextView
                     android:id="@+id/suffixtextview"
@@ -117,8 +117,8 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="58dp"
-                android:minHeight="58dp"
                 android:background="@drawable/list_selector_bg_blue_alt"
+                android:minHeight="58dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -134,9 +134,9 @@
                     android:layout_width="190dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
-                    tools:text="1 Mar 2019"
                     android:layout_marginStart="100dp"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    tools:text="1 Mar 2019" />
 
                 <ImageView
                     android:id="@+id/repeting_edit_ic_calendar"
@@ -144,8 +144,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="10dp"
-                    android:src="@drawable/ic_date_range"
-                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+                    android:contentDescription="@string/content_description_image_of_a_calendar"
+                    android:src="@drawable/ic_date_range" />
 
             </FrameLayout>
 
@@ -196,10 +196,10 @@
                     android:layout_marginStart="100dp"
                     android:gravity="center"
                     android:hint="@string/_0_hint"
+                    android:importantForAutofill="no"
                     android:inputType="number|numberSigned|numberDecimal|numberPassword|phone"
                     android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:importantForAutofill="no" />
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
                 <TextView
                     android:id="@+id/daysinadvancesuffixtextview"
@@ -254,10 +254,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
+                    android:contentDescription="@string/repeat_on_sunday"
                     android:src="@drawable/btn_check_buttonless_on"
-                    tools:visibility="visible"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_sunday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -281,10 +281,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/content_description_image_of_a_calendar"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/content_description_image_of_a_calendar" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -308,10 +308,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/repeat_on_tuesday"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_tuesday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -335,10 +335,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/repeat_on_wednesday"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_wednesday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -362,10 +362,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/repeat_on_thursday"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_thursday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -389,10 +389,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/repeat_on_friday"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_friday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 
@@ -416,10 +416,10 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="18dp"
-                    tools:visibility="visible"
+                    android:contentDescription="@string/repeat_on_saturday"
                     android:src="@drawable/btn_check_buttonless_on"
                     android:visibility="gone"
-                    android:contentDescription="@string/repeat_on_saturday" />
+                    tools:visibility="visible" />
 
             </FrameLayout>
 

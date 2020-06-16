@@ -14,10 +14,10 @@
             android:id="@+id/title_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingStart="6dp"
-            android:paddingEnd="6dp"
             android:layout_gravity="start|center_vertical"
             android:gravity="center_vertical"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:text="@string/title"
             android:textAppearance="?android:textAppearanceMedium" />
 

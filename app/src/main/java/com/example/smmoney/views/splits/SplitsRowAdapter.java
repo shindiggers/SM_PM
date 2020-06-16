@@ -13,6 +13,7 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
+
 import java.util.ArrayList;
 
 class SplitsRowAdapter extends BaseAdapter {
@@ -44,7 +45,7 @@ class SplitsRowAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

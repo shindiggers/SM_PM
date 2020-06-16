@@ -1,37 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/kLOC_GENERAL_REPORTS">
 
     <CheckBoxPreference
-        android:title="@string/kLOC_FILTERS_ALL_ACCOUNTS"
+        android:defaultValue="true"
         android:key="budgetShowAllAccounts"
-        android:defaultValue="true" />
+        android:title="@string/kLOC_FILTERS_ALL_ACCOUNTS" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_BUDGET_SHOWCENTS"
+        android:defaultValue="false"
         android:key="budgetShowCents"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_BUDGET_SHOWCENTS" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_BUDGET_SHOWUNBUDGETED"
+        android:defaultValue="fasle"
         android:key="budgetShowUnbudgeted"
-        android:defaultValue="fasle" />
+        android:title="@string/kLOC_BUDGET_SHOWUNBUDGETED" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_BUDGET_INCLUDEUNBUDGETED"
+        android:defaultValue="false"
         android:key="budgetIncludeUnbudgeted"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_BUDGET_INCLUDEUNBUDGETED" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_BUDGETS_HIDEZEROACTUALS"
+        android:defaultValue="false"
         android:key="budgetHideZeros"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_BUDGETS_HIDEZEROACTUALS" />
 
     <CheckBoxPreference
-        android:title="@string/kLOC_BUDGETS_INCLUDETRANSFER"
+        android:defaultValue="false"
         android:key="budgetIncludeTransfers"
-        android:defaultValue="false" />
+        android:title="@string/kLOC_BUDGETS_INCLUDETRANSFER" />
 
 </PreferenceScreen>

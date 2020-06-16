@@ -3,33 +3,33 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
     android:background="@color/blue_theme_background_color"
+    android:clickable="true"
     android:focusable="true"
     android:nextFocusLeft="@+id/selected"
-    android:nextFocusDown="@+id/transtherow"
-    android:clickable="true"
-    android:layout_width="match_parent"
-    android:layout_height="60dp">
+    android:nextFocusDown="@+id/transtherow">
 
     <ImageView
-        android:layout_gravity="center_vertical|center_horizontal|start"
         android:id="@+id/prefsrowimage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        tools:src="@drawable/repeatingicon"
+        android:layout_gravity="center_vertical|center_horizontal|start"
+        android:layout_marginStart="10dp"
         android:contentDescription="@string/content_description_image_of_a_calendar"
-        android:layout_marginStart="10dp"/>
+        tools:src="@drawable/repeatingicon" />
 
     <TextView
-        android:textSize="25sp"
-        android:textColor="@color/black_theme_text"
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
         android:id="@+id/prefsrowtext"
-        android:paddingTop="15dp"
-        android:paddingBottom="15dp"
-        tools:text="Preference 1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="60dp"/>
+        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_marginStart="60dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textColor="@color/black_theme_text"
+        android:textSize="25sp"
+        tools:text="Preference 1" />
 
 </FrameLayout>

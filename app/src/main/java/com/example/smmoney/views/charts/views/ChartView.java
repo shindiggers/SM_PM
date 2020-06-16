@@ -6,17 +6,19 @@ import android.graphics.Region;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
 import com.example.smmoney.views.charts.ChartViewDataSource;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.reports.ReportDataSource;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 
 public class ChartView extends View {
-    boolean allNegative;
     public ChartViewDataSource dataSource;
     public ChartViewDelegate delegate;
+    boolean allNegative;
     double negativeMaxValue;
     double negativeTotal;
     double positiveMaxValue;

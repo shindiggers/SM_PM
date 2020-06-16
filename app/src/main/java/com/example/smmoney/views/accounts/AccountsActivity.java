@@ -1768,7 +1768,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
         }
     }
-    
+
     @Override
     public void onFinishEmailDialog(int EmailType) {
         switch (EmailType) {

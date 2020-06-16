@@ -3,6 +3,7 @@ package com.example.smmoney.views.filters;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 

@@ -148,11 +148,9 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
                 editText1.onTouchEvent(event);
                 editText1.setInputType(inType);
                 return true;
-        }
-    });
-
-
-}
+            }
+        });
+    }
 
     public void setToolbarView(View toolbar) {
         this.toolbar = toolbar;

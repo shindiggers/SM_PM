@@ -1,62 +1,58 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_QIFOPTIONS_TITLE"
-    android:key="DataTransferPrefs">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="DataTransferPrefs"
+    android:title="@string/kLOC_QIFOPTIONS_TITLE">
 
-    <PreferenceCategory
-        android:title="@string/kLOC_QIFOPTIONS_FILEFORMAT">
+    <PreferenceCategory android:title="@string/kLOC_QIFOPTIONS_FILEFORMAT">
 
         <ListPreference
-            android:title="@string/kLOC_QIFOPTIONS_DATEFORMAT"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT"
             android:key="datatransferqifdateformat"
-            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+            android:title="@string/kLOC_QIFOPTIONS_DATEFORMAT" />
 
         <ListPreference
-            android:title="@string/kLOC_QIFOPTIONS_DATESEPARATOR"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT"
             android:key="datatransferqifdateseparator"
-            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+            android:title="@string/kLOC_QIFOPTIONS_DATESEPARATOR" />
 
         <ListPreference
-            android:title="@string/kLOC_QIFOPTIONS_NUMBERFORMAT"
+            android:defaultValue="@string/kLOC_GENERAL_DEFAULT"
             android:key="datatransfernumberformat"
-            android:defaultValue="@string/kLOC_GENERAL_DEFAULT" />
+            android:title="@string/kLOC_QIFOPTIONS_NUMBERFORMAT" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/kLOC_QIFOPTIONS_IMPORTOPTIONS">
+    <PreferenceCategory android:title="@string/kLOC_QIFOPTIONS_IMPORTOPTIONS">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_QIFOPTIONS_MARKALLCLEARED"
+            android:defaultValue="false"
             android:key="datatransferqifmarkallclear"
-            android:defaultValue="false" />
+            android:title="@string/kLOC_QIFOPTIONS_MARKALLCLEARED" />
 
         <CheckBoxPreference
-            android:title="@string/kLOC_PREFERENCES_ALLOWQIFDUPS"
+            android:defaultValue="true"
             android:key="datatransferqifimportdups"
-            android:defaultValue="true" />
+            android:title="@string/kLOC_PREFERENCES_ALLOWQIFDUPS" />
 
         <CheckBoxPreference
-            android:title="@string/kLOC_QIF_WIPETRANSACTIONS"
+            android:defaultValue="false"
             android:key="datatransferqifwipeonlyonrestore"
-            android:defaultValue="false" />
+            android:title="@string/kLOC_QIF_WIPETRANSACTIONS" />
 
         <CheckBoxPreference
-            android:title="@string/kLOC_GENERAL_BUDGETS"
+            android:defaultValue="false"
             android:key="datatransferqifbudgets"
-            android:defaultValue="false" />
+            android:title="@string/kLOC_GENERAL_BUDGETS" />
 
     </PreferenceCategory>
 
-    <PreferenceCategory
-        android:title="@string/kLOC_QIFOPTIONS_EXPORTOPTIONS">
+    <PreferenceCategory android:title="@string/kLOC_QIFOPTIONS_EXPORTOPTIONS">
 
         <CheckBoxPreference
-            android:title="@string/kLOC_QIFOPTIONS_MSMONEYEXPORT"
+            android:defaultValue="false"
             android:key="datatransferqiffileforeachaccount"
-            android:defaultValue="false" />
+            android:title="@string/kLOC_QIFOPTIONS_MSMONEYEXPORT" />
 
     </PreferenceCategory>
 

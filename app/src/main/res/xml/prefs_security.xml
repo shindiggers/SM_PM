@@ -1,29 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_PREFS_SECURITY"
-    android:key="SecurityPrefs">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="SecurityPrefs"
+    android:title="@string/kLOC_PREFS_SECURITY">
 
     <EditTextPreference
         android:name="@string/kLOC_PREFERENCES_PASSWORD_TITLE"
+        android:key="prefssecuritypassword"
         android:password="true"
-        android:title="@string/kLOC_PREFERENCES_PASSWORD_TITLE"
-        android:key="prefssecuritypassword" />
+        android:title="@string/kLOC_PREFERENCES_PASSWORD_TITLE" />
 
     <EditTextPreference
         android:name="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM"
+        android:key="prefssecurityconfirm"
         android:password="true"
-        android:title="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM"
-        android:key="prefssecurityconfirm" />
+        android:title="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM" />
 
-    <PreferenceCategory
-        android:title="">
+    <PreferenceCategory android:title="">
 
         <ListPreference
-            android:title="@string/kLOC_PASSWORDDELAY"
+            android:defaultValue="@string/kLOC_GENERAL_NONE"
             android:key="prefssecuritydelay"
-            android:defaultValue="@string/kLOC_GENERAL_NONE" />
+            android:title="@string/kLOC_PASSWORDDELAY" />
 
     </PreferenceCategory>
 

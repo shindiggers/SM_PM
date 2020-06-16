@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -11,75 +10,75 @@
         android:layout_height="40dp">
 
         <TextView
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            android:layout_gravity="start|center_vertical"
             android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="15dp"
             android:background="@color/blue_theme_background_color"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
             android:focusable="true"
             android:nextFocusRight="@+id/save_button"
             android:nextFocusDown="@+id/accountname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:text="@string/accounts_edi_cancel" />
-
-        <TextView
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            android:layout_gravity="center"
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            tools:text="Account Info"
-            android:text="@string/accounts_edit_title" />
-
-        <TextView
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            android:layout_gravity="end|center_vertical"
-            android:id="@+id/save_button"
-            android:background="@color/blue_theme_background_color"
             android:paddingLeft="10dp"
             android:paddingTop="3dp"
             android:paddingRight="10dp"
             android:paddingBottom="3dp"
+            android:text="@string/accounts_edi_cancel"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/title_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/accounts_edit_title"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="bold"
+            tools:text="Account Info" />
+
+        <TextView
+            android:id="@+id/save_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="15dp"
+            android:background="@color/blue_theme_background_color"
             android:focusable="true"
             android:nextFocusLeft="@+id/cancel_button"
             android:nextFocusDown="@+id/accountname"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="15dp"
-            android:text="@string/accounts_edit_save" />
+            android:paddingLeft="10dp"
+            android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
+            android:text="@string/accounts_edit_save"
+            android:textAppearance="?android:textAppearanceSmall"
+            android:textStyle="bold" />
 
     </FrameLayout>
 
     <ScrollView
-        android:scrollbarStyle="insideOverlay"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:orientation="vertical"
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_marginTop="40dp"
-        android:fillViewport="true">
+        android:fillViewport="true"
+        android:orientation="vertical"
+        android:scrollbarStyle="insideOverlay">
 
         <LinearLayout
-            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
                     android:id="@+id/account_label"
@@ -98,11 +97,11 @@
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_account_name"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapWords"
                     android:nextFocusDown="@+id/totalworthcb"
                     android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:inputType="textCapWords"
-                    android:importantForAutofill="no" />
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
@@ -111,635 +110,635 @@
                 android:layout_height="wrap_content">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/total_worth_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_GENERAL_TOTALWORTH" />
 
                 <CheckBox
                     android:id="@+id/totalworthcb"
-                    android:nextFocusDown="@+id/typebutton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginEnd="16dp"
-                    android:layout_centerVertical="true" />
+                    android:nextFocusDown="@+id/typebutton" />
 
             </RelativeLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
                 android:id="@+id/typebutton"
-                android:background="@color/blue_theme_background_color"
-                android:padding="0dp"
-                android:focusable="true"
-                android:nextFocusDown="@+id/iconbutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@color/blue_theme_background_color"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:nextFocusDown="@+id/iconbutton"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="start|center_vertical"
                     android:id="@+id/account_type_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_TYPE_LABEL" />
 
                 <TextView
-                    android:gravity="start|center_vertical"
                     android:id="@+id/type"
                     android:layout_width="0dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="4dp"
-                    android:text="@string/accounts_edit_the_type"
-                    android:layout_weight="1.0" />
+                    android:layout_weight="1.0"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/accounts_edit_the_type" />
 
                 <ImageButton
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:clickable="false"
                     android:contentDescription="@string/content_description_menu_accounts_edit" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal"
                 android:id="@+id/iconbutton"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:padding="0dp"
-                android:focusable="true"
-                android:nextFocusDown="@+id/expires"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@drawable/list_selector_bg_blue_alt"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="start|center_vertical"
+                android:nextFocusDown="@+id/expires"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="start|center_vertical"
                     android:id="@+id/account_icon_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_ICON_LABEL" />
 
                 <ImageView
-                    android:layout_gravity="center_vertical"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/icon"
                     android:layout_width="0dp"
                     android:layout_height="30dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:text="@string/accounts_edit_the_icon"
                     android:layout_weight="1.0"
-                    android:contentDescription="@string/accounts_edit_open_icon_chooser" />
+                    android:contentDescription="@string/accounts_edit_open_icon_chooser"
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:text="@string/accounts_edit_the_icon" />
 
                 <ImageButton
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:layout_gravity="center_vertical"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:clickable="false"
                     android:contentDescription="@string/accounts_edit_open_icon_chooser" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_expires_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_EXPIRES_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/expires"
-                    android:nextFocusDown="@+id/accountnumber"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_expiration_date_hint"
-                    android:singleLine="true"
-                    android:digits="1234567890+-. /"
-                    android:inputType="numberDecimal"
                     android:layout_weight="1.0"
-                    android:importantForAutofill="no" />
+                    android:digits="1234567890+-. /"
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:hint="@string/accounts_edit_expiration_date_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@+id/accountnumber"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <View
-                android:background="@android:color/darker_gray"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_number_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_NUMBER_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/black_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/accountnumber"
-                    android:nextFocusDown="@+id/bankid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_account_number_hint"
-                    android:singleLine="true"
-                    android:inputType="numberDecimal"
                     android:layout_weight="1.0"
-                    android:importantForAutofill="no" />
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:hint="@string/accounts_edit_account_number_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal"
+                    android:nextFocusDown="@+id/bankid"
+                    android:singleLine="true"
+                    android:textColorHint="@color/black_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/routing_number_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ROUTING_NUMBER_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:id="@+id/bankid"
-                    android:nextFocusDown="@+id/institution"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_bank_id_hint"
-                    android:singleLine="true"
-                    android:inputType="textCapWords"
                     android:layout_weight="1.0"
-                    android:importantForAutofill="no" />
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_bank_id_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapWords"
+                    android:nextFocusDown="@+id/institution"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_institution_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_INSTITUTION_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:id="@+id/institution"
-                    android:nextFocusDown="@+id/phone"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_institution_hint"
-                    android:singleLine="true"
-                    android:inputType="textCapWords"
                     android:layout_weight="1.0"
-                    android:importantForAutofill="no" />
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_institution_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textCapWords"
+                    android:nextFocusDown="@+id/phone"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_phone_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_PHONE_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:id="@+id/phone"
-                    android:nextFocusDown="@+id/website"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_phone_number_hint"
-                    android:singleLine="true"
-                    android:digits="1234567890+-. /"
                     android:layout_weight="1.0"
+                    android:digits="1234567890+-. /"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_phone_number_hint"
+                    android:importantForAutofill="no"
                     android:inputType="phone"
-                    android:importantForAutofill="no" />
+                    android:nextFocusDown="@+id/website"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_website_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_WEBSITE_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical|start"
                     android:id="@+id/website"
-                    android:nextFocusDown="@+id/fee"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_website_hint"
-                    android:singleLine="true"
-                    android:inputType="textWebEditText"
                     android:layout_weight="1.0"
-                    android:importantForAutofill="no" />
+                    android:gravity="center_vertical|start"
+                    android:hint="@string/accounts_edit_website_hint"
+                    android:importantForAutofill="no"
+                    android:inputType="textWebEditText"
+                    android:nextFocusDown="@+id/fee"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <View
-                android:background="@android:color/darker_gray"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_fee_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_FEE_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="center_vertical|start"
                     android:id="@+id/fee"
-                    android:nextFocusDown="@+id/limit"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_fee_hint"
-                    android:singleLine="true"
                     android:layout_weight="1.0"
+                    android:gravity="center_vertical|start"
+                    android:hint="@string/accounts_edit_fee_hint"
+                    android:importantForAutofill="no"
                     android:inputType="textCapWords"
-                    android:importantForAutofill="no" />
+                    android:nextFocusDown="@+id/limit"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_limit_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_LIMIT_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/limit"
-                    android:nextFocusDown="@+id/checknumber"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_limit_hint"
-                    android:singleLine="true"
                     android:layout_weight="1.0"
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:hint="@string/accounts_edit_limit_hint"
+                    android:importantForAutofill="no"
                     android:inputType="numberSigned|numberDecimal"
-                    android:importantForAutofill="no" />
+                    android:nextFocusDown="@+id/checknumber"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:padding="0dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:baselineAligned="false"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_check_number_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_CHECKNUMBER_LABEL" />
 
                 <EditText
-                    android:textColorHint="@color/blue_theme_text_alt"
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:id="@+id/checknumber"
-                    android:nextFocusDown="@+id/currency_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/accounts_edit_check_number_hint"
-                    android:singleLine="true"
                     android:layout_weight="1.0"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_check_number_hint"
+                    android:importantForAutofill="no"
                     android:inputType="number"
-                    android:importantForAutofill="no" />
+                    android:nextFocusDown="@+id/currency_button"
+                    android:singleLine="true"
+                    android:textColorHint="@color/blue_theme_text_alt" />
 
             </LinearLayout>
 
             <View
-                android:background="@android:color/darker_gray"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
             <LinearLayout
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal"
                 android:id="@+id/currency_button"
-                android:background="@color/blue_theme_background_color"
-                android:padding="0dp"
-                android:focusable="true"
-                android:nextFocusDown="@+id/xratetextview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@color/blue_theme_background_color"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="start|center_vertical"
+                android:nextFocusDown="@+id/xratetextview"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="start|center_vertical"
                     android:id="@+id/account_currency_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_CURRENCY_LABEL" />
 
                 <TextView
-                    android:gravity="start|center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:id="@+id/currency_edit_text"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="6dp"
-                    android:text="@string/accounts_edit_the_type_hint"
-                    android:layout_weight="1.0" />
+                    android:layout_marginEnd="4dp"
+                    android:layout_weight="1.0"
+                    android:gravity="start|center_vertical"
+                    android:text="@string/accounts_edit_the_type_hint" />
 
                 <ImageButton
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:clickable="false"
                     android:contentDescription="@string/accounts_edit_open_currency_dialogue" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="start|center_vertical"
-                android:orientation="horizontal"
                 android:id="@+id/xrate_button"
-                android:background="@drawable/list_selector_bg_black"
-                android:padding="0dp"
-                android:focusable="true"
-                android:nextFocusRight="@+id/xratetextview"
-                android:nextFocusDown="@+id/keepthechange_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@drawable/list_selector_bg_black"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="start|center_vertical"
+                android:nextFocusRight="@+id/xratetextview"
+                android:nextFocusDown="@+id/keepthechange_button"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_exchangerate_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE" />
 
                 <EditText
-                    android:gravity="start|center_vertical"
-                    android:layout_gravity="center_vertical"
                     android:id="@+id/xratetextview"
-                    android:nextFocusDown="@+id/keepthechange_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:singleLine="true"
                     android:layout_weight="1.0"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_the_type"
                     android:importantForAutofill="no"
                     android:inputType=""
-                    android:hint="@string/accounts_edit_the_type" />
+                    android:nextFocusDown="@+id/keepthechange_button"
+                    android:singleLine="true" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
                     android:layout_width="50dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/accounts_edit_x_xrate"
-                    android:singleLine="true" />
+                    android:singleLine="true"
+                    android:text="@string/accounts_edit_x_xrate" />
 
             </LinearLayout>
 
             <View
-                android:background="@android:color/darker_gray"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
                 android:id="@+id/keepthechange_button"
-                android:background="@color/blue_theme_background_color"
-                android:padding="0dp"
-                android:focusable="true"
-                android:nextFocusDown="@+id/account_keep_the_change_round_to_text"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@color/blue_theme_background_color"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:nextFocusDown="@+id/account_keep_the_change_round_to_text"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_keep_the_change_account_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_GENERAL_KEEP_CHANGE" />
 
                 <TextView
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/keep_the_change_account_text"
                     android:layout_width="0dp"
                     android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
-                    android:text="@string/accounts_edit_the_type"
-                    android:layout_weight="1.0" />
+                    android:layout_weight="1.0"
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:text="@string/accounts_edit_the_type" />
 
                 <ImageButton
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:layout_gravity="center_vertical"
-                    android:clickable="false"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
+                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:clickable="false"
                     android:contentDescription="@string/accounts_edit_open_keep_the_change_dialogue" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
-                android:background="@drawable/list_selector_bg_black"
-                android:padding="0dp"
-                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@drawable/list_selector_bg_black"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-                    android:layout_gravity="center_vertical"
                     android:id="@+id/account_keep_the_change_round_to_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_GENERAL_ROUND_TO" />
 
                 <EditText
-                    android:layout_gravity="center_vertical"
-                    android:gravity="start|center_vertical"
                     android:id="@+id/account_keep_the_change_round_to_text"
-                    android:nextFocusDown="@+id/notes_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:singleLine="true"
                     android:layout_weight="1.0"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/accounts_edit_open_keep_the_change_dialogue"
                     android:importantForAutofill="no"
                     android:inputType=""
-                    android:hint="@string/accounts_edit_open_keep_the_change_dialogue" />
+                    android:nextFocusDown="@+id/notes_button"
+                    android:singleLine="true" />
 
             </LinearLayout>
 
             <View
-                android:background="@android:color/darker_gray"
                 android:layout_width="match_parent"
-                android:layout_height="1dp" />
+                android:layout_height="1dp"
+                android:background="@android:color/darker_gray" />
 
             <LinearLayout
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="horizontal"
                 android:id="@+id/notes_button"
-                android:background="@drawable/list_selector_bg_black"
-                android:padding="0dp"
-                android:focusable="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:baselineAligned="false">
+                android:background="@drawable/list_selector_bg_black"
+                android:baselineAligned="false"
+                android:focusable="true"
+                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:id="@+id/account_notes_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
+                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:text="@string/kLOC_ACCOUNT_NOTES_LABEL" />
 
                 <TextView
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
                     android:id="@+id/notestextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0" />
+                    android:layout_weight="1.0"
+                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
 
             </LinearLayout>
 
@@ -747,11 +746,11 @@
 
     </ScrollView>
 
-<FrameLayout
-android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-android:id="@+id/keyboard_toolbar"
-android:background="#000000"
-android:visibility="gone"
-android:layout_width="match_parent"
-android:layout_height="40dp" />
+    <FrameLayout
+        android:id="@+id/keyboard_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+        android:background="#000000"
+        android:visibility="gone" />
 </FrameLayout>

@@ -33,24 +33,24 @@
             android:id="@+id/periodbutton"
             android:layout_width="220dp"
             android:layout_height="match_parent"
-            android:textSize="12sp"
-            android:layout_gravity="center_vertical|center_horizontal" />
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:textSize="12sp" />
 
         <ImageView
             android:id="@+id/lefttarrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
-            android:src="@drawable/leftarrow"
-            android:contentDescription="@string/content_description_left_arrow" />
+            android:contentDescription="@string/content_description_left_arrow"
+            android:src="@drawable/leftarrow" />
 
         <ImageView
             android:id="@+id/rightarrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/rightarrow"
-            android:contentDescription="@string/content_description_right_arrow" />
+            android:contentDescription="@string/content_description_right_arrow"
+            android:src="@drawable/rightarrow" />
 
     </FrameLayout>
 
@@ -66,8 +66,8 @@
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="10dp"
-            android:src="@drawable/grapharrowright"
-            android:contentDescription="@string/content_description_choose_between_actual_budgeted_and_available" />
+            android:contentDescription="@string/content_description_choose_between_actual_budgeted_and_available"
+            android:src="@drawable/grapharrowright" />
 
         <ProgressBar
             android:id="@+id/reloadprogressbar"
@@ -141,12 +141,12 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:gravity="center_horizontal|center_vertical"
                 android:button="@null"
+                android:gravity="center_horizontal|center_vertical"
                 android:minWidth="100dp"
                 android:minHeight="30dp"
-                android:textAppearance="?android:textAppearanceSmall"
                 android:text="@string/kLOC_GENERAL_ACCOUNTS"
+                android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@drawable/segment_radio_text_color" />
 
             <RadioButton
@@ -154,8 +154,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.0"
-                android:checked="true"
                 android:button="@null"
+                android:checked="true"
                 android:gravity="center_horizontal|center_vertical"
                 android:minWidth="100dp"
                 android:minHeight="30dp"
@@ -173,8 +173,8 @@
         android:layout_height="50dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="40dp"
-        tools:text = "Current balance"
-        tools:textColor="@color/black_theme_text"
-        android:textColor="@color/black_theme_text" />
+        android:textColor="@color/black_theme_text"
+        tools:text="Current balance"
+        tools:textColor="@color/black_theme_text" />
 
 </FrameLayout>

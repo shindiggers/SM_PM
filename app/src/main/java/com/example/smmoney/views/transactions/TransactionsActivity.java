@@ -78,6 +78,10 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class TransactionsActivity extends PocketMoneyActivity implements HandlerActivity {
+    public final int REQUEST_EDIT = 2;
+    public final int REQUEST_NEW = 1;
+    public final int TRANSACTION_REQUEST_EMAIL = 2;
+    public final int TRANSACTION_REQUEST_FILTER = 1;
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
     private final int DATE_DIALOG_ID = 8;
@@ -115,10 +119,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int MENU_VIEW = 2;
     private final int MENU_WIFITRANSFERS = 2;
     private final int MENU_WIFI_EXPORT = 4;
-    public final int REQUEST_EDIT = 2;
-    public final int REQUEST_NEW = 1;
-    public final int TRANSACTION_REQUEST_EMAIL = 2;
-    public final int TRANSACTION_REQUEST_FILTER = 1;
     private FilterClass _filter;
     private TransactionRowAdapter adapter;
     private RadioButton allButton;
@@ -342,22 +342,22 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             clearedAdjust = act.balanceOfType(Enums.kBalanceTypeCleared /*1*/);
             futureAdjust = act.balanceOfType(Enums.kBalanceTypeFuture /*0*/);
 
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        final double d = newBalance;
-        final double d2 = newBalance;
-        alt_bld.setCancelable(false).setMessage(Locales.kLOC_TOOLS_RECONCILE_ALLCLEARED).setPositiveButton(Locales.kLOC_GENERAL_CLEARED, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                TransactionsActivity.this.adjustBalanceConfirm(true, d - clearedAdjust);
-            }
-        }).setNegativeButton(Locales.kLOC_TOOLS_RECONCILE_ALL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                TransactionsActivity.this.adjustBalanceConfirm(false, d2 - futureAdjust);
+            AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+            final double d = newBalance;
+            final double d2 = newBalance;
+            alt_bld.setCancelable(false).setMessage(Locales.kLOC_TOOLS_RECONCILE_ALLCLEARED).setPositiveButton(Locales.kLOC_GENERAL_CLEARED, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    TransactionsActivity.this.adjustBalanceConfirm(true, d - clearedAdjust);
+                }
+            }).setNegativeButton(Locales.kLOC_TOOLS_RECONCILE_ALL, new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int id) {
+                    TransactionsActivity.this.adjustBalanceConfirm(false, d2 - futureAdjust);
 
-            }
-        });
+                }
+            });
 
-        alt_bld.create().show();
-    }
+            alt_bld.create().show();
+        }
     }
 
     private void adjustBalanceConfirm(final boolean onlyCleared, final double newBalance) {
@@ -906,7 +906,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                     case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
                         if (TransactionsActivity.this.progressDialog == null) {
                             try {
-                                TransactionsActivity.this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
+                                TransactionsActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }

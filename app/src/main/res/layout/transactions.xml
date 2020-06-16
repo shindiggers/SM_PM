@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <FrameLayout
@@ -33,17 +33,17 @@
         android:layout_height="80dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:orientation="vertical"
-        tools:visibility="visible"
-        android:visibility="gone">
+        android:visibility="gone"
+        tools:visibility="visible">
 
         <EditText
             android:id="@+id/searcheditext"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:hint="@string/kLOC_TOOLS_SEARCH"
-            android:maxLines="1"
+            android:importantForAutofill="no"
             android:inputType=""
-            android:importantForAutofill="no" />
+            android:maxLines="1" />
 
         <com.example.makeramen.segmented.SegmentedRadioGroup
             android:id="@+id/radiogroup"
@@ -56,12 +56,12 @@
                 android:id="@+id/pendingbutton"
                 android:layout_width="0dp"
                 android:layout_height="58dp"
-                android:layout_weight="1.0"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|center_horizontal"
-                android:minHeight="40dp"
+                android:layout_weight="1.0"
                 android:button="@null"
+                android:gravity="center_vertical|center_horizontal"
                 android:minWidth="40dp"
+                android:minHeight="40dp"
                 android:text="@string/kLOC_GENERAL_CLEARED_PENDING"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_text_color_unchecked" />
@@ -70,12 +70,12 @@
                 android:id="@+id/clearedbutton"
                 android:layout_width="0dp"
                 android:layout_height="58dp"
-                android:layout_weight="1.0"
                 android:layout_gravity="center_vertical"
-                android:gravity="center_vertical|center_horizontal"
+                android:layout_weight="1.0"
                 android:button="@null"
-                android:minHeight="40dp"
+                android:gravity="center_vertical|center_horizontal"
                 android:minWidth="40dp"
+                android:minHeight="40dp"
                 android:text="@string/kLOC_GENERAL_CLEARED"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_text_color_unchecked" />
@@ -84,13 +84,13 @@
                 android:id="@+id/allbutton"
                 android:layout_width="0dp"
                 android:layout_height="58dp"
-                android:layout_weight="1.0"
-                android:checked="true"
-                android:button="@null"
                 android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:checked="true"
                 android:gravity="center_vertical|center_horizontal"
-                android:minHeight="40dp"
                 android:minWidth="40dp"
+                android:minHeight="40dp"
                 android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
                 android:textAppearance="?android:textAppearanceSmall"
                 android:textColor="@color/radio_text_color_unchecked" />

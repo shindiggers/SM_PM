@@ -18,6 +18,7 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">false</item>
     </style>
+
     <style name="CategoryStyle">
         <item name="android:textAppearance">?android:textAppearanceSmall</item>
         <item name="android:textSize">14sp</item>
@@ -29,6 +30,7 @@
         <item name="android:layout_width">fill_parent</item>
         <item name="android:layout_height">25dp</item>
     </style>
+
     <style name="Category">
         <item name="android:layout">@layout/pref_category</item>
         <item name="android:selectable">false</item>

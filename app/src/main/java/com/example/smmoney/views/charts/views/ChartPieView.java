@@ -11,14 +11,15 @@ import android.graphics.Path.Direction;
 import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.util.AttributeSet;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.views.charts.items.ChartItem;
 
 public class ChartPieView extends ChartView {
+    double rads;
     private Paint mBgPaints = new Paint();
     private Paint mLinePaints = new Paint();
-    double rads;
 
     public ChartPieView(Context context) {
         super(context);
@@ -55,7 +56,7 @@ public class ChartPieView extends ChartView {
                     mGapBottom = i;
                     mGapTop = i;
                 }
-                if (type ==Enums.kChartTypeNegativePie /*-1*/) {
+                if (type == Enums.kChartTypeNegativePie /*-1*/) {
                     mGapRight = (int) (((float) (mGapLeft * 2)) + (radius * 2.0f));
                     pieCenterX = ((float) mGapLeft) + radius;
                 } else {

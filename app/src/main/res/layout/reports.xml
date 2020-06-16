@@ -31,8 +31,8 @@
         android:layout_width="match_parent"
         android:layout_height="200dp"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        tools:visibility="gone"
-        android:visibility="gone" />
+        android:visibility="gone"
+        tools:visibility="gone" />
 
     <com.example.smmoney.views.charts.views.ChartBarView
         android:id="@+id/barchartview"
@@ -51,23 +51,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
-            android:src="@drawable/leftarrow"
-            android:contentDescription="@string/earlier_period" />
+            android:contentDescription="@string/earlier_period"
+            android:src="@drawable/leftarrow" />
 
         <Button
             android:id="@+id/periodbutton"
             android:layout_width="220dp"
             android:layout_height="wrap_content"
-            tools:text="mmmm yyyy"
-            android:layout_gravity="center" />
+            android:layout_gravity="center"
+            tools:text="mmmm yyyy" />
 
         <ImageView
             android:id="@+id/rightarrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="end|center_vertical"
-            android:src="@drawable/rightarrow"
-            android:contentDescription="@string/later_period" />
+            android:contentDescription="@string/later_period"
+            android:src="@drawable/rightarrow" />
 
     </FrameLayout>
 
@@ -103,8 +103,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="5dp"
                 android:text="@string/_0_0_report_balance_placeholder"
-                tools:text="-£2,000.00"
-                android:textStyle="bold" />
+                android:textStyle="bold"
+                tools:text="-£2,000.00" />
 
         </LinearLayout>
 

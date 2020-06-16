@@ -1,36 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
     <View
         android:id="@+id/place_autocomplete_separator"
-        android:background="@color/place_autocomplete_separator"
-        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:layout_marginStart="@dimen/place_autocomplete_separator_start" />
+        android:layout_marginStart="@dimen/place_autocomplete_separator_start"
+        android:background="@color/place_autocomplete_separator"
+        android:visibility="gone" />
 
     <include
+        layout="@layout/place_autocomplete_progress"
         android:layout_width="24dp"
         android:layout_height="24dp"
-        android:layout_marginLeft="@dimen/place_autocomplete_progress_horizontal_margin"
-        android:layout_marginRight="@dimen/place_autocomplete_progress_horizontal_margin"
         android:layout_below="@+id/place_autocomplete_separator"
         android:layout_centerVertical="true"
-        layout="@layout/place_autocomplete_progress" />
+        android:layout_marginLeft="@dimen/place_autocomplete_progress_horizontal_margin"
+        android:layout_marginRight="@dimen/place_autocomplete_progress_horizontal_margin" />
 
     <ImageView
         android:id="@+id/place_autocomplete_powered_by_google"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
-        android:src="@drawable/powered_by_google_light"
-        android:scaleType="center"
         android:layout_below="@+id/place_autocomplete_separator"
         android:layout_marginStart="@dimen/place_autocomplete_powered_by_google_start"
         android:layout_toEndOf="@+id/place_autocomplete_progress"
-        android:contentDescription="@string/content_description_powered_by_google_logo" />
+        android:contentDescription="@string/content_description_powered_by_google_logo"
+        android:scaleType="center"
+        android:src="@drawable/powered_by_google_light" />
 
 </RelativeLayout>

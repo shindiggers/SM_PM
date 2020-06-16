@@ -451,6 +451,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     /**
      * Uses @link{getType()} method to check whether a Tranaction is a RepeatingTransaction
+     *
      * @return boolen returns true if Transaction is Repeating Transaction, false otherwise
      */
     public boolean isRepeating() {
@@ -589,6 +590,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
      * DOWIM = how many times a particular weekday (M to S) has occured on the transaction date
      * If this is less than 4 then we want to show "The nth week of the month"
      * If it is 4 or more,
+     *
      * @return false
      */
     public boolean showOrdinalDayOfMonth() {
@@ -613,6 +615,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     /**
      * Calculates if the weekday of @date (ie Sun, Mon, Tue etc) is the last Sun, Mon, Tue etc of the month
+     *
      * @param date the date of the repeating transaction
      * @return true or false as appropriate
      */
@@ -634,6 +637,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     /**
      * Checks if a Transaction repeats on the date that is passed into the method
+     *
      * @param cal Gregorian Calendar object
      * @return boolean
      */

@@ -2,6 +2,7 @@ package com.example.smmoney.views;
 
 import android.content.Intent;
 import android.preference.PreferenceActivity;
+
 import com.example.smmoney.misc.Prefs;
 
 public abstract class PocketMoneyPreferenceActivity extends PreferenceActivity {

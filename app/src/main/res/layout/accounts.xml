@@ -3,16 +3,16 @@
     xmlns:ads="http://schemas.android.com/tools"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/accounts_root_view"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <!-- layoutheight 10241 - height from alternative decompile-->
     <FrameLayout
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:id="@+id/the_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
 
         <!-- textAppearance 16842817 - use small for now-->
         <TextView
@@ -37,89 +37,91 @@
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/graphbackground"
+            android:contentDescription="@string/content_description_graph_background"
             android:scaleType="fitXY"
-            android:contentDescription="@string/content_description_graph_background" />
+            android:src="@drawable/graphbackground" />
 
         <!--lh 20481-->
         <FrameLayout
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
             android:layout_width="match_parent"
-            android:layout_height="80dp">
+            android:layout_height="80dp"
+            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
 
             <LinearLayout
-                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
                 <com.example.smmoney.views.charts.views.ChartBarView
                     android:id="@+id/networthbarchart"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp" />
+                    android:layout_marginRight="30dp"
+                    android:visibility="gone" />
 
                 <com.example.smmoney.views.charts.views.ChartBarView
                     android:id="@+id/cashflowbarchart"
-                    android:visibility="gone"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp" />
+                    android:layout_marginRight="30dp"
+                    android:visibility="gone" />
 
                 <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
 
                     <ProgressBar
-                        android:layout_gravity="center_vertical|center_horizontal"
                         android:id="@+id/graphspinner"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical|center_horizontal"
                         android:indeterminate="true" />
 
                     <Button
-                        android:layout_gravity="center_vertical|center_horizontal"
                         android:id="@+id/morechartsbutton"
-                        android:background="@drawable/graphsplacard"
                         android:layout_width="100dp"
-                        android:layout_height="40dp" />
+                        android:layout_height="40dp"
+                        android:layout_gravity="center_vertical|center_horizontal"
+                        android:background="@drawable/graphsplacard" />
                 </FrameLayout>
             </LinearLayout>
 
             <ImageView
-                android:layout_gravity="end|center_vertical"
                 android:id="@+id/graphrightarrow"
-                android:clickable="true"
-                android:focusable="true"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/grapharrowright"
+                android:layout_gravity="end|center_vertical"
+                android:clickable="true"
+                android:contentDescription="@string/content_description_right_arrow"
+                android:focusable="true"
                 android:scaleType="center"
-                android:contentDescription="@string/content_description_right_arrow" />
+                android:src="@drawable/grapharrowright" />
+
             <ImageView
-                android:layout_gravity="start|center_vertical"
                 android:id="@+id/graphleftarrow"
-                android:clickable="true"
-                android:focusable="true"
                 android:layout_width="30dp"
                 android:layout_height="match_parent"
-                android:src="@drawable/grapharrowleft"
+                android:layout_gravity="start|center_vertical"
+                android:clickable="true"
+                android:contentDescription="@string/content_description_left_arrow"
+                android:focusable="true"
                 android:scaleType="center"
-                android:contentDescription="@string/content_description_left_arrow" />
+                android:src="@drawable/grapharrowleft" />
         </FrameLayout>
 
         <ImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:src="@drawable/graphforeground"
+            android:contentDescription="@string/content_description_graph_foreground"
             android:scaleType="fitXY"
-            android:contentDescription="@string/content_description_graph_foreground" />
+            android:src="@drawable/graphforeground" />
 
         <FrameLayout
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
             android:layout_width="match_parent"
-            android:layout_height="20dp">
+            android:layout_height="20dp"
+            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
 
             <TextView
                 android:id="@+id/graphtitletextview"
@@ -145,12 +147,12 @@
     </FrameLayout>
 
     <ListView
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:id="@+id/the_list"
-        android:fadingEdge=""
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_weight="2.0"
+        android:fadingEdge=""
         tools:listitem="@layout/accounts_row" />
 
     <!--<com.google.android.gms.ads.AdView
@@ -163,55 +165,55 @@
         ads:adUnitId="@string/banner_ad_unit_id" />-->
 
     <com.example.smmoney.views.BalanceBar
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
-        android:layout_height="50dp" />
+        android:layout_height="50dp"
+        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
 
     <FrameLayout
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
         android:id="@+id/bottom_tool_bar"
-        android:background="#000"
         android:layout_width="match_parent"
-        android:layout_height="40dp">
+        android:layout_height="40dp"
+        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:background="#000">
 
 
         <com.example.makeramen.segmented.SegmentedRadioGroup
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:orientation="horizontal"
             android:id="@+id/radiogroup"
-            android:checkedButton="@null"
             android:layout_width="200dp"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:checkedButton="@null"
+            android:orientation="horizontal">
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/radio_text_color_checked"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
                 android:id="@+id/accountsbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
                 android:button="@null"
                 android:checked="true"
+                android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="30dp"
                 android:text="@string/kLOC_GENERAL_ACCOUNTS"
-                android:layout_weight="1.0" />
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/radio_text_color_checked" />
 
             <RadioButton
-                android:layout_height="wrap_content"
-                android:layout_width="0dp"
-                android:textAppearance="?android:textAppearanceSmall"
-                android:textColor="@color/radio_text_color_unchecked"
-                android:gravity="center"
-                android:layout_gravity="center_vertical"
-                android:button="@null"
                 android:id="@+id/budgetsbutton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="1.0"
+                android:button="@null"
+                android:gravity="center"
                 android:minWidth="40dp"
                 android:minHeight="30dp"
                 android:text="@string/kLOC_GENERAL_BUDGETS"
-                android:layout_weight="1.0" />
+                android:textAppearance="?android:textAppearanceSmall"
+                android:textColor="@color/radio_text_color_unchecked" />
 
         </com.example.makeramen.segmented.SegmentedRadioGroup>
 

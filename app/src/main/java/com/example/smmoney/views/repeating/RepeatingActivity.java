@@ -88,7 +88,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     if (RepeatingActivity.this.progressDialog == null || !RepeatingActivity.this.progressDialog.isShowing()) {
                         RepeatingActivity.this.showDialog(IMPORT_PROGRESS_DIALOG/*2*/);
                         try {
-                            RepeatingActivity.this.wakeLock.acquire(10*60*1000L /*10 minutes*/);
+                            RepeatingActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                         } catch (Exception e2) {
                             e2.printStackTrace();
                         }
@@ -262,8 +262,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 }
                 if (transaction != null) {
                     new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
-
-                transaction.deleteFromDatabase();
+                    transaction.deleteFromDatabase();
                 }
                 reloadData();
                 return true;

@@ -17,7 +17,7 @@ class SplitsRowHolder {
     void setSplit(SplitsClass aSplit, Context aContext) {
         this.split = aSplit;
         if (this.split.isTransfer()) {
-            String transferToAccount = aContext.getString(R.string.splits_transfer_to_account,this.split.getTransferToAccount());
+            String transferToAccount = aContext.getString(R.string.splits_transfer_to_account, this.split.getTransferToAccount());
             this.category.setText(transferToAccount);
         } else {
             this.category.setText(this.split.getCategory());

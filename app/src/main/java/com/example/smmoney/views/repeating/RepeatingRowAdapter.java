@@ -62,7 +62,7 @@ class RepeatingRowAdapter extends BaseAdapter {
             }
         });
         notifyDataSetChanged();
-           }
+    }
 
     public int getCount() {
         return this.elements.size();
@@ -73,7 +73,7 @@ class RepeatingRowAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {

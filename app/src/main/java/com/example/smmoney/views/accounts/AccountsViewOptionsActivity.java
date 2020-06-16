@@ -20,6 +20,7 @@ import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
+
 import java.util.GregorianCalendar;
 
 public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
@@ -28,7 +29,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference showAccountsListPref;
 
     protected void onCreate(Bundle savedInstanceState) {
-        Log.d("VIEWOPTACT","onCreate() has just run");
+        Log.d("VIEWOPTACT", "onCreate() has just run");
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
         addPreferencesFromResource(R.xml.accounts_view_options);
@@ -41,12 +42,12 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
 
     protected void onStart() {
         super.onStart();
-        Log.d("VIEWOPTACT","onStart() has just run");
+        Log.d("VIEWOPTACT", "onStart() has just run");
         GregorianCalendar cal = new GregorianCalendar();
-        Log.d("ACCNTVIEWOPTIONS","Balance on date = " + Prefs.BALANCEONDATE);
+        Log.d("ACCNTVIEWOPTIONS", "Balance on date = " + Prefs.BALANCEONDATE);
         long millis = Prefs.getLongPref(Prefs.BALANCEONDATE);
 
-        Log.d("ACCTVIEWOPTACT","millis = "+millis);
+        Log.d("ACCTVIEWOPTACT", "millis = " + millis);
 
         if (millis != 0L) {
             cal.setTimeInMillis(millis);
@@ -69,10 +70,10 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void setupPrefs() {
-        Log.d("ACCTSVIEWOPTSACT","setupPrefs() has just run");
+        Log.d("ACCTSVIEWOPTSACT", "setupPrefs() has just run");
         this.showAccountsListPref = (ListPreference) findPreference("viewaccountslistpreference");
         this.asOfDatePref = findPreference(Prefs.BALANCEONDATE);
-        Log.d("ACCTSVIEWOPTACT","Preference asOfDatePref set to = "+ asOfDatePref);
+        Log.d("ACCTSVIEWOPTACT", "Preference asOfDatePref set to = " + asOfDatePref);
         String[] theStrings = new String[]{Locales.kLOC_PREFERENCES_SHOW_ALL, Locales.kLOC_PREFERENCES_NON_ZERO, Locales.kLOC_GENERAL_TOTALWORTH};
         this.showAccountsListPref.setEntries(theStrings);
         this.showAccountsListPref.setEntryValues(theStrings);
@@ -93,7 +94,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
             public boolean onPreferenceClick(Preference preference) {
                 Intent anIntent = new Intent(AccountsViewOptionsActivity.this.context, EndOnDateActivity.class);
                 anIntent.putExtra("Date", AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
-                Log.d("ACCTSVIEWOPTACT","Second element of putExtra = " + AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
+                Log.d("ACCTSVIEWOPTACT", "Second element of putExtra = " + AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
                 ((Activity) AccountsViewOptionsActivity.this.context).startActivityForResult(anIntent, 1);
                 return true;
             }
@@ -106,7 +107,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
             if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
                 this.asOfDatePref.setSummary(data.getStringExtra("Date"));
                 Prefs.setPref(Prefs.BALANCEONDATE, CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
-                Log.d("ACCTSVIEWOPTACT","Result from endon date Intent Preference BALANCE ON DATE ="+ CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
+                Log.d("ACCTSVIEWOPTACT", "Result from endon date Intent Preference BALANCE ON DATE =" + CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
             } else if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
                 this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
                 Prefs.setPref(Prefs.BALANCEONDATE, 0);

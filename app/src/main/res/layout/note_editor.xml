@@ -1,17 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/note_editor_layout"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <EditText
         android:id="@+id/note_editor_edittext"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="@string/hint_add_a_note"
-        android:inputType="textCapSentences|textMultiLine|textAutoCorrect"
-        android:importantForAutofill="no" />
+        android:importantForAutofill="no"
+        android:inputType="textCapSentences|textMultiLine|textAutoCorrect" />
 
 </LinearLayout>

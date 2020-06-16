@@ -45,10 +45,10 @@
             android:layout_marginEnd="15dp"
             android:background="@color/blue_theme_background_color"
             android:focusable="true"
-            android:paddingBottom="3dp"
             android:paddingStart="10dp"
-            android:paddingEnd="10dp"
             android:paddingTop="3dp"
+            android:paddingEnd="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/kLOC_GENERAL_DELETE"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="bold" />

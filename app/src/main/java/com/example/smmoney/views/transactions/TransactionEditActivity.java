@@ -124,6 +124,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private final int REQUEST_SPLITS = 31;
     private final int REQUEST_TRANSFER = 33;
     private final int TIME_DIALOG_ID = 5;
+    private final Timer clearTimer = new Timer();
     private TextView accountTextView;
     private EditText amountEditText;
     private TextView foreignAmountTextView;
@@ -134,7 +135,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private double changeKept;
     private AutoCompleteTextView classEditText;
     private TextView classTextView;
-    private final Timer clearTimer = new Timer();
     private CheckBox clearedCheckBox;
     private CurrencyKeyboard currencyKeyboard;
     private Activity currentActivity;
@@ -147,6 +147,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private boolean isLocalNotification = false;
     private TextView keepTheChangeButton;
     private FrameLayout keyboardToolBar;
+    private TextView memoTextView;
+    private ArrayList<String> newlyAddedImages = new ArrayList<>();
+    private AutoCompleteTextView payeeEditText;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -155,14 +158,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             }
         }
     };
-    private OnTimeSetListener mTimeSetListener = new OnTimeSetListener() {
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            TransactionEditActivity.this.timeTextView.setText(CalExt.descriptionWithShortTime(new GregorianCalendar(0, 0, 0, hourOfDay, minute)));
-        }
-    };
-    private TextView memoTextView;
-    private ArrayList<String> newlyAddedImages = new ArrayList<>();
-    private AutoCompleteTextView payeeEditText;
     private TextView payeeLabelTextView;
     private PhotoReceiptsCell photoCell;
     private boolean posting = false;
@@ -174,52 +169,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private ScrollView scrollView;
     private File tempPhotoPath;
     private TextView timeTextView;
+    private OnTimeSetListener mTimeSetListener = new OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            TransactionEditActivity.this.timeTextView.setText(CalExt.descriptionWithShortTime(new GregorianCalendar(0, 0, 0, hourOfDay, minute)));
+        }
+    };
     private TextView titleTextView;
     private TransactionClass transaction;
     private RadioButton transferButton;
     private RadioButton withdrawalButton;
-
-    class ClearTask extends TimerTask {
-        ClearTask() {
-        }
-
-        public void run() {
-            TransactionEditActivity.this.mHandler.sendMessage(Message.obtain(TransactionEditActivity.this.mHandler, MSG_CLEARDROPDOWNS /*1*/, 0, 0));
-        }
-    }
-
-    private class MyKeyListener implements KeyListener {
-        private int editTextCode;
-        KeyListener original;
-        private int suggest;
-
-        private MyKeyListener(KeyListener orig, int code) {
-            this.original = orig;
-            this.editTextCode = code;
-            this.suggest = Prefs.getBooleanPref(Prefs.AUTO_SUGGEST) ? this.original.getInputType() : 524288;
-        }
-
-        public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
-            TransactionEditActivity.this.editTextDidChange(this.editTextCode);
-            return this.original.onKeyDown(view, text, keyCode, event);
-        }
-
-        public void clearMetaKeyState(View arg0, Editable arg1, int arg2) {
-            this.original.clearMetaKeyState(arg0, arg1, arg2);
-        }
-
-        public int getInputType() {
-            return this.suggest;
-        }
-
-        public boolean onKeyOther(View arg0, Editable arg1, KeyEvent arg2) {
-            return this.original.onKeyOther(arg0, arg1, arg2);
-        }
-
-        public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
-            return this.original.onKeyUp(view, text, keyCode, event);
-        }
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -411,7 +369,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             Log.d("TransactionEditAct", "before setAdapter()");
             //this.categoryEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
             // TODO Customise the simple_list_item_1 so that it looks how it should. Just used here to make code work as original code above does not point to a TextView and therefore crashes!!
-            this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1,CategoryClass.allCategoryNamesInDatabase()));
+            this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CategoryClass.allCategoryNamesInDatabase()));
         }
         this.categoryTextView = cView.findViewById(R.id.categorytextview);
         this.categoryTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -444,7 +402,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.payeeEditText.setThreshold(2);
         if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
 //            this.payeeEditText.setAdapter(new ArrayAdapter(this, R.layout.lookups_category, PayeeClass.allPayeesInDatabase()));
-           // TODO Customise as for category class above
+            // TODO Customise as for category class above
             this.payeeEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, PayeeClass.allPayeesInDatabase()));
         }
         this.payeeLabelTextView = pView.findViewById(R.id.payeelabeltextview);
@@ -659,7 +617,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.categoryEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_CATEGORY /*2*/));
         this.idEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_ID /*4*/));
         this.classEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITTEXT_CLASS /*5*/));
-        this.payeeEditText.setKeyListener(new MyKeyListener(this.payeeEditText.getKeyListener(),EDITTEXT_PAYEE /*1*/));
+        this.payeeEditText.setKeyListener(new MyKeyListener(this.payeeEditText.getKeyListener(), EDITTEXT_PAYEE /*1*/));
         this.categoryEditText.setKeyListener(new MyKeyListener(this.categoryEditText.getKeyListener(), EDITTEXT_CATEGORY /*2*/));
         this.idEditText.setKeyListener(new MyKeyListener(this.idEditText.getKeyListener(), EDITTEXT_ID /*4*/));
         this.classEditText.setKeyListener(new MyKeyListener(this.classEditText.getKeyListener(), EDITTEXT_CLASS /*5*/));
@@ -1859,5 +1817,47 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         });
         TransactionEditActivity.this.repeatingDateChangedAlert = b.create();
         TransactionEditActivity.this.repeatingDateChangedAlert.show();
+    }
+
+    class ClearTask extends TimerTask {
+        ClearTask() {
+        }
+
+        public void run() {
+            TransactionEditActivity.this.mHandler.sendMessage(Message.obtain(TransactionEditActivity.this.mHandler, MSG_CLEARDROPDOWNS /*1*/, 0, 0));
+        }
+    }
+
+    private class MyKeyListener implements KeyListener {
+        KeyListener original;
+        private int editTextCode;
+        private int suggest;
+
+        private MyKeyListener(KeyListener orig, int code) {
+            this.original = orig;
+            this.editTextCode = code;
+            this.suggest = Prefs.getBooleanPref(Prefs.AUTO_SUGGEST) ? this.original.getInputType() : 524288;
+        }
+
+        public boolean onKeyDown(View view, Editable text, int keyCode, KeyEvent event) {
+            TransactionEditActivity.this.editTextDidChange(this.editTextCode);
+            return this.original.onKeyDown(view, text, keyCode, event);
+        }
+
+        public void clearMetaKeyState(View arg0, Editable arg1, int arg2) {
+            this.original.clearMetaKeyState(arg0, arg1, arg2);
+        }
+
+        public int getInputType() {
+            return this.suggest;
+        }
+
+        public boolean onKeyOther(View arg0, Editable arg1, KeyEvent arg2) {
+            return this.original.onKeyOther(arg0, arg1, arg2);
+        }
+
+        public boolean onKeyUp(View view, Editable text, int keyCode, KeyEvent event) {
+            return this.original.onKeyUp(view, text, keyCode, event);
+        }
     }
 }

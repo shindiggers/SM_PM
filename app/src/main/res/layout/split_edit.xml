@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <FrameLayout
@@ -19,11 +19,11 @@
             android:layout_gravity="start|center_vertical"
             android:layout_marginStart="15dp"
             android:background="@color/blue_theme_background_color"
-            android:paddingBottom="3dp"
-            android:paddingEnd="10dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingEnd="10dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/kLOC_GENERAL_CANCEL"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
@@ -44,10 +44,10 @@
             android:layout_gravity="end|center_vertical"
             android:layout_marginEnd="15dp"
             android:background="@color/blue_theme_background_color"
-            android:paddingBottom="3dp"
             android:paddingLeft="10dp"
-            android:paddingRight="10dp"
             android:paddingTop="3dp"
+            android:paddingRight="10dp"
+            android:paddingBottom="3dp"
             android:text="@string/transaction_edit_save"
             android:textAppearance="?android:textAppearanceSmall"
             android:textStyle="bold" />
@@ -92,8 +92,8 @@
                         android:button="@null"
                         android:checked="true"
                         android:gravity="center_vertical|center_horizontal"
-                        android:minHeight="40dp"
                         android:minWidth="40dp"
+                        android:minHeight="40dp"
                         android:text="@string/kLOC_GENERAL_WITHDRAWAL"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -105,8 +105,8 @@
                         android:layout_weight="1.0"
                         android:button="@null"
                         android:gravity="center_vertical|center_horizontal"
-                        android:minHeight="40dp"
                         android:minWidth="40dp"
+                        android:minHeight="40dp"
                         android:text="@string/kLOC_GENERAL_DEPOSIT"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -118,8 +118,8 @@
                         android:layout_weight="1.0"
                         android:button="@null"
                         android:gravity="center_vertical|center_horizontal"
-                        android:minHeight="40dp"
                         android:minWidth="40dp"
+                        android:minHeight="40dp"
                         android:text="@string/kLOC_GENERAL_TRANSFER"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -148,8 +148,8 @@
                     android:id="@+id/transtolabel"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_EDIT_TRANSACTION_TRANS_TO" />
 
@@ -157,20 +157,20 @@
                     android:id="@+id/transtotextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
                     android:singleLine="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    android:contentDescription="@string/kLOC_EDIT_TRANSACTION_TRANS_TO" />
 
             </LinearLayout>
 
@@ -189,8 +189,8 @@
                     android:id="@+id/category_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_CATEGORY_TITLE" />
 
@@ -198,18 +198,18 @@
                     android:id="@+id/categoryedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:inputType="textCapWords"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_CATEGORY"
+                    android:inputType="textCapWords"
                     android:singleLine="true" />
 
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
@@ -229,8 +229,8 @@
                     android:id="@+id/amount_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_AMOUNT" />
 
@@ -238,12 +238,12 @@
                     android:id="@+id/amountedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_AMOUNT"
-                    android:inputType="numberDecimal"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    android:inputType="numberDecimal" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
@@ -257,11 +257,11 @@
                     android:id="@+id/amount_currency_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE" />
 
             </LinearLayout>
 
@@ -285,8 +285,8 @@
                     android:id="@+id/class_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_CLASS" />
 
@@ -294,9 +294,9 @@
                     android:id="@+id/classedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
                     android:hint="@string/kLOC_GENERAL_CLASS"
                     android:inputType="textCapWords"
                     android:singleLine="true" />
@@ -304,11 +304,11 @@
                 <ImageButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
                     android:layout_gravity="center_vertical"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES"
+                    android:layout_marginEnd="4dp"
                     android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false" />
+                    android:clickable="false"
+                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES" />
 
             </LinearLayout>
 
@@ -325,8 +325,8 @@
                     android:id="@+id/memo_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_marginEnd="10dp"
                     android:layout_marginStart="6dp"
+                    android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_NOTE" />
 
@@ -334,13 +334,13 @@
                     android:id="@+id/memoedittext"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:layout_gravity="center_vertical"
-                    android:singleLine="true"
-                    android:inputType=""
                     android:hint="@string/hint_add_a_note"
-                    android:importantForAutofill="no" />
+                    android:importantForAutofill="no"
+                    android:inputType=""
+                    android:singleLine="true" />
 
             </LinearLayout>
 
@@ -348,8 +348,8 @@
                 android:id="@+id/keyboard_spacer_view"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                tools:visibility="visible"
-                android:visibility="gone" />
+                android:visibility="gone"
+                tools:visibility="visible" />
 
         </LinearLayout>
 
@@ -375,8 +375,8 @@
             android:layout_below="@+id/keyboard_toolbar"
             android:focusable="true"
             android:focusableInTouchMode="true"
-            tools:visibility="visible"
-            android:visibility="gone" />
+            android:visibility="gone"
+            tools:visibility="visible" />
 
     </RelativeLayout>
 

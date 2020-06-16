@@ -55,9 +55,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
             }
         }
     };
-    private Context context;
     GregorianCalendar currentDate;
     int currentPeriod;
+    private Context context;
     private List<CategoryClass> elements;
     private List<CategoryClass> expenseCategories;
     private List<CategoryClass> incomeCategories;
@@ -74,6 +74,174 @@ public class BudgetsRowAdapter extends BaseAdapter {
         this.inflater = LayoutInflater.from(this.context);
         this.currentDate = new GregorianCalendar();
         this.currentPeriod = Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD);
+    }
+
+    public static GregorianCalendar startOfPeriod(GregorianCalendar inputDate, int budgetPeriod) {
+        String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
+        GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
+        if (budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
+            budgetStartDate = new GregorianCalendar();
+            budgetStartDate.set(Calendar.YEAR/*1*/, 1989);
+            budgetStartDate.set(Calendar.MONTH/*2*/, 0);
+            budgetStartDate.set(Calendar.DAY_OF_MONTH/*5*/, 1);
+            budgetStartDate.set(Calendar.HOUR_OF_DAY/*11*/, 0);
+            budgetStartDate.set(Calendar.MINUTE/*12*/, 0);
+            budgetStartDate.set(Calendar.SECOND/*13*/, 0);
+        }
+
+        GregorianCalendar eomForBudgetStartDate = CalExt.endOfMonth(budgetStartDate);
+        boolean endOfMonth;
+        endOfMonth = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/) == eomForBudgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
+
+        GregorianCalendar clonedInputDate;
+        label175:
+        {
+            clonedInputDate = (GregorianCalendar) inputDate.clone();
+            switch (budgetPeriod) {
+                case Enums.kBudgetPeriodDay/*0*/:
+                    return CalExt.beginningOfDay(inputDate);
+                case Enums.kBudgetPeriodWeek/*1*/:
+                    int dowBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/);
+                    int dowInputDate = inputDate.get(Calendar.DAY_OF_WEEK/*7*/);
+                    GregorianCalendar returnDate;
+                    if (inputDate.get(Calendar.DAY_OF_WEEK/*7*/) < budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/)) {
+                        returnDate = CalExt.subtractDays(inputDate, 7 - (dowBudgetStartDate - dowInputDate));
+                    } else {
+                        returnDate = CalExt.subtractDays(inputDate, dowInputDate - dowBudgetStartDate);
+                    }
+
+                    return returnDate;
+                case Enums.kBudgetPeriodMonth/*2*/:
+                    CalExt.daysBetween(budgetStartDate, inputDate);
+                    if (inputDate.get(Calendar.DAY_OF_MONTH/*5*/) < budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)) {
+                        clonedInputDate = CalExt.subtractMonth(clonedInputDate);
+                    }
+
+                    if (endOfMonth) {
+                        return CalExt.endOfMonth(clonedInputDate);
+                    }
+
+                    clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(clonedInputDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
+                    return clonedInputDate;
+                case Enums.kBudgetPeriodYear/*4*/:
+                    break label175;
+                case Enums.kBudgetPeriodBiweekly/*5*/:
+                    int weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
+                    int weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
+                    boolean twoWeeksBetweenDays;
+                    twoWeeksBetweenDays = weeksBetweenStartDateAndInputDate % 2 == 0;
+
+                    //GregorianCalendar returnDate;
+                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
+                        byte twoWeekAdjustments;
+                        if (twoWeeksBetweenDays) {
+                            twoWeekAdjustments = 0;
+                        } else {
+                            twoWeekAdjustments = 7;
+                        }
+
+                        returnDate = CalExt.subtractDays(inputDate, twoWeekAdjustments + weekdaysBetweenStartDateAndInputDate);
+                    } else {
+                        byte twoWeekAdjustments;
+                        if (twoWeeksBetweenDays) {
+                            twoWeekAdjustments = 7;
+                        } else {
+                            twoWeekAdjustments = 0;
+                        }
+
+                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + twoWeekAdjustments + 6);
+                    }
+
+                    return returnDate;
+                case Enums.kBudgetPeriodBimonthly/*6*/:
+                    int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
+                    int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
+                    int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
+                    int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
+                    //GregorianCalendar returnDate;
+                    if ((monthOfInputDate - monthOfBudgetStartDate) % 2 == 0 && domOfInputDate < domOfBudgetStartDate) {
+                        returnDate = CalExt.subtractMonths(inputDate, 2);
+                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
+                        returnDate = CalExt.subtractMonths(inputDate, 2 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
+                    } else {
+                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
+                    }
+
+                    if (!endOfMonth) {
+                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
+                        return returnDate;
+                    }
+
+                    CalExt.endOfMonth(returnDate);
+                case Enums.kBudgetPeriodQuarter/*3*/:
+                    monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
+                    domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
+                    monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
+                    domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
+                    //GregorianCalendar returnDate;
+                    if ((monthOfInputDate - monthOfBudgetStartDate) % 3 == 0 && domOfInputDate < domOfBudgetStartDate) {
+                        returnDate = CalExt.subtractMonths(inputDate, 3);
+                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
+                        returnDate = CalExt.subtractMonths(inputDate, 3 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
+                    } else {
+                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
+                    }
+
+                    if (!endOfMonth) {
+                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
+                        return returnDate;
+                    }
+
+                    CalExt.endOfMonth(returnDate);
+                case Enums.kBudgetPeriodHalfYear/*7*/:
+                    break;
+                case Enums.kBudgetPeriod4Weeks/*8*/:
+                    weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
+                    weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
+                    //GregorianCalendar returnDate;
+                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
+                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + weeksBetweenStartDateAndInputDate * 7 % 4);
+                    } else {
+                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + 6 + 7 * (3 - Math.abs(weeksBetweenStartDateAndInputDate % 4)));
+                    }
+
+                    return returnDate;
+                default:
+                    return null;
+            }
+
+            int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
+            int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
+            int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
+            int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
+            GregorianCalendar returnDate;
+            if ((monthOfInputDate - monthOfBudgetStartDate) % 6 == 0 && domOfInputDate < domOfBudgetStartDate) {
+                returnDate = CalExt.subtractMonths(inputDate, 6);
+            } else if (monthOfInputDate < monthOfBudgetStartDate) {
+                returnDate = CalExt.subtractMonths(inputDate, 6 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
+            } else {
+                returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
+            }
+
+            if (!endOfMonth) {
+                returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
+                return returnDate;
+            }
+
+            clonedInputDate = CalExt.endOfMonth(returnDate);
+        }
+
+        int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
+        int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
+        int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
+        int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
+        if (monthOfInputDate < monthOfBudgetStartDate || monthOfInputDate == monthOfBudgetStartDate && domOfInputDate < domOfBudgetStartDate) {
+            clonedInputDate = CalExt.subtractYear(inputDate);
+        }
+
+        clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/));
+        clonedInputDate.set(Calendar.MONTH/*2*/, budgetStartDate.get(Calendar.MONTH/*2*/));
+        return clonedInputDate;
     }
 
     public int getCount() {
@@ -383,174 +551,6 @@ public class BudgetsRowAdapter extends BaseAdapter {
 
     private GregorianCalendar startOfPeriod() {
         return startOfPeriod(this.currentDate, this.currentPeriod);
-    }
-
-    public static GregorianCalendar startOfPeriod(GregorianCalendar inputDate, int budgetPeriod) {
-        String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
-        GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
-        if (budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
-            budgetStartDate = new GregorianCalendar();
-            budgetStartDate.set(Calendar.YEAR/*1*/, 1989);
-            budgetStartDate.set(Calendar.MONTH/*2*/, 0);
-            budgetStartDate.set(Calendar.DAY_OF_MONTH/*5*/, 1);
-            budgetStartDate.set(Calendar.HOUR_OF_DAY/*11*/, 0);
-            budgetStartDate.set(Calendar.MINUTE/*12*/, 0);
-            budgetStartDate.set(Calendar.SECOND/*13*/, 0);
-        }
-
-        GregorianCalendar eomForBudgetStartDate = CalExt.endOfMonth(budgetStartDate);
-        boolean endOfMonth;
-        endOfMonth = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/) == eomForBudgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-
-        GregorianCalendar clonedInputDate;
-        label175:
-        {
-            clonedInputDate = (GregorianCalendar) inputDate.clone();
-            switch (budgetPeriod) {
-                case Enums.kBudgetPeriodDay/*0*/:
-                    return CalExt.beginningOfDay(inputDate);
-                case Enums.kBudgetPeriodWeek/*1*/:
-                    int dowBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/);
-                    int dowInputDate = inputDate.get(Calendar.DAY_OF_WEEK/*7*/);
-                    GregorianCalendar returnDate;
-                    if (inputDate.get(Calendar.DAY_OF_WEEK/*7*/) < budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/)) {
-                        returnDate = CalExt.subtractDays(inputDate, 7 - (dowBudgetStartDate - dowInputDate));
-                    } else {
-                        returnDate = CalExt.subtractDays(inputDate, dowInputDate - dowBudgetStartDate);
-                    }
-
-                    return returnDate;
-                case Enums.kBudgetPeriodMonth/*2*/:
-                    CalExt.daysBetween(budgetStartDate, inputDate);
-                    if (inputDate.get(Calendar.DAY_OF_MONTH/*5*/) < budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)) {
-                        clonedInputDate = CalExt.subtractMonth(clonedInputDate);
-                    }
-
-                    if (endOfMonth) {
-                        return CalExt.endOfMonth(clonedInputDate);
-                    }
-
-                    clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(clonedInputDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                    return clonedInputDate;
-                case Enums.kBudgetPeriodYear/*4*/:
-                    break label175;
-                case Enums.kBudgetPeriodBiweekly/*5*/:
-                    int weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
-                    int weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
-                    boolean twoWeeksBetweenDays;
-                    twoWeeksBetweenDays = weeksBetweenStartDateAndInputDate % 2 == 0;
-
-                    //GregorianCalendar returnDate;
-                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
-                        byte twoWeekAdjustments;
-                        if (twoWeeksBetweenDays) {
-                            twoWeekAdjustments = 0;
-                        } else {
-                            twoWeekAdjustments = 7;
-                        }
-
-                        returnDate = CalExt.subtractDays(inputDate, twoWeekAdjustments + weekdaysBetweenStartDateAndInputDate);
-                    } else {
-                        byte twoWeekAdjustments;
-                        if (twoWeeksBetweenDays) {
-                            twoWeekAdjustments = 7;
-                        } else {
-                            twoWeekAdjustments = 0;
-                        }
-
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + twoWeekAdjustments + 6);
-                    }
-
-                    return returnDate;
-                case Enums.kBudgetPeriodBimonthly/*6*/:
-                    int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-                    int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-                    int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    //GregorianCalendar returnDate;
-                    if ((monthOfInputDate - monthOfBudgetStartDate) % 2 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 2);
-                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 2 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
-                    } else {
-                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
-                    }
-
-                    if (!endOfMonth) {
-                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                        return returnDate;
-                    }
-
-                    CalExt.endOfMonth(returnDate);
-                case Enums.kBudgetPeriodQuarter/*3*/:
-                    monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-                    domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-                    domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    //GregorianCalendar returnDate;
-                    if ((monthOfInputDate - monthOfBudgetStartDate) % 3 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 3);
-                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 3 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
-                    } else {
-                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
-                    }
-
-                    if (!endOfMonth) {
-                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                        return returnDate;
-                    }
-
-                    CalExt.endOfMonth(returnDate);
-                case Enums.kBudgetPeriodHalfYear/*7*/:
-                    break;
-                case Enums.kBudgetPeriod4Weeks/*8*/:
-                    weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
-                    weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
-                    //GregorianCalendar returnDate;
-                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + weeksBetweenStartDateAndInputDate * 7 % 4);
-                    } else {
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + 6 + 7 * (3 - Math.abs(weeksBetweenStartDateAndInputDate % 4)));
-                    }
-
-                    return returnDate;
-                default:
-                    return null;
-            }
-
-            int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-            int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-            int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-            int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-            GregorianCalendar returnDate;
-            if ((monthOfInputDate - monthOfBudgetStartDate) % 6 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                returnDate = CalExt.subtractMonths(inputDate, 6);
-            } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                returnDate = CalExt.subtractMonths(inputDate, 6 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
-            } else {
-                returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
-            }
-
-            if (!endOfMonth) {
-                returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                return returnDate;
-            }
-
-            clonedInputDate = CalExt.endOfMonth(returnDate);
-        }
-
-        int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-        int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-        int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-        int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-        if (monthOfInputDate < monthOfBudgetStartDate || monthOfInputDate == monthOfBudgetStartDate && domOfInputDate < domOfBudgetStartDate) {
-            clonedInputDate = CalExt.subtractYear(inputDate);
-        }
-
-        clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/));
-        clonedInputDate.set(Calendar.MONTH/*2*/, budgetStartDate.get(Calendar.MONTH/*2*/));
-        return clonedInputDate;
     }
 
     private GregorianCalendar endOfPeriod() {

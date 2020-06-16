@@ -3,6 +3,7 @@ package com.example.smmoney.misc;
 import android.content.Context;
 import android.content.res.Resources;
 import android.database.sqlite.SQLiteDatabase;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.TransactionClass;
