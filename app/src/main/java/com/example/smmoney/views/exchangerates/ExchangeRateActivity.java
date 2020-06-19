@@ -79,7 +79,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             }
         }
     };
-    private Runnable onFocusChangedRunnableAccountAmount = new Runnable() {
+    private final Runnable onFocusChangedRunnableAccountAmount = new Runnable() {
         public void run() {
             foreignAmountRadioButton.setVisibility(View.VISIBLE);
             exchangeRateRadioButton.setVisibility(View.VISIBLE);
@@ -103,7 +103,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(50);
         }
     };
-    private Runnable onFocusChangedRunnableExchangeAmount = new Runnable() {
+    private final Runnable onFocusChangedRunnableExchangeAmount = new Runnable() {
         public void run() {
             foreignAmountRadioButton.setVisibility(View.VISIBLE);
             exchangeRateRadioButton.setVisibility(View.VISIBLE);
@@ -127,7 +127,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(50);
         }
     };
-    private Runnable onFocusChangedRunnableForeignAmount = new Runnable() {
+    private final Runnable onFocusChangedRunnableForeignAmount = new Runnable() {
         public void run() {
             foreignAmountRadioButton.setVisibility(View.VISIBLE);
             exchangeRateRadioButton.setVisibility(View.VISIBLE);

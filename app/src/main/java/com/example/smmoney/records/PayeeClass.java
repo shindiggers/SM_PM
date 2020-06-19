@@ -92,7 +92,6 @@ public class PayeeClass extends PocketMoneyRecordClass {
                     str = "";
                 }
                 setPayee(str);
-                col2 = col + 1;
                 str = curs.getString(col);
                 if (str == null) {
                     str = "";
@@ -156,6 +155,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void renameFromToInDatabase(String fromText, String toText) {
         if (fromText == null) {
             fromText = "";
@@ -189,6 +189,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return (int) id;
     }
 
+    @SuppressWarnings("unused")
     public static int idForPayeeElseAddIfMissing(String aClass, boolean addIt) {
         int id = idForPayee(aClass);
         if (id == 0 && addIt) {
@@ -213,6 +214,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return categoryID;
     }
 
+    @SuppressWarnings("unused")
     public static String payeeForID(int pk) {
         if (pk == 0) {
             return null;
@@ -220,6 +222,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return new PayeeClass(pk).getPayee();
     }
 
+    @SuppressWarnings("unused")
     public static PayeeClass recordWithServerID(String serverID) {
         PayeeClass record = null;
         if (serverID == null || serverID.length() == 0) {
@@ -239,15 +242,13 @@ public class PayeeClass extends PocketMoneyRecordClass {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.PAYEES_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"payee"}, "deleted=0", null, null, null, "UPPER(payee)");
-        if (curs.getCount() == 0) {
-            curs.close();
-        } else {
+        if (curs.getCount() != 0) {
             curs.moveToFirst();
             do {
                 array.add(curs.getString(0));
             } while (curs.moveToNext());
-            curs.close();
         }
+        curs.close();
         return array;
     }
 
@@ -264,6 +265,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return array;
     }
 
+    @SuppressWarnings("unused")
     public static String closestRecordMatchForInDatabase(String aClass) {
         String aPayee = null;
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -319,7 +321,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
             case "payee":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -349,7 +351,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

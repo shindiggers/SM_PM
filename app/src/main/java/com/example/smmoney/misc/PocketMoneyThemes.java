@@ -395,6 +395,7 @@ public class PocketMoneyThemes {
     }
 
     public static int primaryHintTextColor() {
+        //noinspection StatementWithEmptyBody
         switch (getTheme()) {
         }
         return blue_theme_hint_color;

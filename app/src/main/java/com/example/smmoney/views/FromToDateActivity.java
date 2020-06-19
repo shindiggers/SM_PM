@@ -22,7 +22,9 @@ import java.util.GregorianCalendar;
 
 public class FromToDateActivity extends PocketMoneyActivity {
     private static final int FROMTODATE_RESULT_SELECTED = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int FROMDATE_DIALOG_ID = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int TODATE_DIALOG_ID = 2;
     private Button fromDate;
     private Button leftNoneButton;

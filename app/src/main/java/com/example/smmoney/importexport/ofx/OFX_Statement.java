@@ -1,5 +1,7 @@
 package com.example.smmoney.importexport.ofx;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.TransactionClass;
 
@@ -15,7 +17,7 @@ class OFX_Statement {
     String defaultCurrency;
     private OFX_BalanceClass ledgerBalance;
     ArrayList<OFX_TransactionClass> ofxtransactions;
-    OFX_Tags tags;
+    final OFX_Tags tags;
     private ArrayList<TransactionClass> transactions;
 
     OFX_Statement(String text, OFX_Tags tags) {
@@ -123,6 +125,8 @@ class OFX_Statement {
                 + "\t\t\t" + this.tags.statusEnd + "\n";
     }
 
+    @Override
+    @NonNull
     public String toString() {
         return "\t\t<STMTTRNRS>\n" +
                 "\t\t\t<TRNUID>PMA - " + OFXClass.dateAsString(new GregorianCalendar()) + "\n"

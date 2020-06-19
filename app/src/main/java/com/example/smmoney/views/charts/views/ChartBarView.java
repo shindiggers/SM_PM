@@ -12,8 +12,8 @@ import android.util.AttributeSet;
 import com.example.smmoney.views.charts.items.ChartItem;
 
 public class ChartBarView extends ChartView {
-    private Paint mBgPaints = new Paint();
-    private Paint mLinePaints = new Paint();
+    private final Paint mBgPaints = new Paint();
+    private final Paint mLinePaints = new Paint();
     private float maxBarWidth;
 
     public ChartBarView(Context context) {
@@ -124,12 +124,11 @@ public class ChartBarView extends ChartView {
                     }
                     if (firstPoint) {
                         lastPoint = new Point(nextPoint.x, nextPoint.y);
-                        firstPoint = false;
                     } else {
                         drawLine(canvas, lastPoint, nextPoint, 2.0f, item.color);
                         lastPoint = nextPoint;
-                        firstPoint = false;
                     }
+                    firstPoint = false;
                     path.addCircle((float) lastPoint.x, (float) lastPoint.y, 8.0f, Direction.CCW);
                     item.path = path;
                     this.mBgPaints.setColor(item.color);

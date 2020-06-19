@@ -47,6 +47,7 @@ public class NoteEditor extends Activity {
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);
     }
 
+    @SuppressWarnings("EmptyMethod")
     protected void onPause() {
         super.onPause();
     }

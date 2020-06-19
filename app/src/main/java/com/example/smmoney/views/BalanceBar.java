@@ -16,18 +16,18 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.records.FilterClass;
 
 public class BalanceBar extends FrameLayout {
-    public TextView balanceAmountTextView;
-    public TextView balanceTypeTextView;
-    public LinearLayout balanceView;
+    public final TextView balanceAmountTextView;
+    public final TextView balanceTypeTextView;
+    public final LinearLayout balanceView;
     private FilterClass filter;
-    private LinearLayout innerLinearLayout;
-    public View nextButton;
-    public View previousButton;
-    public ProgressBar progressBar;
-    public TextView secondBalanceAmountTextView;
-    public TextView secondBalanceTypeTextView;
-    private LinearLayout secondInnerLinearLayout;
-    private ImageView seperatorImage;
+    public final View nextButton;
+    public final View previousButton;
+    public final ProgressBar progressBar;
+    public final TextView secondBalanceAmountTextView;
+    public final TextView secondBalanceTypeTextView;
+    private final LinearLayout innerLinearLayout;
+    private final LinearLayout secondInnerLinearLayout;
+    private final ImageView seperatorImage;
 
     public BalanceBar(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -88,32 +88,28 @@ public class BalanceBar extends FrameLayout {
         int i;
         int i2 = 0;
         this.secondBalanceAmountTextView.setVisibility(enable ? VISIBLE : GONE);
-        TextView textView = this.secondBalanceTypeTextView;
         if (enable) {
             i = VISIBLE /*0*/;
         } else {
             i = GONE /*8*/;
         }
-        textView.setVisibility(i);
-        ImageView imageView = this.seperatorImage;
+        this.secondBalanceTypeTextView.setVisibility(i);
         if (enable) {
             i = VISIBLE /*0*/;
         } else {
             i = GONE /*8*/;
         }
-        imageView.setVisibility(i);
-        LinearLayout linearLayout = this.innerLinearLayout;
+        this.seperatorImage.setVisibility(i);
         if (enable) {
             i = LinearLayout.VERTICAL /*1*/;
         } else {
             i = LinearLayout.HORIZONTAL /*0*/;
         }
-        linearLayout.setOrientation(i);
-        LinearLayout linearLayout2 = this.secondInnerLinearLayout;
+        this.innerLinearLayout.setOrientation(i);
         if (!enable) {
             i2 = GONE /*8*/;
         }
-        linearLayout2.setVisibility(i2);
+        this.secondInnerLinearLayout.setVisibility(i2);
     }
 
     public void setFilter(FilterClass aFilter) {

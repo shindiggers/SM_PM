@@ -24,11 +24,10 @@ public class ClassReportDataSource extends ReportDataSource {
     public FilterClass newFilterBasedOnSelectedRow(String content) {
         FilterClass newFilter = this.filter.copy();
         addCurrentPeriodToFilter(newFilter);
-        String selectedClass = content;
-        if (Locales.kLOC_FILTERS_UNFILED.equals(selectedClass)) {
+        if (Locales.kLOC_FILTERS_UNFILED.equals(content)) {
             newFilter.setClassName(Locales.kLOC_FILTERS_UNFILED);
         } else {
-            newFilter.setClassName(new StringBuilder(String.valueOf(selectedClass)).append("%").toString());
+            newFilter.setClassName(content + "%");
         }
         return newFilter;
     }

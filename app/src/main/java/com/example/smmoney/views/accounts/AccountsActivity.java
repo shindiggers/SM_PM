@@ -128,10 +128,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_RESTORE_QIF = 113;
     private static final int PERMISSION_RESTORE_OFX = 114;
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
-    public static boolean DEBUG = false;
-    public static boolean IS_GOOGLE_MARKET = false;
+    public static final boolean DEBUG = false;
+    public static final boolean IS_GOOGLE_MARKET = false;
     //private static final byte[] SALT = new byte[]{(byte) -25, (byte) 23, (byte) -92, (byte) -16, (byte) -78, (byte) -65, (byte) 20, (byte) 65, (byte) 36, (byte) -9, (byte) 18, (byte) -44, (byte) 13, (byte) -81, (byte) -44, (byte) -13, (byte) -4, (byte) 19, (byte) -111, (byte) 73};
-    private static AsyncTask initTask = null;
+    private static AsyncTask<Object, Void, Object> initTask = null;
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
     private final int DIALOG_REPORTS = 10;
@@ -193,7 +193,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @SuppressWarnings("FieldCanBeLocal")
     private ImageView graphRightArrow;
     private ProgressBar graphSpinner;
-    private AsyncTask graphTask;
+    private AsyncTask<Object, Void, Object> graphTask;
     private TextView graphTitleTextView;
     //boolean launching = false;
     //private LicenseChecker mChecker;
@@ -233,79 +233,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    private static class BalanceTask extends AsyncTask {
-        private int pref;
-        private double totalWorth;
-        private WeakReference<AccountsActivity> accountsActivityWeakReference;
-
-        private BalanceTask(AccountsActivity context) {
-            this.totalWorth = 0.0d;
-            this.pref = 0;
-            accountsActivityWeakReference = new WeakReference<>(context);
-        }
-
-        protected Object doInBackground(Object... params) {
-            this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
-                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
-                this.pref = Enums.kBalanceTypeCurrent /*2*/;
-            }
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            this.totalWorth = activity.totalWorth(this.pref);
-            return null;
-        }
-
-        protected void onPostExecute(Object result) {
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            if (activity == null || activity.isFinishing()) return;
-            activity.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? activity.getResources().getColor(R.color.theme_red_label_color_on_black) : activity.getResources().getColor(R.color.black_theme_text /*WHITE*/));
-            activity.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
-            activity.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
-            activity.balanceBar.balanceTypeTextView.setTextColor(activity.getResources().getColor(R.color.black_theme_text));
-            activity.balanceBar.progressBar.setVisibility(View.GONE);
-            synchronized (activity.adapter) {
-                activity.reloadData();
-            }
-        }
+    @SuppressWarnings("EmptyMethod")
+    private void testTest() {
     }
 
-    private static class InitTask extends AsyncTask {
-        @SuppressWarnings("unused")
-        private boolean addedTransactions;
-        private WeakReference<AccountsActivity> accountsActivityWeakReference;
-
-        private InitTask(AccountsActivity context) {
-            this.addedTransactions = false;
-            accountsActivityWeakReference = new WeakReference<>(context);
-        }
-
-        protected Object doInBackground(Object... params) {
-            Log.d("ACCOUNTSACTIVITY", "InitTask() doInBackground - ie update f/x rate - has just run");
-            if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
-                AccountDB.updateExchangeRates();
-            }
-            Database.deleteUnlinkedRepeatingTransactions();
-            this.addedTransactions = TransactionDB.addRepeatingTransactions();
-            return null;
-        }
-
-        protected void onPostExecute(Object result) {
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            if (activity == null || activity.isFinishing()) return;
-
-            //noinspection SynchronizeOnNonFinalField
-            synchronized (activity.adapter) {
-                activity.reloadData();
-                activity.reloadBalanceBar();
-                activity.reloadCharts();
-                if (activity.adapter.getCount() == 0 && (activity.tipDialog == null || !activity.tipDialog.isShowing())) {
-                    activity.showMenuDialog();
-                }
-            }
-            AccountsActivity.initTask = null;
-        }
+    @SuppressWarnings("EmptyMethod")
+    private void checkLicense() {
     }
 
     //private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
@@ -332,7 +265,48 @@ public class AccountsActivity extends PocketMoneyActivity implements
 //            }
 //        }
 
-    private void testTest() {
+    @SuppressLint("StaticFieldLeak")
+    public void reloadCharts() {
+        this.netWorthChartView.setVisibility(View.GONE);
+        this.cashFlowChartView.setVisibility(View.GONE);
+        this.moreChartsButton.setVisibility(View.GONE);
+        ((View) this.graphSpinner.getParent()).setVisibility(View.VISIBLE);
+        this.graphSpinner.setVisibility(View.VISIBLE);
+        if (Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS)) {
+            switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
+                case Enums.kSumamryChartTypeNetWorth /*0*/:
+                    this.theChartView = this.netWorthChartView;
+                    break;
+                case Enums.kSumamryChartTypeCashFlow /*1*/:
+                    this.theChartView = this.cashFlowChartView;
+                    break;
+                case Enums.kSumamryChartMoreCharts /*2*/:
+                    this.theChartView = null;
+                    break;
+            }
+            if (this.graphTask != null) {
+                this.graphTask.cancel(true);
+                this.graphTask = null;
+            }
+            this.graphTask = new AsyncTask<Object, Void, Object>() {
+                protected Object doInBackground(Object... arg0) {
+                    if (AccountsActivity.this.theChartView != null) {
+                        synchronized (AccountsActivity.this.adapter) {
+                            //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
+                        }
+                    }
+                    return this;
+                }
+
+                protected void onPostExecute(Object result) {
+                    synchronized (AccountsActivity.this.adapter) {
+                        AccountsActivity.this.graphReloadCallback();
+                        AccountsActivity.this.theChartView.reloadData(true);
+                    }
+                }
+            };
+            this.graphTask.execute();
+        }
     }
 
     public void onCreate(Bundle savedInstanceState) {
@@ -427,7 +401,42 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    private void checkLicense() {
+    private static class BalanceTask extends AsyncTask<Object, Void, Object> {
+        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
+        private int pref;
+        private double totalWorth;
+
+        private BalanceTask(AccountsActivity context) {
+            this.totalWorth = 0.0d;
+            this.pref = 0;
+            accountsActivityWeakReference = new WeakReference<>(context);
+        }
+
+        protected Object doInBackground(Object... params) {
+            this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
+            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
+                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
+                this.pref = Enums.kBalanceTypeCurrent /*2*/;
+            }
+            AccountsActivity activity = accountsActivityWeakReference.get();
+            this.totalWorth = activity.totalWorth(this.pref);
+            return null;
+        }
+
+        protected void onPostExecute(Object result) {
+            AccountsActivity activity = accountsActivityWeakReference.get();
+            if (activity == null || activity.isFinishing()) return;
+            activity.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
+            activity.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? activity.getResources().getColor(R.color.theme_red_label_color_on_black) : activity.getResources().getColor(R.color.black_theme_text /*WHITE*/));
+            activity.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
+            activity.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
+            activity.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
+            activity.balanceBar.balanceTypeTextView.setTextColor(activity.getResources().getColor(R.color.black_theme_text));
+            activity.balanceBar.progressBar.setVisibility(View.GONE);
+            synchronized (activity.adapter) {
+                activity.reloadData();
+            }
+        }
     }
 
     public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
@@ -450,47 +459,40 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
     }
 
-    @SuppressLint("StaticFieldLeak")
-    public void reloadCharts() {
-        this.netWorthChartView.setVisibility(View.GONE);
-        this.cashFlowChartView.setVisibility(View.GONE);
-        this.moreChartsButton.setVisibility(View.GONE);
-        ((View) this.graphSpinner.getParent()).setVisibility(View.VISIBLE);
-        this.graphSpinner.setVisibility(View.VISIBLE);
-        if (Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS)) {
-            switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                case Enums.kSumamryChartTypeNetWorth /*0*/:
-                    this.theChartView = this.netWorthChartView;
-                    break;
-                case Enums.kSumamryChartTypeCashFlow /*1*/:
-                    this.theChartView = this.cashFlowChartView;
-                    break;
-                case Enums.kSumamryChartMoreCharts /*2*/:
-                    this.theChartView = null;
-                    break;
-            }
-            if (this.graphTask != null) {
-                this.graphTask.cancel(true);
-                this.graphTask = null;
-            }
-            this.graphTask = new AsyncTask() {
-                protected Object doInBackground(Object... arg0) {
-                    if (AccountsActivity.this.theChartView != null) {
-                        synchronized (AccountsActivity.this.adapter) {
-                            //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
-                        }
-                    }
-                    return this;
-                }
+    private static class InitTask extends AsyncTask<Object, Void, Object> {
+        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
+        @SuppressWarnings("unused")
+        private boolean addedTransactions;
 
-                protected void onPostExecute(Object result) {
-                    synchronized (AccountsActivity.this.adapter) {
-                        AccountsActivity.this.graphReloadCallback();
-                        AccountsActivity.this.theChartView.reloadData(true);
-                    }
+        private InitTask(AccountsActivity context) {
+            this.addedTransactions = false;
+            accountsActivityWeakReference = new WeakReference<>(context);
+        }
+
+        protected Object doInBackground(Object... params) {
+            Log.d("ACCOUNTSACTIVITY", "InitTask() doInBackground - ie update f/x rate - has just run");
+            if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
+                AccountDB.updateExchangeRates();
+            }
+            Database.deleteUnlinkedRepeatingTransactions();
+            this.addedTransactions = TransactionDB.addRepeatingTransactions();
+            return null;
+        }
+
+        protected void onPostExecute(Object result) {
+            AccountsActivity activity = accountsActivityWeakReference.get();
+            if (activity == null || activity.isFinishing()) return;
+
+            //noinspection SynchronizeOnNonFinalField
+            synchronized (activity.adapter) {
+                activity.reloadData();
+                activity.reloadBalanceBar();
+                activity.reloadCharts();
+                if (activity.adapter.getCount() == 0 && (activity.tipDialog == null || !activity.tipDialog.isShowing())) {
+                    activity.showMenuDialog();
                 }
-            };
-            this.graphTask.execute();
+            }
+            AccountsActivity.initTask = null;
         }
     }
 

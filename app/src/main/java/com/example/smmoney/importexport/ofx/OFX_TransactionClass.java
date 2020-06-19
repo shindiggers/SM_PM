@@ -1,5 +1,7 @@
 package com.example.smmoney.importexport.ofx;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.records.TransactionClass;
 
 import java.util.GregorianCalendar;
@@ -14,7 +16,7 @@ class OFX_TransactionClass {
     String fitID;
     String memo;
     String name;
-    private OFX_Tags tags;
+    private final OFX_Tags tags;
     private OFX_TransactionType transactionType;
 
     OFX_TransactionClass(TransactionClass transaction, OFX_Tags tags) {
@@ -219,6 +221,8 @@ class OFX_TransactionClass {
 
     }
 
+    @Override
+    @NonNull
     public String toString() {
         String memoLine = "";
         String checkLine = "";

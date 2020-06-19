@@ -97,11 +97,11 @@ public class SMMoney extends Application {
                 }
             }
             String[] ret = new String[out.size()];
-            Iterator it = out.iterator();
+            Iterator<String> it = out.iterator();
             int i = 0;
             while (it.hasNext()) {
                 int i2 = i + 1;
-                ret[i] = (String) it.next();
+                ret[i] = it.next();
                 i = i2;
             }
             return ret;

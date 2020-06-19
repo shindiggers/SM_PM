@@ -31,7 +31,7 @@ class OFX_Tags {
     String dateStartEnd;
     String ledgerBalanceBegin;
     String ledgerBalanceEnd;
-    String lineEnding;
+    final String lineEnding;
     String statusBegin;
     String statusCodeBegin;
     String statusCodeEnd;

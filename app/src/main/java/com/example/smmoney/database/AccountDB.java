@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class AccountDB {
-    private static HashMap<Integer, AccountClass> map = new HashMap<>();
+    private static final HashMap<Integer, AccountClass> map = new HashMap<>();
 
     /**
      * Uses HashMap called map to find the AccountClass object that matches the {@param id} that was passed in.

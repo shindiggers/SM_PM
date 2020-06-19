@@ -44,6 +44,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     private final int REQUEST_NEW = 1;
     private final int REQUEST_REMAINDER = 2;
     private SplitsRowAdapter adapter;
+    @SuppressWarnings("FieldCanBeLocal")
     private Context context;
     private double originalSubtotal = 0.0d;
     private TextView remainderTextView;
@@ -248,11 +249,6 @@ public class SplitsActivity extends PocketMoneyActivity {
             SplitsClass split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
             switch (requestCode) {
                 case RESULT_CHANGED /*1*/:
-                    if (resultCode == RESULT_CHANGED) {
-                        this.transaction.addSplit(split);
-                        return;
-                    }
-                    return;
                 case REQUEST_REMAINDER /*2*/:
                     if (resultCode == RESULT_CHANGED) {
                         this.transaction.addSplit(split);

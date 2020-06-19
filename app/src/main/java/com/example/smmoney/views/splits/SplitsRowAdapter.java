@@ -18,9 +18,9 @@ import java.util.ArrayList;
 
 class SplitsRowAdapter extends BaseAdapter {
     private ArrayList<SplitsClass> elements = new ArrayList<>();
-    private Context mContext;
-    private LayoutInflater mInflater; //= LayoutInflater.from(this.mContext); TODO Same error are in transaction row adapter. Moving to constructor seems to fix...
-    private TransactionClass transaction;
+    private final Context mContext;
+    private final LayoutInflater mInflater; //= LayoutInflater.from(this.mContext); TODO Same error are in transaction row adapter. Moving to constructor seems to fix...
+    private final TransactionClass transaction;
 
     SplitsRowAdapter(Context aContext, TransactionClass aTrans) {
         this.mContext = aContext;

@@ -18,10 +18,10 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 class FilterRowAdapter extends BaseAdapter {
-    private FiltersMainActivity delegate;
-    private FilterClass filter;
-    private ArrayList<FilterClass> filterList = new ArrayList<>();
-    private LayoutInflater inflater;
+    private final FiltersMainActivity delegate;
+    private final FilterClass filter;
+    private final ArrayList<FilterClass> filterList = new ArrayList<>();
+    private final LayoutInflater inflater;
     private ListView theList;
 
     FilterRowAdapter(FiltersMainActivity theDelegate, FilterClass aFilter) {
@@ -33,7 +33,7 @@ class FilterRowAdapter extends BaseAdapter {
 
     public void reloadData() {
         this.filterList.clear();
-        new ArrayList();
+        //new ArrayList();
         ArrayList<FilterClass> fList = FilterClass.query();
         ArrayList<String> nameList = new ArrayList<>();
         for (FilterClass filter : fList) {
@@ -54,7 +54,7 @@ class FilterRowAdapter extends BaseAdapter {
     }
 
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup arg2) {

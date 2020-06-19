@@ -50,6 +50,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView frequencyTextView;
     private ImageView fridayCheck;
     private TextView fridayTextView;
+    @SuppressWarnings("FieldCanBeLocal")
     private String monday;
     private ImageView mondayCheck;
     private TextView mondayTextView;
@@ -61,6 +62,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView saturdayTextView;
     private String suffix = "";
     private TextView suffixTextView;
+    @SuppressWarnings("FieldCanBeLocal")
     private String sunday;
     private ImageView sundayCheck;
     private TextView sundayTextView;
@@ -172,7 +174,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 if (hasFocus) {
                     RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString().replace(RepeatingEditActivity.this.suffix, ""));
                 } else {
-                    RepeatingEditActivity.this.everyTextView.setText(new StringBuilder(RepeatingEditActivity.this.everyTextView.getText().toString()).append(RepeatingEditActivity.this.suffix).toString());
+                    RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString() + RepeatingEditActivity.this.suffix);
                 }
             }
         });
@@ -488,11 +490,10 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 case REQUEST_ENDON /*1*/:
                     if (resultCode != EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
                         this.endOnTextView.setText(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                        break;
                     } else {
                         this.endOnTextView.setText(Objects.requireNonNull(data.getExtras()).getString("Date"));
-                        break;
                     }
+                    break;
                 case LookupsListActivity.REPEAT_TYPE /*16*/:
                     this.frequencyTextView.setText(Objects.requireNonNull(data.getExtras()).getString("selection"));
                     break;

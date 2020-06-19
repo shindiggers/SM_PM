@@ -24,11 +24,10 @@ public class CategoryReportDataSource extends ReportDataSource {
     public FilterClass newFilterBasedOnSelectedRow(String content) {
         FilterClass newFilter = this.filter.copy();
         addCurrentPeriodToFilter(newFilter);
-        String selectedCategory = content;
-        if (Locales.kLOC_FILTERS_UNFILED.equals(selectedCategory)) {
+        if (Locales.kLOC_FILTERS_UNFILED.equals(content)) {
             newFilter.setCategory(Locales.kLOC_FILTERS_UNFILED);
         } else {
-            newFilter.setCategory(new StringBuilder(String.valueOf(selectedCategory)).append("%").toString());
+            newFilter.setCategory(content + "%");
         }
         return newFilter;
     }
@@ -39,7 +38,7 @@ public class CategoryReportDataSource extends ReportDataSource {
             if (this.filter.getCategory().endsWith("%")) {
                 index = category.indexOf(this.filter.getCategory().replace("%", ":"));
             } else {
-                index = category.indexOf(new StringBuilder(this.filter.getCategory()).append(":").toString());
+                index = category.indexOf(this.filter.getCategory() + ":");
             }
             if (index == -1) {
                 return category;

@@ -40,13 +40,13 @@ import java.util.Vector;
 public class ImportExportCSV {
     public String CSVPath;
     //String accountNameBeingImported;
-    private Context context;
+    private final Context context;
     //Boolean csvOld = Boolean.FALSE;
     private int currentLine;
     private FilterClass filter;
     private boolean importFileExists = false;
     //boolean invalidCSV;
-    private ArrayList<String> lines = new ArrayList<>();
+    private final ArrayList<String> lines = new ArrayList<>();
     private int numberOfLines;
     private int oldNumber = -1;
 
@@ -70,7 +70,7 @@ public class ImportExportCSV {
             e2.printStackTrace();
         }
         try {
-            String readLine = "";
+            String readLine;
             while (true) {
                 readLine = CSVReader.readLine();
                 if (readLine == null) {
@@ -189,21 +189,27 @@ public class ImportExportCSV {
             return 0.0d;
         }
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
-        if (numberFormat.equals("1,000.00")) {
-            formatSymbols.setDecimalSeparator('.');
-            formatSymbols.setGroupingSeparator(',');
-        } else if (numberFormat.equals("1.000,00")) {
-            formatSymbols.setDecimalSeparator(',');
-            formatSymbols.setGroupingSeparator('.');
-        } else if (numberFormat.equals("1'000.00")) {
-            formatSymbols.setDecimalSeparator('.');
-            formatSymbols.setGroupingSeparator('\'');
-        } else if (numberFormat.equals("1'000,00")) {
-            formatSymbols.setDecimalSeparator(',');
-            formatSymbols.setGroupingSeparator('\'');
-        } else if (numberFormat.equals("1 000,00")) {
-            formatSymbols.setDecimalSeparator(',');
-            formatSymbols.setGroupingSeparator(' ');
+        switch (numberFormat) {
+            case "1,000.00":
+                formatSymbols.setDecimalSeparator('.');
+                formatSymbols.setGroupingSeparator(',');
+                break;
+            case "1.000,00":
+                formatSymbols.setDecimalSeparator(',');
+                formatSymbols.setGroupingSeparator('.');
+                break;
+            case "1'000.00":
+                formatSymbols.setDecimalSeparator('.');
+                formatSymbols.setGroupingSeparator('\'');
+                break;
+            case "1'000,00":
+                formatSymbols.setDecimalSeparator(',');
+                formatSymbols.setGroupingSeparator('\'');
+                break;
+            case "1 000,00":
+                formatSymbols.setDecimalSeparator(',');
+                formatSymbols.setGroupingSeparator(' ');
+                break;
         }
         DecimalFormat numberFormatter = new DecimalFormat("#,##0.00#", formatSymbols);
         Number number = null;

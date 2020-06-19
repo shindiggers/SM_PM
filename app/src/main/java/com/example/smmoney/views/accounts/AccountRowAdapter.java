@@ -34,12 +34,19 @@ import java.util.ArrayList;
 import java.util.List;
 
 class AccountRowAdapter extends BaseAdapter {
-    private int NUMBER_OF_ACCOUNT_GROUPS = 7;
+    private final int NUMBER_OF_ACCOUNT_GROUPS = 7;
     private View allTransView;
     private Object customRowTag = new Object();
     private List<AccountClass> elements;
     private View filtersView;
-    private OnClickListener headerClickListener = new OnClickListener() {
+    private final Context mContext;
+    private final LayoutInflater mInflater;
+    private final String[] sectionedAccountStrings = new String[]{Locales.kLOC_ACCOUNTSECTION_BANKS, Locales.kLOC_ACCOUNTSECTION_CASH, Locales.kLOC_ACCOUNTSECTION_CREDIT, Locales.kLOC_ACCOUNTSECTION_ASSETS, Locales.kLOC_ACCOUNTSECTION_LIABILITIES, Locales.kLOC_ACCOUNTSECTION_ONLINE, Locales.kLOC_FILTER_DATES_CUSTOM};
+    private final String[] showSectionedAccountsPrefs = new String[]{Prefs.COLLAPSE_BANKS, Prefs.COLLAPSE_CASH, Prefs.COLLAPSE_CREDITCARDS, Prefs.COLLAPSE_ASSETS, Prefs.COLLAPSE_LIABILITIES, Prefs.COLLAPSE_ONLINE, Prefs.COLLAPSE_CUSTOM};
+    private LinearLayout previousRowLayout = null;
+    private View repeatingView;
+    private ArrayList<ArrayList<AccountClass>> sectionedAccounts;
+    private final OnClickListener headerClickListener = new OnClickListener() {
         public void onClick(View view) {
             String cat = ((BudgetsHeaderHolder) view).label;
             for (int i = 0; i < AccountRowAdapter.this.sectionedAccountStrings.length; i++) {
@@ -50,13 +57,6 @@ class AccountRowAdapter extends BaseAdapter {
             }
         }
     };
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private LinearLayout previousRowLayout = null;
-    private View repeatingView;
-    private String[] sectionedAccountStrings = new String[]{Locales.kLOC_ACCOUNTSECTION_BANKS, Locales.kLOC_ACCOUNTSECTION_CASH, Locales.kLOC_ACCOUNTSECTION_CREDIT, Locales.kLOC_ACCOUNTSECTION_ASSETS, Locales.kLOC_ACCOUNTSECTION_LIABILITIES, Locales.kLOC_ACCOUNTSECTION_ONLINE, Locales.kLOC_FILTER_DATES_CUSTOM};
-    private ArrayList<ArrayList<AccountClass>> sectionedAccounts;
-    private String[] showSectionedAccountsPrefs = new String[]{Prefs.COLLAPSE_BANKS, Prefs.COLLAPSE_CASH, Prefs.COLLAPSE_CREDITCARDS, Prefs.COLLAPSE_ASSETS, Prefs.COLLAPSE_LIABILITIES, Prefs.COLLAPSE_ONLINE, Prefs.COLLAPSE_CUSTOM};
     private float textSize = 0.0f;
 
     public AccountRowAdapter(Context aContext) {

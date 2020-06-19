@@ -40,10 +40,15 @@ import com.example.smmoney.views.lookups.LookupsListActivity;
 import java.util.ArrayList;
 
 public class SplitsEditActivity extends PocketMoneyActivity {
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITSPLIT_AMOUNT = 2;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITSPLIT_CATEGORY = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITSPLIT_CLASS = 3;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int NOTE_EDIT_BUTTON = 30;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int REQUEST_CURRENCY = 31;
     private EditText amountEditText;
     private TextView amountXrateTextView;
@@ -52,6 +57,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private CurrencyKeyboard currencyKeyboard;
     private Activity currentActivity;
     private RadioButton depositButton;
+    @SuppressWarnings("FieldCanBeLocal")
     private FrameLayout keyboardToolbar;
     private EditText memoEditText;
     private boolean programaticUpdate;
@@ -260,7 +266,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     private void loadAmountXrateValues() {
         AccountClass act = AccountDB.recordFor(this.transaction.getAccount());
-        String currencyCode = "";
+        String currencyCode;
         if (act != null) {
             currencyCode = act.getCurrencyCode();
         } else {
@@ -337,6 +343,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         }
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void editTextDidChange(int editTextCode) {
     }
 
@@ -448,8 +455,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     }
 
     private class MyKeyListener implements KeyListener {
-        KeyListener original;
-        private int editTextCode;
+        final KeyListener original;
+        private final int editTextCode;
 
         private MyKeyListener(KeyListener orig, int code) {
             this.original = orig;

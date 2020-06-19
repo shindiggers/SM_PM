@@ -24,15 +24,15 @@ import com.example.smmoney.records.CategoryClass;
 
 public class BudgetsRowHolder extends View {
     public CategoryClass category;
-    Rect bounds = new Rect(0, 0, 0, 0);
-    Rect firstBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
-    Rect secondBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
-    Rect rect = new Rect(bounds.left, bounds.top, bounds.right, bounds.bottom);
-    Paint p = new Paint();
+    final Rect bounds = new Rect(0, 0, 0, 0);
+    final Rect firstBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
+    final Rect secondBarRect = new Rect(0, bounds.top, 0, bounds.bottom);
+    final Rect rect = new Rect(bounds.left, bounds.top, bounds.right, bounds.bottom);
+    final Paint p = new Paint();
     private String actualString;
     private String budgetedString;
     private String categoryString;
-    private Context context;
+    private final Context context;
     private boolean touched = false;
 
     public BudgetsRowHolder(Context context) {
@@ -149,43 +149,46 @@ public class BudgetsRowHolder extends View {
                 secondBarRect.set(0, bounds.top, (int) ((budget / budget) * width), bounds.bottom);
                 secondBitmapRes = R.drawable.budgetyellow;
             }
-        } else if (this.category.getType() == Enums.kCategoryExpense/*0*/) {
-            if (spent > budget) {
-                if (budget < 0.0d) {
-                    greenBarWidth = 0.0d;
+        } else {
+            final double greenBarWidth1 = budget != 0.0d ? (spent / budget) * width : width;
+            if (this.category.getType() == Enums.kCategoryExpense/*0*/) {
+                if (spent > budget) {
+                    if (budget < 0.0d) {
+                        greenBarWidth = 0.0d;
+                    } else {
+                        greenBarWidth = spent != 0.0d ? (budget / spent) * width : width;
+                    }
+                    redBarWidth = width - greenBarWidth;
+                    firstBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
+                    firstBitmapRes = R.drawable.budgetyellow;
+                    secondBarRect.set((bounds.right - ((int) redBarWidth)) - 1, bounds.top, bounds.right, bounds.bottom);
+                    secondBitmapRes = R.drawable.budgetred;
                 } else {
-                    greenBarWidth = spent != 0.0d ? (budget / spent) * width : width;
+                    if (budget < 0.0d) {
+                        greenBarWidth = 0.0d;
+                    } else {
+                        greenBarWidth = greenBarWidth1;
+                    }
+                    redBarWidth = width - greenBarWidth;
+                    firstBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
+                    firstBitmapRes = R.drawable.budgetyellow;
+                    secondBarRect.set((bounds.right - ((int) redBarWidth)) - 1, bounds.top, bounds.right, bounds.bottom);
+                    secondBitmapRes = R.drawable.budgetgreen;
                 }
+            } else if (spent >= budget) {
+                greenBarWidth = spent != 0.0d ? (budget / spent) * width : budget > 0.0d ? width : 0.0d;
+                firstBarRect.set((bounds.right - ((int) (width - greenBarWidth))) - 1, bounds.top, bounds.right, bounds.bottom);
+                firstBitmapRes = R.drawable.budgetgreen;
+                secondBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
+                secondBitmapRes = R.drawable.budgetyellow;
+            } else {
+                greenBarWidth = greenBarWidth1;
                 redBarWidth = width - greenBarWidth;
                 firstBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
                 firstBitmapRes = R.drawable.budgetyellow;
                 secondBarRect.set((bounds.right - ((int) redBarWidth)) - 1, bounds.top, bounds.right, bounds.bottom);
                 secondBitmapRes = R.drawable.budgetred;
-            } else {
-                if (budget < 0.0d) {
-                    greenBarWidth = 0.0d;
-                } else {
-                    greenBarWidth = budget != 0.0d ? (spent / budget) * width : width;
-                }
-                redBarWidth = width - greenBarWidth;
-                firstBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
-                firstBitmapRes = R.drawable.budgetyellow;
-                secondBarRect.set((bounds.right - ((int) redBarWidth)) - 1, bounds.top, bounds.right, bounds.bottom);
-                secondBitmapRes = R.drawable.budgetgreen;
             }
-        } else if (spent >= budget) {
-            greenBarWidth = spent != 0.0d ? (budget / spent) * width : budget > 0.0d ? width : 0.0d;
-            firstBarRect.set((bounds.right - ((int) (width - greenBarWidth))) - 1, bounds.top, bounds.right, bounds.bottom);
-            firstBitmapRes = R.drawable.budgetgreen;
-            secondBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
-            secondBitmapRes = R.drawable.budgetyellow;
-        } else {
-            greenBarWidth = budget != 0.0d ? (spent / budget) * width : width;
-            redBarWidth = width - greenBarWidth;
-            firstBarRect.set(0, bounds.top, (int) greenBarWidth, bounds.bottom);
-            firstBitmapRes = R.drawable.budgetyellow;
-            secondBarRect.set((bounds.right - ((int) redBarWidth)) - 1, bounds.top, bounds.right, bounds.bottom);
-            secondBitmapRes = R.drawable.budgetred;
         }
         //Paint p = new Paint();
         rect.set(1, 1, 1, 1);

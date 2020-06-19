@@ -26,13 +26,14 @@ import java.util.jar.Attributes;
 import javax.xml.parsers.SAXParserFactory;
 
 public class CategoryBudgetClass extends PocketMoneyRecordClass {
-    public static String XML_LISTTAG_CATEGORYBUDGETS = "CATEGORYBUDGETS";
-    public static String XML_RECORDTAG_CATEGORYBUDGET = "CATEGORYBUDGETCLASS";
+    public static final String XML_LISTTAG_CATEGORYBUDGETS = "CATEGORYBUDGETS";
+    public static final String XML_RECORDTAG_CATEGORYBUDGET = "CATEGORYBUDGETCLASS";
     private static String deletecatbudget_statement = null;
     private double budgetLimit;
     public int categoryBudgetID;
     private String categoryName;
     private String currentElementValue;
+    @SuppressWarnings("unused")
     private SQLiteDatabase database;
     private GregorianCalendar date;
     private boolean resetRollover;
@@ -101,6 +102,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         }
     }
 
+    @SuppressWarnings("unused")
     public static CategoryBudgetClass recordWithServerID(String serverID) {
         CategoryBudgetClass record = null;
         if (serverID == null || serverID.length() == 0) {
@@ -236,6 +238,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return cal;
     }
 
+    @SuppressWarnings("unused")
     public static List<CategoryBudgetClass> budgetItemsWithRolloverForCategory(String category, GregorianCalendar startDate, GregorianCalendar endDate) {
         Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND resetRollover=1 AND date >= " + startDate.getTimeInMillis() + " AND date <= " + endDate.getTimeInMillis() + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date", null);
         int count = curs.getCount();
@@ -303,7 +306,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     public void endDocument() {
     }
 
-    public void startElement(String uri, String localName, String qName, Attributes attributes) {
+    public void startElement(@SuppressWarnings("unused") String uri, @SuppressWarnings("unused") String localName, @SuppressWarnings("unused") String qName, @SuppressWarnings("unused") Attributes attributes) {
         this.currentElementValue = null;
     }
 
@@ -359,13 +362,14 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         body.text(text);
     }
 
+    @SuppressWarnings("unused")
     private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
         body.text(text == null ? "" : encode(text));
     }
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

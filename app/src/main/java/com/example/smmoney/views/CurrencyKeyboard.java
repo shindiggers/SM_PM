@@ -25,21 +25,23 @@ import java.util.Hashtable;
 import java.util.Objects;
 
 public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, OnKeyListener {
-    private Context context;
+    private final Context context;
     private EditText editText;
     private Hashtable<String, String> keyValues = null;
-    private int keyboardSize;
+    @SuppressWarnings("unused")
     int originalScrollViewHeight;
+    @SuppressWarnings("FieldCanBeLocal")
+    private int keyboardSize;
     private View toolbar;
     private boolean toolbarEnabled = true;
 
     private static class MyScanner {
         String amount = null;
-        int end;
+        final int end;
         int index = 0;
         char sign = '\u0000';
         StringBuffer strBuff;
-        char[] theChars;
+        final char[] theChars;
 
         MyScanner(String s) {
             this.theChars = s.toCharArray();
@@ -50,10 +52,9 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
             if (this.index >= this.end) {
                 return false;
             }
-            char[] cArr = this.theChars;
             int i = this.index;
             this.index = i + 1;
-            this.sign = cArr[i];
+            this.sign = this.theChars[i];
             this.strBuff = new StringBuffer();
             while (this.index != this.end) {
                 if (isDelimeter(this.theChars[this.index])) {

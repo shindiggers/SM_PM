@@ -8,9 +8,9 @@ import java.net.URL;
 
 public class ExchangeRateClass {
     private int accountUpdateCount = 0;
-    private ExchangeRateCallbackInterface delegate;
+    private final ExchangeRateCallbackInterface delegate;
     private boolean inverseLookup;
-    private boolean justUpdateTheAccounts;
+    private final boolean justUpdateTheAccounts;
 
     public ExchangeRateClass(boolean justUpdate, ExchangeRateCallbackInterface delegate) {
         this.justUpdateTheAccounts = justUpdate;

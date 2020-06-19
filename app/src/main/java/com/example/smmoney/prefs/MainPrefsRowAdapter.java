@@ -29,9 +29,9 @@ import com.example.smmoney.views.accounts.AccountsActivity;
 import java.util.ArrayList;
 
 class MainPrefsRowAdapter extends BaseAdapter {
-    private Context context;
+    private final Context context;
     private int[] imageList;
-    private LayoutInflater inflater;
+    private final LayoutInflater inflater;
     private ArrayList<OnClickListener> listenerList;
     private String[] nameList;
 
@@ -189,7 +189,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
     }
 
     public long getItemId(int arg0) {
-        return (long) arg0;
+        return arg0;
     }
 
     public View getView(int position, View convertView, ViewGroup arg2) {

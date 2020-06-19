@@ -27,8 +27,8 @@ import java.util.ArrayList;
 
 class TransactionRowAdapter extends BaseAdapter {
     private ArrayList<TransactionClass> elements = new ArrayList<>();
-    private Context mContext;
-    private LayoutInflater mInflater;//= LayoutInflater.from(this.mContext); //TODO Fix nullPointer exception which arises here!! UPDATE -> Moved the layout inflator to the constructor. seemed to fix the null pointer exception??
+    private final Context mContext;
+    private final LayoutInflater mInflater;//= LayoutInflater.from(this.mContext); //TODO Fix nullPointer exception which arises here!! UPDATE -> Moved the layout inflator to the constructor. seemed to fix the null pointer exception??
 
     TransactionRowAdapter(Context aContext) { // constructor for this class?? Think so...
         this.mContext = aContext;

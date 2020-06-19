@@ -10,6 +10,7 @@ class OFX_StatusCode {
         this.parse(text);
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void parse(String text) {
     }
 }

@@ -354,7 +354,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 }
                 Locale current = getResources().getConfiguration().locale;
 
-                AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", (Double) rate));
+                AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
                 AccountsEditActivity.this.exchangeRate.invalidate();
             }
         });

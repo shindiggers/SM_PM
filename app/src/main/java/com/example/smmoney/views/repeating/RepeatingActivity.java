@@ -52,6 +52,7 @@ import java.util.Objects;
 public class RepeatingActivity extends PocketMoneyActivity {
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int DATE_DIALOG_ID = 1;
     private final int IMPORT_PROGRESS_DIALOG = 2;
     private final int MENU_NEW = 1;

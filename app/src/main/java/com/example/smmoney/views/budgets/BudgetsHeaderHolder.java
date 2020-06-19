@@ -21,14 +21,14 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class BudgetsHeaderHolder extends View {
-    public String label;
-    Rect r = new Rect(0, 0, 0, 0);
-    Paint p = new Paint();
-    PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.actionBarColor(), Mode.DARKEN);
-    Bitmap catBarBitmap;
-    Bitmap collBarBitmap;
-    private Context context;
-    private String xofy;
+    public final String label;
+    final Rect r = new Rect(0, 0, 0, 0);
+    final Paint p = new Paint();
+    final PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.actionBarColor(), Mode.DARKEN);
+    final Bitmap catBarBitmap;
+    final Bitmap collBarBitmap;
+    private final Context context;
+    private final String xofy;
 
     public BudgetsHeaderHolder(Context context, String label, String xofy) {
         super(context);
@@ -90,17 +90,13 @@ public class BudgetsHeaderHolder extends View {
             case 120:
                 return pixels * 0.75d;
             case 160:
+            case 320:
+            case 480:
+            case 560:
+            case 640:
                 return pixels * 2.0d;
             case 240:
                 return pixels * 3.0d;
-            case 320:
-                return pixels * 2.0d;
-            case 480:
-                return pixels * 2.0d;
-            case 560:
-                return pixels * 2.0d;
-            case 640:
-                return pixels * 2.0d;
             default:
                 return pixels;
         }

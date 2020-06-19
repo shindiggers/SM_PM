@@ -57,16 +57,18 @@ public class BudgetsRowAdapter extends BaseAdapter {
     };
     GregorianCalendar currentDate;
     int currentPeriod;
-    private Context context;
+    private final Context context;
     private List<CategoryClass> elements;
     private List<CategoryClass> expenseCategories;
     private List<CategoryClass> incomeCategories;
-    private LayoutInflater inflater;
-    private ListView listView;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final LayoutInflater inflater;
+    @SuppressWarnings("FieldCanBeLocal")
+    private final ListView listView;
     private List<CategoryClass> nonBudgetedCategories;
-    private String showExpense = Prefs.COLLAPSE_EXPENSES;
-    private String showIncome = Prefs.COLLAPSE_INCOME;
-    private String showNonBudgeted = Prefs.COLLAPSE_UNBUDGETED;
+    private final String showExpense = Prefs.COLLAPSE_EXPENSES;
+    private final String showIncome = Prefs.COLLAPSE_INCOME;
+    private final String showNonBudgeted = Prefs.COLLAPSE_UNBUDGETED;
 
     BudgetsRowAdapter(Context aContext, ListView theList) {
         this.context = aContext;
@@ -375,7 +377,6 @@ public class BudgetsRowAdapter extends BaseAdapter {
                 category.budget = ((double) Math.round(100.0d * category.budgetLimit(startDate, endDate))) / 100.0d;
             }
         }
-        List<CategoryClass> incomeCategoriesHolder = afterZeroIncomes;
         List<CategoryClass> tempExpenseCategories = CategoryClass.queryExpenseCategoriesWithBudgets();
         ArrayList<CategoryClass> afterZeroExpenses = new ArrayList<>();
         for (CategoryClass category2 : tempExpenseCategories) {
@@ -385,7 +386,6 @@ public class BudgetsRowAdapter extends BaseAdapter {
                 category2.budget = ((double) Math.round(100.0d * category2.budgetLimit(startDate, endDate))) / 100.0d;
             }
         }
-        List<CategoryClass> expenseCategoriesHolder = afterZeroExpenses;
         if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED)) {
             List<CategoryClass> tempNonBudgetdCategories = CategoryClass.queryNonBudgettedCategories();
             ArrayList<CategoryClass> afterZeroNonBudgeted = new ArrayList<>();
@@ -399,14 +399,14 @@ public class BudgetsRowAdapter extends BaseAdapter {
         } else {
             nonBudgetedCategoriesHolder = null;
         }
-        Collections.sort(incomeCategoriesHolder, categoryComparator);
-        Collections.sort(expenseCategoriesHolder, categoryComparator);
+        Collections.sort(afterZeroIncomes, categoryComparator);
+        Collections.sort(afterZeroExpenses, categoryComparator);
         if (nonBudgetedCategoriesHolder != null) {
             Collections.sort(nonBudgetedCategoriesHolder, categoryComparator);
         }
         final List<CategoryClass> list = nonBudgetedCategoriesHolder;
-        final List<CategoryClass> list2 = expenseCategoriesHolder;
-        final List<CategoryClass> list3 = incomeCategoriesHolder;
+        final List<CategoryClass> list2 = afterZeroExpenses;
+        final List<CategoryClass> list3 = afterZeroIncomes;
         ((Activity) this.context).runOnUiThread(new Runnable() {
             public void run() {
                 BudgetsRowAdapter.this.nonBudgetedCategories = list;

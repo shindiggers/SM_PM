@@ -54,9 +54,9 @@ public class ChartView extends View {
         this.negativeMaxValue = 0.0d;
         this.positiveMaxValue = 0.0d;
         this.allNegative = this.dataSource.getClass().equals(ReportDataSource.class);
-        Iterator it = this.series.iterator();
+        Iterator<ArrayList<ChartItem>> it = this.series.iterator();
         while (it.hasNext()) {
-            for (Object o : ((ArrayList) it.next())) {
+            for (Object o : it.next()) {
                 ChartItem anItem = (ChartItem) o;
                 if (anItem.value > 0.0d) {
                     this.positiveTotal += anItem.value;
@@ -70,7 +70,7 @@ public class ChartView extends View {
         }
         it = this.series.iterator();
         while (it.hasNext()) {
-            for (Object o : ((ArrayList) it.next())) {
+            for (Object o : it.next()) {
                 ChartItem anItem = (ChartItem) o;
                 if (anItem.value < 0.0d) {
                     anItem.percent = anItem.value / this.negativeTotal;

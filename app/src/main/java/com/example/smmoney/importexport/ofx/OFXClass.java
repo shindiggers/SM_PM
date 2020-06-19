@@ -2,6 +2,8 @@ package com.example.smmoney.importexport.ofx;
 
 import android.util.Log;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.TransactionClass;
@@ -197,6 +199,8 @@ class OFXClass {
                 + "\t\t\t" + this.tags.statusEnd + "\n";
     }
 
+    @Override
+    @NonNull
     public String toString() {
         return this.header() +
                 "<OFX>\n" +

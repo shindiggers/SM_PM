@@ -18,8 +18,8 @@ import com.example.smmoney.views.charts.items.ChartItem;
 
 public class ChartPieView extends ChartView {
     double rads;
-    private Paint mBgPaints = new Paint();
-    private Paint mLinePaints = new Paint();
+    private final Paint mBgPaints = new Paint();
+    private final Paint mLinePaints = new Paint();
 
     public ChartPieView(Context context) {
         super(context);
@@ -58,11 +58,10 @@ public class ChartPieView extends ChartView {
                 }
                 if (type == Enums.kChartTypeNegativePie /*-1*/) {
                     mGapRight = (int) (((float) (mGapLeft * 2)) + (radius * 2.0f));
-                    pieCenterX = ((float) mGapLeft) + radius;
                 } else {
                     mGapLeft = (int) (((float) (mGapRight * 2)) + (radius * 2.0f));
-                    pieCenterX = ((float) mGapLeft) + radius;
                 }
+                pieCenterX = ((float) mGapLeft) + radius;
             } else {
                 i = ((mWidth - mHeight) + 20) / 2;
                 mGapRight = i;

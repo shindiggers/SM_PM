@@ -23,22 +23,12 @@ import java.util.GregorianCalendar;
 public class LocalNotificationAlertActivitiy extends Activity {
     private Context context;
     private GregorianCalendar date;
-    private OnClickListener mainOkayListener = new OnClickListener() {
+    private final OnClickListener mainOkayListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             dialog.dismiss();
         }
     };
-    private OnClickListener mainPostListener = new OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-            new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
-        }
-    };
-    private OnClickListener mainSnoozeListener = new OnClickListener() {
-        public void onClick(DialogInterface dialog, int which) {
-            new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_REPEATING_ONE_DAY, Locales.kLOC_REPEATING_TWO_DAYS}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
-        }
-    };
-    private OnClickListener postMenuListener = new OnClickListener() {
+    private final OnClickListener postMenuListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             GregorianCalendar gregorianCalendar;
             if (which == PocketMoneyThemes.kThemeBlack) { /*0*/
@@ -48,8 +38,18 @@ public class LocalNotificationAlertActivitiy extends Activity {
             gregorianCalendar = new GregorianCalendar();
         }
     };
+    private final OnClickListener mainPostListener = new OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
+        }
+    };
+    private final OnClickListener mainSnoozeListener = new OnClickListener() {
+        public void onClick(DialogInterface dialog, int which) {
+            new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_REPEATING_ONE_DAY, Locales.kLOC_REPEATING_TWO_DAYS}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
+        }
+    };
     private RepeatingTransactionClass repeatingTransaction;
-    private OnClickListener snoozeMenuListener = new OnClickListener() {
+    private final OnClickListener snoozeMenuListener = new OnClickListener() {
         public void onClick(DialogInterface dialog, int which) {
             String transferToAccount;
             int hours = 0;
@@ -79,9 +79,9 @@ public class LocalNotificationAlertActivitiy extends Activity {
             //<string name="kLOC_REPEATING_NOTIFY_DUE">%1$sRepeating Transaction due\n%2$s %3$s➜%4$s</string>
             //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
             body.replaceFirst("%1$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.isOverdueOnDate(newDate) ? Locales.kLOC_REPEATING_OVERDUE : "");
-            //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored,ResultOfMethodCallIgnored
+            // noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
             body.replaceFirst("%2$s", CalExt.descriptionWithMediumDate(LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getDate()));
-            //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored,ResultOfMethodCallIgnored
+            // noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
             body.replaceFirst("%3$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getAccount());
             //noinspection RegExpUnexpectedAnchor
             String str = "%4$s";

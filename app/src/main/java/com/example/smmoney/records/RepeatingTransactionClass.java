@@ -38,13 +38,17 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
     public static final String XML_RECORDTAG_REPEATINGTRANSACTION = "RPTTRANSCLASS";
     private String currentElementValue;
+    @SuppressWarnings("unused")
     private final String dayNameToken;
+    @SuppressWarnings("unused")
     private final String dayOrdinalToken;
     private GregorianCalendar endDate;
+    @SuppressWarnings("unused")
     private final String frequenceToken;
     private int frequency;
     public boolean hydratedTransaction;
     private GregorianCalendar lastProcessedDate;
+    @SuppressWarnings("unused")
     private final String monthNameToken;
     private int notifyDaysInAdvance;
     private int repeatOn;
@@ -55,6 +59,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     private int transactionID;
     public String transactionServerID;
     private int type;
+    @SuppressWarnings("unused")
     private final String weekOrdinalToken;
 
     public RepeatingTransactionClass() {
@@ -97,7 +102,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         curs.close();
     }
 
-    public RepeatingTransactionClass(int transactionID, boolean usesTransID) {
+    public RepeatingTransactionClass(int transactionID, @SuppressWarnings("unused") boolean usesTransID) {
         this.frequenceToken = "^f";
         this.dayOrdinalToken = "^x";
         this.weekOrdinalToken = "^w";
@@ -117,7 +122,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         curs.close();
     }
 
-    public RepeatingTransactionClass(TransactionClass aTransaction, boolean skipCheck) {
+    public RepeatingTransactionClass(TransactionClass aTransaction, @SuppressWarnings("unused") boolean skipCheck) {
         this.frequenceToken = "^f";
         this.dayOrdinalToken = "^x";
         this.weekOrdinalToken = "^w";
@@ -318,8 +323,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     private GregorianCalendar getNextTransactionDateAfter(GregorianCalendar lastDate) {
-        GregorianCalendar calendar = new GregorianCalendar();
-        GregorianCalendar futureDate = lastDate;
+        @SuppressWarnings("unused") GregorianCalendar calendar = new GregorianCalendar();
+        @SuppressWarnings("UnnecessaryLocalVariable") GregorianCalendar futureDate = lastDate;
         if (repeatsOnDate(futureDate)) {
             switch (getType()) {
                 case Enums.repeatDaily /*1*/:
@@ -525,6 +530,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
+    @SuppressWarnings("unused")
     public void postAndAdvanceTransaction() {
         TransactionDB.postTransactionOnDate(this, new GregorianCalendar());
         if (getType() == Enums.repeatingOnce /*5*/) {
@@ -557,7 +563,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         String[] weekDays = new DateFormatSymbols().getWeekdays();
         String[] weekOrdinals = Locales.kLOC_WEEK_ORDINALS.split(" ");
         String weekDayName = weekDays[getTransaction().getDate().get(Calendar.DAY_OF_WEEK)];
-        String weekOrdinal = "";
+        @SuppressWarnings("UnusedAssignment") String weekOrdinal = "";
         if (weekOrdinals.length > getTransaction().getDate().get(Calendar.DAY_OF_WEEK_IN_MONTH) - 1) {
             weekOrdinal = weekOrdinals[getTransaction().getDate().get(Calendar.DAY_OF_WEEK_IN_MONTH) - 1];
         } else {
@@ -712,7 +718,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public void advanceTransactionDateToNextPostDateAfterDateIgnoringCurrentlySetDate(GregorianCalendar cal) {
-        GregorianCalendar calendar = new GregorianCalendar();
+        @SuppressWarnings("unused") GregorianCalendar calendar = new GregorianCalendar();
         GregorianCalendar futureDate = (GregorianCalendar) cal.clone();
         GregorianCalendar processRepeatingEventsThroughDate = (GregorianCalendar) CalExt.beginningOfDay(cal).clone();
         boolean found = false;
@@ -825,7 +831,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             setNotifyDaysInAdvance(curs.getInt(col));                                           // set the notifyDaysInAdvance to the RT notifyDaysInAdvance just read from the database
             col = col2 + 1;                                                                     // col = 11
             setSendLocalNotifications(curs.getInt(col2) == 1);                                  // set the sendLocalNotifications RT param to the notifyDaysInAdvance of the RT just read from the database
-            col2 = col + 1;                                                                     // col2 = 12
             String str = curs.getString(col);                                                   // read the serverID of the RT just retrieved from the DB
             if (str == null) {
                 str = "";
@@ -863,7 +868,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (this.dirty) {
             dehydrateTransaction();
             ContentValues values = new ContentValues();
-            GregorianCalendar cal = new GregorianCalendar();
+            @SuppressWarnings("unused") GregorianCalendar cal = new GregorianCalendar();
             String str = "timestamp";
             long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
             values.put(str, currentTimeMillis);
@@ -994,7 +999,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

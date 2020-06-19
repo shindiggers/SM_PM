@@ -40,15 +40,17 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
     private CatPayeeRowAdapter adapter;
     private int currentType = 2;
     private boolean isCategoryLookup = true;
+    @SuppressWarnings("FieldCanBeLocal")
     private ListView listView;
     private LayoutInflater mInflater;
     private String payee;
     private boolean progUpdate = false;
+    @SuppressWarnings("FieldCanBeLocal")
     private TextView titleTextView;
 
     private class CatPayeeRowAdapter extends BaseAdapter {
         List<String> allCategories;
-        private OnClickListener itemClickListener = new OnClickListener() {
+        private final OnClickListener itemClickListener = new OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent();
                 i.putExtra("selection", (String) v.getTag());

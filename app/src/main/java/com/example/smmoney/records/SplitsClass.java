@@ -13,11 +13,12 @@ import com.example.smmoney.misc.Prefs;
 import java.io.Serializable;
 
 public class SplitsClass implements Serializable {
-    private static String splitSelectionString = "SELECT transactionID, amount, xrate, categoryID, classID, memo, transferToAccountID, currencyCode FROM splits WHERE splitID=?";
+    private static final String splitSelectionString = "SELECT transactionID, amount, xrate, categoryID, classID, memo, transferToAccountID, currencyCode FROM splits WHERE splitID=?";
     private double amount;
     private String category;
     private String className;
     private String currencyCode;
+    @SuppressWarnings("unused")
     private boolean deleted;
     public boolean dirty;
     public boolean hydrated;
@@ -166,6 +167,7 @@ public class SplitsClass implements Serializable {
     public String getCurrencyCode() {
         hydrate();
         if (this.currencyCode == null || this.currencyCode.length() == 0) {
+            //noinspection ConstantConditions
             setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE) == null ? "USD" : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
         }
         while (this.currencyCode.length() < 3) {
@@ -249,8 +251,8 @@ public class SplitsClass implements Serializable {
     public void hydrate() {
         if (!this.hydrated) {
             new SQLiteQueryBuilder().setTables(Database.SPLITS_TABLE_NAME);
-            String selection = "splitID=" + this.splitID;
-            String[] projection = new String[]{"transactionID", "amount", "xrate", "categoryID", "classID", "memo", "transferToAccountID", "currencyCode"};
+            @SuppressWarnings("unused") String selection = "splitID=" + this.splitID;
+            @SuppressWarnings("unused") String[] projection = new String[]{"transactionID", "amount", "xrate", "categoryID", "classID", "memo", "transferToAccountID", "currencyCode"};
             Cursor curs = Database.rawQuery(splitSelectionString, new String[]{String.valueOf(this.splitID)});
             if (curs.getCount() > 0) {
                 curs.moveToFirst();

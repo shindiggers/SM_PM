@@ -22,9 +22,9 @@ import java.util.Comparator;
 
 class RepeatingRowAdapter extends BaseAdapter {
     private ArrayList<TransactionClass> elements;
-    private Context mContext;
-    private LayoutInflater mInflater;
-    private OnClickListener postButtonListener = new OnClickListener() {
+    private final Context mContext;
+    private final LayoutInflater mInflater;
+    private final OnClickListener postButtonListener = new OnClickListener() {
         public void onClick(View v) {
             RepeatingRowHolder holder = (RepeatingRowHolder) ((View) v.getParent().getParent()).getTag();
             holder.repeatingTransaction.hydrated = false;

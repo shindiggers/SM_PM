@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -51,29 +52,38 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     private static String renameid_statement = null;
     private static String renameidtimestamp_statement = null;
     private static String renamepayee_statement = null;
-    private static String serverIDSelectionString = "SELECT transactionID FROM transactions WHERE serverID=?";
-    private static String transactionSelectionString = "SELECT deleted, timestamp, type, date, cleared, accountID, payee, checkNumber, ofxID, image, subTotal, serverID FROM transactions WHERE transactionID=?";
+    private static final String serverIDSelectionString = "SELECT transactionID FROM transactions WHERE serverID=?";
+    private static final String transactionSelectionString = "SELECT deleted, timestamp, type, date, cleared, accountID, payee, checkNumber, ofxID, image, subTotal, serverID FROM transactions WHERE transactionID=?";
     private String account;
     private String checkNumber;
     private boolean cleared;
     private String currentElementValue;
+    @SuppressWarnings("unused")
     private int currentImage;
+    @SuppressWarnings("unused")
     private int currentIndex;
     private byte[] data;
+    @SuppressWarnings("unused")
     private String dataString;
     private GregorianCalendar date;
     private boolean hydratedSplits;
+    @SuppressWarnings("unused")
     private int imageCount;
+    @SuppressWarnings("unused")
     private ArrayList<Integer> imageCounts;
     private String imageLocation;
+    @SuppressWarnings("unused")
     private int imageSize;
+    @SuppressWarnings("unused")
     private boolean isNew;
     public boolean isRepeatingTransaction;
     private String ofxID;
     private SplitsClass parserSplit;
     private String payee;
+    @SuppressWarnings("unused")
     private boolean readingInImage;
     public double runningBalance;
+    @SuppressWarnings("unused")
     private StringBuilder sb;
     private ArrayList<SplitsClass> splits;
     private ArrayList<SplitsClass> splitsDeleted;
@@ -81,15 +91,8 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     public int transactionID;
     private int type;
 
-    public boolean getDirty() {
-        if (this.dirty) {
-            return this.dirty;
-        }
-        for (SplitsClass split : this.splits) {
-            if ((split).dirty) {
-                return true;
-            }
-        }
+    @SuppressWarnings("unused")
+    public static boolean writeXMLStringWithFileNameToStream(BufferedOutputStream output, String fileName, boolean withImages) {
         return false;
     }
 
@@ -255,11 +258,36 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         this.subTotal += amount;
     }
 
-    public String subTotalAsString() {
-        if (0.0d == this.subTotal) {
-            return "";
+    @SuppressWarnings("unused")
+    public static String XMLStringWithFileNameToString(String fileName, boolean withImages) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("<image>");
+        if (withImages) {
+            try {
+                String imgdata = "<imagedata>";
+                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
+                if (f.exists()) {
+                    FileInputStream fin = new FileInputStream(f.getAbsolutePath());
+                    int totalRead = 0;
+                    int read = 0;
+                    int size = (int) f.length();
+                    byte[] data = new byte[size];
+                    while (totalRead < size && read != -1) {
+                        read = fin.read(data, totalRead, size - totalRead);
+                        totalRead += read;
+                    }
+                    imgdata = imgdata + Base64.encode(data) + "</imagedata>";
+                    sb.append(imgdata);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-        return Double.toString(this.subTotal);
+        sb.append("<filename>");
+        sb.append(fileName);
+        sb.append("</filename>");
+        sb.append("</image>");
+        return sb.toString();
     }
 
     public String subTotalAsABSString() {
@@ -291,16 +319,35 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return CurrencyExt.amountAsCurrency(this.runningBalance, a1 == null ? Prefs.getStringPref(Prefs.HOMECURRENCYCODE) : a1.getCurrencyCode());
     }
 
-    public int splitIndexOfSplitID(int splitID) {
-        int retVal = 0;
-        hydrate();
-        for (SplitsClass split : this.splits) {
-            if ((split).splitID == splitID) {
-                return retVal;
+    private static void XMLStringWithFileName(XmlSerializer body, String fileName, boolean withImages) {
+        try {
+            body.startTag(null, "image");
+            if (withImages) {
+                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
+                if (f.exists()) {
+                    FileInputStream fin = new FileInputStream(f.getAbsolutePath());
+                    int totalRead = 0;
+                    int read = 0;
+                    int size = (int) f.length();
+                    byte[] data = new byte[size];
+                    while (totalRead < size && read != -1) {
+                        read = fin.read(data, totalRead, size - totalRead);
+                        totalRead += read;
+                    }
+                    body.startTag(null, "imagedata");
+                    String hmmm = Base64.encode(data);
+                    PocketMoneySyncClass.printToFile(hmmm, "image.out");
+                    body.text(hmmm);
+                    body.endTag(null, "imagedata");
+                }
             }
-            retVal++;
+            body.startTag(null, "filename");
+            body.text(fileName);
+            body.endTag(null, "filename");
+            body.endTag(null, "image");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return -1;
     }
 
     public void addSplit(SplitsClass aSplit) {
@@ -369,12 +416,16 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return true;
     }
 
-    public int getTransferTransactionID() {
-        hydrate();
-        if (getSplits().size() > 0) {
-            return this.splits.get(0).getTransferTransactionID();
+    public boolean getDirty() {
+        if (this.dirty) {
+            return true;
         }
-        return 0;
+        for (SplitsClass split : this.splits) {
+            if ((split).dirty) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void setCategory(String category) {
@@ -503,18 +554,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return splitsTotal;
     }
 
-    public void adjustSplits() {
-        if (getSplitsTotal() == getSubTotal()) {
-            return;
+    @SuppressWarnings("unused")
+    public String subTotalAsString() {
+        if (0.0d == this.subTotal) {
+            return "";
         }
-        if (getNumberOfSplits() <= 1) {
-            setAmount(getSubTotal());
-            return;
-        }
-        SplitsClass split = new SplitsClass();
-        split.setCategory("Miscellaneous");
-        split.setAmount(getSubTotal() - getSplitsTotal());
-        this.splits.add(split);
+        return Double.toString(this.subTotal);
     }
 
     public void deleteSplitAtIndex(int index) {
@@ -742,107 +787,26 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
     }
 
-    public void hydrate() {
-        if (!this.hydrated) {
-            new SQLiteQueryBuilder().setTables(Database.TRANSACTIONS_TABLE_NAME);
-            String selection = "transactionID=" + this.transactionID;
-            String[] projection = new String[]{"deleted", "timestamp", "type", "date", "cleared", "accountID", "payee", "checkNumber", "ofxID", "image", "subTotal", "serverID"};
-            Cursor curs = Database.rawQuery(transactionSelectionString, new String[]{String.valueOf(this.transactionID)});
-            if (curs.getCount() != 0) {
-                curs.moveToFirst();
-                boolean wasDirty = this.dirty;
-                int col = 1;
-                setDeleted(curs.getInt(0) == 1);
-                this.timestamp = new GregorianCalendar();
-                int col2 = col + 1;
-                this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);
-                col = col2 + 1;
-                setType(curs.getInt(col2));
-                this.date = new GregorianCalendar();
-                col2 = col + 1;
-                long tempdate = (long) curs.getDouble(col);
-                Log.d("@@@@@@@@@@@@@@@@@@@", " before x 1000 = " + tempdate);
-                Log.d("@@@@@@@@@@@@@@@@@@@", " after x 1000 = " + (tempdate * 1000));
-                this.date.setTimeInMillis(1000 * ((long) curs.getDouble(col)));
-                col = col2 + 1;
-                setCleared(curs.getInt(col2) == 1);
-                col2 = col + 1;
-                setAccount(AccountClass.accountForID(curs.getInt(col)));
-                col = col2 + 1;
-                String str = curs.getString(col2);
-                if (str == null) {
-                    str = "";
-                }
-                setPayee(str);
-                col2 = col + 1;
-                str = curs.getString(col);
-                if (str == null) {
-                    str = "";
-                }
-                setCheckNumber(str);
-                col = col2 + 1;
-                str = curs.getString(col2);
-                if (str == null) {
-                    str = "";
-                }
-                setOfxID(str);
-                col2 = col + 1;
-                str = curs.getString(col);
-                if (str == null) {
-                    str = "";
-                }
-                setImageLocation(str);
-                col = col2 + 1;
-                setSubTotal(curs.getDouble(col2));
-                str = curs.getString(col);
-                if (str == null) {
-                    str = "";
-                }
-                setServerID(str);
-                hydrateSplits();
-                if (!wasDirty && this.dirty) {
-                    this.dirty = false;
-                }
-            } else {
-                if (this.timestamp == null) {
-                    this.timestamp = new GregorianCalendar();
-                }
-                if (this.date == null) {
-                    setDate(new GregorianCalendar());
-                    setType(0);
-                }
+    @SuppressWarnings("unused")
+    public int splitIndexOfSplitID(int splitID) {
+        int retVal = 0;
+        hydrate();
+        for (SplitsClass split : this.splits) {
+            if ((split).splitID == splitID) {
+                return retVal;
             }
-            curs.close();
-            this.hydrated = true;
-            if (this.type == 5) {
-                this.isRepeatingTransaction = true;
-                initType(); // this changes type from '5' (ie repeating) to '0' (ie withdrawal) or whatever type it is
-                return;
-            }
-            this.isRepeatingTransaction = false;
+            retVal++;
         }
+        return -1;
     }
 
-    private void hydrateSplits() {
-        if (!this.hydratedSplits) {
-            new SQLiteQueryBuilder().setTables(Database.SPLITS_TABLE_NAME);
-            String selection = "transactionID=" + this.transactionID;
-            String[] projection = new String[]{"splitID"};
-            String hydrateSplitsString = "SELECT splitID FROM splits WHERE transactionID=?";
-            Cursor curs = Database.rawQuery(hydrateSplitsString, new String[]{String.valueOf(this.transactionID)});
-            if (curs.getCount() != 0) {
-                if (this.splits == null) {
-                    this.splits = new ArrayList<>();
-                }
-                while (curs.moveToNext()) {
-                    SplitsClass split = new SplitsClass(curs.getInt(0));
-                    split.hydrate();
-                    this.splits.add(split);
-                }
-            }
-            this.hydratedSplits = true;
-            curs.close();
+    @SuppressWarnings("unused")
+    public int getTransferTransactionID() {
+        hydrate();
+        if (getSplits().size() > 0) {
+            return this.splits.get(0).getTransferTransactionID();
         }
+        return 0;
     }
 
     public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
@@ -946,19 +910,19 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
     }
 
-    public void updateWithXML(String xmlTransaction) {
-        if (xmlTransaction.startsWith("<images>")) {
-            xmlTransaction = xmlTransaction.replaceAll("[\r\n]", "");
+    @SuppressWarnings("unused")
+    public void adjustSplits() {
+        if (getSplitsTotal() == getSubTotal()) {
+            return;
         }
-        int index = xmlTransaction.indexOf(10);
-        try {
-            XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
-            InputSource is = new InputSource(new StringReader(xmlTransaction));
-            xr.setContentHandler(this);
-            xr.parse(is);
-        } catch (Exception e) {
-            Log.e(SMMoney.TAG, "Error parsing xml");
+        if (getNumberOfSplits() <= 1) {
+            setAmount(getSubTotal());
+            return;
         }
+        SplitsClass split = new SplitsClass();
+        split.setCategory("Miscellaneous");
+        split.setAmount(getSubTotal() - getSplitsTotal());
+        this.splits.add(split);
     }
 
     public void updateWithXMLFile(File f) {
@@ -1002,6 +966,145 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         this.currentElementValue = null;
     }
 
+    public void hydrate() {
+        if (!this.hydrated) {
+            new SQLiteQueryBuilder().setTables(Database.TRANSACTIONS_TABLE_NAME);
+            @SuppressWarnings("unused") String selection = "transactionID=" + this.transactionID;
+            @SuppressWarnings("unused") String[] projection = new String[]{"deleted", "timestamp", "type", "date", "cleared", "accountID", "payee", "checkNumber", "ofxID", "image", "subTotal", "serverID"};
+            Cursor curs = Database.rawQuery(transactionSelectionString, new String[]{String.valueOf(this.transactionID)});
+            if (curs.getCount() != 0) {
+                curs.moveToFirst();
+                boolean wasDirty = this.dirty;
+                int col = 1;
+                setDeleted(curs.getInt(0) == 1);
+                this.timestamp = new GregorianCalendar();
+                int col2 = col + 1;
+                this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);
+                col = col2 + 1;
+                setType(curs.getInt(col2));
+                this.date = new GregorianCalendar();
+                col2 = col + 1;
+                long tempdate = (long) curs.getDouble(col);
+                Log.d("@@@@@@@@@@@@@@@@@@@", " before x 1000 = " + tempdate);
+                Log.d("@@@@@@@@@@@@@@@@@@@", " after x 1000 = " + (tempdate * 1000));
+                this.date.setTimeInMillis(1000 * ((long) curs.getDouble(col)));
+                col = col2 + 1;
+                setCleared(curs.getInt(col2) == 1);
+                col2 = col + 1;
+                setAccount(AccountClass.accountForID(curs.getInt(col)));
+                col = col2 + 1;
+                String str = curs.getString(col2);
+                if (str == null) {
+                    str = "";
+                }
+                setPayee(str);
+                col2 = col + 1;
+                str = curs.getString(col);
+                if (str == null) {
+                    str = "";
+                }
+                setCheckNumber(str);
+                col = col2 + 1;
+                str = curs.getString(col2);
+                if (str == null) {
+                    str = "";
+                }
+                setOfxID(str);
+                col2 = col + 1;
+                str = curs.getString(col);
+                if (str == null) {
+                    str = "";
+                }
+                setImageLocation(str);
+                col = col2 + 1;
+                setSubTotal(curs.getDouble(col2));
+                str = curs.getString(col);
+                if (str == null) {
+                    str = "";
+                }
+                setServerID(str);
+                hydrateSplits();
+                if (!wasDirty && this.dirty) {
+                    this.dirty = false;
+                }
+            } else {
+                if (this.timestamp == null) {
+                    this.timestamp = new GregorianCalendar();
+                }
+                if (this.date == null) {
+                    setDate(new GregorianCalendar());
+                    setType(0);
+                }
+            }
+            curs.close();
+            this.hydrated = true;
+            if (this.type == 5) {
+                this.isRepeatingTransaction = true;
+                initType(); // this changes type from '5' (ie repeating) to '0' (ie withdrawal) or whatever type it is
+                return;
+            }
+            this.isRepeatingTransaction = false;
+        }
+    }
+
+    public void characters(char[] ch, int start, int length) {
+        if (this.currentElementValue == null) {
+            this.currentElementValue = new String(ch, start, length);
+            return;
+        }
+        String buffer = this.currentElementValue.concat(new String(ch, start, length));
+        this.currentElementValue = null;
+        this.currentElementValue = buffer;
+    }
+
+    private void addText(XmlSerializer body, String text) throws IOException {
+        if (text == null) {
+            text = "";
+        }
+        body.text(text);
+    }
+
+    private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
+        body.text(text == null ? "" : encode(text));
+    }
+
+    private void hydrateSplits() {
+        if (!this.hydratedSplits) {
+            new SQLiteQueryBuilder().setTables(Database.SPLITS_TABLE_NAME);
+            @SuppressWarnings("unused") String selection = "transactionID=" + this.transactionID;
+            @SuppressWarnings("unused") String[] projection = new String[]{"splitID"};
+            String hydrateSplitsString = "SELECT splitID FROM splits WHERE transactionID=?";
+            Cursor curs = Database.rawQuery(hydrateSplitsString, new String[]{String.valueOf(this.transactionID)});
+            if (curs.getCount() != 0) {
+                if (this.splits == null) {
+                    this.splits = new ArrayList<>();
+                }
+                while (curs.moveToNext()) {
+                    SplitsClass split = new SplitsClass(curs.getInt(0));
+                    split.hydrate();
+                    this.splits.add(split);
+                }
+            }
+            this.hydratedSplits = true;
+            curs.close();
+        }
+    }
+
+    public void updateWithXML(String xmlTransaction) {
+        if (xmlTransaction.startsWith("<images>")) {
+            xmlTransaction = xmlTransaction.replaceAll("[\r\n]", "");
+        }
+        @SuppressWarnings("unused") int index = xmlTransaction.indexOf(10);
+        try {
+            XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
+            InputSource is = new InputSource(new StringReader(xmlTransaction));
+            xr.setContentHandler(this);
+            xr.parse(is);
+        } catch (Exception e) {
+            Log.e(SMMoney.TAG, "Error parsing xml");
+        }
+    }
+
     public void endElement(String namespaceURI, String localName, String qName) {
         boolean z = false;
         if (this.currentElementValue == null) {
@@ -1037,6 +1140,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             case "filename":
                 if (this.data != null) {
                     try {
+                        //noinspection ResultOfMethodCallIgnored
                         new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/").mkdirs();
                         FileOutputStream fos = new FileOutputStream(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + this.currentElementValue);
                         int length = this.data.length;
@@ -1083,8 +1187,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 this.parserSplit.setXrate(Double.parseDouble(this.currentElementValue));
                 break;
             case "image":
-                if (!(this.currentElementValue == null || this.currentElementValue.length() <= 0 || this.currentElementValue.contains("\n"))) {
-                    setImageLocation(URLDecoder.decode(this.currentElementValue));
+                if (!(this.currentElementValue.length() <= 0 || this.currentElementValue.contains("\n"))) {
+                    try {
+                        setImageLocation(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                    } catch (UnsupportedEncodingException e) {
+                        Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                    }
                 }
                 break;
             case "serverID":
@@ -1099,14 +1207,18 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this, URLDecoder.decode(this.currentElementValue));
+                    f.set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
                 } catch (Exception e3) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
                 break;
             }
             case "class":
-                this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue));
+                try {
+                    this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                }
                 break;
             case "currencyCode":
             case "transferToAccount":
@@ -1116,7 +1228,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this.parserSplit, URLDecoder.decode(this.currentElementValue));
+                    f.set(this.parserSplit, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
                 } catch (Exception e4) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -1126,100 +1238,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         this.currentElementValue = null;
     }
 
-    public void characters(char[] ch, int start, int length) {
-        if (this.currentElementValue == null) {
-            this.currentElementValue = new String(ch, start, length);
-            return;
-        }
-        String buffer = this.currentElementValue.concat(new String(ch, start, length));
-        this.currentElementValue = null;
-        this.currentElementValue = buffer;
-    }
-
-    private void addText(XmlSerializer body, String text) throws IOException {
-        if (text == null) {
-            text = "";
-        }
-        body.text(text);
-    }
-
-    private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
-        body.text(text == null ? "" : encode(text));
-    }
-
-    public static boolean writeXMLStringWithFileNameToStream(BufferedOutputStream output, String fileName, boolean withImages) {
-        return false;
-    }
-
-    public static String XMLStringWithFileNameToString(String fileName, boolean withImages) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<image>");
-        if (withImages) {
-            try {
-                String imgdata = "<imagedata>";
-                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
-                if (f.exists()) {
-                    FileInputStream fin = new FileInputStream(f.getAbsolutePath());
-                    int totalRead = 0;
-                    int read = 0;
-                    int size = (int) f.length();
-                    byte[] data = new byte[size];
-                    while (totalRead < size && read != -1) {
-                        read = fin.read(data, totalRead, size - totalRead);
-                        totalRead += read;
-                    }
-                    if (data != null) {
-                        imgdata = imgdata + Base64.encode(data) + "</imagedata>";
-                    }
-                    sb.append(imgdata);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        sb.append("<filename>");
-        sb.append(fileName);
-        sb.append("</filename>");
-        sb.append("</image>");
-        return sb.toString();
-    }
-
-    private static void XMLStringWithFileName(XmlSerializer body, String fileName, boolean withImages) {
-        try {
-            body.startTag(null, "image");
-            if (withImages) {
-                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
-                if (f.exists()) {
-                    FileInputStream fin = new FileInputStream(f.getAbsolutePath());
-                    int totalRead = 0;
-                    int read = 0;
-                    int size = (int) f.length();
-                    byte[] data = new byte[size];
-                    while (totalRead < size && read != -1) {
-                        read = fin.read(data, totalRead, size - totalRead);
-                        totalRead += read;
-                    }
-                    if (data != null) {
-                        body.startTag(null, "imagedata");
-                        String hmmm = Base64.encode(data);
-                        PocketMoneySyncClass.printToFile(hmmm, "image.out");
-                        body.text(hmmm);
-                        body.endTag(null, "imagedata");
-                    }
-                }
-            }
-            body.startTag(null, "filename");
-            body.text(fileName);
-            body.endTag(null, "filename");
-            body.endTag(null, "image");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     public String XMLStringWithImages(boolean withImages) {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

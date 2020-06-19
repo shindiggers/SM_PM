@@ -149,11 +149,10 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                 case Enums.kDesktopSyncStateSendPhotos /*30*/:
                     if (this.imageSentCounter >= this.imageFilenames.size()) {
                         sendTheEnd();
-                        break;
                     } else {
                         sendPhoto();
-                        break;
                     }
+                    break;
                 case Enums.kDesktopSyncStateSentPhoto /*32*/:
                     this.imageSentCounter++;
                     getPhotoACKHeader();
@@ -164,11 +163,10 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                 case Enums.kDesktopSyncStatePhotoReceived /*36*/:
                     if (!processPhotos()) {
                         setCurrentState(Enums.kDesktopSyncStateUDIDReceived/*22*/);
-                        break;
                     } else {
                         sendPhotoACK();
-                        break;
                     }
+                    break;
                 case Enums.kDesktopSyncStateSentPhotoACK /*39*/:
                     getPhotoHeader();
                     break;
@@ -201,11 +199,10 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                 case Enums.kDesktopSyncStateSentACK /*55*/:
                     if (this.syncVersion != 1) {
                         getPhotoHeader();
-                        break;
                     } else {
                         getUDIDHeader();
-                        break;
                     }
+                    break;
                 case Enums.kDesktopSyncStateACKHeaderReceived /*57*/:
                     getACK();
                     break;
@@ -277,11 +274,11 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
         if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT) || localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION) || localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY) || localName.equals(PayeeClass.XML_RECORDTAG_PAYEE) || localName.equals(IDClass.XML_RECORDTAG_ID) || localName.equals(ClassNameClass.XML_RECORDTAG_CLASS) || localName.equals(FilterClass.XML_RECORDTAG_FILTER) || localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION) || localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
-            this.currentElementValue = new String("<" + localName + ">");
+            this.currentElementValue = "<" + localName + ">";
         } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
             this.accounts = new ArrayList<>();
         } else if (this.currentElementValue == null) {
-            this.currentElementValue = new String("<" + localName + ">");
+            this.currentElementValue = "<" + localName + ">";
         } else {
             this.currentElementValue += "<" + localName + ">";
         }
@@ -289,59 +286,70 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
 
     public void endElement(String namespaceURI, String localName, String qName) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String("</" + localName + ">");
+            this.currentElementValue = "</" + localName + ">";
         } else {
             this.currentElementValue += "</" + localName + ">";
         }
-        if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT)) {
-            AccountClass act = new AccountClass();
-            act.updateWithXML(this.currentElementValue);
-            processRecentAccount(act);
-            this.accounts.add(act);
-        } else if (localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION)) {
-            TransactionClass t = new TransactionClass();
-            t.updateWithXML(this.currentElementValue);
-            processRecentTransaction(t);
-        } else if (localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY)) {
-            CategoryClass c = new CategoryClass();
-            c.updateWithXML(this.currentElementValue);
-            processRecentChange(c, CategoryClass.class, "categoryID");
-        } else if (localName.equals(PayeeClass.XML_RECORDTAG_PAYEE)) {
-            PayeeClass p = new PayeeClass(0);
-            p.updateWithXML(this.currentElementValue);
-            processRecentChange(p, PayeeClass.class, "payeeID");
-        } else if (localName.equals(IDClass.XML_RECORDTAG_ID)) {
-            IDClass c2 = new IDClass(0);
-            c2.updateWithXML(this.currentElementValue);
-            processRecentChange(c2, IDClass.class, "idID");
-        } else if (localName.equals(ClassNameClass.XML_RECORDTAG_CLASS)) {
-            ClassNameClass c3 = new ClassNameClass(0);
-            c3.updateWithXML(this.currentElementValue);
-            processRecentChange(c3, ClassNameClass.class, "classID");
-        } else if (localName.equals(FilterClass.XML_RECORDTAG_FILTER)) {
-            FilterClass c4 = new FilterClass();
-            c4.updateWithXML(this.currentElementValue);
-            processRecentChange(c4, FilterClass.class, "filterID");
-        } else if (localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION)) {
-            RepeatingTransactionClass c5 = new RepeatingTransactionClass();
-            c5.updateWithXML(this.currentElementValue);
-            processRecentRepeatingTransaction(c5);
-        } else if (localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
-            CategoryBudgetClass c6 = new CategoryBudgetClass();
-            c6.updateWithXML(this.currentElementValue);
-            processRecentChange(c6, CategoryBudgetClass.class, "categoryBudgetID");
-        } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
-            processAccounts(this.accounts);
-            this.accounts = null;
-        } else {
-            return;
+        switch (localName) {
+            case AccountClass.XML_RECORDTAG_ACCOUNT:
+                AccountClass act = new AccountClass();
+                act.updateWithXML(this.currentElementValue);
+                processRecentAccount(act);
+                this.accounts.add(act);
+                break;
+            case TransactionClass.XML_RECORDTAG_TRANSACTION:
+                TransactionClass t = new TransactionClass();
+                t.updateWithXML(this.currentElementValue);
+                processRecentTransaction(t);
+                break;
+            case CategoryClass.XML_RECORDTAG_CATEGORY:
+                CategoryClass c = new CategoryClass();
+                c.updateWithXML(this.currentElementValue);
+                processRecentChange(c, CategoryClass.class, "categoryID");
+                break;
+            case PayeeClass.XML_RECORDTAG_PAYEE:
+                PayeeClass p = new PayeeClass(0);
+                p.updateWithXML(this.currentElementValue);
+                processRecentChange(p, PayeeClass.class, "payeeID");
+                break;
+            case IDClass.XML_RECORDTAG_ID:
+                IDClass c2 = new IDClass(0);
+                c2.updateWithXML(this.currentElementValue);
+                processRecentChange(c2, IDClass.class, "idID");
+                break;
+            case ClassNameClass.XML_RECORDTAG_CLASS:
+                ClassNameClass c3 = new ClassNameClass(0);
+                c3.updateWithXML(this.currentElementValue);
+                processRecentChange(c3, ClassNameClass.class, "classID");
+                break;
+            case FilterClass.XML_RECORDTAG_FILTER:
+                FilterClass c4 = new FilterClass();
+                c4.updateWithXML(this.currentElementValue);
+                processRecentChange(c4, FilterClass.class, "filterID");
+                break;
+            case RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION:
+                RepeatingTransactionClass c5 = new RepeatingTransactionClass();
+                c5.updateWithXML(this.currentElementValue);
+                processRecentRepeatingTransaction(c5);
+                break;
+            case CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET:
+                CategoryBudgetClass c6 = new CategoryBudgetClass();
+                c6.updateWithXML(this.currentElementValue);
+                processRecentChange(c6, CategoryBudgetClass.class, "categoryBudgetID");
+                break;
+            case AccountClass.XML_LISTTAG_ACCOUNTS:
+                processAccounts(this.accounts);
+                this.accounts = null;
+                break;
+            default:
+                return;
         }
         this.currentElementValue = null;
     }
 
     public void characters(char[] ch, int start, int length) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String(new String(ch, start, length).trim());
+            this.currentElementValue = new String(ch, start, length).trim();
         } else {
             this.currentElementValue += new String(ch, start, length);
         }

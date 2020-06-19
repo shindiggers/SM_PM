@@ -76,9 +76,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private TextView titleTextView;
 
     private class LookupRowAdapter<T> extends BaseAdapter {
-        LayoutInflater inflator;
-        List<T> items;
-        int layoutResId;
+        final LayoutInflater inflator;
+        final List<T> items;
+        final int layoutResId;
 
         LookupRowAdapter(int layoutResId, List<T> items) {
             this.items = items;
@@ -110,9 +110,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     class MyIndexerAdapter<T> extends LookupRowAdapter<T> implements SectionIndexer {
-        HashMap<String, Integer> alphaIndexer = new HashMap<>();
-        ArrayList<String> myElements;
-        String[] sections;
+        final HashMap<String, Integer> alphaIndexer = new HashMap<>();
+        final ArrayList<String> myElements;
+        final String[] sections;
 
         MyIndexerAdapter(Context context, int textViewResourceId, List<T> objects) {
             super(textViewResourceId, objects);

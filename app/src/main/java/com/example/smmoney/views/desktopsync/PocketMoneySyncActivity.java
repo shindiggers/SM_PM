@@ -48,12 +48,16 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private final int DIALOG_FIRST_UDID_CLIENT = 2;
     private final int DIALOG_FIRST_UDID_SERVER = 3;
     private final int DIALOG_NO_HOST = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_OPEN_CONNECTION = 4;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_PURCHASE = 6;
     private final int DIALOG_REPEATINGWARNING = 7;
     private final int DIALOG_RESTORE = 5;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_UPGRADE = 8;
     private final int DIALOG_WIFI = 9;
+    @SuppressWarnings("unused")
     private Hashtable addresses;
     private RadioButton clientRadioButton;
     private TextView descriptionTextView;
@@ -69,6 +73,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private ProgressBar progressBar;
     private CheckBox restoreCheckBox;
     private TextView restoreTextView;
+    @SuppressWarnings("FieldCanBeLocal")
     private RadioButton serverRadioButton;
     private ProgressBar spinningWheel;
     private TextView statusTextView;
@@ -241,15 +246,14 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             this.pocketmoneySync.restoreFromServer = this.restoreCheckBox.isChecked();
             if (this.pocketmoneySync.host == null || this.pocketmoneySync.host.equals("")) {
                 showDialog(DIALOG_NO_HOST/*1*/);
-                return;
             } else {
                 new Thread() {
                     public void run() {
                         ((PocketMoneySyncClientClass) PocketMoneySyncActivity.this.pocketmoneySync).connectToServer();
                     }
                 }.start();
-                return;
             }
+            return;
         }
         this.spinningWheel.setVisibility(View.VISIBLE);
         if (this.pocketmoneySync == null) {

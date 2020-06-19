@@ -18,6 +18,7 @@ import org.xmlpull.v1.XmlSerializer;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
@@ -25,8 +26,8 @@ import java.util.GregorianCalendar;
 import javax.xml.parsers.SAXParserFactory;
 
 public class ClassNameClass extends PocketMoneyRecordClass {
-    public static String XML_LISTTAG_CLASSES = "CLASSES";
-    public static String XML_RECORDTAG_CLASS = "CLASSCLASS";
+    public static final String XML_LISTTAG_CLASSES = "CLASSES";
+    public static final String XML_RECORDTAG_CLASS = "CLASSCLASS";
     private int classID;
     private String className;
     private String currentElementValue;
@@ -153,6 +154,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         }
     }
 
+    @SuppressWarnings("unused")
     public static void renameFromToInDatabase(String fromText, String toText) {
         if (fromText == null) {
             fromText = "";
@@ -186,6 +188,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return (int) id;
     }
 
+    @SuppressWarnings("unused")
     public static int idForClassNameElseAddIfMissing(String aClass, boolean addIt) {
         int id = idForClass(aClass);
         if (id == 0 && addIt) {
@@ -210,6 +213,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return categoryID;
     }
 
+    @SuppressWarnings("unused")
     public static ClassNameClass recordWithServerID(String serverID) {
         ClassNameClass record = null;
         if (serverID == null || serverID.length() == 0) {
@@ -224,6 +228,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return record;
     }
 
+    @SuppressWarnings("unused")
     public static String classForID(int pk) {
         if (pk == 0) {
             return null;
@@ -246,6 +251,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return array;
     }
 
+    @SuppressWarnings("unused")
     public static int countOfClassInDatabase(String aClass) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.SPLITS_TABLE_NAME);
@@ -255,6 +261,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return count;
     }
 
+    @SuppressWarnings("unused")
     public static String closestRecordMatchForInDatabase(String aClass) {
         String aClassName = null;
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -305,7 +312,11 @@ public class ClassNameClass extends PocketMoneyRecordClass {
                 setDeleted(z);
                 break;
             case "class":
-                setClassName(URLDecoder.decode(this.currentElementValue));
+                try {
+                    setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                }
                 break;
             case "serverID":
                 setServerID(this.currentElementValue);
@@ -335,7 +346,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

@@ -41,6 +41,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.TransactionDB;
@@ -78,7 +80,9 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class TransactionsActivity extends PocketMoneyActivity implements HandlerActivity {
+    @SuppressWarnings("unused")
     public final int REQUEST_EDIT = 2;
+    @SuppressWarnings("unused")
     public final int REQUEST_NEW = 1;
     public final int TRANSACTION_REQUEST_EMAIL = 2;
     public final int TRANSACTION_REQUEST_FILTER = 1;
@@ -88,48 +92,55 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int EMAIL_CSV = 2;
     private final int EMAIL_QIF = 0;
     private final int EMAIL_TDF = 1;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int IMPORT_PROGRESS_DIALOG = 9;
     private final int MENU_EMAILTRANSFERS = 3;
     private final int MENU_FILETRANSFERS = 1;
     private final int MENU_FILTER = 4;
     private final int MENU_NEW = 1;
+    @SuppressWarnings("unused")
     private final int MENU_REPORTS = 5;
     private final int MENU_REPORTS_ACCOUNT = 6;
     private final int MENU_REPORTS_CATEGORY = 7;
     private final int MENU_REPORTS_CLASS = 8;
     private final int MENU_REPORTS_PAYEE = 9;
+    @SuppressWarnings("unused")
     private final int MENU_SDCARDTRANSFER = 5;
     private final int MENU_SD_EXPORT = 7;
+    @SuppressWarnings("unused")
     private final int MENU_SD_IMPORT = 6;
     private final int MENU_SEARCH = 24;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS = 3;
     private final int MENU_TOOLS_ADJUSTBALANCE = 13;
     private final int MENU_TOOLS_FILETRANSFERS = 10;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EMAIL = 17;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EMAIL_CSV = 23;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EMAIL_QIF = 21;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EMAIL_TDF = 22;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EXPORT = 16;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EXPORT_CSV = 20;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EXPORT_QIF = 18;
+    @SuppressWarnings("unused")
     private final int MENU_TOOLS_FILETRANSFERS_EXPORT_TDF = 19;
     private final int MENU_TOOLS_GOTODATE = 11;
     private final int MENU_TOOLS_MARKASCLEAR = 14;
     private final int MENU_TOOLS_ROLLUP = 15;
     private final int MENU_VIEW = 2;
+    @SuppressWarnings("unused")
     private final int MENU_WIFITRANSFERS = 2;
+    @SuppressWarnings("unused")
     private final int MENU_WIFI_EXPORT = 4;
     private FilterClass _filter;
     private TransactionRowAdapter adapter;
-    private RadioButton allButton;
-    private BalanceBar balanceBar;
-    private RadioButton clearedButton;
-    private Context context;
-    private String emailFileLocation;
-    private ArrayList<String> fileNames;
-    private boolean firstOpenOfView;
-    private ListView listView;
-    private OnDateSetListener mDateSetListener = new OnDateSetListener() {
+    private final OnDateSetListener mDateSetListener = new OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
             boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
@@ -143,13 +154,26 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             ((ListView) TransactionsActivity.this.findViewById(R.id.the_list)).setSelection(i);
         }
     };
+    private BalanceBar balanceBar;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private RadioButton allButton;
+    private Context context;
+    private String emailFileLocation;
+    private ArrayList<String> fileNames;
+    private boolean firstOpenOfView;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
+    private RadioButton clearedButton;
+    @SuppressWarnings("FieldCanBeLocal")
+    private ListView listView;
     private Handler mHandler = null;
     private int msgEmail = -1;
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private RadioButton pendingButton;
     private ProgressDialog progressDialog = null;
     private EditText searchEditText;
     private LinearLayout searchView;
     private boolean shouldEmail = false;
+    @SuppressWarnings("unused")
     private TextView titleTextView;
     private WakeLock wakeLock;
 
@@ -167,7 +191,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         //if (this._filter.getType() == 4 && !this._filter.customFilter()){
         //    Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_ALL_TRANSACTIONS);
         //} else {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount() == "" ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
+        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : Objects.equals(this._filter.getAccount(), "") ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
         //}
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -194,6 +218,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return true;
     }
 
+    @SuppressWarnings("unused")
     private void setTitle(String title) {
         this.titleTextView.setText(title);
     }
@@ -742,7 +767,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         switch (item) {
                             case EMAIL_QIF /*0*/:
                                 new Thread() {
-                                    ProgressDialog pd;
+                                    final ProgressDialog pd;
 
                                     {
                                         this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
@@ -758,7 +783,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 return;
                             case EMAIL_TDF /*1*/:
                                 new Thread() {
-                                    ProgressDialog pd;
+                                    final ProgressDialog pd;
 
                                     {
                                         this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
@@ -774,7 +799,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 return;
                             case EMAIL_CSV /*2*/:
                                 new Thread() {
-                                    ProgressDialog pd;
+                                    final ProgressDialog pd;
 
                                     {
                                         this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
@@ -819,6 +844,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         }
     }
 
+    @SuppressWarnings("unused")
     public void displayError(String msg) {
         AlertDialog alert = new AlertDialog.Builder(this.context).create();
         alert.setTitle("Error");
@@ -901,7 +927,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     @SuppressLint("HandlerLeak")
     private void createHandler() {
         this.mHandler = new Handler() {
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
                         if (TransactionsActivity.this.progressDialog == null) {

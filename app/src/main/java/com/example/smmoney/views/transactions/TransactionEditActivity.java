@@ -104,10 +104,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private final int DIALOG_FEE = 4;
     private final int DIALOG_NEED_ACCOUNT = 6;
     private final int DIALOG_NEED_REPEATING = 7;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITTEXT_AMOUNT = 3;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITTEXT_CATEGORY = 2;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITTEXT_CLASS = 5;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITTEXT_ID = 4;
+    @SuppressWarnings("FieldCanBeLocal")
     private final int EDITTEXT_PAYEE = 1;
     private final int MENU_CAMERA = 4;
     private final int MENU_DELETE = 5;
@@ -140,15 +145,20 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private Activity currentActivity;
     private int dateChanged;
     private TextView dateTextView;
-    private ArrayList<String> deletedImages = new ArrayList<>();
+    private final ArrayList<String> deletedImages = new ArrayList<>();
     private RadioButton depositButton;
     private AutoCompleteTextView idEditText;
     private boolean isIReceipt = false;
     private boolean isLocalNotification = false;
-    private TextView keepTheChangeButton;
-    private FrameLayout keyboardToolBar;
+    private final ArrayList<String> newlyAddedImages = new ArrayList<>();
+    private final OnTimeSetListener mTimeSetListener = new OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            TransactionEditActivity.this.timeTextView.setText(CalExt.descriptionWithShortTime(new GregorianCalendar(0, 0, 0, hourOfDay, minute)));
+        }
+    };
     private TextView memoTextView;
-    private ArrayList<String> newlyAddedImages = new ArrayList<>();
+    @SuppressWarnings("FieldCanBeLocal")
+    private TextView keepTheChangeButton;
     private AutoCompleteTextView payeeEditText;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler() {
@@ -166,14 +176,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private AlertDialog repeatingDateChangedAlert = null;
     private ImageView repeatingImageView;
     private RepeatingTransactionClass repeatingTransaction;
-    private ScrollView scrollView;
+    @SuppressWarnings("FieldCanBeLocal")
+    private FrameLayout keyboardToolBar;
     private File tempPhotoPath;
     private TextView timeTextView;
-    private OnTimeSetListener mTimeSetListener = new OnTimeSetListener() {
-        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-            TransactionEditActivity.this.timeTextView.setText(CalExt.descriptionWithShortTime(new GregorianCalendar(0, 0, 0, hourOfDay, minute)));
-        }
-    };
+    @SuppressWarnings("FieldCanBeLocal")
+    private ScrollView scrollView;
     private TextView titleTextView;
     private TransactionClass transaction;
     private RadioButton transferButton;
@@ -796,7 +804,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
 
     private void deleteNewlyAddedImages() {
         for (String newlyAddedImage : this.newlyAddedImages) {
-            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", new StringBuilder(String.valueOf(newlyAddedImage)).append(".jpg").toString()).delete()) {
+            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", newlyAddedImage + ".jpg").delete()) {
                 int hmm = 1;
             }
         }
@@ -882,6 +890,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         loadCells();
     }
 
+    @SuppressWarnings("unused")
     private View.OnClickListener getBalanceBarClickListener() {
         return new View.OnClickListener() {
             public void onClick(View v) {
@@ -995,6 +1004,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         startActivityForResult(i, REQUEST_SPLITS /*31*/);
     }
 
+    @SuppressWarnings("unused")
     private int getType() {
         if (this.withdrawalButton.isChecked()) {
             return 0;
@@ -1096,7 +1106,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             this.transaction.setXrate(xrateFromAccountToAccount(this.transaction.getAccount(), a1.getAccount()));
             this.transaction.setCurrencyCode(a1.getCurrencyCode());
             //this.amountXrateTextView.setText("x" + this.transaction.getXrate());
-            Double xRate = this.transaction.getXrate();
+            double xRate = this.transaction.getXrate();
             String currencyCode = this.transaction.getCurrencyCode();
             String tempFxString = "1" + Prefs.getStringPref(Prefs.HOMECURRENCYCODE) + " = " + currencyCode + xRate;
             this.foreignAmountTextView.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal() / this.transaction.getXrate()), this.transaction.getCurrencyCode()));
@@ -1125,7 +1135,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         if (this.transaction.getSubTotal() == 0.0d) {
             this.amountEditText.setText("");
         } else if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            Double xRate = this.transaction.getXrate();
+            double xRate = this.transaction.getXrate();
             String currencyCode = this.transaction.getCurrencyCode();
             String tempFxString = "1 " + Prefs.getStringPref(Prefs.HOMECURRENCYCODE) + " = " + xRate + " " + currencyCode;
 
@@ -1159,8 +1169,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     }
 
     private int useCanModifyChildTransferOfBasedOn(TransactionClass newRecord, TransactionClass oldRecord) {
-        Integer transferRecID = 0;
-        Integer transferSplitItem = 0;
+        int transferRecID;
+        int transferSplitItem = 0;
         boolean regularTransfer = newRecord.getCurrencyCode().equals(AccountDB.recordFor(newRecord.getAccount()).getCurrencyCode());
         if (oldRecord.getNumberOfSplits() > 1 || oldRecord.getTransferToAccount() == null || oldRecord.getTransferToAccount().length() <= 0) {
             return 2;
@@ -1183,8 +1193,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         double newRate;
         double newAmount;
         TransactionClass transferRecord;
-        Integer transferRecID = 0;
-        Integer transferSplitItem = 0;
+        int transferRecID;
+        int transferSplitItem;
         String currencyCode = AccountDB.recordFor(modRecP.getAccount()).getCurrencyCode();
         String tToCurrencyCode = "";
         int i = 0;
@@ -1355,6 +1365,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         }
     }
 
+    @SuppressWarnings("EmptyMethod")
     private void editTextDidChange(int editTextCode) {
     }
 
@@ -1435,13 +1446,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 case REQUEST_CAMERA_NEW /*35*/:
                     FileChannel inChannel = null;
                     FileChannel outChannel = null;
-                    String fileName = "";
+                    String fileName;
                     try {
                         Object obj;
-                        fileName = new StringBuilder(this.payeeEditText.getText().toString()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
+                        fileName = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
                         this.newlyAddedImages.add(fileName);
                         file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, new StringBuilder(fileName).append(".jpg").toString());
+                        file = new File(file, fileName + ".jpg");
                         if (!file.exists()) {
                             file.mkdirs();
                         }
@@ -1469,7 +1480,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         } else {
                             obj = this.transaction.getImageLocation();
                         }
-                        transactionClass.setImageLocation(new StringBuilder(String.valueOf(obj)).append(fileName).append(".jpg;").toString());
+                        transactionClass.setImageLocation(obj + fileName + ".jpg;");
                         break;
                     } catch (Exception e3) {
                         e3.printStackTrace();
@@ -1507,7 +1518,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         }
                     }
                 case REQUEST_CAMERA_PICK /*36*/:
-                    String fileName2 = new StringBuilder(this.payeeEditText.getText().toString()).append("-").append(CalExt.descriptionWithTimestamp(new GregorianCalendar())).toString();
+                    String fileName2 = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
                     String[] filePathColumn = new String[]{"_data"};
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
                     cursor.moveToFirst();
@@ -1516,13 +1527,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
                     try {
                         file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, new StringBuilder(fileName2).append(".jpg").toString());
+                        file = new File(file, fileName2 + ".jpg");
                         if (!file.exists()) {
                             file.mkdirs();
                         }
                         boolean fail = file.createNewFile();
                         yourSelectedImage.compress(CompressFormat.JPEG, 90, new FileOutputStream(file));
-                        this.transaction.setImageLocation(new StringBuilder(this.transaction.getImageLocation() == null ? "" : this.transaction.getImageLocation()).append(fileName2).append(".jpg;").toString());
+                        this.transaction.setImageLocation((this.transaction.getImageLocation() == null ? "" : this.transaction.getImageLocation()) + fileName2 + ".jpg;");
                         this.newlyAddedImages.add(fileName2);
                         break;
                     } catch (Exception e32) {
@@ -1532,7 +1543,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 case REQUEST_PHOTO_OPTION /*37*/:
                     String fileNamee = data.getExtras().getString("imageName");
                     this.deletedImages.add(fileNamee);
-                    this.transaction.setImageLocation(this.transaction.getImageLocation().replace(new StringBuilder(String.valueOf(fileNamee)).append(";").toString(), ""));
+                    this.transaction.setImageLocation(this.transaction.getImageLocation().replace(fileNamee + ";", ""));
                     reloadData();
                     break;
             }
@@ -1829,9 +1840,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     }
 
     private class MyKeyListener implements KeyListener {
-        KeyListener original;
-        private int editTextCode;
-        private int suggest;
+        final KeyListener original;
+        private final int editTextCode;
+        private final int suggest;
 
         private MyKeyListener(KeyListener orig, int code) {
             this.original = orig;

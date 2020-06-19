@@ -24,12 +24,12 @@ import java.util.ArrayList;
 
 public class PhotoReceiptsCell extends View {
     private int PHOTO_HEIGHT = 40;
-    private int PHOTO_SPACE_H = 10;
+    private final int PHOTO_SPACE_H = 10;
     private int PHOTO_SPACE_W = -1;
     private int PHOTO_WIDTH = 40;
-    private ArrayList<Bitmap> bitmaps = new ArrayList<>();
-    private Context context;
-    private ArrayList<String> imageNames = new ArrayList<>();
+    private final ArrayList<Bitmap> bitmaps = new ArrayList<>();
+    private final Context context;
+    private final ArrayList<String> imageNames = new ArrayList<>();
     private int itemsPerRow = 3;
 
     public PhotoReceiptsCell(Context context, AttributeSet attrs) {

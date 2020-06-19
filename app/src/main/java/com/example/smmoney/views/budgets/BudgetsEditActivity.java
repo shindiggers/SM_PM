@@ -60,17 +60,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private CurrencyKeyboard currencyKeyboard;
     private ArrayList<CategoryBudgetClass> deletedCategoryBudgetItems;
     private Button enableVariableBudgetCell;
-    private View includeSubcategoriesCell;
-    private CheckBox includeSubcategoriesCheckBox;
-    private String oldCategory;
-    private TextView originalHistoryBudgetTextView;
-    private View originalHistoryCell;
-    private TextView originalHistoryDateTextView;
-    private ViewGroup outterView;
-    private TextView periodTextView;
-    private CheckBox rolloverCheckBox;
-    private CategoryBudgetClass selectedBudgetItem;
-    private OnDateSetListener mDateSetListener = new OnDateSetListener() {
+    private final OnDateSetListener mDateSetListener = new OnDateSetListener() {
         public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
             GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
             if (BudgetsEditActivity.this.selectedBudgetItem == null) {
@@ -81,6 +71,17 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             BudgetsEditActivity.this.reloadData();
         }
     };
+    private CheckBox includeSubcategoriesCheckBox;
+    private String oldCategory;
+    private TextView originalHistoryBudgetTextView;
+    private View originalHistoryCell;
+    private TextView originalHistoryDateTextView;
+    private ViewGroup outterView;
+    private TextView periodTextView;
+    private CheckBox rolloverCheckBox;
+    private CategoryBudgetClass selectedBudgetItem;
+    @SuppressWarnings("FieldCanBeLocal")
+    private View includeSubcategoriesCell;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -383,13 +384,13 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     private void save() {
         this.category.saveToDatabase();
-        Iterator it = this.categoryBudgetItems.iterator();
+        Iterator<CategoryBudgetClass> it = this.categoryBudgetItems.iterator();
         while (it.hasNext()) {
-            ((CategoryBudgetClass) it.next()).saveToDatabase();
+            it.next().saveToDatabase();
         }
         it = this.deletedCategoryBudgetItems.iterator();
         while (it.hasNext()) {
-            CategoryBudgetClass bItem = (CategoryBudgetClass) it.next();
+            CategoryBudgetClass bItem = it.next();
             if (bItem.categoryBudgetID != 0) {
                 bItem.deleteFromDatabase();
             }
@@ -420,7 +421,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode != 0) {
-            String selection = "";
+            String selection;
             try {
                 if (data.getExtras() != null) {
                     selection = data.getExtras().getString("selection");

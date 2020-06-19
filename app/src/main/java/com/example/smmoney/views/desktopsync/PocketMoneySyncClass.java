@@ -58,33 +58,95 @@ public class PocketMoneySyncClass extends DefaultHandler {
     int syncVersion = 0;
     String udid;
 
-    static class AnonymousClass1TempTransAccountClass {
-        String account;
-        String serverID;
-
-        AnonymousClass1TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
+    protected void processRecentAccounts(PocketMoneyRecordClass[] recentChanges) {
+        if (recentChanges != null) {
+            AnonymousClass1TempTransAccountClass tempAct;
+            AccountClass act;
+            ArrayList<AnonymousClass1TempTransAccountClass> overdraftAccounts = new ArrayList<>();
+            ArrayList<AnonymousClass1TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
+            for (PocketMoneyRecordClass rec : recentChanges) {
+                AccountClass record = (AccountClass) rec;
+                if (record.serverID == null || record.serverID.length() <= 0) {
+                    record.serverID = Database.newServerID();
+                    record.saveToDataBaseAndUpdateTimeStamp(true);
+                } else {
+                    AccountClass oldTransaction = AccountClass.recordWithServerID(record.serverID);
+                    if (oldTransaction != null) {
+                        oldTransaction.hydrate();
+                        if (!oldTransaction.timestamp.after(record.timestamp)) {
+                            record.accountID = oldTransaction.accountID;
+                        }
+                    } else {
+                        record.accountID = 0;
+                    }
+                    if (record.getOverdraftAccount() != null && record.getOverdraftAccount().length() > 0) {
+                        overdraftAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getOverdraftAccount()));
+                    }
+                    if (record.getKeepTheChangeAccount() != null && record.getKeepTheChangeAccount().length() > 0) {
+                        keepTheChangeAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getKeepTheChangeAccount()));
+                    }
+                    record.saveToDataBaseAndUpdateTimeStamp(true);
+                }
+            }
+            Iterator<AnonymousClass1TempTransAccountClass> it = keepTheChangeAccounts.iterator();
+            while (it.hasNext()) {
+                tempAct = it.next();
+                act = AccountClass.recordWithServerID(tempAct.serverID);
+                if (act != null) {
+                    act.hydrate();
+                    act.setKeepTheChangeAccount(tempAct.account);
+                    act.saveToDatabase();
+                }
+            }
+            it = overdraftAccounts.iterator();
+            while (it.hasNext()) {
+                tempAct = it.next();
+                act = AccountClass.recordWithServerID(tempAct.serverID);
+                if (act != null) {
+                    act.hydrate();
+                    act.setOverdraftAccount(tempAct.account);
+                    act.saveToDatabase();
+                }
+            }
         }
     }
 
-    static class AnonymousClass2TempTransAccountClass {
-        String account;
-        String serverID;
-
-        AnonymousClass2TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
-        }
+    @SuppressWarnings("EmptyMethod")
+    protected void stackSafePhotoProcess() {
     }
 
-    static class AnonymousClass3TempTransAccountClass {
-        String account;
-        String serverID;
-
-        AnonymousClass3TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
+    void getRecentChanges() {
+        setCurrentState(Enums.kDesktopSyncStateReceivingRecentChanges/*50*/);
+        float totalSize = (float) sizeFromHeader();
+        try {
+            System.gc();
+            byte[] newData = new byte[1024];
+            int readIn = this.asyncSocket.getInputStream().read(newData, 0, "DATA:".length());
+            if (readIn != -1) {
+                int totalReadIn = readIn;
+                deleteTempFile();
+                BufferedOutputStream fr = new BufferedOutputStream(new FileOutputStream(new File(SMMoney.getTempFile()).getAbsoluteFile()));
+                while (((float) totalReadIn) < totalSize) {
+                    readIn = this.asyncSocket.getInputStream().read(newData, 0, 1024);
+                    if (readIn == -1) {
+                        break;
+                    }
+                    fr.write(newData, 0, readIn);
+                    totalReadIn += readIn;
+                }
+                Log.i("DEBUGTAG123", "getRecentChanges totalReadIn=" + totalReadIn);
+                fr.flush();
+                fr.close();
+                //noinspection IfStatementWithIdenticalBranches
+                if (this.server) {
+                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
+                } else {
+                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
+                }
+            }
+        } catch (IOException e) {
+            Log.e(SMMoney.TAG, e.getLocalizedMessage());
+            e.printStackTrace();
         }
     }
 
@@ -283,56 +345,38 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void processRecentAccounts(PocketMoneyRecordClass[] recentChanges) {
-        if (recentChanges != null) {
-            AnonymousClass1TempTransAccountClass tempAct;
-            AccountClass act;
-            ArrayList<AnonymousClass1TempTransAccountClass> overdraftAccounts = new ArrayList<>();
-            ArrayList<AnonymousClass1TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
-            for (PocketMoneyRecordClass rec : recentChanges) {
-                AccountClass record = (AccountClass) rec;
-                if (record.serverID == null || record.serverID.length() <= 0) {
-                    record.serverID = Database.newServerID();
-                    record.saveToDataBaseAndUpdateTimeStamp(true);
+    void sendRecentChanges() {
+        setCurrentState(Enums.kDesktopSyncStateSendingRecentChanges/*46*/);
+        newRecentDatabaseChanges();
+        try {
+            File f = new File(SMMoney.getTempFile());
+            BufferedInputStream fr = new BufferedInputStream(new FileInputStream(f.getAbsoluteFile()));
+            int totalSize = (int) f.length();
+            byte[] chunk = new byte[1024];
+            int totalRead = 0;
+            while (totalRead < totalSize) {
+                int read = fr.read(chunk, 0, 1024);
+                if (read == -1) {
+                    break;
+                }
+                if (totalRead == 0) {
+                    byte[] outData = packageDataWithHeader(chunk, totalSize);
+                    this.asyncSocket.getOutputStream().write(outData, 0, outData.length);
                 } else {
-                    AccountClass oldTransaction = AccountClass.recordWithServerID(record.serverID);
-                    if (oldTransaction != null) {
-                        oldTransaction.hydrate();
-                        if (!oldTransaction.timestamp.after(record.timestamp)) {
-                            record.accountID = oldTransaction.accountID;
-                        }
-                    } else {
-                        record.accountID = 0;
-                    }
-                    if (record.getOverdraftAccount() != null && record.getOverdraftAccount().length() > 0) {
-                        overdraftAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getOverdraftAccount()));
-                    }
-                    if (record.getKeepTheChangeAccount() != null && record.getKeepTheChangeAccount().length() > 0) {
-                        keepTheChangeAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getKeepTheChangeAccount()));
-                    }
-                    record.saveToDataBaseAndUpdateTimeStamp(true);
+                    this.asyncSocket.getOutputStream().write(chunk, 0, read);
                 }
+                totalRead += read;
             }
-            Iterator it = keepTheChangeAccounts.iterator();
-            while (it.hasNext()) {
-                tempAct = (AnonymousClass1TempTransAccountClass) it.next();
-                act = AccountClass.recordWithServerID(tempAct.serverID);
-                if (act != null) {
-                    act.hydrate();
-                    act.setKeepTheChangeAccount(tempAct.account);
-                    act.saveToDatabase();
-                }
-            }
-            it = overdraftAccounts.iterator();
-            while (it.hasNext()) {
-                tempAct = (AnonymousClass1TempTransAccountClass) it.next();
-                act = AccountClass.recordWithServerID(tempAct.serverID);
-                if (act != null) {
-                    act.hydrate();
-                    act.setOverdraftAccount(tempAct.account);
-                    act.saveToDatabase();
-                }
-            }
+            Log.i("DEBUGTAG123", "sendRecentChanges totalRead=" + totalRead);
+            fr.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        //noinspection IfStatementWithIdenticalBranches
+        if (this.server) {
+            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
+        } else {
+            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
         }
     }
 
@@ -483,7 +527,35 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    protected void stackSafePhotoProcess() {
+    void parseTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
+        String xmlBlock;
+        String startTag = "<" + recordTag + ">";
+        String endTag = "</" + recordTag + ">";
+        String startList = "<" + listTag + ">";
+        String endList = "</" + listTag + ">";
+        int currentIndex = sData.indexOf(startList);
+        int endIndex = sData.indexOf(endList);
+        if (currentIndex == -1 || endIndex == -1) {
+            Log.e(SMMoney.TAG, "couldnt find " + startList);
+            return;
+        }
+        xmlBlock = sData.substring(currentIndex, endIndex);
+        String transactionXML = "";
+        currentIndex = xmlBlock.indexOf(startTag) + startTag.length();
+        int cancel = startTag.length() - 1;
+        while (currentIndex != cancel) {
+            endIndex = xmlBlock.indexOf(endTag, currentIndex);
+            try {
+                String taggedString = startTag + xmlBlock.substring(currentIndex, endIndex) + endTag;
+                TransactionClass record = new TransactionClass();
+                record.updateWithXML(taggedString);
+                processRecentTransaction(record);
+            } catch (Exception e) {
+                Log.e(SMMoney.TAG, e.getLocalizedMessage());
+                e.printStackTrace();
+            }
+            currentIndex = xmlBlock.indexOf(startTag, endIndex) + startTag.length();
+        }
     }
 
     void sendPhoto() {
@@ -802,122 +874,12 @@ public class PocketMoneySyncClass extends DefaultHandler {
         readInHeaderSize(Enums.kDesktopSyncStateRecentChangesHeaderReceived/*49*/);
     }
 
-    void getRecentChanges() {
-        setCurrentState(Enums.kDesktopSyncStateReceivingRecentChanges/*50*/);
-        float totalSize = (float) sizeFromHeader();
-        try {
-            System.gc();
-            byte[] newData = new byte[1024];
-            int readIn = this.asyncSocket.getInputStream().read(newData, 0, "DATA:".length());
-            if (readIn != -1) {
-                int totalReadIn = readIn;
-                deleteTempFile();
-                BufferedOutputStream fr = new BufferedOutputStream(new FileOutputStream(new File(SMMoney.getTempFile()).getAbsoluteFile()));
-                while (((float) totalReadIn) < totalSize) {
-                    readIn = this.asyncSocket.getInputStream().read(newData, 0, 1024);
-                    if (readIn == -1) {
-                        break;
-                    }
-                    fr.write(newData, 0, readIn);
-                    totalReadIn += readIn;
-                }
-                Log.i("DEBUGTAG123", "getRecentChanges totalReadIn=" + totalReadIn);
-                fr.flush();
-                fr.close();
-                if (this.server) {
-                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
-                } else {
-                    setCurrentState(Enums.kDesktopSyncStateRecentChangesReceived/*51*/);
-                }
-            }
-        } catch (IOException e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
-            e.printStackTrace();
-        }
-    }
-
-    void sendRecentChanges() {
-        setCurrentState(Enums.kDesktopSyncStateSendingRecentChanges/*46*/);
-        newRecentDatabaseChanges();
-        try {
-            File f = new File(SMMoney.getTempFile());
-            BufferedInputStream fr = new BufferedInputStream(new FileInputStream(f.getAbsoluteFile()));
-            int totalSize = (int) f.length();
-            byte[] chunk = new byte[1024];
-            int totalRead = 0;
-            while (totalRead < totalSize) {
-                int read = fr.read(chunk, 0, 1024);
-                if (read == -1) {
-                    break;
-                }
-                if (totalRead == 0) {
-                    byte[] outData = packageDataWithHeader(chunk, totalSize);
-                    this.asyncSocket.getOutputStream().write(outData, 0, outData.length);
-                } else {
-                    this.asyncSocket.getOutputStream().write(chunk, 0, read);
-                }
-                totalRead += read;
-            }
-            Log.i("DEBUGTAG123", "sendRecentChanges totalRead=" + totalRead);
-            fr.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (this.server) {
-            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
-        } else {
-            setCurrentState(Enums.kDesktopSyncStateSentRecentChanges/*47*/);
-        }
-    }
-
-    protected String parseXMLHeader(String sData) {
-        String singleQuote = "\"";
-        String DBID = "DBID=";
-        int currentIndex = (sData.indexOf(DBID) + DBID.length()) + singleQuote.length();
-        int bdid = Integer.parseInt(sData.substring(currentIndex, sData.indexOf(singleQuote, currentIndex)));
-        String DBVersion = "DBVER=";
-        currentIndex = (sData.indexOf(DBVersion, currentIndex) + DBVersion.length()) + singleQuote.length();
-        int dbVersion = Integer.parseInt(sData.substring(currentIndex, sData.indexOf(singleQuote, currentIndex)));
-        return sData.substring(sData.indexOf(singleQuote, currentIndex) + singleQuote.length());
-    }
-
-    void parseTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
-        String xmlBlock = "";
-        String startTag = "<" + recordTag + ">";
-        String endTag = "</" + recordTag + ">";
-        String startList = "<" + listTag + ">";
-        String endList = "</" + listTag + ">";
-        int currentIndex = sData.indexOf(startList);
-        int endIndex = sData.indexOf(endList);
-        if (currentIndex == -1 || endIndex == -1) {
-            Log.e(SMMoney.TAG, "couldnt find " + startList);
-            return;
-        }
-        xmlBlock = sData.substring(currentIndex, endIndex);
-        String transactionXML = "";
-        currentIndex = xmlBlock.indexOf(startTag) + startTag.length();
-        int cancel = startTag.length() - 1;
-        while (currentIndex != cancel) {
-            endIndex = xmlBlock.indexOf(endTag, currentIndex);
-            try {
-                String taggedString = startTag + xmlBlock.substring(currentIndex, endIndex) + endTag;
-                TransactionClass record = new TransactionClass();
-                record.updateWithXML(taggedString);
-                processRecentTransaction(record);
-            } catch (Exception e) {
-                Log.e(SMMoney.TAG, e.getLocalizedMessage());
-                e.printStackTrace();
-            }
-            currentIndex = xmlBlock.indexOf(startTag, endIndex) + startTag.length();
-        }
-    }
-
     void processAccounts(ArrayList<AccountClass> accounts) {
         ArrayList<AnonymousClass2TempTransAccountClass> overdraftAccounts = new ArrayList<>();
         ArrayList<AnonymousClass2TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
-        Iterator it = accounts.iterator();
+        Iterator<AccountClass> it = accounts.iterator();
         while (it.hasNext()) {
-            AccountClass act = (AccountClass) it.next();
+            AccountClass act = it.next();
             if (act.getOverdraftAccount() != null && act.getOverdraftAccount().length() > 0) {
                 overdraftAccounts.add(new AnonymousClass2TempTransAccountClass(act.serverID, act.getOverdraftAccount()));
             }
@@ -925,9 +887,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 keepTheChangeAccounts.add(new AnonymousClass2TempTransAccountClass(act.serverID, act.getKeepTheChangeAccount()));
             }
         }
-        it = keepTheChangeAccounts.iterator();
-        while (it.hasNext()) {
-            AnonymousClass2TempTransAccountClass tempAct = (AnonymousClass2TempTransAccountClass) it.next();
+        Iterator<AnonymousClass2TempTransAccountClass> it2 = keepTheChangeAccounts.iterator();
+        while (it2.hasNext()) {
+            AnonymousClass2TempTransAccountClass tempAct = it2.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -935,9 +897,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 act.saveToDatabase();
             }
         }
-        it = overdraftAccounts.iterator();
+        it2 = overdraftAccounts.iterator();
         while (it.hasNext()) {
-            AnonymousClass2TempTransAccountClass tempAct = (AnonymousClass2TempTransAccountClass) it.next();
+            AnonymousClass2TempTransAccountClass tempAct = it2.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -948,7 +910,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
     }
 
     void parseAccountsXML(String sData, String listTag, String recordTag, Class classOf) {
-        String xmlBlock = "";
+        String xmlBlock;
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
         String startList = "<" + listTag + ">";
@@ -984,9 +946,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
             currentIndex = xmlBlock.indexOf(startTag, endIndex) + startTag.length();
         }
-        Iterator it = keepTheChangeAccounts.iterator();
+        Iterator<AnonymousClass3TempTransAccountClass> it = keepTheChangeAccounts.iterator();
         while (it.hasNext()) {
-            AnonymousClass3TempTransAccountClass tempAct = (AnonymousClass3TempTransAccountClass) it.next();
+            AnonymousClass3TempTransAccountClass tempAct = it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -996,7 +958,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
         it = overdraftAccounts.iterator();
         while (it.hasNext()) {
-            AnonymousClass3TempTransAccountClass tempAct = (AnonymousClass3TempTransAccountClass) it.next();
+            AnonymousClass3TempTransAccountClass tempAct = it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -1006,8 +968,19 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
+    protected String parseXMLHeader(String sData) {
+        String singleQuote = "\"";
+        String DBID = "DBID=";
+        int currentIndex = (sData.indexOf(DBID) + DBID.length()) + singleQuote.length();
+        int bdid = Integer.parseInt(sData.substring(currentIndex, sData.indexOf(singleQuote, currentIndex)));
+        String DBVersion = "DBVER=";
+        currentIndex = (sData.indexOf(DBVersion, currentIndex) + DBVersion.length()) + singleQuote.length();
+        int dbVersion = Integer.parseInt(sData.substring(currentIndex, sData.indexOf(singleQuote, currentIndex)));
+        return sData.substring(sData.indexOf(singleQuote, currentIndex) + singleQuote.length());
+    }
+
     void parseRepeatingTransactionXML(String sData, String listTag, String recordTag, Class classOf) {
-        String xmlBlock = "";
+        String xmlBlock;
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
         String startList = "<" + listTag + ">";
@@ -1038,7 +1011,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
     }
 
     void parseXML(String sData, String listTag, String recordTag, Class classOf, String primaryKeyField) {
-        String xmlBlock = "";
+        String xmlBlock;
         String startTag = "<" + recordTag + ">";
         String endTag = "</" + recordTag + ">";
         String startList = "<" + listTag + ">";
@@ -1067,33 +1040,22 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
     }
 
-    void sendFail() {
-        writeData("DATA:FAIL", 10);
-    }
-
     private String stringFromDataExcluding(String substring) {
-        String sData = "";
+        String sData;
         sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
         this.data = null;
         return sData.substring(substring.length());
     }
 
     private int intFromDataExcluding(String substring) {
-        String sData = "";
+        String sData;
         sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
         this.data = null;
         return Integer.parseInt(sData.substring(substring.length()));
     }
 
-    private int sizeFromHeader() {
-        ByteBuffer buf = ByteBuffer.wrap(this.data);
-        buf.order(ByteOrder.LITTLE_ENDIAN);
-        this.data = null;
-        return buf.getInt(0);
-    }
-
     private byte[] packageData(String data) {
-        byte[] plainData = null;
+        byte[] plainData;
         plainData = data.getBytes(StandardCharsets.UTF_8);
         int headerLength = plainData.length;
         ByteBuffer buf = ByteBuffer.allocate(4);
@@ -1117,6 +1079,42 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
         }
         return packagedData;
+    }
+
+    void sendFail() {
+        writeData("DATA:FAIL", 10);
+    }
+
+    private byte[] packageDataWithHeader(byte[] data, int size) {
+        int dataLength = Math.min(data.length, size);
+        ByteBuffer buf = ByteBuffer.allocate(4);
+        buf.order(ByteOrder.BIG_ENDIAN);
+        buf.putInt(size);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        byte[] headerArray = buf.array();
+        int i = 0;
+        for (int j = headerArray.length - 1; i < j; j--) {
+            byte b = headerArray[i];
+            headerArray[i] = headerArray[j];
+            headerArray[j] = b;
+            i++;
+        }
+        byte[] packagedData = new byte[(headerArray.length + dataLength)];
+        for (i = 0; i < headerArray.length + dataLength; i++) {
+            if (i < 4) {
+                packagedData[i] = headerArray[i];
+            } else {
+                packagedData[i] = data[i - headerArray.length];
+            }
+        }
+        return packagedData;
+    }
+
+    private int sizeFromHeader() {
+        ByteBuffer buf = ByteBuffer.wrap(this.data);
+        buf.order(ByteOrder.LITTLE_ENDIAN);
+        this.data = null;
+        return buf.getInt(0);
     }
 
     private byte[] packageData(byte[] plainData) {
@@ -1144,29 +1142,34 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return packagedData;
     }
 
-    private byte[] packageDataWithHeader(byte[] data, int size) {
-        int dataLength = data.length > size ? size : data.length;
-        ByteBuffer buf = ByteBuffer.allocate(4);
-        buf.order(ByteOrder.BIG_ENDIAN);
-        buf.putInt(size);
-        buf.order(ByteOrder.LITTLE_ENDIAN);
-        byte[] headerArray = buf.array();
-        int i = 0;
-        for (int j = headerArray.length - 1; i < j; j--) {
-            byte b = headerArray[i];
-            headerArray[i] = headerArray[j];
-            headerArray[j] = b;
-            i++;
+    static class AnonymousClass1TempTransAccountClass {
+        final String account;
+        final String serverID;
+
+        AnonymousClass1TempTransAccountClass(String serverID, String account) {
+            this.serverID = serverID;
+            this.account = account;
         }
-        byte[] packagedData = new byte[(headerArray.length + dataLength)];
-        for (i = 0; i < headerArray.length + dataLength; i++) {
-            if (i < 4) {
-                packagedData[i] = headerArray[i];
-            } else {
-                packagedData[i] = data[i - headerArray.length];
-            }
+    }
+
+    static class AnonymousClass2TempTransAccountClass {
+        final String account;
+        final String serverID;
+
+        AnonymousClass2TempTransAccountClass(String serverID, String account) {
+            this.serverID = serverID;
+            this.account = account;
         }
-        return packagedData;
+    }
+
+    static class AnonymousClass3TempTransAccountClass {
+        final String account;
+        final String serverID;
+
+        AnonymousClass3TempTransAccountClass(String serverID, String account) {
+            this.serverID = serverID;
+            this.account = account;
+        }
     }
 
     public static void printToFile(String sData, String file) {

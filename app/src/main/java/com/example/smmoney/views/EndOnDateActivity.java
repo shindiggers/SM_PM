@@ -32,8 +32,8 @@ import java.util.Objects;
 
 
 public class EndOnDateActivity extends PocketMoneyActivity implements DatePickerDialog.OnDateSetListener {
-    public static int ENDONDATE_RESULT_DATESELECTED = 2;
-    public static int ENDONDATE_RESULT_NODATESELECTED = 1;
+    public static final int ENDONDATE_RESULT_DATESELECTED = 2;
+    public static final int ENDONDATE_RESULT_NODATESELECTED = 1;
     private GregorianCalendar prevDate = null;
     private CheckBox theCheckbox;
     private TextView theDate;
@@ -73,12 +73,8 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
 
                     if (prevDate == null) {
                         prevDate = new GregorianCalendar();
-                        datelong = prevDate.getTimeInMillis();
-
-
-                    } else {
-                        datelong = prevDate.getTimeInMillis();
                     }
+                    datelong = prevDate.getTimeInMillis();
 
                     Bundle args = new Bundle();
                     args.putLong("dateInt", datelong);
@@ -95,10 +91,8 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
 
                 if (prevDate == null) {
                     prevDate = new GregorianCalendar();
-                    datelong = prevDate.getTimeInMillis();
-                } else {
-                    datelong = prevDate.getTimeInMillis();
                 }
+                datelong = prevDate.getTimeInMillis();
 
                 Bundle args = new Bundle();
                 args.putLong("dateInt", datelong);

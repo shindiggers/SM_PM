@@ -108,7 +108,7 @@ public class TransactionDB {
     }
 
     private static long timeOffsetForCurrentTimezone() {
-        return (long) (TimeZone.getDefault().getOffset(0) / 1000);
+        return TimeZone.getDefault().getOffset(0) / 1000;
     }
 
     private static String queryWithFilterWhereClause(FilterClass filter) {
@@ -402,9 +402,9 @@ public class TransactionDB {
         Hashtable<String, Hashtable<String, Hashtable<String, Double>>> accountListings = new Hashtable<>();
         GregorianCalendar lastDate = null;
         String com = SMMoney.getAppContext().getPackageName();
-        Iterator it = transactions.iterator();
+        Iterator<TransactionClass> it = transactions.iterator();
         while (it.hasNext()) {
-            TransactionClass transaction = (TransactionClass) it.next();
+            TransactionClass transaction = it.next();
             Hashtable<String, Hashtable<String, Double>> accountRollup = accountListings.get(transaction.getAccount());
             if (accountRollup == null) {
                 accountListings.put(transaction.getAccount(), new Hashtable<String, Hashtable<String, Double>>());
@@ -435,7 +435,7 @@ public class TransactionDB {
         }
         it = transactions.iterator();
         while (it.hasNext()) {
-            TransactionClass transaction = (TransactionClass) it.next();
+            TransactionClass transaction = it.next();
             disconnectionTransfersForTransaction(transaction);
             transaction.deleteFromDatabase();
         }

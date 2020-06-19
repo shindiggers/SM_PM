@@ -10,7 +10,7 @@ import androidx.appcompat.widget.AppCompatRadioButton;
 import com.example.smmoney.R;
 
 public class CenteredRadioImageButton extends AppCompatRadioButton {
-    private Drawable image;
+    private final Drawable image;
 
     public CenteredRadioImageButton(Context context, AttributeSet attrs) {
         super(context, attrs);

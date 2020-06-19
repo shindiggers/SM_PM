@@ -8,6 +8,7 @@ import org.xml.sax.Attributes;
 import org.xml.sax.helpers.DefaultHandler;
 
 import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.GregorianCalendar;
 
@@ -52,8 +53,8 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
         saveToDataBaseAndUpdateTimeStamp(true);
     }
 
-    String encode(String aString) {
-        return URLEncoder.encode(aString).replace("+", "%20");
+    String encode(String aString) throws UnsupportedEncodingException {
+        return URLEncoder.encode(aString, java.nio.charset.StandardCharsets.UTF_8.toString()).replace("+", "%20");
     }
 
     void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {

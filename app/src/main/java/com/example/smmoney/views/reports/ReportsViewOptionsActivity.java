@@ -16,6 +16,7 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference chartTypePref;
+    @SuppressWarnings("FieldCanBeLocal")
     private Context context;
     private ListPreference sortDirectionPref;
     private ListPreference sortOnPref;

@@ -33,7 +33,7 @@ import java.util.List;
 
 public class ImportExportOFX {
     public String accountNameBeingImported;
-    private Context context;
+    private final Context context;
     @SuppressWarnings("unused")
     int currentLine;
     @SuppressWarnings({"unused", "rawtypes"})

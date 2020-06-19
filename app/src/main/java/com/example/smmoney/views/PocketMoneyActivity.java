@@ -46,6 +46,7 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
         }
     }
 
+    @SuppressWarnings("EmptyMethod")
     public void finish() {
         super.finish();
     }

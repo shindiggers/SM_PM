@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 class OFX_BalanceClass {
     private double balance;
     private GregorianCalendar dateAsOf;
-    private OFX_Tags tags;
+    private final OFX_Tags tags;
 
     OFX_BalanceClass(String text, OFX_Tags tags) {
         this.tags = tags;

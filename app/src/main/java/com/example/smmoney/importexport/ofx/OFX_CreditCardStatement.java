@@ -1,5 +1,7 @@
 package com.example.smmoney.importexport.ofx;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.records.TransactionClass;
 
 import java.util.GregorianCalendar;
@@ -27,6 +29,8 @@ public class OFX_CreditCardStatement extends OFX_Statement {
         this.account.accountType = OFX_AccountType.OFX_CREDITCARD;
     }
 
+    @Override
+    @NonNull
     public String toString() {
         return "\t\t<CCSTMTTRNRS>\n" +
                 "\t\t\t<TRNUID>PMA - " + OFXClass.dateAsString(new GregorianCalendar()) + "\n"

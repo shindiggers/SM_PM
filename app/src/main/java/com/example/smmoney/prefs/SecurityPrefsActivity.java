@@ -24,6 +24,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     static final int SECURITY_RESULT_PROMPT = 0;
     boolean confirmChanged = false;
     private EditTextPreference confirmPref;
+    @SuppressWarnings("FieldCanBeLocal")
     private Context context;
     private ListPreference delayListPref;
     boolean passwordChanged = false;

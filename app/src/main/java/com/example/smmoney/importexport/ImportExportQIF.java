@@ -48,13 +48,14 @@ import java.util.regex.Pattern;
 public class ImportExportQIF {
     public String QIFPath;
     public String accountNameBeingImported;
-    private HandlerActivity act;
-    private Context context;
+    private final Context context;
+    private final ArrayList<String> lines = new ArrayList<>();
     private int currentLine;
     private FilterClass filter;
     private boolean importFileExists = false;
     private boolean invalidQIF;
-    private ArrayList<String> lines = new ArrayList<>();
+    @SuppressWarnings("FieldCanBeLocal")
+    private HandlerActivity act;
     private int numberOfLines;
     private int oldNumber = -1;
     private Boolean qifOld = Boolean.FALSE;
@@ -509,10 +510,11 @@ public class ImportExportQIF {
             dateSeparator = matcher.find() ? matcher.group(0) : "/";
         }
         if (!dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+            final String pattern = dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''");
             if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
-                dateFormatter.applyPattern(dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''"));
+                dateFormatter.applyPattern(pattern);
             } else if (dateFormat.equals("dd/mm'yy") || dateFormat.equals("dd/mm'yyyy")) {
-                dateFormatter.applyPattern(dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''"));
+                dateFormatter.applyPattern(pattern);
             } else {
                 dateFormatter.applyPattern(dateFormat.replaceAll("mm", "MM").replaceAll("/", dateSeparator));
             }
@@ -898,14 +900,17 @@ public class ImportExportQIF {
         if (dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
             dateSeparator = "/";
             dateFormatter.applyPattern("MM/dd/yy");
-        } else if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
-            dateFormatter.applyPattern(dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''"));
-        } else if (dateFormat.equals("dd/mm'yy") || dateFormat.equals("dd/mm'yyyy")) {
-            dateFormatter.applyPattern(dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''"));
         } else {
-            dateFormatter.applyPattern(dateFormat.replaceAll("mm", "MM").replaceAll("/", dateSeparator));
+            final String pattern = dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''");
+            if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
+                dateFormatter.applyPattern(pattern);
+            } else if (dateFormat.equals("dd/mm'yy") || dateFormat.equals("dd/mm'yyyy")) {
+                dateFormatter.applyPattern(pattern);
+            } else {
+                dateFormatter.applyPattern(dateFormat.replaceAll("mm", "MM").replaceAll("/", dateSeparator));
+            }
         }
-        String testStr = String.valueOf(dateFormatter.format(date));
+        String testStr = dateFormatter.format(date);
         return dateFormatter.format(date);
     }
 

@@ -18,7 +18,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.PocketMoneyActivity;
 
 public class AccountTypeIconGridActivity extends PocketMoneyActivity {
-    private static String[] icons = new String[]{
+    private static final String[] icons = new String[]{
             "ic_axa.xml",
             "ic_bank_of_scotland.xml",
             "ic_bankofamerica.xml",
@@ -131,9 +131,9 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
             "textbooks.png"};
 
     static class ImageAdapter extends BaseAdapter {
-        private Context mContext;
+        private final Context mContext;
         // The order of this array determines display order in AccountTypeIconGridActivity.java
-        private Integer[] mThumbIds = new Integer[]{
+        private final Integer[] mThumbIds = new Integer[]{
                 R.drawable.ic_axa,
                 R.drawable.ic_bank_of_scotland,
                 R.drawable.ic_bankofamerica,

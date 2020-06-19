@@ -35,6 +35,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     public static final String XML_LISTTAG_CATEGORIES = "CATEGORIES";
     public static final String XML_RECORDTAG_CATEGORY = "CATEGORYCLASS";
     private static String catpayee_statement = null;
+    @SuppressWarnings("FieldCanBeLocal")
     private static int currentViewType;
     private static String query_spent_stmt = null;
     public double budget;
@@ -43,22 +44,26 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     private String category;
     public int categoryID;
     private String currentElementValue;
+    @SuppressWarnings("unused")
     private boolean hydratedSpent;
     private boolean includeSubcategories;
     private boolean rollover;
     public double spent;
     private int type;
 
-    private static class BudgetPeriodInfo {
-        GregorianCalendar date;
-        int daysInPeriod;
-        int daysLeft;
-
-        BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
-            this.daysLeft = daysLeft;
-            this.daysInPeriod = daysInPeriod;
-            this.date = date;
+    @SuppressWarnings("unused")
+    public static CategoryClass recordWithServerID(String serverID) {
+        CategoryClass record = null;
+        if (serverID == null || serverID.length() == 0) {
+            return null;
         }
+        Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE serverID=" + Database.SQLFormat(serverID), null);
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            record = new CategoryClass(c.getInt(0));
+        }
+        c.close();
+        return record;
     }
 
     public CategoryClass() {
@@ -302,32 +307,12 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return categoryID;
     }
 
-    public static CategoryClass recordWithServerID(String serverID) {
-        CategoryClass record = null;
-        if (serverID == null || serverID.length() == 0) {
-            return null;
-        }
-        Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE serverID=" + Database.SQLFormat(serverID), null);
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            record = new CategoryClass(c.getInt(0));
-        }
-        c.close();
-        return record;
-    }
-
+    @SuppressWarnings("unused")
     public static String categoryForID(int pk) {
         if (pk == 0) {
             return null;
         }
         return new CategoryClass(pk).category;
-    }
-
-    private static CategoryClass categoryClassForID(int pk) {
-        if (pk == 0) {
-            return null;
-        }
-        return new CategoryClass(pk);
     }
 
     public static ArrayList<String> allCategoryNamesInDatabase() {
@@ -337,16 +322,39 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         String[] projection = new String[]{"category"};
         qb.setDistinct(true);
         Cursor curs = Database.query(qb, projection, "deleted=0", null, null, null, "UPPER(category)");
-        if (curs.getCount() == 0) {
-            curs.close();
-        } else {
+        if (curs.getCount() != 0) {
             curs.moveToFirst();
             do {
                 array.add(curs.getString(0));
             } while (curs.moveToNext());
-            curs.close();
         }
+        curs.close();
         return array;
+    }
+
+    private static CategoryClass categoryClassForID(int pk) {
+        if (pk == 0) {
+            return null;
+        }
+        return new CategoryClass(pk);
+    }
+
+    @SuppressWarnings("unused")
+    public static void renameFromToInDatabase(String fromText, String toText) {
+        if (fromText == null) {
+            fromText = "";
+        }
+        if (toText == null) {
+            toText = "";
+        }
+        ContentValues content = new ContentValues();
+        content.put("category", toText);
+        content.put("timestamp", System.currentTimeMillis() / 1000);
+        try {
+            Database.update(Database.CATEGORIES_TABLE_NAME, content, "category LIKE " + Database.SQLFormat(fromText), null);
+        } catch (Exception e) {
+            Log.e(SMMoney.TAG, e.getLocalizedMessage());
+        }
     }
 
     public static ArrayList<String> allCategoryNamesInDatabaseForPayee(String payee) {
@@ -415,36 +423,19 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         }
     }
 
-    public static void renameFromToInDatabase(String fromText, String toText) {
-        if (fromText == null) {
-            fromText = "";
-        }
-        if (toText == null) {
-            toText = "";
-        }
-        ContentValues content = new ContentValues();
-        content.put("category", toText);
-        content.put("timestamp", System.currentTimeMillis() / 1000);
-        try {
-            Database.update(Database.CATEGORIES_TABLE_NAME, content, "category LIKE " + Database.SQLFormat(fromText), null);
-        } catch (Exception e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
-        }
-    }
-
     public static double querySpentInCategory(String category, boolean includeSubcategories, GregorianCalendar startDate, GregorianCalendar endDate) {
         currentViewType = Enums.kViewAccountsAll /*0*/;
         String startTime = Long.toString(CalExt.beginningOfDay(startDate).getTimeInMillis() / 1000);
         String endTime = Long.toString(CalExt.endOfDay(endDate).getTimeInMillis() / 1000);
         String str = includeSubcategories ? "%" : "";
-        String plainCategoryString = category;
+        @SuppressWarnings({"UnnecessaryLocalVariable", "unused"}) String plainCategoryString = category;
         String[] bindArgs = new String[]{category + str, startTime, endTime};
         if (query_spent_stmt == null || ((Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) && currentViewType != 0) || currentViewType != Prefs.getIntPref(Prefs.VIEWACCOUNTS))) {
             String exchangeRateLookup = "";
             if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
                 exchangeRateLookup = " / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = (SELECT accountID FROM transactions WHERE transactionID = splits.transactionID))";
             }
-            String transactionsLookup = "";
+            String transactionsLookup;
             currentViewType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
             if (Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS)) {
                 currentViewType = Enums.kViewAccountsAll /*0*/;
@@ -475,6 +466,35 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         }
         curs.close();
         return 0.0d;
+    }
+
+    public double budgetLimit(GregorianCalendar startDate, GregorianCalendar endDate) {
+        if (!this.rollover) {
+            return budgetLimitWithoutRollover(startDate, endDate);
+        }
+        GregorianCalendar rolloverStartDate = CategoryBudgetClass.firstRolloverDatePriorTo(CalExt.endOfDay(startDate), this.category);
+        if (rolloverStartDate == null) {
+            rolloverStartDate = CategoryBudgetClass.firstDateOfTransactionPriorTo(startDate, this.category);
+            if (rolloverStartDate == null) {
+                rolloverStartDate = startDate;
+            }
+            rolloverStartDate = BudgetsRowAdapter.startOfPeriod(rolloverStartDate, this.budgetPeriod);
+        } else {
+            rolloverStartDate = CalExt.beginningOfDay(rolloverStartDate);
+        }
+        List<CategoryBudgetClass> budgetItems = CategoryBudgetClass.budgetItems(this.category, CalExt.endOfDay(startDate), CalExt.endOfDay(endDate));
+        double spentPrior = querySpentInCategory(this.category, this.includeSubcategories, rolloverStartDate, startDate);
+        double newBudgetLimit = 0.0d;
+        GregorianCalendar currentStartDate = CalExt.subtractSecond((GregorianCalendar) rolloverStartDate.clone());
+        for (CategoryBudgetClass budgetItem : budgetItems) {
+            newBudgetLimit += budgetLimitWithoutRollover(currentStartDate, CalExt.endOfDay(budgetItem.getDate()));
+            currentStartDate = CalExt.subtractSecond(budgetItem.getDate());
+        }
+        newBudgetLimit += budgetLimitWithoutRollover(CalExt.addSecond(currentStartDate), CalExt.endOfDay(endDate));
+        if (this.type == 1) {
+            return newBudgetLimit - spentPrior;
+        }
+        return newBudgetLimit + spentPrior;
     }
 
     private double budgetLimitDailyForDate(GregorianCalendar aDate) {
@@ -688,37 +708,58 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return newBudgetLimit + ((limit / daysInPeriod) * ((double) CalExt.daysBetween(CalExt.subtractSecond(CalExt.beginningOfDay(currentDate)), CalExt.endOfDay(endDate))));
     }
 
-    public double budgetLimit(GregorianCalendar startDate, GregorianCalendar endDate) {
-        if (!this.rollover) {
-            return budgetLimitWithoutRollover(startDate, endDate);
+    public void endElement(String namespaceURI, String localName, String qName) {
+        boolean z = false;
+        if (this.currentElementValue == null) {
+            this.currentElementValue = "";
         }
-        GregorianCalendar rolloverStartDate = CategoryBudgetClass.firstRolloverDatePriorTo(CalExt.endOfDay(startDate), this.category);
-        if (rolloverStartDate == null) {
-            rolloverStartDate = CategoryBudgetClass.firstDateOfTransactionPriorTo(startDate, this.category);
-            if (rolloverStartDate == null) {
-                rolloverStartDate = startDate;
-            }
-            rolloverStartDate = BudgetsRowAdapter.startOfPeriod(rolloverStartDate, this.budgetPeriod);
-        } else {
-            rolloverStartDate = CalExt.beginningOfDay(rolloverStartDate);
+        switch (localName) {
+            case "categoryID":
+                this.categoryID = Integer.parseInt(this.currentElementValue);
+                break;
+            case "timestamp":
+                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
+                break;
+            case "deleted":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setDeleted(z);
+                break;
+            case "rollover":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setRollover(z);
+                break;
+            case "type":
+                setType(Integer.parseInt(this.currentElementValue));
+                break;
+            case Prefs.DISPLAY_BUDGETPERIOD:
+                setBudgetPeriod(Integer.parseInt(this.currentElementValue));
+                break;
+            case "budgetLimit":
+                setBudgetLimit(Double.parseDouble(this.currentElementValue));
+                break;
+            case "includeSubcategories":
+                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
+                    z = true;
+                }
+                setIncludeSubcategories(z);
+                break;
+            case "serverID":
+                setServerID(this.currentElementValue);
+                break;
+            case "category":
+                Class<?> c = getClass();
+                try {
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (Exception e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
+                }
+                break;
         }
-        List<CategoryBudgetClass> budgetItems = CategoryBudgetClass.budgetItems(this.category, CalExt.endOfDay(startDate), CalExt.endOfDay(endDate));
-        double spentPrior = querySpentInCategory(this.category, this.includeSubcategories, rolloverStartDate, startDate);
-        double newBudgetLimit = 0.0d;
-        GregorianCalendar currentStartDate = CalExt.subtractSecond((GregorianCalendar) rolloverStartDate.clone());
-        for (CategoryBudgetClass budgetItem : budgetItems) {
-            if (currentStartDate == null) {
-                currentStartDate = CalExt.subtractSecond(budgetItem.getDate());
-            } else {
-                newBudgetLimit += budgetLimitWithoutRollover(currentStartDate, CalExt.endOfDay(budgetItem.getDate()));
-                currentStartDate = CalExt.subtractSecond(budgetItem.getDate());
-            }
-        }
-        newBudgetLimit += budgetLimitWithoutRollover(CalExt.addSecond(currentStartDate), CalExt.endOfDay(endDate));
-        if (this.type == 1) {
-            return newBudgetLimit - spentPrior;
-        }
-        return newBudgetLimit + spentPrior;
+        this.currentElementValue = null;
     }
 
     private boolean isNonVariableBudgetPeriod(int aPeriod) {
@@ -832,7 +873,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                     str = "";
                 }
                 setServerID(str);
-                col = col2 + 1;
                 this.rollover = curs.getInt(col2) == 1;
                 if (!wasDirty && this.dirty) {
                     this.dirty = false;
@@ -897,82 +937,9 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         this.currentElementValue = null;
     }
 
-    public void endElement(String namespaceURI, String localName, String qName) {
-        boolean z = false;
-        if (this.currentElementValue == null) {
-            this.currentElementValue = "";
-        }
-        switch (localName) {
-            case "categoryID":
-                this.categoryID = Integer.parseInt(this.currentElementValue);
-                break;
-            case "timestamp":
-                this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-                break;
-            case "deleted":
-                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                    z = true;
-                }
-                setDeleted(z);
-                break;
-            case "rollover":
-                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                    z = true;
-                }
-                setRollover(z);
-                break;
-            case "type":
-                setType(Integer.parseInt(this.currentElementValue));
-                break;
-            case Prefs.DISPLAY_BUDGETPERIOD:
-                setBudgetPeriod(Integer.parseInt(this.currentElementValue));
-                break;
-            case "budgetLimit":
-                setBudgetLimit(Double.parseDouble(this.currentElementValue));
-                break;
-            case "includeSubcategories":
-                if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
-                    z = true;
-                }
-                setIncludeSubcategories(z);
-                break;
-            case "serverID":
-                setServerID(this.currentElementValue);
-                break;
-            case "category":
-                Class<?> c = getClass();
-                try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
-                } catch (Exception e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
-                }
-                break;
-        }
-        this.currentElementValue = null;
-    }
-
-    public void characters(char[] ch, int start, int length) {
-        if (this.currentElementValue == null) {
-            this.currentElementValue = new String(ch, start, length);
-        } else {
-            this.currentElementValue += new String(ch, start, length);
-        }
-    }
-
-    private void addText(XmlSerializer body, String text) throws IOException {
-        if (text == null) {
-            text = "";
-        }
-        body.text(text);
-    }
-
-    private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
-        body.text(text == null ? "" : encode(text));
-    }
-
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);
@@ -1028,6 +995,37 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         } catch (Exception e) {
             Log.e(SMMoney.TAG, "Error while creating XML");
             return "";
+        }
+    }
+
+    public void characters(char[] ch, int start, int length) {
+        if (this.currentElementValue == null) {
+            this.currentElementValue = new String(ch, start, length);
+        } else {
+            this.currentElementValue += new String(ch, start, length);
+        }
+    }
+
+    private void addText(XmlSerializer body, String text) throws IOException {
+        if (text == null) {
+            text = "";
+        }
+        body.text(text);
+    }
+
+    private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
+        body.text(text == null ? "" : encode(text));
+    }
+
+    private static class BudgetPeriodInfo {
+        final GregorianCalendar date;
+        final int daysInPeriod;
+        final int daysLeft;
+
+        BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
+            this.daysLeft = daysLeft;
+            this.daysInPeriod = daysInPeriod;
+            this.date = date;
         }
     }
 }

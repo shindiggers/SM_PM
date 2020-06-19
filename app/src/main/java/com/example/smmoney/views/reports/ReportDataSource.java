@@ -30,9 +30,9 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
     public ArrayList<ReportItem> data;
     int currentAction = 0;
     int currentPeriod;
-    FilterClass filter;
+    final FilterClass filter;
     int totalActions = 0;
-    private Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
+    private final Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
         public int compare(ReportItem o1, ReportItem o2) {
             int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
             double retVal = 0.0d;
@@ -79,9 +79,9 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         double negativeMaxValue = 0.0d;
         double positiveMaxValue = 0.0d;
         int index = 0;
-        Iterator it = array.iterator();
+        Iterator<ReportItem> it = array.iterator();
         while (it.hasNext()) {
-            ReportItem item = (ReportItem) it.next();
+            ReportItem item = it.next();
             if (item.checked) {
                 if (item.amount < 0.0d) {
                     negativeTotal += item.amount;
@@ -94,7 +94,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         }
         it = array.iterator();
         while (it.hasNext()) {
-            ReportItem item = (ReportItem) it.next();
+            ReportItem item = it.next();
             if (item.checked) {
                 if (item.amount < 0.0d) {
                     item.percent = (item.amount / negativeTotal) * 100.0d;

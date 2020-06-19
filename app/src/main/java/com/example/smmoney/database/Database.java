@@ -577,6 +577,7 @@ public class Database {
         return db;
     }
 
+    @SuppressWarnings("EmptyMethod")
     public static void unlockDB() {
     }
 
@@ -739,7 +740,9 @@ public class Database {
             clsArr[0] = Integer.TYPE;
             constructor = aClass.getConstructor(clsArr);
         } catch (SecurityException | NoSuchMethodException e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
+            if (e.getLocalizedMessage() != null) {
+                Log.e(SMMoney.TAG, e.getLocalizedMessage());
+            }
             e.printStackTrace();
         }
         while (c.moveToNext()) {
@@ -748,7 +751,9 @@ public class Database {
                 objArr[0] = c.getInt(0);
                 pm = constructor.newInstance(objArr);
             } catch (Exception e3) {
-                Log.e(SMMoney.TAG, e3.getLocalizedMessage());
+                if (e3.getLocalizedMessage() != null) {
+                    Log.e(SMMoney.TAG, e3.getLocalizedMessage());
+                }
                 e3.printStackTrace();
             }
             foundRecords.add(pm);
@@ -788,7 +793,7 @@ public class Database {
             try {
                 Object[] objArr = new Object[PMSYNC_VERSION_1];
                 objArr[0] = c.getInt(0);
-                out.write(new StringBuilder(String.valueOf(constructor.newInstance(objArr).XMLString())).append("\n").toString());
+                out.write(constructor.newInstance(objArr).XMLString() + "\n");
             } catch (Exception e3) {
                 Log.e(SMMoney.TAG, e3.getLocalizedMessage());
                 e3.printStackTrace();

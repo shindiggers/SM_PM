@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -515,19 +516,21 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         return dup;
     }
 
-    public boolean validTransaction(TransactionClass transaction) {
-        if (getAccount().compareToIgnoreCase(transaction.getAccount()) != 0) {
-            return false;
+    @SuppressWarnings("unused")
+    public static int idForFilter(String filter) {
+        if (filter == null || filter.length() == 0) {
+            return 0;
         }
-        if (getCleared() != 2) {
-            if ((this.cleared == 1) != transaction.getCleared()) {
-                return false;
-            }
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.FILTERS_TABLE_NAME);
+        Cursor curs = Database.query(qb, new String[]{"filterID"}, "deleted=0 AND filter LIKE " + Database.SQLFormat(filter), null, null, null, null);
+        int filterID = 0;
+        if (curs.getCount() != 0) {
+            curs.moveToFirst();
+            filterID = curs.getInt(0);
         }
-        if (getPayee().length() > 0 && this.payee.compareToIgnoreCase(transaction.getPayee()) != 0) {
-            return false;
-        }
-        return getCategory().length() <= 0 || this.category.compareToIgnoreCase(transaction.getCategory()) == 0;
+        curs.close();
+        return filterID;
     }
 
     public boolean isValidSplit(SplitsClass split) {
@@ -704,22 +707,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         return theList;
     }
 
-    public static int idForFilter(String filter) {
-        if (filter == null || filter.length() == 0) {
-            return 0;
-        }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.FILTERS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"filterID"}, "deleted=0 AND filter LIKE " + Database.SQLFormat(filter), null, null, null, null);
-        int filterID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            filterID = curs.getInt(0);
-        }
-        curs.close();
-        return filterID;
-    }
-
+    @SuppressWarnings("unused")
     public static FilterClass recordWithServerID(String serverID) {
         FilterClass record = null;
         if (serverID == null || serverID.length() == 0) {
@@ -741,6 +729,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             cal = CalExt.beginningOfToday();
             cal.setLenient(true);
             if (fromDateString.equals(Locales.kLOC_FILTER_DATES_ALL)) {
+                //noinspection ConstantConditions
                 retDate = 0;
             } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
                 retDate = cal.getTimeInMillis();
@@ -791,6 +780,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             cal = CalExt.endOfToday();
             cal.setLenient(true);
             if (fromDateString.equals(Locales.kLOC_FILTER_DATES_ALL)) {
+                //noinspection ConstantConditions
                 retDate = 0;
             } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
                 cal.add(Calendar.DAY_OF_YEAR, 1);
@@ -837,6 +827,22 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             }
         }
         return retDate / 1000;
+    }
+
+    @SuppressWarnings("unused")
+    public boolean validTransaction(TransactionClass transaction) {
+        if (getAccount().compareToIgnoreCase(transaction.getAccount()) != 0) {
+            return false;
+        }
+        if (getCleared() != 2) {
+            if ((this.cleared == 1) != transaction.getCleared()) {
+                return false;
+            }
+        }
+        if (getPayee().length() > 0 && this.payee.compareToIgnoreCase(transaction.getPayee()) != 0) {
+            return false;
+        }
+        return getCategory().length() <= 0 || this.category.compareToIgnoreCase(transaction.getCategory()) == 0;
     }
 
     private static int getMaxDayForMonth(GregorianCalendar cal) {
@@ -930,17 +936,25 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 setCleared(Integer.parseInt(this.currentElementValue));
                 break;
             case "account":
-                if (this.currentElementValue == null) {
-                    setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-                } else {
-                    setAccount(URLDecoder.decode(this.currentElementValue));
+                try {
+                    setAccount(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
                 }
                 break;
             case "categoryID":
-                setCategory(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
+                try {
+                    setCategory(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                }
                 break;
             case "classID":
-                setClassName(URLDecoder.decode(this.currentElementValue == null ? "" : this.currentElementValue));
+                try {
+                    setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                }
                 break;
             case "serverID":
                 setServerID(this.currentElementValue);
@@ -952,7 +966,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             case "filterName":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -982,7 +996,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);

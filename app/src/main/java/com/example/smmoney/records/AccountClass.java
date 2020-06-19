@@ -57,6 +57,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private double fee;
     private int fixedPercent;
     private String iconFileName;
+    @SuppressWarnings("unused")
     private Bitmap iconImage;
     private String institution;
     private double keepChangeRoundTo;
@@ -70,6 +71,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private String routingNumber;
     private boolean totalWorth;
     private int type;
+    @SuppressWarnings("unused")
     private int uniqueID;
     private String url;
 
@@ -452,24 +454,43 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         }
     }
 
+    static int idForAccount(@SuppressWarnings("SameParameterValue") boolean deleted, String account) {
+        int i = 1;
+        if (account == null || account.length() == 0) {
+            return 0;
+        }
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.ACCOUNTS_TABLE_NAME);
+        String[] projection = new String[]{"accountID"};
+        StringBuilder stringBuilder = new StringBuilder("deleted=");
+        if (!deleted) {
+            i = 0;
+        }
+        Cursor curs = Database.query(qb, projection, stringBuilder.append(i).append(" AND account LIKE ").append(Database.SQLFormat(account)).toString(), null, null, null, null);
+        int accountID = 0;
+        if (curs.getCount() != 0) {
+            curs.moveToFirst();
+            accountID = curs.getInt(0);
+        }
+        curs.close();
+        return accountID;
+    }
+
     public String getCurrencyCode() {
         hydrate();
         if (this.currencyCode == null || this.currencyCode.length() == 0) {
             this.currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
+        StringBuilder builder = new StringBuilder(this.currencyCode);
         while (this.currencyCode.length() < 3) {
-            this.currencyCode += " ";
+            builder.append(" ");
+            //this.currencyCode += " ";
         }
+        this.currencyCode = builder.toString();
         return this.currencyCode;
     }
 
-    public void setLastSyncTime(double time) {
-        if (this.lastSyncTime != time) {
-            this.dirty = true;
-            this.lastSyncTime = time;
-        }
-    }
-
+    @SuppressWarnings("unused")
     public double getLastSyncTime() {
         hydrate();
         return this.lastSyncTime;
@@ -489,8 +510,11 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.overdraftAccount;
     }
 
-    public void timeStampIt() {
-        this.timestamp = new GregorianCalendar();
+    public void setLastSyncTime(double time) {
+        if (this.lastSyncTime != time) {
+            this.dirty = true;
+            this.lastSyncTime = time;
+        }
     }
 
     public AccountClass() {
@@ -588,70 +612,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return !isLiability();
     }
 
-    public double balanceOfType(int balanceType) {
-        double retBalance;
-        switch (balanceType) {
-            case Enums.kBalanceTypeFuture /*0*/:
-                if (this.balanceOverallCached == 0.0d) {
-                    retBalance = balanceOverall();
-                    this.balanceOverallCached = retBalance;
-                    break;
-                }
-                return this.balanceOverallCached;
-            case Enums.kBalanceTypeCleared /*1*/:
-                if (this.balanceClearedCached == 0.0d) {
-                    retBalance = balanceCleared();
-                    this.balanceClearedCached = retBalance;
-                    break;
-                }
-                return this.balanceClearedCached;
-            case Enums.kBalanceTypeCurrent /*2*/:
-                if (this.balanceCurrentCached == 0.0d) {
-                    retBalance = balanceCurrent();
-                    this.balanceCurrentCached = retBalance;
-                    break;
-                }
-                return this.balanceCurrentCached;
-            case Enums.kBalanceTypeAvailableFunds /*3*/:
-                if (this.balanceAvailableFundsCached == 0.0d) {
-                    if (!isLiability()) {
-                        if (hasLimit()) {
-                            retBalance = balanceOverall() - this.limit;
-                        } else {
-                            double balanceOverallCache = balanceCurrent();
-                            if (balanceOverallCache < 0.0d) {
-                                retBalance = 0.0d;
-                            } else {
-                                retBalance = balanceOverallCache;
-                            }
-                        }
-                        if (retBalance < 0.0d) {
-                            retBalance = 0.0d;
-                        }
-                    } else if (hasLimit()) {
-                        retBalance = this.limit + balanceCurrent();
-                    } else {
-                        retBalance = 0.0d;
-                    }
-                    this.balanceAvailableFundsCached = retBalance;
-                    break;
-                }
-                return this.balanceAvailableFundsCached;
-            case Enums.kBalanceTypeAvailableCredit /*4*/:
-                if (this.balanceAvailableCreditCached == 0.0d) {
-                    retBalance = 0.0d;
-                    if ((Enums.kAccountTypeCreditCard/*2*/ == getType() || Enums.kAccountTypeCreditLine /*8*/ == getType()) && hasLimit()) {
-                        retBalance = this.limit + balanceCurrent();
-                    }
-                    this.balanceAvailableCreditCached = retBalance;
-                    break;
-                }
-                return this.balanceAvailableCreditCached;
-            default:
-                retBalance = 0.0d;
-                break;
-        }
-        return retBalance;
+    @SuppressWarnings("unused")
+    public void timeStampIt() {
+        this.timestamp = new GregorianCalendar();
     }
 
     public void setTypeFromString(String aType) {
@@ -865,7 +828,6 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 setServerID(str);
                 col = col2 + 1;
                 setKeepTheChangeAccount(accountForID(curs.getInt(col2)));
-                col2 = col + 1;
                 double keep = curs.getDouble(col);
                 if (keep == 0.0d) {
                     keep = 1.0d;
@@ -988,26 +950,66 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return accountID;
     }
 
-    static int idForAccount(boolean deleted, String account) {
-        int i = 1;
-        if (account == null || account.length() == 0) {
-            return 0;
+    public double balanceOfType(int balanceType) {
+        double retBalance;
+        switch (balanceType) {
+            case Enums.kBalanceTypeFuture /*0*/:
+                if (this.balanceOverallCached == 0.0d) {
+                    retBalance = balanceOverall();
+                    this.balanceOverallCached = retBalance;
+                    break;
+                }
+                return this.balanceOverallCached;
+            case Enums.kBalanceTypeCleared /*1*/:
+                if (this.balanceClearedCached == 0.0d) {
+                    retBalance = balanceCleared();
+                    this.balanceClearedCached = retBalance;
+                    break;
+                }
+                return this.balanceClearedCached;
+            case Enums.kBalanceTypeCurrent /*2*/:
+                if (this.balanceCurrentCached == 0.0d) {
+                    retBalance = balanceCurrent();
+                    this.balanceCurrentCached = retBalance;
+                    break;
+                }
+                return this.balanceCurrentCached;
+            case Enums.kBalanceTypeAvailableFunds /*3*/:
+                if (this.balanceAvailableFundsCached == 0.0d) {
+                    if (!isLiability()) {
+                        if (hasLimit()) {
+                            retBalance = balanceOverall() - this.limit;
+                        } else {
+                            double balanceOverallCache = balanceCurrent();
+                            retBalance = Math.max(balanceOverallCache, 0.0d);
+                        }
+                        if (retBalance < 0.0d) {
+                            retBalance = 0.0d;
+                        }
+                    } else if (hasLimit()) {
+                        retBalance = this.limit + balanceCurrent();
+                    } else {
+                        retBalance = 0.0d;
+                    }
+                    this.balanceAvailableFundsCached = retBalance;
+                    break;
+                }
+                return this.balanceAvailableFundsCached;
+            case Enums.kBalanceTypeAvailableCredit /*4*/:
+                if (this.balanceAvailableCreditCached == 0.0d) {
+                    retBalance = 0.0d;
+                    if ((Enums.kAccountTypeCreditCard/*2*/ == getType() || Enums.kAccountTypeCreditLine /*8*/ == getType()) && hasLimit()) {
+                        retBalance = this.limit + balanceCurrent();
+                    }
+                    this.balanceAvailableCreditCached = retBalance;
+                    break;
+                }
+                return this.balanceAvailableCreditCached;
+            default:
+                retBalance = 0.0d;
+                break;
         }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.ACCOUNTS_TABLE_NAME);
-        String[] projection = new String[]{"accountID"};
-        StringBuilder stringBuilder = new StringBuilder("deleted=");
-        if (!deleted) {
-            i = 0;
-        }
-        Cursor curs = Database.query(qb, projection, stringBuilder.append(i).append(" AND account LIKE ").append(Database.SQLFormat(account)).toString(), null, null, null, null);
-        int accountID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            accountID = curs.getInt(0);
-        }
-        curs.close();
-        return accountID;
+        return retBalance;
     }
 
     static String accountForID(int pk) {
@@ -1189,7 +1191,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 case "overdraftAccount":
                     Class<?> c = getClass();
                     try {
-                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue));
+                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
                     } catch (Exception e2) {
                         Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml [" + localName + "]");
                     }
@@ -1220,7 +1222,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public String XMLString() {
         OutputStream output = new OutputStream() {
-            private StringBuilder string = new StringBuilder();
+            private final StringBuilder string = new StringBuilder();
 
             public void write(int b) {
                 this.string.append((char) b);
