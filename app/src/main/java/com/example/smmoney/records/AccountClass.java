@@ -361,11 +361,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setLimitFromString(String str) {
         setLimit(numberFromString(str));
-        if (str == null || str.length() <= 0) {
-            setNoLimit(true);
-        } else {
-            setNoLimit(false);
-        }
+        setNoLimit(str == null || str.length() <= 0);
     }
 
     public String limitAsString() {

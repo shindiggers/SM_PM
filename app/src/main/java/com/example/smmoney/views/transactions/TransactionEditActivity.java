@@ -198,9 +198,11 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             if (z) {
                 this.isLocalNotification = extras.getBoolean("localNotification");
                 this.repeatingTransaction = (RepeatingTransactionClass) extras.get("repeatingTransaction");
-                this.repeatingTransaction.hydrated = false;
-                this.repeatingTransaction.hydratedTransaction = false;
-                this.transaction = this.repeatingTransaction.getTransaction();
+                if (this.repeatingTransaction != null) { //nullpointer exception check added to clear lint
+                    this.repeatingTransaction.hydrated = false;
+                    this.repeatingTransaction.hydratedTransaction = false;
+                    this.transaction = this.repeatingTransaction.getTransaction();
+                }
                 if (this.transaction != null) {
                     this.transaction = this.transaction.copy();
                     this.transaction.initType();
@@ -213,18 +215,27 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
                 setContentView(R.layout.transaction_edit);
                 setupButtons();
-                setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+                Log.d(TAG, "onCreate: <--- after setupButtons");
+                setTitle();
                 this.balanceBar.setVisibility(View.GONE);
-                getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+                if (getSupportActionBar() != null) { //null pointer exception check added to clear lint
+                    getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+                    getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+                }
             }
         }
-        if (data == null) {
-            this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
-            this.transaction.hydrated = true;
+        if (data == null) { //added null pointer exception check to clear lint
+            if (getIntent().getExtras() != null) {//added null pointer exception check to clear lint
+                this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
+            }
+            if (this.transaction != null) {//added null pointer exception check to clear lint
+                this.transaction.hydrated = true;
+            }
             this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
             this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
-            this.transaction.hydrated = true;
+            if (this.transaction != null) { //added null pointer exception check to clear lint
+                this.transaction.hydrated = true;
+            }
         } else {
             this.isIReceipt = true;
             handleIReceipt(data);
@@ -235,11 +246,14 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
         setContentView(R.layout.transaction_edit);
         setupButtons();
-        setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+        setTitle();
+        Log.d(TAG, "onCreate: <---- after setupButtons()");
         this.balanceBar.setVisibility(View.GONE);
-        getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        if (getSupportActionBar() != null) { //added null pointer exception check to clear lint
+            getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     public void onResume() {
@@ -278,8 +292,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.transaction.hydrated = true;
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
+    private void setTitle() {
+        this.titleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TITLE); //changed to reference Locales instead of passing 'title' String into the setTitle() method
     }
 
     private void setupButtons() {
@@ -946,7 +960,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private void clearKeepTheChange() {
         if (this.changeKept != 0.0d) {
             AccountClass act = AccountDB.recordFor(this.transaction.getAccount());
-            this.amountEditText.setText(CurrencyExt.amountAsCurrency(CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), act.getCurrencyCode()) - this.changeKept, act.getCurrencyCode()));
+            this.amountEditText.setText(CurrencyExt.amountAsCurrency(CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), act != null ? /* added null pointer exception check */ act.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE)) - this.changeKept, act != null ? /* added null pointer exception check */ act.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
             this.changeKept = 0.0d;
         }
     }
@@ -955,10 +969,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         AccountClass act = AccountDB.recordFor(this.transaction.getAccount());
         String amountString = this.amountEditText.getText().toString();
         if (amountString.length() > 0) {
-            double keepTheChange = act.getKeepChangeRoundTo();
-            double initialAmount = CurrencyExt.amountFromStringWithCurrency(this.currencyKeyboard.processMath(amountString), act.getCurrencyCode());
+            double keepTheChange = act != null ? /* added null pointer exception check */ act.getKeepChangeRoundTo() : 0;
+            double initialAmount = CurrencyExt.amountFromStringWithCurrency(this.currencyKeyboard.processMath(amountString), act != null ? /* added null pointer exception check */ act.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
             double newBal = keepTheChange - (initialAmount % keepTheChange);
-            this.amountEditText.setText(CurrencyExt.amountAsCurrency(newBal + initialAmount, act.getCurrencyCode()));
+            this.amountEditText.setText(CurrencyExt.amountAsCurrency(newBal + initialAmount, act != null ? /* added null pointer exception check */ act.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
             this.changeKept = newBal;
             this.currencyKeyboard.hide();
         }
@@ -967,20 +981,25 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private void keepTheChangeUpdate() {
         if (this.changeKept != 0.0d) {
             AccountClass account = AccountDB.recordFor(this.transaction.getAccount());
-            AccountClass ktcAccount = AccountDB.recordFor(account.getKeepTheChangeAccount());
+            AccountClass ktcAccount = null; //changes made to clear null pointer exception lint warining
+            if (account != null) {
+                ktcAccount = AccountDB.recordFor(account.getKeepTheChangeAccount());
+            }
             TransactionClass keepTheChangeRecord = new TransactionClass();
             keepTheChangeRecord.setAccount(this.transaction.getAccount());
             if (ktcAccount != null) {
                 keepTheChangeRecord.setTransferToAccount(account.getKeepTheChangeAccount());
             } else {
-                keepTheChangeRecord.setPayee(account.getKeepTheChangeAccount());
+                if (account != null) {
+                    keepTheChangeRecord.setPayee(account.getKeepTheChangeAccount());
+                }
             }
             GregorianCalendar greg = new GregorianCalendar();
             greg.setTimeInMillis(this.transaction.getDate().getTimeInMillis() + 1000);
             keepTheChangeRecord.setDate(greg);
             keepTheChangeRecord.setSubTotal(this.changeKept * -1.0d);
             keepTheChangeRecord.setAmount(this.changeKept * -1.0d);
-            keepTheChangeRecord.setCurrencyCode(account.getCurrencyCode());
+            keepTheChangeRecord.setCurrencyCode(account != null ? /* added null pointer exception check to clear lint */ account.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
             keepTheChangeRecord.setCategory(Locales.kLOC_GENERAL_KEEP_CHANGE);
             keepTheChangeRecord.setType(Enums.kTransactionTypeTransferFrom /*3*/);
             keepTheChangeRecord.setClassName(this.transaction.getClassName());
@@ -1049,13 +1068,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
 
     private void includeFeeAction() {
         AccountClass account = AccountDB.recordFor(this.accountTextView.getText().toString());
-        if (account.getFee() <= 0.0d) {
+        if (account != null /* added null pointer exception check */ && account.getFee() <= 0.0d) {
             showDialog(DIALOG_FEE /*4*/);
             return;
         }
         save();
         TransactionClass fee = new TransactionClass();
-        fee.setAccount(account.getAccount());
+        if (account != null) { /* added null pointer exception check */
+            fee.setAccount(account.getAccount());
+        }
         fee.setDate(CalExt.addSecond(this.transaction.getDate()));
         fee.initType();
         fee.setSubTotal(account.getFee() * -1.0d);
@@ -1103,8 +1124,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         getCells();
         if (this.transaction.isTransfer() && Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             AccountClass a1 = AccountDB.recordFor(this.transaction.getTransferToAccount());
-            this.transaction.setXrate(xrateFromAccountToAccount(this.transaction.getAccount(), a1.getAccount()));
-            this.transaction.setCurrencyCode(a1.getCurrencyCode());
+            if (a1 != null) {
+                this.transaction.setXrate(xrateFromAccountToAccount(this.transaction.getAccount(), a1.getAccount()));
+            }
+            this.transaction.setCurrencyCode(a1 != null ? a1.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
             //this.amountXrateTextView.setText("x" + this.transaction.getXrate());
             double xRate = this.transaction.getXrate();
             String currencyCode = this.transaction.getCurrencyCode();
@@ -1460,19 +1483,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         inChannel = new FileInputStream(this.tempPhotoPath).getChannel();
                         outChannel = new FileOutputStream(file).getChannel();
                         inChannel.transferTo(0, inChannel.size(), outChannel);
-                        if (inChannel != null) {
-                            try {
-                                inChannel.close();
-                            } catch (IOException e2) {
-                                e2.printStackTrace();
-                            }
+                        try {
+                            inChannel.close();
+                        } catch (IOException e2) {
+                            e2.printStackTrace();
                         }
-                        if (outChannel != null) {
-                            try {
-                                outChannel.close();
-                            } catch (IOException e22) {
-                                e22.printStackTrace();
-                            }
+                        try {
+                            outChannel.close();
+                        } catch (IOException e22) {
+                            e22.printStackTrace();
                         }
                         TransactionClass transactionClass = this.transaction;
                         if (this.transaction.getImageLocation() == null) {

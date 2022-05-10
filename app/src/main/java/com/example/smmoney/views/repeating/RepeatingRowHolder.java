@@ -32,10 +32,13 @@ class RepeatingRowHolder {
         this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         this.repeatingTransaction.hydrate();
         if (this.repeatingTransaction.isOverdueOnDate(new GregorianCalendar())) {
+            //noinspection deprecation
             this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_orange));
         } else if (this.repeatingTransaction.isOverdue()) {
+            //noinspection deprecation
             this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_red));
         } else {
+            //noinspection deprecation
             this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_grey));
         }
         this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
@@ -69,6 +72,7 @@ class RepeatingRowHolder {
         this.account.setTextColor(PocketMoneyThemes.alternateCellTextColor());
     }
 
+    @SuppressWarnings("unused")
     private void scaleTextField(TextView txtView) {
         int parentWidth = txtView.getWidth();
         float freqWidth = txtView.getPaint().measureText((String) txtView.getText());

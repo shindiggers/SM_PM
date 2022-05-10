@@ -59,9 +59,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     private boolean cleared;
     private String currentElementValue;
     @SuppressWarnings("unused")
-    private int currentImage;
+    private final int currentImage;
     @SuppressWarnings("unused")
-    private int currentIndex;
+    private final int currentIndex;
     private byte[] data;
     @SuppressWarnings("unused")
     private String dataString;
@@ -81,10 +81,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     private SplitsClass parserSplit;
     private String payee;
     @SuppressWarnings("unused")
-    private boolean readingInImage;
+    private final boolean readingInImage;
     public double runningBalance;
     @SuppressWarnings("unused")
-    private StringBuilder sb;
+    private final StringBuilder sb;
     private ArrayList<SplitsClass> splits;
     private ArrayList<SplitsClass> splitsDeleted;
     private double subTotal;
@@ -96,8 +96,161 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return false;
     }
 
+    public TransactionClass() {
+        Log.d(TAG, "TransactionClass() called **default constructor");
+        this.transactionID = 0;
+        this.date = null;
+        this.cleared = false;
+        this.account = "";
+        this.payee = "";
+        this.checkNumber = "";
+        this.ofxID = "";
+        this.imageLocation = "";
+        this.splits = new ArrayList<>();
+        this.splitsDeleted = new ArrayList<>();
+        this.currentImage = 0;
+        this.readingInImage = false;
+        this.currentIndex = 0;
+        this.sb = new StringBuilder();
+        this.hydrated = true;
+        this.transactionID = 0;
+        this.date = new GregorianCalendar();
+        this.date.setTimeInMillis(System.currentTimeMillis());
+        this.subTotal = 0.0d;
+        this.account = null;
+        this.payee = null;
+        this.checkNumber = null;
+        this.cleared = false;
+        this.isRepeatingTransaction = false;
+        this.splits = new ArrayList<>();
+        this.splits.add(new SplitsClass());
+        this.dirty = false;
+        this.imageLocation = null;
+    }
+
+    public TransactionClass(int pk) {
+        Log.d(TAG, "TransactionClass() called with: pk = [" + pk + "]");
+        this.transactionID = 0;
+        this.date = null;
+        this.cleared = false;
+        this.account = "";
+        this.payee = "";
+        this.checkNumber = "";
+        this.ofxID = "";
+        this.imageLocation = "";
+        this.splits = new ArrayList<>();
+        this.splitsDeleted = new ArrayList<>();
+        this.currentImage = 0;
+        this.readingInImage = false;
+        this.currentIndex = 0;
+        this.sb = new StringBuilder();
+        this.transactionID = pk;
+        this.hydrated = false;
+        this.dirty = false;
+    }
+
+    static void renamePayeeFromTo(String fromPayee, String toPayee) {
+        Log.d(TAG, "renamePayeeFromTo() called with: fromPayee = [" + fromPayee + "], toPayee = [" + toPayee + "]");
+        if (fromPayee == null) {
+            fromPayee = "";
+        }
+        if (toPayee == null) {
+            toPayee = "";
+        }
+        if (renamepayee_statement == null) {
+            renamepayee_statement = "UPDATE transactions SET payee=?, timestamp=? WHERE payee LIKE ?";
+        }
+        Database.execSQL(renamepayee_statement, new String[]{toPayee, String.valueOf((new GregorianCalendar().getTimeInMillis() / 1000)), fromPayee});
+    }
+
+    static void renameClassFromTo(String fromText, String toText) {
+        Log.d(TAG, "renameClassFromTo() called with: fromText = [" + fromText + "], toText = [" + toText + "]");
+        if (fromText == null) {
+            fromText = "";
+        }
+        if (toText == null) {
+            toText = "";
+        }
+        if (renameclasstimestamp_statement == null) {
+            renameclasstimestamp_statement = "UPDATE transactions SET timestamp=? WHERE transactionID IN (SELECT transactionID FROM splits WHERE classID LIKE ?)";
+        }
+        if (renameclass_statement == null) {
+            renameclass_statement = "UPDATE splits SET classID=? WHERE classID LIKE ?";
+        }
+        Database.execSQL(renameclasstimestamp_statement, new String[]{String.valueOf((new GregorianCalendar().getTimeInMillis() / 1000)), fromText});
+        Database.execSQL(renameclass_statement, new String[]{toText, fromText});
+    }
+
+    static void renameIDFromTo(String fromText, String toText) {
+        Log.d(TAG, "renameIDFromTo() called with: fromText = [" + fromText + "], toText = [" + toText + "]");
+        if (fromText == null) {
+            fromText = "";
+        }
+        if (toText == null) {
+            toText = "";
+        }
+        if (renameidtimestamp_statement == null) {
+            renameidtimestamp_statement = "UPDATE transactions SET timestamp=? WHERE transactionID IN (SELECT transactionID FROM splits WHERE checkNumber LIKE ?)";
+        }
+        if (renameid_statement == null) {
+            renameid_statement = "UPDATE transactions SET checkNumber=?, timestamp=? WHERE checkNumber LIKE ?";
+        }
+        Database.execSQL(renameidtimestamp_statement, new String[]{String.valueOf((new GregorianCalendar().getTimeInMillis() / 1000)), fromText});
+        Database.execSQL(renameid_statement, new String[]{toText, String.valueOf((new GregorianCalendar().getTimeInMillis() / 1000)), fromText});
+    }
+
+    private static int insertNewRecordIntoDatabase() {
+        Log.d(TAG, "insertNewRecordIntoDatabase() called");
+        Log.d(TAG, "insertNewRecordIntoDatabase: THIS INSERTS A NEW TRANSACTION INTO TRANSACTION TABLE GIVING IT THE NEXT AVAILABLE TRANSACTION ID");
+        ContentValues content = new ContentValues();
+        content.put("deleted", 0);
+        content.put("serverID", Database.newServerID());
+        long id = Database.insert(Database.TRANSACTIONS_TABLE_NAME, null, content);
+        if (id == -1) {
+            return 0;
+        }
+        return (int) id;
+    }
+
+    public static boolean importedTransactionExists(TransactionClass transaction) {
+        Log.d(TAG, "importedTransactionExists() called with: transaction = [" + transaction + "]");
+        String clearedString;
+        new SQLiteQueryBuilder().setTables(Database.TRANSACTIONS_TABLE_NAME);
+        int accountID = AccountDB.uniqueID(transaction.account);
+        if (transaction.getCleared()) {
+            clearedString = "1";
+        } else {
+            clearedString = "0";
+        }
+        Cursor c = Database.rawQuery("SELECT transactionID FROM transactions WHERE deleted=0 AND type=" + transaction.type + " AND accountID=" + accountID + " AND date >= " + CalExt.beginningOfDay(transaction.getDate()).getTimeInMillis() + " AND date <= " + CalExt.endOfDay(transaction.getDate()).getTimeInMillis() + " AND ((payee ISNULL AND (? ISNULL OR LENGTH(?)=0)) OR (payee LIKE ?) OR (? ISNULL AND LENGTH(payee)=0)) AND subtotal=" + transaction.getSubTotal() + " AND ((checkNumber ISNULL AND (? ISNULL OR LENGTH(?)=0)) OR (checkNumber LIKE ?) OR (? ISNULL AND LENGTH(checkNumber)=0)) AND cleared=" + clearedString, new String[]{transaction.getPayee(), transaction.getPayee(), transaction.getPayee(), transaction.getPayee(), transaction.getCheckNumber(), transaction.getCheckNumber(), transaction.getCheckNumber(), transaction.getCheckNumber()});
+        boolean foundMatch = c.moveToFirst();
+        c.close();
+        return foundMatch;
+    }
+
+    public static TransactionClass recordWithServerID(String serverID) {
+        Log.d(TAG, "recordWithServerID() called with: serverID = [" + serverID + "]");
+        TransactionClass record = null;
+        if (serverID == null || serverID.length() == 0) {
+            return null;
+        }
+        Cursor c = Database.rawQuery(serverIDSelectionString, new String[]{serverID});
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            record = new TransactionClass(c.getInt(0));
+        }
+        c.close();
+        return record;
+    }
+
     public int getTransactionID() {
         return this.transactionID;
+    }
+
+    public int getType() {
+        //   Log.d(TAG, "getType() called");
+        hydrate();
+        return this.type;
     }
 
     public void setType(int atype) {
@@ -126,6 +279,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
     }
 
+    public boolean getCleared() {
+        //   Log.d(TAG, "getCleared() called");
+        hydrate();
+        return this.cleared;
+    }
+
     public void setCleared(boolean clearIt) {
         if (this.cleared != clearIt) {
             this.dirty = true;
@@ -135,7 +294,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     public boolean getCleared() {
         hydrate();
-        return this.cleared;
+        return this.date;
     }
 
     public void setDate(GregorianCalendar aDate) {
@@ -165,6 +324,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         date.set(Calendar.MINUTE, g.get(Calendar.MINUTE));
         date.set(Calendar.HOUR_OF_DAY, g.get(Calendar.HOUR_OF_DAY));
         setDate(date);
+    }
+
+    public String getAccount() {
+        //   Log.d(TAG, "getAccount() called");
+        hydrate();
+        return this.account;
     }
 
     public void setAccount(String aString) {
@@ -294,7 +459,6 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         if (this.subTotal == 0.0d) {
             return null;
         }
-        return Double.toString(Math.abs(this.subTotal));
     }
 
     public String subTotalAsCurrency() {
@@ -350,6 +514,75 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
     }
 
+    public String getPayee() {
+        //   Log.d(TAG, "getPayee() called");
+        hydrate();
+        return this.payee;
+    }
+
+    public void setPayee(String aString) {
+        // Log.d(TAG, "setPayee() called with: aString = [" + aString + "]");
+        if (this.payee != null || aString != null) {
+            if (this.payee == null || !this.payee.equals(aString)) {
+                this.dirty = true;
+                this.payee = aString;
+            }
+        }
+    }
+
+    public double getSubTotal() {
+        //   Log.d(TAG, "getSubTotal() called");
+        if (this.subTotal == 0.0d) {
+            hydrate();
+        }
+        return this.subTotal;
+    }
+
+    public void setSubTotal(double amount) {
+        // Log.d(TAG, "setSubTotal() called with: amount = [" + amount + "]");
+        if (this.subTotal != amount) {
+            this.dirty = true;
+            this.subTotal = amount;
+        }
+    }
+
+    private void adjustSubTotal(double amount) {
+        Log.d(TAG, "adjustSubTotal() called with: amount = [" + amount + "]");
+        this.subTotal += amount;
+    }
+
+    public String subTotalAsABSString() {
+        Log.d(TAG, "subTotalAsABSString() called");
+        if (this.subTotal == 0.0d) {
+            return null;
+        }
+        return Double.toString(Math.abs(this.subTotal));
+    }
+
+    public String subTotalAsCurrency() {
+        Log.d(TAG, "subTotalAsCurrency() called");
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
+            return CurrencyExt.amountAsCurrency(getSubTotal());
+        }
+        if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_FOREIGNAMOUNT)) {
+            return CurrencyExt.amountAsCurrency(getSubTotal() / getXrate(), getCurrencyCode());
+        }
+        try {
+            return CurrencyExt.amountAsCurrency(getSubTotal(), AccountDB.recordFor(getAccount()).getCurrencyCode());
+        } catch (Exception e) {
+            return CurrencyExt.amountAsCurrency(getSubTotal(), Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
+        }
+    }
+
+    public String runningBalanceAsCurrency() {
+        Log.d(TAG, "runningBalanceAsCurrency() called");
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
+            return CurrencyExt.amountAsCurrency(this.runningBalance);
+        }
+        AccountClass a1 = AccountDB.recordFor(getAccount());
+        return CurrencyExt.amountAsCurrency(this.runningBalance, a1 == null ? Prefs.getStringPref(Prefs.HOMECURRENCYCODE) : a1.getCurrencyCode());
+    }
+
     public void addSplit(SplitsClass aSplit) {
         this.splits.add(aSplit);
     }
@@ -378,6 +611,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return getAmountAtIndex(0);
     }
 
+    public void setAmount(double amount) {
+        //   Log.d(TAG, "setAmount() called with: amount = [" + amount + "]");
+        setAmountAtIndex(amount, 0);
+    }
+
     public double getAmountAtIndex(int index) {
         hydrate();
         if (getSplits().size() <= 0 || this.splits.size() <= index) {
@@ -396,6 +634,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     public double getXrate() {
         return getXrateAtIndex(0);
+    }
+
+    public void setXrate(double rate) {
+        // Log.d(TAG, "setXrate() called with: rate = [" + rate + "]");
+        setXrateAtIndex(rate, 0);
     }
 
     public double getXrateAtIndex(int index) {
@@ -440,6 +683,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return getCategoryAtIndex(0);
     }
 
+    public void setCategory(String category) {
+        //  Log.d(TAG, "setCategory() called with: category = [" + category + "]");
+        setCategoryAtIndex(category, 0);
+    }
+
     public String getCategoryAtIndex(int index) {
         hydrate();
         if (getSplits() == null || this.splits.size() <= 0) {
@@ -458,6 +706,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     public String getClassName() {
         return getClassNameAtIndex(0);
+    }
+
+    public void setClassName(String classname) {
+        //  Log.d(TAG, "setClassName() called with: classname = [" + classname + "]");
+        setClassNameAtIndex(classname, 0);
     }
 
     public String getClassNameAtIndex(int index) {
@@ -480,6 +733,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return getMemoAtIndex(0);
     }
 
+    public void setMemo(String memo) {
+        //   Log.d(TAG, "setMemo() called with: memo = [" + memo + "]");
+        setMemoAtIndex(memo, 0);
+    }
+
     public String getMemoAtIndex(int index) {
         hydrate();
         if (getSplits() == null || getSplits().size() <= 0 || this.splits.size() <= index) {
@@ -500,6 +758,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return getTransferToAccountAtIndex(0);
     }
 
+    public void setTransferToAccount(String anAccount) {
+        //  Log.d(TAG, "setTransferToAccount() called with: anAccount = [" + anAccount + "]");
+        setTransferToAccountAtIndex(anAccount, 0);
+    }
+
     public String getTransferToAccountAtIndex(int index) {
         hydrate();
         if (getSplits() == null || getSplits().size() <= 0 || this.splits.size() <= index) {
@@ -518,6 +781,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     public String getCurrencyCode() {
         return getCurrencyCodeAtIndex(0);
+    }
+
+    public void setCurrencyCode(String code) {
+        //  Log.d(TAG, "setCurrencyCode() called with: code = [" + code + "]");
+        setCurrencyCodeAtIndex(code, 0);
     }
 
     public String getCurrencyCodeAtIndex(int index) {
@@ -542,6 +810,20 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return splitNumber > 1 || firstClass == null || firstClass.equals("");
     }
 
+    public ArrayList<String> imageFileNames() {
+        if (getImageLocation() == null) {
+            return null;
+        }
+        String[] strings = getImageLocation().split(";");
+        ArrayList<String> retStrings = new ArrayList<>(strings.length);
+        for (Object add : strings) {
+            if (strings[0].length() > 0) {
+                retStrings.add((String) add);
+            }
+        }
+        return retStrings;
+    }
+
     public int getNumberOfSplits() {
         return getSplits().size();
     }
@@ -560,6 +842,17 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             return "";
         }
         return Double.toString(this.subTotal);
+    }
+
+    public static void renameCategoryFromTo(String oldCat, String newCat) {
+        if (oldCat == null) {
+            oldCat = "";
+        }
+        if (newCat == null) {
+            newCat = "";
+        }
+        Database.execSQL("UPDATE transactions SET timestamp=" + System.currentTimeMillis() + " WHERE transactionID IN (SELECT transactionID FROM splits WHERE categoryID LIKE " + Database.SQLFormat(oldCat) + " ESCAPE '\\')");
+        Database.execSQL("UPDATE splits SET categoryID=" + Database.SQLFormat(newCat) + " WHERE categoryID LIKE " + Database.SQLFormat(oldCat) + " ESCAPE '\\'");
     }
 
     public void deleteSplitAtIndex(int index) {
@@ -592,20 +885,6 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         if (AccountClass.idForAccount(this.account) == 0) {
             AccountClass.insertIntoDatabase(this.account);
         }
-    }
-
-    public ArrayList<String> imageFileNames() {
-        if (getImageLocation() == null) {
-            return null;
-        }
-        String[] strings = getImageLocation().split(";");
-        ArrayList<String> retStrings = new ArrayList<>(strings.length);
-        for (Object add : strings) {
-            if (strings[0].length() > 0) {
-                retStrings.add((String) add);
-            }
-        }
-        return retStrings;
     }
 
     public TransactionClass copy() {

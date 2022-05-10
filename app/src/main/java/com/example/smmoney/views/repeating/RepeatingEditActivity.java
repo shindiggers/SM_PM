@@ -50,7 +50,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView frequencyTextView;
     private ImageView fridayCheck;
     private TextView fridayTextView;
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private String monday;
     private ImageView mondayCheck;
     private TextView mondayTextView;
@@ -62,7 +62,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView saturdayTextView;
     private String suffix = "";
     private TextView suffixTextView;
-    @SuppressWarnings("FieldCanBeLocal")
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private String sunday;
     private ImageView sundayCheck;
     private TextView sundayTextView;
