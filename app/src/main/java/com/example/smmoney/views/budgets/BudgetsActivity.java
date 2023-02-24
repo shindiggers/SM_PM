@@ -250,7 +250,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseOver/*3*/) {
             this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BALANCE);
         }
-        int newWidth = (int) TypedValue.applyDimension(1, 9.0f, getResources().getDisplayMetrics());
+        int newWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9.0f, getResources().getDisplayMetrics());
 
         loadBalanceBar();
         this.budgetProgressBar.setVisibility(View.INVISIBLE);
