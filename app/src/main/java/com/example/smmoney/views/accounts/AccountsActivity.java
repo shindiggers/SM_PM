@@ -1,5 +1,8 @@
 package com.example.smmoney.views.accounts;
 
+import static androidx.core.content.FileProvider.getUriForFile;
+import static com.example.smmoney.SMMoney.TAG;
+
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -77,7 +80,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.budgets.BudgetsActivity;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
-import com.example.smmoney.views.charts.views.ChartBarView;
 import com.example.smmoney.views.charts.views.ChartView;
 import com.example.smmoney.views.desktopsync.PocketMoneySyncActivity;
 import com.example.smmoney.views.repeating.RepeatingActivity;
@@ -95,9 +97,6 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Objects;
-
-import static androidx.core.content.FileProvider.getUriForFile;
-import static com.example.smmoney.SMMoney.TAG;
 
 //import com.android.vending.licensing.LicenseChecker;
 //import com.android.vending.licensing.LicenseCheckerCallback;
@@ -761,10 +760,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 }
             }
         });
-        this.netWorthChartView = (ChartBarView) layout.findViewById(R.id.networthbarchart);
+        this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
         this.netWorthChartView.delegate = this;
         this.netWorthChartView.dataSource = new NetWorthDataSource(this.adapter);
-        this.cashFlowChartView = (ChartBarView) layout.findViewById(R.id.cashflowbarchart);
+        this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
         this.cashFlowChartView.delegate = this;
         this.cashFlowChartView.dataSource = new CashFlowDataSource(this.adapter);
         this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
@@ -1062,14 +1061,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", qifUris);
         int i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-        Object[] objArr = new Object[ACCOUNT_REQUEST_FILTER];
+        Object[] objArr = new Object[1];
         objArr[0] = "QIF";
         emailIntent.putExtra("android.intent.extra.SUBJECT", getString(i, objArr));
         i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-        objArr = new Object[2];
-        objArr[0] = "QIF";
-        objArr[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr));
+        Object[] objArr2 = new Object[2];
+        objArr2[0] = "QIF";
+        objArr2[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr2));
         this.fileNames = fileNames;
         startActivityForResult(emailIntent, ACCOUNT_REQUEST_EMAIL);
     }
@@ -1438,15 +1437,15 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
+                                    objArr = new Object[1];
                                     objArr[0] = "QIF";
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_BUDGET];
-                                    objArr[0] = "QIF";
-                                    objArr[AccountsActivity.ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
+                                    Object[] objArrEmailText = new Object[2];
+                                    objArrEmailText[0] = "QIF";
+                                    objArrEmailText[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailText));
                                     AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
                                     break;
                                 case EMAIL_TDF /*1*/:
@@ -1458,15 +1457,15 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
-                                    objArr[0] = "TDF";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
+                                    Object[] objArrEmailSubjectTDF = new Object[1];
+                                    objArrEmailSubjectTDF[0] = "TDF";
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArrEmailSubjectTDF));
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_BUDGET];
-                                    objArr[0] = "TDF";
-                                    objArr[AccountsActivity.ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
+                                    Object[] objArrEmailTextTDF = new Object[2];
+                                    objArrEmailTextTDF[0] = "TDF";
+                                    objArrEmailTextTDF[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextTDF));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_CSV /*2*/:
@@ -1478,15 +1477,15 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
+                                    objArr = new Object[1];
                                     objArr[0] = "CSV";
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_BUDGET];
-                                    objArr[0] = "CSV";
-                                    objArr[AccountsActivity.ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
+                                    Object[] objArrEmailTextCSV = new Object[2];
+                                    objArrEmailTextCSV[0] = "CSV";
+                                    objArrEmailTextCSV[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextCSV));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_OFX /*3*/:
@@ -1507,15 +1506,15 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_FILTER];
+                                    objArr = new Object[1];
                                     objArr[0] = "OFX/QFX";
                                     emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
                                     accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    objArr = new Object[AccountsActivity.ACCOUNT_REQUEST_BUDGET];
-                                    objArr[0] = "OFX/QFX";
-                                    objArr[AccountsActivity.ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArr));
+                                    Object[] objArrEmailTextOFX = new Object[2];
+                                    objArrEmailTextOFX[0] = "OFX/QFX";
+                                    objArrEmailTextOFX[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextOFX));
                                     Log.i(TAG, "ACCOUNTS_ACTIVITY.JAVA: HANDLER - BEFORE START ACTIVTY CALLED");
                                     AccountsActivity.this.startActivity(emailOfxIntent);
                                     break;
@@ -1700,6 +1699,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // If request is cancelled, the result arrays are empty.
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // permission was granted
