@@ -11,6 +11,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.widget.CheckBox;
@@ -564,4 +565,22 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         finish();
         return true;
     }
+
+    /**
+     * This method is called when on pressing the back button arrow in the action bar, which is
+     * implemented using the 'getSupportActionBar()' method. When the back button arrow is
+     * clicked, it calls the 'save()' method and finishes the current activity.
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId(); // Get the ID of the menu item that was selected
+
+        if (id == android.R.id.home) { // Check if the selected menu item is the back button arrow in the action bar
+            save(); // Call the 'save()' method
+            finish(); // Call the 'finish()' method to close the current activity
+            return true; // Return 'true' to indicate that the menu item selection has been handled
+        }
+        return super.onOptionsItemSelected(item); // Call the default implementation if the selected menu item is not the back button arrow
+    }
+
 }
