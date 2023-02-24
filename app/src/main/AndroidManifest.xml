@@ -33,6 +33,7 @@
 
         <activity
             android:name="com.example.smmoney.views.LaunchActivity"
+            android:exported="true"
             android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -60,7 +61,8 @@
         <activity android:name="com.example.smmoney.views.transactions.PhotoReceiptOptionsActivity" />
         <activity
             android:name="com.example.smmoney.views.transactions.TransactionEditActivity"
-            android:configChanges="orientation">
+            android:configChanges="orientation"
+            android:exported="true">
             <intent-filter>
                 <data
                     android:host="hostlocation"
