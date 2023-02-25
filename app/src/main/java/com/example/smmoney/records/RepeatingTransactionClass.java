@@ -37,30 +37,25 @@ import javax.xml.parsers.SAXParserFactory;
 public class RepeatingTransactionClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
     public static final String XML_RECORDTAG_REPEATINGTRANSACTION = "RPTTRANSCLASS";
-    private String currentElementValue;
-    @SuppressWarnings("unused")
-    private final String dayNameToken;
-    @SuppressWarnings("unused")
-    private final String dayOrdinalToken;
-    private GregorianCalendar endDate;
-    @SuppressWarnings("unused")
-    private final String frequenceToken;
-    private int frequency;
-    public boolean hydratedTransaction;
-    private GregorianCalendar lastProcessedDate;
-    @SuppressWarnings("unused")
-    private final String monthNameToken;
-    private int notifyDaysInAdvance;
-    private int repeatOn;
-    public int repeatingID;
-    private boolean sendLocalNotifications;
-    private int startOfWeek;
-    private TransactionClass transaction;
-    private int transactionID;
-    public String transactionServerID;
-    private int type;
-    @SuppressWarnings("unused")
-    private final String weekOrdinalToken;
+    private final String dayNameToken;                          // String placeholder for days of the week in dynamic strings. The token will be replaced with Monday, Tuesday etc as required
+    private final String dayOrdinalToken;                       // String placeholder for day ordinals (eg 'st', 'nd', 'rd', 'th' for 1st, 2nd, 3rd, 4th etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
+    private final String frequenceToken;                        // String placeholder for the different frequency types (eg daily, weekly, bi-weekly, monthly, bi-monthly, quarterly etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
+    private final String monthNameToken;                        // String placeholder for months of the year in dynamic strings. The token will be replaced with January, February etc as required
+    private final String weekOrdinalToken;                      // String placeholder for week of the month ordinals (eg 'st', 'nd', 'rd', 'th' or 'last' for 1st, 2nd, 3rd, 4th or last, say, Tuesday of the month etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
+    public boolean hydratedTransaction;                         // Flag to indicate if the repeating transaction object has been populated with data, either data read from databse or data from UI. 1/TRUE = Hydrated 0/FALSE = Not
+    public int repeatingID;                                     // DATABASE FIELD unique ID for each repeating transaction. Primary key for repeating transactions database
+    public String transactionServerID;                          // Not sure of the useage of this class member. //todo: establish what this is for
+    private String currentElementValue;                         // Don't know what this class member is used for todo: establish what this is for
+    private GregorianCalendar endDate;                          // DATABASE FIELD Date on which the repeating transaction ceases to repeat
+    private int frequency;                                      // DATABASE FIELD Repeat frequency of repeating transaction e.g. 1, 2, 3 etc. Example every 1 month, every 2 week
+    private GregorianCalendar lastProcessedDate;                // DATABASE FIELD date on which the repeating transaction was last processed
+    private int notifyDaysInAdvance;                            // DATABASE FIELD how many days in advance of the next occurance of the transaction should a notification be sent
+    private int repeatOn;                                       // DATABASE FIELD int used to record 1) the type of monthly repeat or 2) the days of the week on which a weekly transaction repeats
+    private boolean sendLocalNotifications;                     // DATABASE FIELD flag to indicate if local notifications should be sent. 1/TRUE = Yes 0/FALSE = No
+    private int startOfWeek;                                    // DATABASE FIELD DON'T KNOW EXACTLY WHAT THIS DOES - todo: establish how this is used
+    private TransactionClass transaction;                       // TransactionClass object (see TransactionClass.java for member variables and methods)
+    private int transactionID;                                  // DATABASE FIELD Foreign key to link repeating transaciton to a transaction in the Transaction Database
+    private int type;                                           // DATABASE FIELD records the repeating transaction type 0=none, 1=daily, 2=weekly, 3=monthly, 4=yearly, 5=once
 
     public RepeatingTransactionClass() {
         this.frequenceToken = "^f";
@@ -80,27 +75,42 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         this.dirty = false;
     }
 
+    /**
+     * Constructor for a new instance of RepeatingTransactionClass with a specified primary key value.
+     *
+     * @param pk the primary key value to associate with this instance of the class
+     */
     public RepeatingTransactionClass(int pk) {
-        this.frequenceToken = "^f";
+        this.frequenceToken = "^f"; // Initialize instance variables with default values
         this.dayOrdinalToken = "^x";
         this.weekOrdinalToken = "^w";
         this.monthNameToken = "^m";
         this.dayNameToken = "^d";
-        this.repeatingID = pk;
+        this.repeatingID = pk; // Set the repeatingID instance variable to the specified primary key value
+
+        // Query the database for the lastProcessedDate associated with this primary key
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"lastProcessedDate"}, "repeatingID=" + pk, null, null, null, null); // SQL statement: SELECT lastProcessedDate FROM repeatingTransactions WHERE (repeatingID=1)  ...for pk=1
+
+        // If a lastProcessedDate value was found in the database, set the lastProcessedDate instance variable
         if (curs.getCount() != 0) {
             curs.moveToFirst();
             GregorianCalendar cal = new GregorianCalendar();
             cal.setTimeInMillis(((long) curs.getDouble(0)) * 1000);
             setLastProcessedDate(cal);
         } else {
+            // If no lastProcessedDate value was found in the database, set the lastProcessedDate instance variable to null
             setLastProcessedDate(null);
         }
+
+        // Set the dirty instance variable to false
         this.dirty = false;
+
+        // Close the database cursor
         curs.close();
     }
+
 
     public RepeatingTransactionClass(int transactionID, @SuppressWarnings("unused") boolean usesTransID) {
         this.frequenceToken = "^f";
