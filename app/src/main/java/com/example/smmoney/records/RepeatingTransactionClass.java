@@ -89,7 +89,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         this.repeatingID = pk;
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"lastProcessedDate"}, "repeatingID=" + pk, null, null, null, null);
+        Cursor curs = Database.query(qb, new String[]{"lastProcessedDate"}, "repeatingID=" + pk, null, null, null, null); // SQL statement: SELECT lastProcessedDate FROM repeatingTransactions WHERE (repeatingID=1)  ...for pk=1
         if (curs.getCount() != 0) {
             curs.moveToFirst();
             GregorianCalendar cal = new GregorianCalendar();
@@ -202,20 +202,20 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public int getType() {
         hydrate();
-        return this.type;
+        return this.type; // 0=no repeat, 1=daily, 2=weekly, 3=monthly, 4=yearly, 5=repeat once only
     }
 
     public String typeEveryAsString() {
         if (Enums.repeatWeekly == this.type && this.frequency == 2) {
             return Locales.kLOC_BUDGETS_BIWEEKLY;
         }
-        if (Enums.repeatWeekly == this.type && Enums.repeatWeekly < this.frequency) {
+        if (Enums.repeatWeekly == this.type && 2 < this.frequency) {
             return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY; // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
         }
-        if (Enums.repeatMonthly == this.type && Enums.repeatWeekly == this.frequency) {
+        if (Enums.repeatMonthly == this.type && 2 == this.frequency) {
             return Locales.kLOC_BUDGETS_BIMONTHLY; // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
         }
-        if (Enums.repeatMonthly != this.type || Enums.repeatWeekly >= this.frequency) {
+        if (Enums.repeatMonthly != this.type || 2 >= this.frequency) {
             return types()[this.type]; // type 3 = weekly thereofore if type is not monthly OR frequency > 2 this returns whatever 'type' is. That could be type = 0 = "None"; type = 1 = "Daily"; type = 4 = "Yearly"
         }
         return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY; // default if none of other conditions are met = "Monthly"
@@ -456,6 +456,13 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     /**
      * Uses @link{getType()} method to check whether a Tranaction is a RepeatingTransaction
+     * <p>
+     * type 0 = no repeat
+     * type 1 = daily repeat
+     * type 2 = weekly repeat
+     * type 3 = monthly repeat
+     * type 4 = yearly repeat
+     * type 5 = repeat once
      *
      * @return boolen returns true if Transaction is Repeating Transaction, false otherwise
      */
@@ -662,13 +669,16 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             case Enums.repeatNone /*0*/:
                 return false;
             case Enums.repeatDaily /*1*/:
-                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000)) % getFrequency() == 0;
+                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000)) % getFrequency() == 0; // 86,400,000 = milliseconds in a day
+            // i.e 86,400,000/1000 = 86,400 seconds/60 = 1,440 mins/60 = 24 hours
+            // If the difference between the date (in millis) of the transaction passed in (i.e. 'cal') and the date (in millis) of the startDate (i.e. the trans associated with the RT)
+            // is divisible by 86,400,000 without remainder then the transaction must be due to repeat as the difference is exactly 1 day and this is a daily repeat test.
             case Enums.repeatWeekly /*2*/:
-                onDate = ((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0;
+                onDate = ((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0; //DAY_OF_WEEK - 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat
                 if (!onDate) {
                     return onDate;
                 }
-                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 604800000)) % getFrequency() == 0; // 604,800,000 = milliseconds in a week
+                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 604800000)) % getFrequency() == 0; // 604,800,000 = milliseconds in a week i.e. 604,800,000/1000 = 604,800 seconds/60 = 10,800 mins/60 = 168 hours/24 = 7 days.
             case Enums.repeatMonthly /*3*/:
                 switch (getRepeatOn()) {
                     case Enums.monthlyDayOfMonth /*0*/:
@@ -701,11 +711,17 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                         return false;
                 }
             case Enums.repeatYearly /*4*/:
+                // 3.1558464^10 millis = 365.26 days. Cast to int = 365 days. Divide diff in time (in millis) by this. Result = # of years.
+                // Divide result by frequency (eg every 1 year, 2 years etc). If the remained is 0 then there is a whole number of 'x' yearly intervals between the years so...
+                // the transaction repeats on date. Set boolean onDate to 'true', otherwise 'false'. WHAT ABOUT 366 DAY LEAP YEARS?
                 onDate = ((int) (((double) (calendar.getTimeInMillis() - startDate.getTimeInMillis())) / 3.1558464E10d)) % getFrequency() == 0;
                 if (!onDate) {
                     return onDate;
                 }
-                onDate = cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH) && cal.get(Calendar.MONTH) == startDate.get(Calendar.MONTH);
+                onDate = cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH) && cal.get(Calendar.MONTH) == startDate.get(Calendar.MONTH);// if DAY_OF_MONTH and MONTH of both dates are same, set onDate to 'true', otherwise false
+                // If no previous match to 'x' yearly gap between dates -> check if RT transaction date is 29 Feb. If it is, check if date of transaction passed (i.e. 'cal')
+                // in is last day of Feb.
+                // If these conditions are 'true' then return 'true', the transaction must repeat
                 if (!onDate && startDate.get(Calendar.MONTH) == Calendar.FEBRUARY && startDate.get(Calendar.DAY_OF_MONTH) == 29 && cal.get(Calendar.MONTH) == Calendar.FEBRUARY && cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
                     return true;
                 }
