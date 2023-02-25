@@ -1567,7 +1567,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     String[] filePathColumn = new String[]{"_data"};
                     Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
                     cursor.moveToFirst();
-                    String filePath = cursor.getString(cursor.getColumnIndex(filePathColumn[0]));
+                    String filePath = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[0]));
                     cursor.close();
                     Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
                     try {
