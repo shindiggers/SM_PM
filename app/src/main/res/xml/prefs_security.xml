@@ -16,7 +16,8 @@
         android:password="true"
         android:title="@string/kLOC_PREFERENCES_PASSWORD_CONFIRM" />
 
-    <PreferenceCategory android:title="">
+    <PreferenceCategory android:title="PLACEHOLDER">//todo: Entered this text to prevent red error.
+        Work out what this is doing as it doesn't seem to appear in the preference screen
 
         <ListPreference
             android:defaultValue="@string/kLOC_GENERAL_NONE"

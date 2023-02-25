@@ -16,7 +16,8 @@
         android:summary=""
         android:title="Storage Device" />
 
-    <PreferenceCategory android:title="">
+    <PreferenceCategory android:title="PLACEHOLDER">//todo: Entered this text to prevent red error.
+        Work out what this is doing as it doesn't seem to appear in the preference screen
 
         <ListPreference
             android:defaultValue="ISO-8859-1"
@@ -26,7 +27,8 @@
 
     </PreferenceCategory>
 
-    <PreferenceCategory android:title="">
+    <PreferenceCategory android:title="PLACEHOLDER">//todo: Entered this text to prevent red error.
+        Work out what this is doing as it doesn't seem to appear in the preference screen
 
         <Preference
             android:key="prefsdatatransfersqifoptions"
