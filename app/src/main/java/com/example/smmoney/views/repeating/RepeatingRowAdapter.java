@@ -12,7 +12,6 @@ import android.widget.Toast;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 
@@ -29,16 +28,22 @@ class RepeatingRowAdapter extends BaseAdapter {
             RepeatingRowHolder holder = (RepeatingRowHolder) ((View) v.getParent().getParent()).getTag();
             holder.repeatingTransaction.hydrated = false;
             if (holder.repeatingTransaction.getTransaction() != null) {
-                RepeatingTransactionClass repeaterSM;
-                repeaterSM = new RepeatingTransactionClass(holder.repeatingTransaction.getTransaction());
-                repeaterSM.postAndAdvanceTransaction(repeaterSM.getTransaction().getSubTotal(), repeaterSM.getTransaction().getDate());
-                repeaterSM.saveToDatabase();
+                // Post the transaction immediately
+                holder.repeatingTransaction.postAndAdvanceTransaction(
+                        holder.repeatingTransaction.getTransaction().getSubTotal(),
+                        holder.repeatingTransaction.getNextTransactionDateAfter(holder.repeatingTransaction.lastProcessedDate)
+                );
+                holder.repeatingTransaction.saveToDatabase();
+                
                 Toast.makeText(mContext, "Transaction posted", Toast.LENGTH_LONG).show();
-                holder.setTransaction(repeaterSM.getTransaction(), mContext);
-                //Intent intent = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
-                //intent.putExtra("repeatingTransaction", holder.repeatingTransaction);
-                //intent.putExtra("Posting", true);
-                //RepeatingRowAdapter.this.mContext.startActivity(intent);
+
+                // Refresh this row's display
+                holder.setTransaction(holder.repeatingTransaction.getTransaction(), mContext);
+
+                // Refresh the whole screen (balances, etc)
+                if (mContext instanceof RepeatingActivity) {
+                    ((RepeatingActivity) mContext).onResume();
+                }
             }
         }
     };

@@ -166,14 +166,11 @@ public class SplitsClass implements Serializable {
 
     public String getCurrencyCode() {
         hydrate();
-        if (this.currencyCode == null || this.currencyCode.length() == 0) {
+        if (this.currencyCode == null || this.currencyCode.trim().isEmpty()) {
             //noinspection ConstantConditions
             setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE) == null ? "USD" : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
         }
-        while (this.currencyCode.length() < 3) {
-            setCurrencyCode(this.currencyCode + " ");
-        }
-        return this.currencyCode;
+        return this.currencyCode.trim();
     }
 
     public boolean isTransfer() {
