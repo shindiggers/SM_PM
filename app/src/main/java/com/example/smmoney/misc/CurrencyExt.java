@@ -13,9 +13,7 @@ import java.util.Currency;
 
 public class CurrencyExt {
     public static String amountAsCurrency(double amount) {
-        NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
-        currencyFormatter.setCurrency(Currency.getInstance(Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
-        return currencyFormatter.format(amount);
+        return amountAsCurrency(amount, null);
     }
 
     public static String amountAsCurrencyWithoutCents(double amount) {
@@ -23,32 +21,42 @@ public class CurrencyExt {
     }
 
     private static String amountAsCurrencyWithoutCents(double amount, String currencyCode) {
-        if (currencyCode == null) {
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
             currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
+        if (currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
+            currencyCode = "USD";
+        }
+        currencyCode = currencyCode.trim();
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
         try {
             currencyFormatter.setCurrency(Currency.getInstance(currencyCode));
             currencyFormatter.setMaximumFractionDigits(0);
             return currencyFormatter.format(amount);
         } catch (IllegalArgumentException e) {
-            currencyFormatter.setCurrency(Currency.getInstance("USD"));
-            currencyFormatter.setMaximumFractionDigits(0);
-            return currencyFormatter.format(amount).replace("$", currencyCode);
+            NumberFormat numberFormatter = NumberFormat.getNumberInstance();
+            numberFormatter.setMaximumFractionDigits(0);
+            return currencyCode + numberFormatter.format(amount);
         }
     }
 
     public static String amountAsCurrency(double amount, String currencyCode) {
-        if (currencyCode == null) {
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
             currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
+        if (currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
+            currencyCode = "USD";
+        }
+        currencyCode = currencyCode.trim();
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
         try {
             currencyFormatter.setCurrency(Currency.getInstance(currencyCode));
             return currencyFormatter.format(amount);
         } catch (IllegalArgumentException e) {
-            currencyFormatter.setCurrency(Currency.getInstance("USD"));
-            return currencyFormatter.format(amount).replace("$", currencyCode);
+            NumberFormat numberFormatter = NumberFormat.getNumberInstance();
+            numberFormatter.setMinimumFractionDigits(2);
+            numberFormatter.setMaximumFractionDigits(2);
+            return currencyCode + numberFormatter.format(amount);
         }
     }
 

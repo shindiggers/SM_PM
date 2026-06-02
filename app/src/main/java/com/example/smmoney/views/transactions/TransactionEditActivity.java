@@ -194,46 +194,46 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         Intent i = getIntent();
         Bundle extras = i.getExtras();
         Uri data = i.getData();
-        if (extras != null) {
-            Log.d(TAG, "onCreate: extras != null");
-            boolean z = extras.getBoolean("Posting");
-            this.posting = z;
-            if (z) {
-                Log.d(TAG, "onCreate: this.posting = true");
-                this.isLocalNotification = extras.getBoolean("localNotification");
-                this.repeatingTransaction = (RepeatingTransactionClass) extras.get("repeatingTransaction");
+
+        if (extras != null && extras.getBoolean("Posting")) {
+            Log.d(TAG, "onCreate: this.posting = true");
+            this.posting = true;
+            this.isLocalNotification = extras.getBoolean("localNotification");
+            this.repeatingTransaction = (RepeatingTransactionClass) extras.get("repeatingTransaction");
+            if (this.repeatingTransaction != null) {
                 this.repeatingTransaction.hydrated = false;
                 this.repeatingTransaction.hydratedTransaction = false;
                 this.transaction = this.repeatingTransaction.getTransaction();
                 if (this.transaction != null) {
                     this.transaction = this.transaction.copy();
+                    GregorianCalendar nextDate = this.repeatingTransaction.getNextTransactionDateAfter(this.repeatingTransaction.getLastProcessedDate());
+                    if (nextDate != null) {
+                        this.transaction.setDate(nextDate);
+                    }
                     this.transaction.initType();
                 }
                 if (this.isLocalNotification) {
                     ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(this.repeatingTransaction.repeatingID);
                 }
-                this.currentActivity = this;
-                this.dateChanged = Enums.DateChangeTypeNone /*0*/;
-                this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
-                setContentView(R.layout.transaction_edit);
-                setupButtons();
-                setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-                this.balanceBar.setVisibility(View.GONE);
-                getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-                getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             }
-        }
-        if (data == null) {
-            this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
-            this.transaction.hydrated = true;
-            this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
-            this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
-            this.transaction.hydrated = true;
-        } else {
+        } else if (data != null) {
             this.isIReceipt = true;
             handleIReceipt(data);
             this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
+        } else if (extras != null && extras.containsKey("Transaction")) {
+            this.transaction = (TransactionClass) extras.get("Transaction");
+            if (this.transaction != null) {
+                this.transaction.hydrated = true;
+                this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
+            }
         }
+
+        if (this.transaction == null) {
+            Log.e(TAG, "Failed to initialize transaction");
+            finish();
+            return;
+        }
+
         this.currentActivity = this;
         this.dateChanged = Enums.DateChangeTypeNone /*0*/;
         this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;

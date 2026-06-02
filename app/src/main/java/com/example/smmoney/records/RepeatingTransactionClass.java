@@ -48,7 +48,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     private String currentElementValue;                         // Don't know what this class member is used for todo: establish what this is for
     private GregorianCalendar endDate;                          // DATABASE FIELD Date on which the repeating transaction ceases to repeat
     private int frequency;                                      // DATABASE FIELD Repeat frequency of repeating transaction e.g. 1, 2, 3 etc. Example every 1 month, every 2 week
-    private GregorianCalendar lastProcessedDate;                // DATABASE FIELD date on which the repeating transaction was last processed
+    public GregorianCalendar lastProcessedDate;                // DATABASE FIELD date on which the repeating transaction was last processed
     private int notifyDaysInAdvance;                            // DATABASE FIELD how many days in advance of the next occurance of the transaction should a notification be sent
     private int repeatOn;                                       // DATABASE FIELD int used to record 1) the type of monthly repeat or 2) the days of the week on which a weekly transaction repeats
     private boolean sendLocalNotifications;                     // DATABASE FIELD flag to indicate if local notifications should be sent. 1/TRUE = Yes 0/FALSE = No
@@ -161,7 +161,11 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         this.weekOrdinalToken = "^w";
         this.monthNameToken = "^m";
         this.dayNameToken = "^d";
-        this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction); //THIS RETURNS TRANS ID 0 !!!SEEMS TO BE AN ERROR AS TRANS ID IS NOT 0 !!! PUT A BREAK BEFORE THIS LINE AND DEBUG FROM HERE!!!
+        if (aTransaction.transactionID != 0) {
+            this.transactionID = aTransaction.transactionID;
+        } else {
+            this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction);
+        }
         if (this.transactionID == 0) {
             TransactionDB.fixRepeatingTransactionsThatDontRepeatOnDate();
             aTransaction.hydrated = false;
@@ -171,15 +175,16 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
             qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
             Cursor curs = Database.query(qb, new String[]{"repeatingID"}, "transactionID=" + this.transactionID, null, null, null, null);
-            if (curs.getCount() != 0) {
+            if (curs != null && curs.getCount() != 0) {
                 curs.moveToFirst();
                 this.repeatingID = curs.getInt(0);
+                curs.close();
             } else {
+                if (curs != null) curs.close();
                 this.repeatingID = 0;
                 setLastProcessedDate(null);
             }
             this.dirty = false;
-            curs.close();
         }
     }
 
@@ -332,7 +337,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
-    private GregorianCalendar getNextTransactionDateAfter(GregorianCalendar lastDate) {
+    public GregorianCalendar getNextTransactionDateAfter(GregorianCalendar lastDate) {
         @SuppressWarnings("unused") GregorianCalendar calendar = new GregorianCalendar();
         @SuppressWarnings("UnnecessaryLocalVariable") GregorianCalendar futureDate = lastDate;
         if (repeatsOnDate(futureDate)) {
@@ -521,7 +526,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public void deleteNotification(Context context) {
         Intent intent = new Intent(context, LocalNotificationRepeatingReciever.class);
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(this.repeatingID);
-        PendingIntent p = PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent p = PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE);
         if (p != null) {
             p.cancel();
         }
@@ -540,8 +545,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 intent.putExtra("localNotification", true);
                 intent.putExtra("Posting", true);
                 intent.putExtra("body", newBody);
-                if (PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_NO_CREATE) == null) {
-                    ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_CANCEL_CURRENT));
+                if (PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
+                    ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
                 }
             }
         }
@@ -567,7 +572,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             deleteFromDatabase();
             return;
         }
-        setLastProcessedDate(this.transaction.getDate());
+        setLastProcessedDate(date);
         advanceTransactionDateToNextPostDateAfterDate(getLastProcessedDate());
         setupNotification(SMMoney.getAppContext());
     }

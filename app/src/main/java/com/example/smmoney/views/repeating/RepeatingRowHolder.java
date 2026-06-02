@@ -1,13 +1,15 @@
 package com.example.smmoney.views.repeating;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import androidx.core.content.res.ResourcesCompat;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.RepeatingTransactionClass;
@@ -32,13 +34,24 @@ class RepeatingRowHolder {
         this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         this.repeatingTransaction.hydrate();
         if (this.repeatingTransaction.isOverdueOnDate(new GregorianCalendar())) {
-            this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_orange));
+            //this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_orange));
+            Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.button_orange, null);
+            this.postButton.setBackground(drawable);
         } else if (this.repeatingTransaction.isOverdue()) {
-            this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_red));
+            //this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_red));
+            Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.button_red, null);
+            this.postButton.setBackground(drawable);
         } else {
-            this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_grey));
+            //this.postButton.setBackgroundDrawable(context.getResources().getDrawable(R.drawable.button_grey));
+            Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.button_grey, null);
+            this.postButton.setBackground(drawable);
         }
+        // code to go here:
+        // find date on which transaction next repeats and assign to temp GregorianCalendar local variable
+        GregorianCalendar dateOfNextRepeat = this.repeatingTransaction.getNextTransactionDateAfter(this.repeatingTransaction.lastProcessedDate);
+        // amend code on next line to set date equal to date on above code line
         this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
+        this.date.setText(CalExt.descriptionWithShortDate(dateOfNextRepeat).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
         // TODO This scaling causes date not to display - to fix
         //        scaleTextField(this.date);
         this.frequency.setText(this.repeatingTransaction.typeEveryAsString());
@@ -49,11 +62,10 @@ class RepeatingRowHolder {
         } else {
             this.payee.setText(this.transaction.getPayee());
         }
+        this.amount.setText(this.transaction.subTotalAsCurrency());
         if (this.transaction.getSubTotal() < 0.0d) {
-            this.amount.setText(CurrencyExt.amountAsCurrency(this.transaction.getSubTotal(), this.transaction.getCurrencyCode()));
             this.amount.setTextColor(PocketMoneyThemes.redLabelColor());
         } else {
-            this.amount.setText(CurrencyExt.amountAsCurrency(this.transaction.getSubTotal(), this.transaction.getCurrencyCode()));
             this.amount.setTextColor(PocketMoneyThemes.greenDepositColor());
         }
         if (this.transaction.getNumberOfSplits() > 1) {
