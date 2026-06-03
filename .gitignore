@@ -4,7 +4,16 @@
 /.idea/libraries
 /.idea/modules.xml
 /.idea/workspace.xml
+/.idea/navEditor.xml
+/.idea/assetWizardSettings.xml
+/.idea/deploymentTargetSelector.xml
+/.idea/deviceStreaming.xml
+/.idea/deviceManager.xml
+/.idea/studiobot.xml
+/.idea/AndroidProjectSystem.xml
+/.idea/caches
 .DS_Store
 /build
 /captures
 .externalNativeBuild
+.cxx
