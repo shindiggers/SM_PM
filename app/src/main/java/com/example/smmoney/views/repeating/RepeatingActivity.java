@@ -175,14 +175,18 @@ public class RepeatingActivity extends PocketMoneyActivity {
         ArrayList<RepeatingTransactionClass> repeatingTransactions = TransactionDB.queryAllRepeatingTransactions();
         int days = Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD);
         String text = Locales.kLOC_REPEATING_UPCOMING_LABEL + " " + days + " " + Locales.kLOC_REPEATING_FREQUENCY_DAYS;
-        GregorianCalendar upcomingEndDate = CalExt.addDays(new GregorianCalendar(), days);
+        GregorianCalendar today = new GregorianCalendar();
+        GregorianCalendar upcomingEndDate = CalExt.addDays(today, days);
         double overdueAmount = 0.0d;
         double upcomingAmount = 0.0d;
         for (RepeatingTransactionClass repeatingTransaction : repeatingTransactions) {
             if (repeatingTransaction.isOverdue()) {
                 overdueAmount += repeatingTransaction.overdueAmount();
             }
-            upcomingAmount += repeatingTransaction.amountBetweenDate(repeatingTransaction.getTransaction().getDate(), upcomingEndDate);
+            GregorianCalendar firstUpcoming = repeatingTransaction.getNextTransactionDateAfter(today);
+            if (firstUpcoming != null) {
+                upcomingAmount += repeatingTransaction.amountBetweenDate(firstUpcoming, upcomingEndDate);
+            }
         }
         if (overdueAmount < 0.0d) {
             this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());

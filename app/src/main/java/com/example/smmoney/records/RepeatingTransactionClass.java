@@ -208,7 +208,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         }
     }
 
-    private void setType(int aType) {
+    public void setType(int aType) {
         if (this.type != aType) {
             this.dirty = true;
             this.type = aType;
@@ -317,17 +317,18 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         GregorianCalendar beginDateTemp = (GregorianCalendar) aBeginDate.clone();
         int count = 0;
         if (this.type != Enums.repeatingOnce /*5*/) {
-            if (this.endDate != null && this.endDate.after(anEndDate)) {
+            if (this.endDate != null && this.endDate.before(anEndDate)) {
                 anEndDate = (GregorianCalendar) this.endDate.clone();
             }
-            while (CalExt.endOfDay(beginDateTemp).before(anEndDate)) {
-                if (beginDateTemp.after(this.lastProcessedDate)) {
+            anEndDate = CalExt.endOfDay(anEndDate); // Use end of day for inclusive comparison
+            if (!repeatsOnDate(beginDateTemp)) {
+                beginDateTemp = getNextTransactionDateAfter(beginDateTemp);
+            }
+            while (beginDateTemp != null && !beginDateTemp.after(anEndDate)) {
+                if (this.lastProcessedDate == null || beginDateTemp.after(this.lastProcessedDate)) {
                     count++;
                 }
                 beginDateTemp = getNextTransactionDateAfter(beginDateTemp);
-                if (beginDateTemp == null) {
-                    break;
-                }
             }
             return this.transaction.getSubTotal() * ((double) count);
         } else if (CalExt.endOfDay(this.transaction.getDate()).after(CalExt.beginningOfDay(aBeginDate)) && CalExt.beginningOfDay(this.transaction.getDate()).before(CalExt.endOfDay(anEndDate))) {
@@ -338,8 +339,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public GregorianCalendar getNextTransactionDateAfter(GregorianCalendar lastDate) {
-        @SuppressWarnings("unused") GregorianCalendar calendar = new GregorianCalendar();
-        @SuppressWarnings("UnnecessaryLocalVariable") GregorianCalendar futureDate = lastDate;
+        GregorianCalendar futureDate = (GregorianCalendar) lastDate.clone();
         if (repeatsOnDate(futureDate)) {
             switch (getType()) {
                 case Enums.repeatDaily /*1*/:
@@ -377,7 +377,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                         case Enums.monthlyLastWeekDayOfMonth /*3*/:
                         case Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/:
                             returnDate = CalExt.addMonths(futureDate, getFrequency());
-                            int month = futureDate.get(Calendar.MONTH);
+                            int month = returnDate.get(Calendar.MONTH);
                             while (month == returnDate.get(Calendar.MONTH)) {
                                 returnDate.add(Calendar.DAY_OF_MONTH, 1);
                             }
@@ -388,9 +388,9 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                             if (getRepeatOn() == Enums.monthlyLastWeekDayOfMonth /*3*/) {
                                 int daysBackward = 0;
                                 if (returnDate.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY /*1*/) {
-                                    daysBackward = -2; /* take 2 days off the get to Friday (ie last weekday) */
+                                    daysBackward = -2; /* take 2 days off to get to from Sunday to Friday (ie last weekday) */
                                 } else if (returnDate.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY /*7*/) {
-                                    daysBackward = -1; /* take 1 days off the get to Friday (ie last weekday) */
+                                    daysBackward = -1; /* take 1 day off to get to from Saturday to Friday (ie last weekday) */
                                 }
                                 if (daysBackward != 0) {
                                     return CalExt.addDays(returnDate, daysBackward);
@@ -418,8 +418,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             }
         }
         for (int days = 0; days < 3650; days++) {
-            futureDate.add(Calendar.DAY_OF_WEEK, 1);
-            if (repeatsOnDate(CalExt.beginningOfDay(futureDate))) {
+            futureDate.add(Calendar.DATE, 1);
+            if (repeatsOnDate(futureDate)) {
                 return (GregorianCalendar) futureDate.clone();
             }
         }
@@ -457,7 +457,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return this.startOfWeek;
     }
 
-    private void setRepeatOn(int anInt) {
+    public void setRepeatOn(int anInt) {
         if (this.repeatOn != anInt) {
             this.dirty = true;
             this.repeatOn = anInt;
@@ -673,48 +673,40 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (getTransaction() == null) {
             return false;
         }
-        GregorianCalendar calendar = new GregorianCalendar();
         GregorianCalendar startDate = CalExt.beginningOfDay(getTransaction().getDate());
         cal = CalExt.beginningOfDay(cal);
         if (getEndDate() != null && cal.after(getEndDate())) {
             return false;
         }
-        boolean onDate;
+        if (cal.before(startDate)) {
+            return false;
+        }
+
+        int diffMonths = (cal.get(Calendar.YEAR) - startDate.get(Calendar.YEAR)) * 12 + (cal.get(Calendar.MONTH) - startDate.get(Calendar.MONTH));
+        int diffYears = cal.get(Calendar.YEAR) - startDate.get(Calendar.YEAR);
+
         switch (getType()) {
             case Enums.repeatNone /*0*/:
                 return false;
             case Enums.repeatDaily /*1*/:
-                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000)) % getFrequency() == 0; // 86,400,000 = milliseconds in a day
-            // i.e 86,400,000/1000 = 86,400 seconds/60 = 1,440 mins/60 = 24 hours
-            // If the difference between the date (in millis) of the transaction passed in (i.e. 'cal') and the date (in millis) of the startDate (i.e. the trans associated with the RT)
-            // is divisible by 86,400,000 without remainder then the transaction must be due to repeat as the difference is exactly 1 day and this is a daily repeat test.
+                return CalExt.daysBetween(startDate, cal) % getFrequency() == 0;
             case Enums.repeatWeekly /*2*/:
-                onDate = ((1 << (cal.get(Calendar.DAY_OF_WEEK) + -1)) & getRepeatOn()) != 0; //DAY_OF_WEEK - 1=Sun, 2=Mon, 3=Tue, 4=Wed, 5=Thu, 6=Fri, 7=Sat
-                if (!onDate) {
-                    return onDate;
-                }
-                return ((int) ((cal.getTimeInMillis() - startDate.getTimeInMillis()) / 604800000)) % getFrequency() == 0; // 604,800,000 = milliseconds in a week i.e. 604,800,000/1000 = 604,800 seconds/60 = 10,800 mins/60 = 168 hours/24 = 7 days.
+                boolean onDayOfWeek = ((1 << (cal.get(Calendar.DAY_OF_WEEK) - 1)) & getRepeatOn()) != 0;
+                if (!onDayOfWeek) return false;
+                // Check if we are in the correct weekly interval
+                long days = (cal.getTimeInMillis() - startDate.getTimeInMillis()) / 86400000;
+                return (days / 7) % getFrequency() == 0;
             case Enums.repeatMonthly /*3*/:
+                if (diffMonths < 0 || diffMonths % getFrequency() != 0) return false;
                 switch (getRepeatOn()) {
                     case Enums.monthlyDayOfMonth /*0*/:
-                        onDate = ((int) (((double) (cal.getTimeInMillis() - startDate.getTimeInMillis())) / 2.62974383E9d)) % getFrequency() == 0;
-                        if (!onDate) {
-                            return onDate;
-                        }
-                        onDate = cal.get(Calendar.DAY_OF_WEEK) == startDate.get(Calendar.DAY_OF_WEEK) && cal.get(Calendar.DAY_OF_WEEK_IN_MONTH) == startDate.get(Calendar.DAY_OF_WEEK_IN_MONTH);
-                        return onDate;
+                        return cal.get(Calendar.DAY_OF_WEEK) == startDate.get(Calendar.DAY_OF_WEEK) &&
+                                cal.get(Calendar.DAY_OF_WEEK_IN_MONTH) == startDate.get(Calendar.DAY_OF_WEEK_IN_MONTH);
                     case Enums.monthlyDateInMonth /*1*/:
-                        onDate = ((int) (((double) (cal.getTimeInMillis() - startDate.getTimeInMillis())) / 2.62974383E9d)) % getFrequency() == 0;
-                        if (!onDate) {
-                            return onDate;
-                        }
-                        onDate = cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH);
-                        if (onDate) {
-                            return onDate;
-                        }
-                        int daysInMonth = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
-                        onDate = startDate.get(Calendar.DAY_OF_MONTH) > daysInMonth && cal.get(Calendar.DAY_OF_MONTH) == daysInMonth;
-                        return onDate;
+                        if (cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH))
+                            return true;
+                        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        return startDate.get(Calendar.DAY_OF_MONTH) > lastDay && cal.get(Calendar.DAY_OF_MONTH) == lastDay;
                     case Enums.monthlyLastDayOfMonth /*2*/:
                         return isLastDay(cal);
                     case Enums.monthlyLastWeekDayOfMonth /*3*/:
@@ -726,23 +718,16 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                         return false;
                 }
             case Enums.repeatYearly /*4*/:
-                // 3.1558464^10 millis = 365.26 days. Cast to int = 365 days. Divide diff in time (in millis) by this. Result = # of years.
-                // Divide result by frequency (eg every 1 year, 2 years etc). If the remained is 0 then there is a whole number of 'x' yearly intervals between the years so...
-                // the transaction repeats on date. Set boolean onDate to 'true', otherwise 'false'. WHAT ABOUT 366 DAY LEAP YEARS?
-                onDate = ((int) (((double) (calendar.getTimeInMillis() - startDate.getTimeInMillis())) / 3.1558464E10d)) % getFrequency() == 0;
-                if (!onDate) {
-                    return onDate;
+                if (diffYears < 0 || diffYears % getFrequency() != 0) return false;
+                if (cal.get(Calendar.MONTH) == startDate.get(Calendar.MONTH)) {
+                    if (cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH))
+                        return true;
+                    return startDate.get(Calendar.MONTH) == Calendar.FEBRUARY && startDate.get(Calendar.DAY_OF_MONTH) == 29 &&
+                            cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH);
                 }
-                onDate = cal.get(Calendar.DAY_OF_MONTH) == startDate.get(Calendar.DAY_OF_MONTH) && cal.get(Calendar.MONTH) == startDate.get(Calendar.MONTH);// if DAY_OF_MONTH and MONTH of both dates are same, set onDate to 'true', otherwise false
-                // If no previous match to 'x' yearly gap between dates -> check if RT transaction date is 29 Feb. If it is, check if date of transaction passed (i.e. 'cal')
-                // in is last day of Feb.
-                // If these conditions are 'true' then return 'true', the transaction must repeat
-                if (!onDate && startDate.get(Calendar.MONTH) == Calendar.FEBRUARY && startDate.get(Calendar.DAY_OF_MONTH) == 29 && cal.get(Calendar.MONTH) == Calendar.FEBRUARY && cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH)) {
-                    return true;
-                }
-                return onDate;
+                return false;
             case Enums.repeatingOnce /*5*/:
-                return CalExt.beginningOfDay(getTransaction().getDate()).equals(CalExt.beginningOfDay(cal));
+                return cal.equals(startDate);
             default:
                 return false;
         }
