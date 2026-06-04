@@ -572,7 +572,6 @@ public class Database {
         }
         if (db == null) {
             db = dbh.getWritableDatabase();
-            db.setLockingEnabled(true);
         }
         return db;
     }

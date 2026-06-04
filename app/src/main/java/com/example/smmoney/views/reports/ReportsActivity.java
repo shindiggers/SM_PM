@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -20,6 +21,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
+
+import androidx.core.content.ContextCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -58,7 +61,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private View previousPeriodView;
     private ProgressDialog progressDialog = null;
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_PROGRESS_FINISH /*0*/:
@@ -255,7 +258,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
             this.balanceLabelView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
             this.balanceAmountView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         } else {
-            this.balanceLabelView.setTextColor(getResources().getColor(R.color.black_theme_text));
+            this.balanceLabelView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text));
             this.balanceAmountView.setTextColor(PocketMoneyThemes.greenDepositColor());
         }
     }

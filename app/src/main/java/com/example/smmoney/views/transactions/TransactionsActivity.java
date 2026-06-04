@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -926,7 +927,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     @SuppressLint("HandlerLeak")
     private void createHandler() {
-        this.mHandler = new Handler() {
+        this.mHandler = new Handler(Looper.getMainLooper()) {
             public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:

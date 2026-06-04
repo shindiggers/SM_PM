@@ -23,6 +23,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
 import android.text.Html;
@@ -50,6 +51,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -162,7 +164,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private TextView keepTheChangeButton;
     private AutoCompleteTextView payeeEditText;
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             if (msg.what == MSG_CLEARDROPDOWNS) { /*1*/
                 TransactionEditActivity.this.clearDropDowns();
@@ -946,12 +948,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             this.balanceBar.balanceAmountTextView.setText(account.formatAmountAsCurrency(account.balanceOfType(balanceType)));
         }
         if (account == null || !account.balanceExceedsLimit()) {
-            this.balanceBar.balanceAmountTextView.setTextColor(getResources().getColor(R.color.black_theme_text)/*Original value -1 = white*/);
+            this.balanceBar.balanceAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text)/*Original value -1 = white*/);
         } else {
-            this.balanceBar.balanceAmountTextView.setTextColor(getResources().getColor(R.color.theme_red_label_color_on_black)/*Original color -65536*/);
+            this.balanceBar.balanceAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.theme_red_label_color_on_black)/*Original color -65536*/);
         }
         this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(balanceType));
-        this.balanceBar.balanceTypeTextView.setTextColor(getResources().getColor(R.color.black_theme_text)/* Original value -1 = white*/);
+        this.balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text)/* Original value -1 = white*/);
     }
 
     private void editTransactionDelete() {

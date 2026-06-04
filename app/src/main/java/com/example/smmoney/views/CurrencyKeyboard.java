@@ -7,6 +7,7 @@ import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -173,7 +174,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
 
     private void show() {
         ((InputMethodManager) Objects.requireNonNull(this.context.getSystemService(Context.INPUT_METHOD_SERVICE))).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
-        new Handler().postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
             public void run() {
                 if (CurrencyKeyboard.this.editText.hasFocus()) {
                     int i = CurrencyKeyboard.this.getVisibility();

@@ -17,6 +17,8 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AbsListView.LayoutParams;
 
+import androidx.core.content.ContextCompat;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
@@ -61,7 +63,7 @@ public class BudgetsHeaderHolder extends View {
         int spSize = 14;
         float scaledSizeInPixels = spSize * getResources().getDisplayMetrics().scaledDensity;
         p.setTextSize(scaledSizeInPixels);
-        p.setColor(getResources().getColor(R.color.black_theme_text));
+        p.setColor(ContextCompat.getColor(getContext(), R.color.black_theme_text));
         p.setTypeface(Typeface.SANS_SERIF);
         p.setAntiAlias(true);
         float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);

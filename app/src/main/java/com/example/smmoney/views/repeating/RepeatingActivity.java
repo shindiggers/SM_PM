@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -63,7 +64,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private FilterClass filter;
     private boolean isProcessingToDate = false;
     @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler() {
+    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
             final int MSG_PROGRESS_FINISH = 0;
             final int MSG_PROGRESS_UPDATE = 1;

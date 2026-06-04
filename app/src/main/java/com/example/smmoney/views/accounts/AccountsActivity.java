@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -400,42 +401,163 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    private static class BalanceTask extends AsyncTask<Object, Void, Object> {
-        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
-        private int pref;
-        private double totalWorth;
-
-        private BalanceTask(AccountsActivity context) {
-            this.totalWorth = 0.0d;
-            this.pref = 0;
-            accountsActivityWeakReference = new WeakReference<>(context);
-        }
-
-        protected Object doInBackground(Object... params) {
-            this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
-                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
-                this.pref = Enums.kBalanceTypeCurrent /*2*/;
+    @SuppressLint("HandlerLeak")
+    private void createHandler() {
+        this.mHandler = new Handler(Looper.getMainLooper()) {
+            public void handleMessage(Message msg) {
+                switch (msg.what) {
+                    case HandlerActivity.MSG_ANIMATEBALANCEBAR /*3*/:
+                        AccountsActivity.this.animateBalanceBarBack();
+                        break;
+                    case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
+                        break;
+                    case HandlerActivity.MSG_PROGRESS_FINISH /*5*/:
+                        if (!AccountsActivity.this.shouldEmail && msg.obj.getClass().equals(String.class)) {
+                            Snackbar.make(findViewById(R.id.accounts_root_view), (CharSequence) msg.obj, Snackbar.LENGTH_LONG).show();
+                        }
+                        try {
+                            AccountsActivity.this.wakeLock.release();
+                        } catch (Exception e) {
+                            Log.d(TAG, "handleMessage: ");
+                        }
+                        if (AccountsActivity.this.progressDialog != null) {
+                            AccountsActivity.this.progressDialog.dismiss();
+                            AccountsActivity.this.progressDialog.setProgress(0);
+                        }
+                        if (AccountsActivity.this.shouldEmail) {
+                            Intent emailIntent = new Intent("android.intent.action.SEND");
+                            AccountsActivity accountsActivity;
+                            int i;
+                            Object[] objArr;
+                            switch (AccountsActivity.this.msgEmail) {
+                                case EMAIL_QIF /*0*/:
+                                    emailIntent.setType("text/qif");
+                                    File qifFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File sharedQifFile = new File(qifFile, "SMMoney.qif");
+                                    Uri contentUriQif = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedQifFile);
+                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
+                                    objArr = new Object[1];
+                                    objArr[0] = "QIF";
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+                                    Object[] objArrEmailText = new Object[2];
+                                    objArrEmailText[0] = "QIF";
+                                    objArrEmailText[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailText));
+                                    AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
+                                    break;
+                                case EMAIL_TDF /*1*/:
+                                    emailIntent.setType("text/txt");
+                                    File txtFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File sharedTxtFile = new File(txtFile, "SMMoney.txt");
+                                    Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
+                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
+                                    Object[] objArrEmailSubjectTDF = new Object[1];
+                                    objArrEmailSubjectTDF[0] = "TDF";
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArrEmailSubjectTDF));
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+                                    Object[] objArrEmailTextTDF = new Object[2];
+                                    objArrEmailTextTDF[0] = "TDF";
+                                    objArrEmailTextTDF[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextTDF));
+                                    AccountsActivity.this.startActivity(emailIntent);
+                                    break;
+                                case EMAIL_CSV /*2*/:
+                                    emailIntent.setType("text/csv");
+                                    File csvFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File sharedCsvFile = new File(csvFile, "SMMoney.csv");
+                                    Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
+                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
+                                    objArr = new Object[1];
+                                    objArr[0] = "CSV";
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+                                    Object[] objArrEmailTextCSV = new Object[2];
+                                    objArrEmailTextCSV[0] = "CSV";
+                                    objArrEmailTextCSV[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextCSV));
+                                    AccountsActivity.this.startActivity(emailIntent);
+                                    break;
+                                case EMAIL_OFX /*3*/:
+                                    Log.i(TAG, "EMAIL_OFX IN ACCOUNTSACTIVITY HANDLER - START");
+                                    Intent emailOfxIntent = new Intent("android.intent.action.SEND_MULTIPLR");
+                                    emailOfxIntent.setType("text/ofx");
+                                    ArrayList<Uri> fileNames = new ArrayList<>();
+                                    File ofxDir = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    File[] ofxFiles;
+                                    ofxFiles = ofxDir.listFiles();
+                                    for (File file : ofxFiles) {
+                                        String fName = file.getName();
+                                        File fileToAdd = new File(ofxDir, fName);
+                                        Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
+                                        fileNames.add(contentUriOfx);
+                                    }
+                                    emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                                    emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
+                                    objArr = new Object[1];
+                                    objArr[0] = "OFX/QFX";
+                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
+                                    accountsActivity = AccountsActivity.this;
+                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+                                    Object[] objArrEmailTextOFX = new Object[2];
+                                    objArrEmailTextOFX[0] = "OFX/QFX";
+                                    objArrEmailTextOFX[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextOFX));
+                                    Log.i(TAG, "ACCOUNTS_ACTIVITY.JAVA: HANDLER - BEFORE START ACTIVTY CALLED");
+                                    AccountsActivity.this.startActivity(emailOfxIntent);
+                                    break;
+                            }
+                            AccountsActivity.this.shouldEmail = false;
+                            return;
+                        }
+                        AccountsActivity.this.reloadData();
+                        return;
+                    case HandlerActivity.MSG_ERROR /*6*/:
+                        if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
+                            AccountsActivity.this.progressDialog.dismiss();
+                            AccountsActivity.this.progressDialog.setProgress(0);
+                        }
+                        AlertDialog alert = new AlertDialog.Builder(AccountsActivity.this.context).create();
+                        alert.setTitle("Error");
+                        alert.setMessage((String) msg.obj);
+                        alert.setCancelable(false);
+                        alert.setButton(-1, "OK", new OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.dismiss();
+                            }
+                        });
+                        alert.show();
+                        return;
+                    default:
+                        throw new IllegalArgumentException("Unknown message id " + msg.what);
+                }
+                if (AccountsActivity.this.progressDialog == null || !AccountsActivity.this.progressDialog.isShowing()) {
+                    AccountsActivity.this.showDialog(IMPORT_PROGRESS_DIALOG /*9*/);
+                    try {
+                        AccountsActivity.this.wakeLock.acquire(10000);
+                    } catch (Exception e2) {
+                        Log.d(TAG, "handleMessage: ");
+                    }
+                }
+                if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
+                    AccountsActivity.this.progressDialog.setProgress(msg.arg1);
+                }
             }
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            this.totalWorth = activity.totalWorth(this.pref);
-            return null;
-        }
-
-        protected void onPostExecute(Object result) {
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            if (activity == null || activity.isFinishing()) return;
-            activity.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? activity.getResources().getColor(R.color.theme_red_label_color_on_black) : activity.getResources().getColor(R.color.black_theme_text /*WHITE*/));
-            activity.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
-            activity.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
-            activity.balanceBar.balanceTypeTextView.setTextColor(activity.getResources().getColor(R.color.black_theme_text));
-            activity.balanceBar.progressBar.setVisibility(View.GONE);
-            synchronized (activity.adapter) {
-                activity.reloadData();
-            }
-        }
+        };
     }
 
     public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
@@ -1399,163 +1521,42 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return this.mHandler;
     }
 
-    @SuppressLint("HandlerLeak")
-    private void createHandler() {
-        this.mHandler = new Handler() {
-            public void handleMessage(Message msg) {
-                switch (msg.what) {
-                    case HandlerActivity.MSG_ANIMATEBALANCEBAR /*3*/:
-                        AccountsActivity.this.animateBalanceBarBack();
-                        break;
-                    case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
-                        break;
-                    case HandlerActivity.MSG_PROGRESS_FINISH /*5*/:
-                        if (!AccountsActivity.this.shouldEmail && msg.obj.getClass().equals(String.class)) {
-                            Snackbar.make(findViewById(R.id.accounts_root_view), (CharSequence) msg.obj, Snackbar.LENGTH_LONG).show();
-                        }
-                        try {
-                            AccountsActivity.this.wakeLock.release();
-                        } catch (Exception e) {
-                            Log.d(TAG, "handleMessage: ");
-                        }
-                        if (AccountsActivity.this.progressDialog != null) {
-                            AccountsActivity.this.progressDialog.dismiss();
-                            AccountsActivity.this.progressDialog.setProgress(0);
-                        }
-                        if (AccountsActivity.this.shouldEmail) {
-                            Intent emailIntent = new Intent("android.intent.action.SEND");
-                            AccountsActivity accountsActivity;
-                            int i;
-                            Object[] objArr;
-                            switch (AccountsActivity.this.msgEmail) {
-                                case EMAIL_QIF /*0*/:
-                                    emailIntent.setType("text/qif");
-                                    File qifFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedQifFile = new File(qifFile, "SMMoney.qif");
-                                    Uri contentUriQif = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedQifFile);
-                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "QIF";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailText = new Object[2];
-                                    objArrEmailText[0] = "QIF";
-                                    objArrEmailText[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailText));
-                                    AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
-                                    break;
-                                case EMAIL_TDF /*1*/:
-                                    emailIntent.setType("text/txt");
-                                    File txtFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedTxtFile = new File(txtFile, "SMMoney.txt");
-                                    Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
-                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    Object[] objArrEmailSubjectTDF = new Object[1];
-                                    objArrEmailSubjectTDF[0] = "TDF";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArrEmailSubjectTDF));
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextTDF = new Object[2];
-                                    objArrEmailTextTDF[0] = "TDF";
-                                    objArrEmailTextTDF[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextTDF));
-                                    AccountsActivity.this.startActivity(emailIntent);
-                                    break;
-                                case EMAIL_CSV /*2*/:
-                                    emailIntent.setType("text/csv");
-                                    File csvFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedCsvFile = new File(csvFile, "SMMoney.csv");
-                                    Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
-                                    emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "CSV";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextCSV = new Object[2];
-                                    objArrEmailTextCSV[0] = "CSV";
-                                    objArrEmailTextCSV[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextCSV));
-                                    AccountsActivity.this.startActivity(emailIntent);
-                                    break;
-                                case EMAIL_OFX /*3*/:
-                                    Log.i(TAG, "EMAIL_OFX IN ACCOUNTSACTIVITY HANDLER - START");
-                                    Intent emailOfxIntent = new Intent("android.intent.action.SEND_MULTIPLR");
-                                    emailOfxIntent.setType("text/ofx");
-                                    ArrayList<Uri> fileNames = new ArrayList<>();
-                                    File ofxDir = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File[] ofxFiles;
-                                    ofxFiles = ofxDir.listFiles();
-                                    for (File file : ofxFiles) {
-                                        String fName = file.getName();
-                                        File fileToAdd = new File(ofxDir, fName);
-                                        Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
-                                        fileNames.add(contentUriOfx);
-                                    }
-                                    emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "OFX/QFX";
-                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextOFX = new Object[2];
-                                    objArrEmailTextOFX[0] = "OFX/QFX";
-                                    objArrEmailTextOFX[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextOFX));
-                                    Log.i(TAG, "ACCOUNTS_ACTIVITY.JAVA: HANDLER - BEFORE START ACTIVTY CALLED");
-                                    AccountsActivity.this.startActivity(emailOfxIntent);
-                                    break;
-                            }
-                            AccountsActivity.this.shouldEmail = false;
-                            return;
-                        }
-                        AccountsActivity.this.reloadData();
-                        return;
-                    case HandlerActivity.MSG_ERROR /*6*/:
-                        if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
-                            AccountsActivity.this.progressDialog.dismiss();
-                            AccountsActivity.this.progressDialog.setProgress(0);
-                        }
-                        AlertDialog alert = new AlertDialog.Builder(AccountsActivity.this.context).create();
-                        alert.setTitle("Error");
-                        alert.setMessage((String) msg.obj);
-                        alert.setCancelable(false);
-                        alert.setButton(-1, "OK", new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                        return;
-                    default:
-                        throw new IllegalArgumentException("Unknown message id " + msg.what);
-                }
-                if (AccountsActivity.this.progressDialog == null || !AccountsActivity.this.progressDialog.isShowing()) {
-                    AccountsActivity.this.showDialog(IMPORT_PROGRESS_DIALOG /*9*/);
-                    try {
-                        AccountsActivity.this.wakeLock.acquire(10000);
-                    } catch (Exception e2) {
-                        Log.d(TAG, "handleMessage: ");
-                    }
-                }
-                if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
-                    AccountsActivity.this.progressDialog.setProgress(msg.arg1);
-                }
+    private static class BalanceTask extends AsyncTask<Object, Void, Object> {
+        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
+        private int pref;
+        private double totalWorth;
+
+        private BalanceTask(AccountsActivity context) {
+            this.totalWorth = 0.0d;
+            this.pref = 0;
+            accountsActivityWeakReference = new WeakReference<>(context);
+        }
+
+        protected Object doInBackground(Object... params) {
+            this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
+            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
+                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
+                this.pref = Enums.kBalanceTypeCurrent /*2*/;
             }
-        };
+            AccountsActivity activity = accountsActivityWeakReference.get();
+            this.totalWorth = activity.totalWorth(this.pref);
+            return null;
+        }
+
+        protected void onPostExecute(Object result) {
+            AccountsActivity activity = accountsActivityWeakReference.get();
+            if (activity == null || activity.isFinishing()) return;
+            activity.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
+            activity.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? ContextCompat.getColor(activity, R.color.theme_red_label_color_on_black) : ContextCompat.getColor(activity, R.color.black_theme_text /*WHITE*/));
+            activity.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
+            activity.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
+            activity.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
+            activity.balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(activity, R.color.black_theme_text));
+            activity.balanceBar.progressBar.setVisibility(View.GONE);
+            synchronized (activity.adapter) {
+                activity.reloadData();
+            }
+        }
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
