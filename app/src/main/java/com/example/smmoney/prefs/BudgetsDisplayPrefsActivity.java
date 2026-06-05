@@ -4,15 +4,14 @@ import android.os.Bundle;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 
-public class BudgetsDisplayPrefsActivity extends PocketMoneyPreferenceActivity {
+public class BudgetsDisplayPrefsActivity extends PocketMoneyPreferenceActivityV2 {
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.prefs_display_budgets);
+        loadParentFragment(R.xml.prefs_display_budgets);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 }
