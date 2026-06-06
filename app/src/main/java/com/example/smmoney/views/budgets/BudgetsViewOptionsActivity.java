@@ -3,6 +3,8 @@ package com.example.smmoney.views.budgets;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -18,6 +20,22 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
     private ListPreference sortOnPref;
     private Preference startOnDate;
+
+    private final ActivityResultLauncher<Intent> datePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != 0) {
+                    if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED && result.getData() != null) {
+                        Intent data = result.getData();
+                        this.startOnDate.setSummary(data.getStringExtra("Date"));
+                        Prefs.setPref(Prefs.BUDGETSTARTDATE, data.getStringExtra("Date"));
+                    } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
+                        this.startOnDate.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+                        Prefs.setPref(Prefs.BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,23 +92,9 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 
                 Intent anIntent = new Intent(BudgetsViewOptionsActivity.this, EndOnDateActivity.class);
                 anIntent.putExtra("Date", BudgetsViewOptionsActivity.this.startOnDate.getSummary().toString());
                 anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
-                BudgetsViewOptionsActivity.this.startActivityForResult(anIntent, 1);
+                datePickerLauncher.launch(anIntent);
                 return true;
             }
         });
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
-                this.startOnDate.setSummary(data.getStringExtra("Date"));
-                Prefs.setPref(Prefs.BUDGETSTARTDATE, data.getStringExtra("Date"));
-            } else if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                this.startOnDate.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                Prefs.setPref(Prefs.BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
-            }
-        }
     }
 }

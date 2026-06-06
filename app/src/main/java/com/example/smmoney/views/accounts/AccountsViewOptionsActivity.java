@@ -3,6 +3,8 @@ package com.example.smmoney.views.accounts;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -23,6 +25,22 @@ import java.util.GregorianCalendar;
 public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
     private Preference asOfDatePref;
     private ListPreference showAccountsListPref;
+
+    private final ActivityResultLauncher<Intent> datePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() != 0) {
+                    if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED && result.getData() != null) {
+                        Intent data = result.getData();
+                        this.asOfDatePref.setSummary(data.getStringExtra("Date"));
+                        Prefs.setPref(Prefs.BALANCEONDATE, CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
+                    } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
+                        this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+                        Prefs.setPref(Prefs.BALANCEONDATE, 0L);
+                    }
+                }
+            }
+    );
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,23 +102,10 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivityV2
             public boolean onPreferenceClick(Preference preference) {
                 Intent anIntent = new Intent(AccountsViewOptionsActivity.this, EndOnDateActivity.class);
                 anIntent.putExtra("Date", AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
-                AccountsViewOptionsActivity.this.startActivityForResult(anIntent, 1);
+                datePickerLauncher.launch(anIntent);
                 return true;
             }
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
-                this.asOfDatePref.setSummary(data.getStringExtra("Date"));
-                Prefs.setPref(Prefs.BALANCEONDATE, CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
-            } else if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                Prefs.setPref(Prefs.BALANCEONDATE, 0L);
-            }
-        }
-    }
 }

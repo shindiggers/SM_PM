@@ -54,8 +54,15 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
             this.theCheckbox.setChecked(true);
             this.theDateRow.setVisibility(View.VISIBLE);
         }
-        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.kLOC_EDIT_REPEATING_ENDON);
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+
+        // Attach listener AFTER setting initial state to avoid automatic dialog trigger
+        attachListeners();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.kLOC_EDIT_REPEATING_ENDON);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
 
@@ -65,43 +72,7 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         this.theDate = findViewById(R.id.endondatedate);
         ImageView theDateIcon = findViewById(R.id.endondate_ic_calendar);
         this.theDateRow = (FrameLayout) this.theDate.getParent();
-        this.theCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                EndOnDateActivity.this.theDateRow.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-                if (isChecked) {
-                    long datelong;
 
-                    if (prevDate == null) {
-                        prevDate = new GregorianCalendar();
-                    }
-                    datelong = prevDate.getTimeInMillis();
-
-                    Bundle args = new Bundle();
-                    args.putLong("dateInt", datelong);
-                    //EndOnDateActivity.this.showDialog(DATE_DIALOG_ID/*1*/);
-                    DialogFragment datePicker = new BudgetsDatePickerDialog();
-                    datePicker.setArguments(args);
-                    datePicker.show(getSupportFragmentManager(), "date picker");
-                }
-            }
-        });
-        this.theDateRow.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                long datelong;
-
-                if (prevDate == null) {
-                    prevDate = new GregorianCalendar();
-                }
-                datelong = prevDate.getTimeInMillis();
-
-                Bundle args = new Bundle();
-                args.putLong("dateInt", datelong);
-
-                DialogFragment datePicker = new BudgetsDatePickerDialog();
-                datePicker.setArguments(args);
-                datePicker.show(getSupportFragmentManager(), "date picker");
-            }
-        });
         ((TextView) findViewById(R.id.endon_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
 
         if (Objects.requireNonNull(getIntent().getExtras()).getBoolean(Prefs.BUDGETSTARTDATE)) {
@@ -112,6 +83,43 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         ((View) this.theCheckbox.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theDate.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theDate.getParent().getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+    }
+
+    private void attachListeners() {
+        this.theCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                EndOnDateActivity.this.theDateRow.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+                if (isChecked) {
+                    showDatePicker();
+                }
+            }
+        });
+        this.theDateRow.setOnClickListener(new OnClickListener() {
+            public void onClick(View v) {
+                showDatePicker();
+            }
+        });
+    }
+
+    private void showDatePicker() {
+        long datelong;
+        if (prevDate == null) {
+            prevDate = new GregorianCalendar();
+        }
+        datelong = prevDate.getTimeInMillis();
+
+        Bundle args = new Bundle();
+        args.putLong("dateInt", datelong);
+
+        DialogFragment datePicker = new BudgetsDatePickerDialog();
+        datePicker.setArguments(args);
+        datePicker.show(getSupportFragmentManager(), "date picker");
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        processDate();
+        return true;
     }
 
     private void processDate() {
@@ -128,11 +136,11 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
 
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != 4) {
-            return super.onKeyDown(keyCode, event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            processDate();
+            return true;
         }
-        processDate();
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 
     @Override
