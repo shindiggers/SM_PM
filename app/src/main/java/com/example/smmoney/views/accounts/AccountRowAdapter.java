@@ -36,14 +36,14 @@ import java.util.List;
 class AccountRowAdapter extends BaseAdapter {
     private final int NUMBER_OF_ACCOUNT_GROUPS = 7;
     private View allTransView;
-    private Object customRowTag = new Object();
+    private final Object customRowTag = new Object();
     private List<AccountClass> elements;
     private View filtersView;
     private final Context mContext;
     private final LayoutInflater mInflater;
     private final String[] sectionedAccountStrings = new String[]{Locales.kLOC_ACCOUNTSECTION_BANKS, Locales.kLOC_ACCOUNTSECTION_CASH, Locales.kLOC_ACCOUNTSECTION_CREDIT, Locales.kLOC_ACCOUNTSECTION_ASSETS, Locales.kLOC_ACCOUNTSECTION_LIABILITIES, Locales.kLOC_ACCOUNTSECTION_ONLINE, Locales.kLOC_FILTER_DATES_CUSTOM};
     private final String[] showSectionedAccountsPrefs = new String[]{Prefs.COLLAPSE_BANKS, Prefs.COLLAPSE_CASH, Prefs.COLLAPSE_CREDITCARDS, Prefs.COLLAPSE_ASSETS, Prefs.COLLAPSE_LIABILITIES, Prefs.COLLAPSE_ONLINE, Prefs.COLLAPSE_CUSTOM};
-    private LinearLayout previousRowLayout = null;
+    private final LinearLayout previousRowLayout = null;
     private View repeatingView;
     private ArrayList<ArrayList<AccountClass>> sectionedAccounts;
     private final OnClickListener headerClickListener = new OnClickListener() {
@@ -83,7 +83,7 @@ class AccountRowAdapter extends BaseAdapter {
         int count = 0;
         int customButtonCount = 0;
         if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-            customButtonCount = 0 + 1;
+            customButtonCount = 1;
         }
         if (Prefs.getBooleanPref(Prefs.FILTERS)) {
             customButtonCount++;
@@ -104,7 +104,7 @@ class AccountRowAdapter extends BaseAdapter {
                 count += size;
             }
         } else {
-            count = 0 + this.elements.size();
+            count = this.elements.size();
         }
         if (count == 0) {
             return 0;
@@ -119,7 +119,7 @@ class AccountRowAdapter extends BaseAdapter {
             while (i < this.sectionedAccounts.size()) {
                 if (currentIndex == position) {
                     if (this.sectionedAccounts.get(i).size() > 0 || i == this.sectionedAccounts.size() - 1) {
-                        return new StringBuilder(String.valueOf('H')).append(this.sectionedAccountStrings[i]).toString();
+                        return String.valueOf('H') + this.sectionedAccountStrings[i];
                     }
                 } else if (this.sectionedAccounts.get(i).size() + currentIndex >= position) {
                     if (getShowSection(i)) {
@@ -136,49 +136,49 @@ class AccountRowAdapter extends BaseAdapter {
             int newPos = position - currentIndex;
             if (newPos == 0) {
                 if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                    return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_ALL_TRANSACTIONS).toString();
+                    return String.valueOf('C') + Locales.kLOC_ALL_TRANSACTIONS;
                 }
                 if (Prefs.getBooleanPref(Prefs.FILTERS)) {
-                    return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_TOOLS_FILTERS).toString();
+                    return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
                 }
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
             } else if (newPos != 1) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
             } else {
                 if (Prefs.getBooleanPref(Prefs.FILTERS) && Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                    return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_TOOLS_FILTERS).toString();
+                    return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
                 }
                 if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                    return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+                    return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
                 }
                 return null;
             }
         }
         if (position == this.elements.size()) {
             if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_ALL_TRANSACTIONS).toString();
+                return String.valueOf('C') + Locales.kLOC_ALL_TRANSACTIONS;
             }
             if (Prefs.getBooleanPref(Prefs.FILTERS)) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_TOOLS_FILTERS).toString();
+                return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
             }
             if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
             }
         } else if (position == this.elements.size() + 1) {
             if (Prefs.getBooleanPref(Prefs.FILTERS) && Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_TOOLS_FILTERS).toString();
+                return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
             }
             if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
             }
         } else if (position == this.elements.size() + 2) {
-            return new StringBuilder(String.valueOf('C')).append(Locales.kLOC_REPEATING_TRANSACTIONS).toString();
+            return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
         }
         return this.elements.get(position);
     }
 
     public long getItemId(int position) {
-        return (long) position;
+        return position;
     }
 
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -372,7 +372,9 @@ class AccountRowAdapter extends BaseAdapter {
                 f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
                 i.putExtra("Filter", f);
                 i.putExtra("ONLY SAVED", 1);
-                ((AccountsActivity) AccountRowAdapter.this.mContext).startActivityForResult(i, 1);
+                if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
+                    ((AccountsActivity) AccountRowAdapter.this.mContext).filterLauncher.launch(i);
+                }
             }
         });
         v.setTag(null);

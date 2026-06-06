@@ -48,6 +48,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -213,6 +215,41 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @SuppressWarnings("FieldCanBeLocal")
     private TextView titleTextView;
     private WakeLock wakeLock;
+
+    public final ActivityResultLauncher<Intent> filterLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == ACCOUNT_REQUEST_FILTER && result.getData() != null) {
+                    Intent i = new Intent(this, TransactionsActivity.class);
+                    i.putExtra("Filter", (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter"));
+                    startActivity(i);
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> budgetLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
+                    setResult(ACCOUNT_REQUEST_FILTER);
+                    finish();
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> emailLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (this.fileNames != null) {
+                    for (Uri fileName : this.fileNames) {
+                        File file = new File(Objects.requireNonNull(fileName.getPath()));
+                        if (file.exists()) {
+                            file.delete();
+                        }
+                    }
+                }
+            }
+    );
 
     static class AnonymousClass49 implements OnClickListener {
         private final /* synthetic */ Activity val$c;
@@ -817,7 +854,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
             public void onCheckedChanged(RadioGroup group, int checkedId) {
                 if (!AccountsActivity.this.progUpdate) {
-                    AccountsActivity.this.startActivityForResult(new Intent(AccountsActivity.this, BudgetsActivity.class), AccountsActivity.ACCOUNT_REQUEST_BUDGET);
+                    Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
+                    budgetLauncher.launch(intent);
                     AccountsActivity.this.overridePendingTransition(0, 0);
                     AccountsActivity.this.progUpdate = true;
                     AccountsActivity.this.accountRadioButton.setChecked(true);
@@ -1198,7 +1236,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         objArr2[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
         emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr2));
         this.fileNames = fileNames;
-        startActivityForResult(emailIntent, ACCOUNT_REQUEST_EMAIL);
+        emailLauncher.launch(emailIntent);
     }
 
     protected void generateQIFForEmail() {
@@ -1274,7 +1312,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         objArr[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
         emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr));
         this.fileNames = fileNames;
-        startActivityForResult(emailIntent, ACCOUNT_REQUEST_EMAIL);
+        emailLauncher.launch(emailIntent);
     }
 
     private void generateOFXForEmail() {
@@ -1470,37 +1508,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 return true;
             default:
                 return super.onContextItemSelected(item);
-        }
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            switch (requestCode) {
-                case ACCOUNT_REQUEST_FILTER /*1*/:
-                    if (resultCode == ACCOUNT_REQUEST_FILTER) {
-                        Intent i = new Intent(this, TransactionsActivity.class);
-                        i.putExtra("Filter", (FilterClass) Objects.requireNonNull(data.getExtras()).get("Filter"));
-                        startActivity(i);
-                        return;
-                    }
-                    return;
-                case ACCOUNT_REQUEST_BUDGET /*2*/:
-                    if (Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
-                        setResult(ACCOUNT_REQUEST_FILTER);
-                        finish();
-                        return;
-                    }
-                    return;
-                case ACCOUNT_REQUEST_EMAIL /*3*/:
-                    for (Uri fileName : this.fileNames) {
-                        if (!new File(Objects.requireNonNull((fileName).getPath())).delete()) {
-                            int i2 = ACCOUNT_REQUEST_FILTER + ACCOUNT_REQUEST_FILTER;
-                        }
-                    }
-                    return;
-                default:
-            }
         }
     }
 

@@ -41,6 +41,8 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 
 import com.example.smmoney.R;
@@ -177,6 +179,32 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     @SuppressWarnings("unused")
     private TextView titleTextView;
     private WakeLock wakeLock;
+
+    private final ActivityResultLauncher<Intent> filterLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == 1 && result.getData() != null) {
+                    String currentAccount = this._filter.getAccount();
+                    this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
+                    if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+                        this._filter.setAccount(currentAccount);
+                    }
+                    Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
+                    reloadData();
+                }
+            }
+    );
+
+    private final ActivityResultLauncher<Intent> emailLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (this.fileNames != null) {
+                    for (String fileName : this.fileNames) {
+                        new File(fileName).delete();
+                    }
+                }
+            }
+    );
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -526,7 +554,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney OFX/QFX File");
         emailIntent.putExtra("android.intent.extra.TEXT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "OFX/QFX", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
         this.fileNames = fileNames;
-        startActivityForResult(emailIntent, TRANSACTION_REQUEST_EMAIL/*2*/);
+        emailLauncher.launch(emailIntent);
     }
 
     private void generateOFXForEmail() {
@@ -596,7 +624,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 }
                 i = new Intent(this, FiltersMainActivity.class);
                 i.putExtra("Filter", this._filter);
-                startActivityForResult(i, TRANSACTION_REQUEST_FILTER /*1*/);
+                filterLauncher.launch(i);
                 return true;
             case MENU_REPORTS_ACCOUNT /*6*/:
                 AccountsReportDataSource ds = new AccountsReportDataSource(this.adapter.getElements(), this._filter);
@@ -858,31 +886,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            switch (requestCode) {
-                case TRANSACTION_REQUEST_FILTER /*1*/:
-                    if (resultCode == 1) {
-                        String currentAccount = this._filter.getAccount();
-                        this._filter = (FilterClass) Objects.requireNonNull(data.getExtras()).get("Filter");
-                        if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
-                            this._filter.setAccount(currentAccount);
-                        }
-                        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
-                        return;
-                    }
-                    return;
-                case TRANSACTION_REQUEST_EMAIL /*2*/:
-                    for (String fileName : this.fileNames) {
-                        new File(fileName).delete();
-                    }
-                    return;
-                default:
-            }
-        }
-    }
-
     public Handler getHandler() {
         if (this.mHandler == null) {
             createHandler();
@@ -942,21 +945,21 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                     emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "QIF"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
-                                    TransactionsActivity.this.startActivity(emailIntent);
+                                    emailLauncher.launch(emailIntent);
                                     break;
                                 case EMAIL_TDF /*1*/:
                                     emailIntent.setType("text/txt");
                                     emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "TDF"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "TDF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
-                                    TransactionsActivity.this.startActivity(emailIntent);
+                                    emailLauncher.launch(emailIntent);
                                     break;
                                 case EMAIL_CSV /*2*/:
                                     emailIntent.setType("text/csv");
                                     emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "CSV"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "CSV", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
-                                    TransactionsActivity.this.startActivity(emailIntent);
+                                    emailLauncher.launch(emailIntent);
                                     break;
                             }
                             TransactionsActivity.this.shouldEmail = false;
