@@ -1,69 +1,69 @@
 package com.example.smmoney.prefs;
 
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
-import android.preference.Preference.OnPreferenceClickListener;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.LaunchActivity;
-import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 
-public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
-    private Context context;
+public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivityV2 {
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.prefs_display_main);
+        loadParentFragment(R.xml.prefs_display_main);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.context = this;
-        setupPrefs();
     }
 
-    private void setupPrefs() {
-        findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+    @Override
+    public void onPreferencesCreated(PreferenceFragmentCompat fragment) {
+        setupPrefs(fragment);
+    }
+
+    private void setupPrefs(PreferenceFragmentCompat fragment) {
+        fragment.findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), AccountDisplayPrefsActivity.class));
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, AccountDisplayPrefsActivity.class));
                 return true;
             }
         });
-        findPreference("TransactionRegisterDisplayPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        fragment.findPreference("TransactionRegisterDisplayPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), TransactionRegisterDisplayPrefsActivity.class));
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, TransactionRegisterDisplayPrefsActivity.class));
                 return true;
             }
         });
-        findPreference("BudgetsPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        fragment.findPreference("BudgetsPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), BudgetsDisplayPrefsActivity.class));
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, BudgetsDisplayPrefsActivity.class));
                 return true;
             }
         });
-        findPreference("EditTransactionPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        fragment.findPreference("EditTransactionPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), EditTransactionDisplayPrefsActivity.class));
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, EditTransactionDisplayPrefsActivity.class));
                 return true;
             }
         });
-        findPreference("ReportsPrefs").setOnPreferenceClickListener(new OnPreferenceClickListener() {
+        fragment.findPreference("ReportsPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.context.startActivity(new Intent(DisplayOptionsPrefsActivity.this.getBaseContext(), ReportsDisplayPrefsActivity.class));
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, ReportsDisplayPrefsActivity.class));
                 return true;
             }
         });
-        ListPreference themes = (ListPreference) findPreference(Prefs.THEME_COLOR);
+        ListPreference themes = fragment.findPreference(Prefs.THEME_COLOR);
         String[] colors = new String[]{"Black", "Blue", Locales.kLOC_THEME_COLOR_GREEN, Locales.kLOC_THEME_COLOR_PURPLE, Locales.kLOC_THEME_COLOR_GRAY, Locales.kLOC_THEME_COLOR_COFFEE};
         themes.setEntries(colors);
         themes.setEntryValues(colors);
@@ -71,8 +71,8 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
         themes.setSummary(Prefs.getStringPref(Prefs.THEME_COLOR));
     }
 
-    private OnPreferenceChangeListener getChangeListener() {
-        return new OnPreferenceChangeListener() {
+    private Preference.OnPreferenceChangeListener getChangeListener() {
+        return new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);
                 PocketMoneyThemes.refreshTheme();

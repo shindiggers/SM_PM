@@ -1,10 +1,10 @@
 package com.example.smmoney.views.reports;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -12,28 +12,28 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 
-public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
+public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
     private ListPreference chartTypePref;
-    @SuppressWarnings("FieldCanBeLocal")
-    private Context context;
     private ListPreference sortDirectionPref;
     private ListPreference sortOnPref;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.reports_view_options);
-        this.context = this;
-        setupPrefs();
+        loadParentFragment(R.xml.reports_view_options);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 
-    protected void onStart() {
-        super.onStart();
+    @Override
+    public void onPreferencesCreated(PreferenceFragmentCompat fragment) {
+        setupPrefs(fragment);
+        updateSummaries();
+    }
+
+    private void updateSummaries() {
         this.chartTypePref.setSummary(chartTypeString());
         this.sortDirectionPref.setSummary(sortDirectionString());
         this.sortOnPref.setSummary(sortOnString());
@@ -68,10 +68,10 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         return Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING;
     }
 
-    private void setupPrefs() {
-        this.chartTypePref = (ListPreference) findPreference("chartreportsoptions");
-        this.sortDirectionPref = (ListPreference) findPreference("directionreportsoptions");
-        this.sortOnPref = (ListPreference) findPreference("sortonreportsoptions");
+    private void setupPrefs(PreferenceFragmentCompat fragment) {
+        this.chartTypePref = fragment.findPreference("chartreportsoptions");
+        this.sortDirectionPref = fragment.findPreference("directionreportsoptions");
+        this.sortOnPref = fragment.findPreference("sortonreportsoptions");
         if (SMMoney.isLiteVersion()) {
             Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeNone /*0*/);
             this.chartTypePref.setEnabled(false);
@@ -79,7 +79,7 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         String[] theStrings = new String[]{Locales.kLOC_GENERAL_NONE, "Pie Chart", "Bar Chart"};
         this.chartTypePref.setEntries(theStrings);
         this.chartTypePref.setEntryValues(theStrings);
-        this.chartTypePref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        this.chartTypePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (newValue.equals(Locales.kLOC_GENERAL_NONE)) {
                     Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeNone /*0*/);
@@ -95,7 +95,7 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         String[] theStrings2 = new String[]{Locales.kLOC_REPORTDISPLAY_ITEM, Locales.kLOC_GENERAL_AMOUNT, Locales.kLOC_REPORTDISPLAY_COUNT};
         this.sortOnPref.setEntries(theStrings2);
         this.sortOnPref.setEntryValues(theStrings2);
-        this.sortOnPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        this.sortOnPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (newValue.equals(Locales.kLOC_REPORTDISPLAY_ITEM)) {
                     Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnItem /*0*/);
@@ -111,7 +111,7 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         String[] theStrings3 = new String[]{Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING, Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING};
         this.sortDirectionPref.setEntries(theStrings3);
         this.sortDirectionPref.setEntryValues(theStrings3);
-        this.sortDirectionPref.setOnPreferenceChangeListener(new OnPreferenceChangeListener() {
+        this.sortDirectionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 if (newValue.equals(Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING)) {
                     Prefs.setPref(Prefs.PREFS_REPORTS_SORTDIRECTION, Enums.ReportsSortDirectionAscending /*0*/);

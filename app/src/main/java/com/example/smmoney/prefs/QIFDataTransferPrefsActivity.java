@@ -1,42 +1,39 @@
 package com.example.smmoney.prefs;
 
 import android.os.Bundle;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
+
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.importexport.ImportExportQIF;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 
-public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity {
+public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivityV2 {
     private ListPreference dateFormatListPref;
     private ListPreference dateSeparatorListPref;
     private ListPreference numberFormatListPref;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.prefs_datatransfers_qifoptions);
+        loadParentFragment(R.xml.prefs_datatransfers_qifoptions);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
-        setupPrefs();
     }
 
-    protected void onStart() {
-        super.onStart();
-        this.dateFormatListPref.setSummary(this.dateFormatListPref.getValue());
-        this.dateSeparatorListPref.setSummary(this.dateSeparatorListPref.getValue());
-        this.numberFormatListPref.setSummary(this.numberFormatListPref.getValue());
+    @Override
+    public void onPreferencesCreated(PreferenceFragmentCompat fragment) {
+        setupPrefs(fragment);
     }
 
-    private void setupPrefs() {
-        this.dateFormatListPref = (ListPreference) findPreference(Prefs.QIF_DATEFORMAT);
-        this.dateSeparatorListPref = (ListPreference) findPreference(Prefs.QIF_DATESEPARATOR);
-        this.numberFormatListPref = (ListPreference) findPreference(Prefs.QIF_NUMBERFORMAT);
+    private void setupPrefs(PreferenceFragmentCompat fragment) {
+        this.dateFormatListPref = fragment.findPreference(Prefs.QIF_DATEFORMAT);
+        this.dateSeparatorListPref = fragment.findPreference(Prefs.QIF_DATESEPARATOR);
+        this.numberFormatListPref = fragment.findPreference(Prefs.QIF_NUMBERFORMAT);
         this.dateFormatListPref.setEntries(ImportExportQIF.dateFormats());
         this.dateFormatListPref.setEntryValues(ImportExportQIF.dateFormats());
         this.dateSeparatorListPref.setEntries(ImportExportQIF.dateSeparators());
@@ -46,10 +43,14 @@ public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity 
         this.dateFormatListPref.setOnPreferenceChangeListener(getChangeListener());
         this.dateSeparatorListPref.setOnPreferenceChangeListener(getChangeListener());
         this.numberFormatListPref.setOnPreferenceChangeListener(getChangeListener());
+
+        this.dateFormatListPref.setSummary(this.dateFormatListPref.getValue());
+        this.dateSeparatorListPref.setSummary(this.dateSeparatorListPref.getValue());
+        this.numberFormatListPref.setSummary(this.numberFormatListPref.getValue());
     }
 
-    private OnPreferenceChangeListener getChangeListener() {
-        return new OnPreferenceChangeListener() {
+    private Preference.OnPreferenceChangeListener getChangeListener() {
+        return new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);
                 return true;

@@ -2,49 +2,40 @@ package com.example.smmoney.prefs;
 
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
-import android.preference.EditTextPreference;
-import android.preference.ListPreference;
-import android.preference.Preference;
-import android.preference.Preference.OnPreferenceChangeListener;
 import android.view.KeyEvent;
+
+import androidx.preference.EditTextPreference;
+import androidx.preference.ListPreference;
+import androidx.preference.Preference;
+import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivity;
+import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
 
-public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
-    static final int SECURITY_RESULT_DONTPROMPT = 1;
-    static final int SECURITY_RESULT_PROMPT = 0;
-    boolean confirmChanged = false;
+public class SecurityPrefsActivity extends PocketMoneyPreferenceActivityV2 {
     private EditTextPreference confirmPref;
-    @SuppressWarnings("FieldCanBeLocal")
-    private Context context;
     private ListPreference delayListPref;
-    boolean passwordChanged = false;
     private EditTextPreference passwordPref;
     private String storedPassword;
 
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        addPreferencesFromResource(R.xml.prefs_security);
+        loadParentFragment(R.xml.prefs_security);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.context = this;
-        setupPrefs();
     }
 
-    protected void onStart() {
-        super.onStart();
-        this.delayListPref.setSummary(this.delayListPref.getEntry());
+    @Override
+    public void onPreferencesCreated(PreferenceFragmentCompat fragment) {
+        setupPrefs(fragment);
     }
 
     private void checkPassword() {
@@ -73,30 +64,33 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         startActivity(i);
     }
 
-    private void setupPrefs() {
+    private void setupPrefs(PreferenceFragmentCompat fragment) {
         String[] delays = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_PASSWORDDELAY1MIN, Locales.kLOC_PASSWORDDELAY5MINS, Locales.kLOC_PASSWORDDELAY10MINS, Locales.kLOC_PASSWORDDELAY15MINS, Locales.kLOC_PASSWORDDELAY30MINS, Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_PASSWORDDELAY24HOURS};
-        this.delayListPref = (ListPreference) findPreference(Prefs.PASSWORD_DELAY);
+        this.delayListPref = fragment.findPreference(Prefs.PASSWORD_DELAY);
         this.delayListPref.setEntries(delays);
         this.delayListPref.setEntryValues(delays);
         if (this.delayListPref.getValue() == null) {
             this.delayListPref.setDefaultValue(delays[0]);
         }
         this.delayListPref.setOnPreferenceChangeListener(getOnChangeListener());
-        this.passwordPref = (EditTextPreference) findPreference(Prefs.PASSWORD);
-        this.confirmPref = (EditTextPreference) findPreference("prefssecurityconfirm");
+        this.delayListPref.setSummary(this.delayListPref.getEntry());
+
+        this.passwordPref = fragment.findPreference(Prefs.PASSWORD);
+        this.confirmPref = fragment.findPreference("prefssecurityconfirm");
         this.storedPassword = this.passwordPref.getText();
     }
 
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != 4 && keyCode != 3) {
+        if (keyCode != KeyEvent.KEYCODE_BACK && keyCode != KeyEvent.KEYCODE_HOME) {
             return super.onKeyDown(keyCode, event);
         }
         checkPassword();
         return true;
     }
 
-    private OnPreferenceChangeListener getOnChangeListener() {
-        return new OnPreferenceChangeListener() {
+    private Preference.OnPreferenceChangeListener getOnChangeListener() {
+        return new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue) {
                 preference.setSummary((String) newValue);
                 return true;
