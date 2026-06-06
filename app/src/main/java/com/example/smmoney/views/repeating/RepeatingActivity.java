@@ -1,11 +1,9 @@
 package com.example.smmoney.views.repeating;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -28,6 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
@@ -42,6 +42,7 @@ import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 
@@ -55,7 +56,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private final int CMENU_EDIT = 1;
     @SuppressWarnings("FieldCanBeLocal")
     private final int DATE_DIALOG_ID = 1;
-    private final int IMPORT_PROGRESS_DIALOG = 2;
     private final int MENU_NEW = 1;
     private final int MENU_PROCESS = 2;
     private AccountClass account;
@@ -63,6 +63,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private BalanceBar balanceBar;
     private FilterClass filter;
     private boolean isProcessingToDate = false;
+    private PocketMoneyProgressDialog progressDialog = null;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
@@ -82,13 +83,15 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         if (RepeatingActivity.this.progressDialog.isShowing()) {
                             RepeatingActivity.this.progressDialog.dismiss();
                         }
-                        RepeatingActivity.this.progressDialog.setProgress(MSG_PROGRESS_FINISH/*0*/);
                     }
                     RepeatingActivity.this.reloadData();
                     return;
                 case MSG_PROGRESS_UPDATE /*1*/:
                     if (RepeatingActivity.this.progressDialog == null || !RepeatingActivity.this.progressDialog.isShowing()) {
-                        RepeatingActivity.this.showDialog(IMPORT_PROGRESS_DIALOG/*2*/);
+                        RepeatingActivity.this.progressDialog = new PocketMoneyProgressDialog(RepeatingActivity.this);
+                        RepeatingActivity.this.progressDialog.setMessage("Processing...\n\nWarning: This may take several minutes");
+                        RepeatingActivity.this.progressDialog.setCancelable(false);
+                        RepeatingActivity.this.progressDialog.show();
                         try {
                             RepeatingActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                         } catch (Exception e2) {
@@ -104,7 +107,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
             }
         }
     };
-    private ProgressDialog progressDialog = null;
     private TextView titleTextView;
     private WakeLock wakeLock;
 
@@ -153,7 +155,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
         this.balanceBar.nextButton.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 final EditText textView = new EditText(RepeatingActivity.this);
-                Builder b = new Builder(RepeatingActivity.this);
+                AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this);
                 b.setView(textView);
                 b.setTitle(Locales.kLOC_REPEATING_UPCOMING_MESSAGE);
                 b.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
@@ -235,7 +237,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 AccountsActivity.displayLiteDialog(this);
                 return true;
             case MENU_PROCESS /*2*/:
-                showDialog(IMPORT_PROGRESS_DIALOG/*2*/);
+                showDialog(DATE_DIALOG_ID);
                 return true;
             default:
                 return false;
@@ -292,6 +294,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                                     RepeatingActivity.this.runOnUiThread(new Runnable() {
                                         public void run() {
                                             RepeatingActivity.this.reloadData();
+                                            RepeatingActivity.this.finishProgressBar();
                                         }
                                     });
                                 }
@@ -299,12 +302,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         }
                     }
                 }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            case IMPORT_PROGRESS_DIALOG /*2*/:
-                this.progressDialog = new ProgressDialog(this);
-                this.progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-                this.progressDialog.setMessage("Processing...\n\nWarning: This may take several minutes");
-                this.progressDialog.setCancelable(false);
-                return this.progressDialog;
             default:
                 return null;
         }

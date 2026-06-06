@@ -99,7 +99,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivityV2
                 Prefs.setPref(Prefs.BALANCEONDATE, CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
             } else if (resultCode == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
                 this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                Prefs.setPref(Prefs.BALANCEONDATE, 0);
+                Prefs.setPref(Prefs.BALANCEONDATE, 0L);
             }
         }
     }

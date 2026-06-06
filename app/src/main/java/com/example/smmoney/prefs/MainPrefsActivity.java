@@ -23,14 +23,10 @@ public class MainPrefsActivity extends ListActivity {
         super.onCreate(savedInstanceState);
         getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
-        getListView().setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        getListView().setCacheColorHint(PocketMoneyThemes.groupTableViewBackgroundColor());
         setListAdapter(new MainPrefsRowAdapter(this));
         setResult(0);
-        try {
-            Objects.requireNonNull(getActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
-        } catch (NullPointerException e) {
-            e.printStackTrace();
+        if (getActionBar() != null) {
+            getActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
         }
         String dontShowPass;
         try {

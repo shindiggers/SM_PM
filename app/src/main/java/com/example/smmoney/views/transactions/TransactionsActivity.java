@@ -5,7 +5,6 @@ import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -64,6 +63,7 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.HandlerActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.filters.FiltersMainActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -170,7 +170,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private int msgEmail = -1;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private RadioButton pendingButton;
-    private ProgressDialog progressDialog = null;
+    private PocketMoneyProgressDialog progressDialog = null;
     private EditText searchEditText;
     private LinearLayout searchView;
     private boolean shouldEmail = false;
@@ -498,7 +498,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private void exportOFXToSD() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -529,7 +530,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private void generateOFXForEmail() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -679,14 +681,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 Log.i("****** EMAIL", "EXPORTING QIF");
                                 final String fl = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
-                                    ProgressDialog pd;
-
                                     public void run() {
                                         ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
                                         exportqif.setFilter(TransactionsActivity.this._filter);
                                         exportqif.QIFPath = fl;
                                         exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
@@ -696,14 +695,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 TransactionsActivity.this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/SMMoney.txt";
                                 final String fl2 = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
-                                    ProgressDialog pd;
-
                                     public void run() {
                                         ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
                                         exporttdf.CSVPath = fl2;
                                         exporttdf.setFilter(TransactionsActivity.this._filter);
                                         exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
@@ -713,14 +709,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 TransactionsActivity.this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/SMMoney.csv";
                                 final String fl3 = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
-                                    ProgressDialog pd;
-
                                     public void run() {
                                         ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
                                         exportcsv.CSVPath = fl3;
                                         exportcsv.setFilter(TransactionsActivity.this._filter);
                                         exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
@@ -768,49 +761,28 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         switch (item) {
                             case EMAIL_QIF /*0*/:
                                 new Thread() {
-                                    final ProgressDialog pd;
-
-                                    {
-                                        this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
-                                    }
-
                                     public void run() {
                                         ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
                                         exportqif.setFilter(TransactionsActivity.this._filter);
                                         exportqif.exportRecords(TransactionDB.queryWithFilterOrderByAccount(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
                             case EMAIL_TDF /*1*/:
                                 new Thread() {
-                                    final ProgressDialog pd;
-
-                                    {
-                                        this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
-                                    }
-
                                     public void run() {
                                         ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
                                         exporttdf.setFilter(TransactionsActivity.this._filter);
                                         exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
                             case EMAIL_CSV /*2*/:
                                 new Thread() {
-                                    final ProgressDialog pd;
-
-                                    {
-                                        this.pd = ProgressDialog.show(TransactionsActivity.this, "Exporting", "Exporting records, please wait");
-                                    }
-
                                     public void run() {
                                         ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
                                         exportcsv.setFilter(TransactionsActivity.this._filter);
                                         exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                        this.pd.dismiss();
                                     }
                                 }.start();
                                 return;
@@ -832,14 +804,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 }
                 return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
             case IMPORT_PROGRESS_DIALOG /*9*/:
-                if (this.progressDialog == null) {
-                    this.progressDialog = new ProgressDialog(this);
-                    Log.i("*** Progress Dialog **", "Creating");
-                }
-                this.progressDialog.setProgressStyle(1);
-                this.progressDialog.setMessage("Exporting...\n\nWarning: This may take several minutes");
-                this.progressDialog.setCancelable(true);
-                return this.progressDialog;
+                return null;
             default:
                 return null;
         }
@@ -932,6 +897,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 switch (msg.what) {
                     case HandlerActivity.MSG_PROGRESS_UPDATE /*4*/:
                         if (TransactionsActivity.this.progressDialog == null) {
+                            TransactionsActivity.this.progressDialog = new PocketMoneyProgressDialog(TransactionsActivity.this);
+                            TransactionsActivity.this.progressDialog.setMessage("Exporting...\n\nWarning: This may take several minutes");
+                            TransactionsActivity.this.progressDialog.setCancelable(true);
+                            TransactionsActivity.this.progressDialog.show();
                             try {
                                 TransactionsActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                             } catch (Exception e) {

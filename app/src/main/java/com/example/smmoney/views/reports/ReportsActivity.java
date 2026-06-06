@@ -1,18 +1,13 @@
 package com.example.smmoney.views.reports;
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -33,6 +28,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.charts.items.ReportChartItem;
@@ -41,6 +37,8 @@ import com.example.smmoney.views.charts.views.ChartPieView;
 import com.example.smmoney.views.charts.views.ChartView;
 
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate, ReportDialog.ReportDialogListner {
     public static boolean processData = false;
@@ -49,6 +47,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private final int MSG_PROGRESS_FINISH = 0;
     @SuppressWarnings("FieldCanBeLocal")
     private final int MSG_PROGRESS_UPDATE = 1;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private ReportsRowAdapter adapter;
     private TextView balanceAmountView;
     private TextView balanceLabelView;
@@ -59,7 +58,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private Button periodButton;
     private ChartPieView pieChartView;
     private View previousPeriodView;
-    private ProgressDialog progressDialog = null;
+    private PocketMoneyProgressDialog progressDialog = null;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
         public void handleMessage(Message msg) {
@@ -69,26 +68,14 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
                         if (ReportsActivity.this.progressDialog.isShowing()) {
                             ReportsActivity.this.progressDialog.dismiss();
                         }
-                        ReportsActivity.this.progressDialog.setProgress(0);
                         return;
                     }
                     return;
                 case MSG_PROGRESS_UPDATE /*1*/:
                     if (ReportsActivity.this.progressDialog == null || !ReportsActivity.this.progressDialog.isShowing()) {
-                        ReportsActivity.this.progressDialog = new ProgressDialog(ReportsActivity.this);
-                        ReportsActivity.this.progressDialog.setProgressStyle(1);
+                        ReportsActivity.this.progressDialog = new PocketMoneyProgressDialog(ReportsActivity.this);
                         ReportsActivity.this.progressDialog.setMessage("Generating Report.\nPlease wait...");
                         ReportsActivity.this.progressDialog.setCancelable(true);
-                        ReportsActivity.this.progressDialog.setOnKeyListener(new OnKeyListener() {
-                            public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event) {
-                                if (keyCode == 3) {
-                                    ReportsActivity.processData = false;
-                                } else if (keyCode == 4) {
-                                    ReportsActivity.processData = false;
-                                }
-                                return true;
-                            }
-                        });
                         ReportsActivity.this.progressDialog.show();
                     }
                     if (ReportsActivity.this.progressDialog != null && ReportsActivity.this.progressDialog.isShowing()) {
@@ -101,7 +88,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
     };
     @SuppressWarnings("unused")
-    private ProgressDialog progressSpinnerDialog;
+    private PocketMoneyProgressDialog progressSpinnerDialog;
     private ListView theList;
     private TextView titleTextView;
     private WakeLock wakeLock;
@@ -211,7 +198,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
     public void reloadData() {
         selectChartView();
         this.periodButton.setText(this.datasource.rangeOfPeriodAsString());
@@ -220,26 +206,20 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
         processData = true;
         updateProgressBar(0);
-        new AsyncTask<Object, Void, Object>() {
-            protected Object doInBackground(Object... arg0) {
-                ReportsActivity.this.datasource.reloadData(ReportsActivity.this);
+        executor.execute(() -> {
+            ReportsActivity.this.datasource.reloadData(ReportsActivity.this);
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
                 if (ReportsActivity.this.datasource.data == null) {
                     ReportsActivity.this.finishProgressBar();
-                } else if (!(ReportsActivity.this.chartView == null || SMMoney.isLiteVersion())) {
-                    Log.i("ReportsActivity", "Charts || isLiteVersion");
-
+                } else {
+                    if (ReportsActivity.processData) {
+                        ReportsActivity.this.reloadDataCallback();
+                    }
+                    ReportsActivity.this.finishProgressBar();
                 }
-                return null;
-            }
-
-            protected void onPostExecute(Object result) {
-                if (ReportsActivity.processData) {
-                    ReportsActivity.this.reloadDataCallback();
-                    //ReportsActivity.this.chartView.reloadData(false); TODO This line causes null pointer exception. Same as trying to load graph in AccountsActivity. To fix
-                }
-                ReportsActivity.this.finishProgressBar();
-            }
-        }.execute();
+            });
+        });
     }
 
     private void reloadDataCallback() {

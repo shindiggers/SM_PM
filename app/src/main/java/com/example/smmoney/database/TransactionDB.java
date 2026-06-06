@@ -676,7 +676,7 @@ public class TransactionDB {
                 if (repeatingTransaction.getSendLocalNotifications() && ignoreRepeating) {
                     repeatingTransaction.setupNotification(context);
                 } else {
-                    while (CalExt.beginningOfDay(repeatingTransaction.getTransaction().getDate()).before(checkDate)) {
+                    while (!CalExt.beginningOfDay(repeatingTransaction.getTransaction().getDate()).after(checkDate)) {
                         postTransactionOnDate(repeatingTransaction, repeatingTransaction.getTransaction().getDate());
                         lastDate = repeatingTransaction.getTransaction().getDate();
                         repeatingTransactionAdded = true;

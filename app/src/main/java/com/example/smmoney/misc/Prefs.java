@@ -261,7 +261,11 @@ public class Prefs {
     }
 
     public static Long getLongPref(String thePref) {
-        return getSharedPrefs().getLong(thePref, 0L);
+        try {
+            return getSharedPrefs().getLong(thePref, 0L);
+        } catch (ClassCastException e) {
+            return (long) getSharedPrefs().getInt(thePref, 0);
+        }
     }
 
     public static int getIntPref(String thePref) {

@@ -1,12 +1,10 @@
 package com.example.smmoney.views.budgets;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -47,6 +45,8 @@ import com.example.smmoney.views.PocketMoneyActivity;
 
 import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPeriodDialog.BudgetsDialogListner, DatePickerDialog.OnDateSetListener {
     private final int CMENU_DELETE = 3;
@@ -56,6 +56,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private final int MENU_PREFS = 2;
     private final int MENU_QUIT = 5;
     private final int MENU_VIEW = 4;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private BudgetsRowAdapter adapter;
     private BalanceBar balanceBar;
     private TextView budgetDisplay;
@@ -224,21 +225,17 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         }
     }
 
-    @SuppressLint("StaticFieldLeak")
     private void reloadData() {
         if (this.budgetProgressBar.getVisibility() == View.INVISIBLE) {
             this.reloadProgressBar.setVisibility(View.VISIBLE);
         }
-        new AsyncTask<Object, Void, Object>() {
-            protected Object doInBackground(Object... params) {
-                BudgetsActivity.this.adapter.reloadData();
-                return null;
-            }
-
-            protected void onPostExecute(Object result) {
+        executor.execute(() -> {
+            BudgetsActivity.this.adapter.reloadData();
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
                 BudgetsActivity.this.reloadDataCallBack();
-            }
-        }.execute();
+            });
+        });
     }
 
     private void reloadDataCallBack() {

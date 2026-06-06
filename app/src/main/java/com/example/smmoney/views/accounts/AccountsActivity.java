@@ -8,7 +8,6 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -16,7 +15,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -78,6 +76,7 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.HandlerActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.budgets.BudgetsActivity;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
@@ -94,10 +93,11 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 //import com.android.vending.licensing.LicenseChecker;
 //import com.android.vending.licensing.LicenseCheckerCallback;
@@ -130,8 +130,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static final boolean DEBUG = false;
     public static final boolean IS_GOOGLE_MARKET = false;
-    //private static final byte[] SALT = new byte[]{(byte) -25, (byte) 23, (byte) -92, (byte) -16, (byte) -78, (byte) -65, (byte) 20, (byte) 65, (byte) 36, (byte) -9, (byte) 18, (byte) -44, (byte) 13, (byte) -81, (byte) -44, (byte) -13, (byte) -4, (byte) 19, (byte) -111, (byte) 73};
-    private static AsyncTask<Object, Void, Object> initTask = null;
+    private static boolean initTaskRunning = false;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
     private final int DIALOG_REPORTS = 10;
@@ -193,7 +193,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @SuppressWarnings("FieldCanBeLocal")
     private ImageView graphRightArrow;
     private ProgressBar graphSpinner;
-    private AsyncTask<Object, Void, Object> graphTask;
+    private java.util.concurrent.Future<?> graphFuture;
     private TextView graphTitleTextView;
     //boolean launching = false;
     //private LicenseChecker mChecker;
@@ -203,7 +203,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private int msgEmail = -1;
     private ChartView netWorthChartView;
     private boolean progUpdate = false;
-    private ProgressDialog progressDialog = null;
+    private PocketMoneyProgressDialog progressDialog = null;
     private boolean shouldEmail = false;
     //double startTime = 0.0d;
     private ChartView theChartView;
@@ -265,7 +265,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
 //            }
 //        }
 
-    @SuppressLint("StaticFieldLeak")
     public void reloadCharts() {
         this.netWorthChartView.setVisibility(View.GONE);
         this.cashFlowChartView.setVisibility(View.GONE);
@@ -284,28 +283,26 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     this.theChartView = null;
                     break;
             }
-            if (this.graphTask != null) {
-                this.graphTask.cancel(true);
-                this.graphTask = null;
+            if (this.graphFuture != null) {
+                this.graphFuture.cancel(true);
+                this.graphFuture = null;
             }
-            this.graphTask = new AsyncTask<Object, Void, Object>() {
-                protected Object doInBackground(Object... arg0) {
-                    if (AccountsActivity.this.theChartView != null) {
-                        synchronized (AccountsActivity.this.adapter) {
-                            //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
-                        }
+            this.graphFuture = executor.submit(() -> {
+                if (AccountsActivity.this.theChartView != null) {
+                    synchronized (AccountsActivity.this.adapter) {
+                        //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
                     }
-                    return this;
                 }
-
-                protected void onPostExecute(Object result) {
+                runOnUiThread(() -> {
                     synchronized (AccountsActivity.this.adapter) {
                         AccountsActivity.this.graphReloadCallback();
-                        AccountsActivity.this.theChartView.reloadData(true);
+                        if (AccountsActivity.this.theChartView != null) {
+                            AccountsActivity.this.theChartView.reloadData(true);
+                        }
                     }
-                }
-            };
-            this.graphTask.execute();
+                    this.graphFuture = null;
+                });
+            });
         }
     }
 
@@ -366,9 +363,29 @@ public class AccountsActivity extends PocketMoneyActivity implements
         int i2 = (!Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS) || SMMoney.isLiteVersion()) ? View.GONE : View.VISIBLE;
         frameLayout.setVisibility(i2);
         clearBalanceCache();
-        if (initTask == null) {
-            initTask = new InitTask(AccountsActivity.this);
-            initTask.execute();
+        if (!initTaskRunning) {
+            initTaskRunning = true;
+            executor.execute(() -> {
+                Log.d("ACCOUNTSACTIVITY", "InitTask() doInBackground - ie update f/x rate - has just run");
+                if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
+                    AccountDB.updateExchangeRates();
+                }
+                Database.deleteUnlinkedRepeatingTransactions();
+                TransactionDB.addRepeatingTransactions();
+
+                runOnUiThread(() -> {
+                    if (isFinishing()) return;
+                    synchronized (adapter) {
+                        reloadData();
+                        reloadBalanceBar();
+                        reloadCharts();
+                        if (adapter.getCount() == 0 && (tipDialog == null || !tipDialog.isShowing())) {
+                            showMenuDialog();
+                        }
+                    }
+                    initTaskRunning = false;
+                });
+            });
         }
         testTest();
     }
@@ -546,7 +563,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         throw new IllegalArgumentException("Unknown message id " + msg.what);
                 }
                 if (AccountsActivity.this.progressDialog == null || !AccountsActivity.this.progressDialog.isShowing()) {
-                    AccountsActivity.this.showDialog(IMPORT_PROGRESS_DIALOG /*9*/);
+                    AccountsActivity.this.progressDialog = new PocketMoneyProgressDialog(AccountsActivity.this);
+                    AccountsActivity.this.progressDialog.setMessage("Transferring...\n\nWarning: This may take several minutes");
+                    AccountsActivity.this.progressDialog.setCancelable(true);
+                    AccountsActivity.this.progressDialog.show();
                     try {
                         AccountsActivity.this.wakeLock.acquire(10000);
                     } catch (Exception e2) {
@@ -580,43 +600,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
     }
 
-    private static class InitTask extends AsyncTask<Object, Void, Object> {
-        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
-        @SuppressWarnings("unused")
-        private boolean addedTransactions;
-
-        private InitTask(AccountsActivity context) {
-            this.addedTransactions = false;
-            accountsActivityWeakReference = new WeakReference<>(context);
-        }
-
-        protected Object doInBackground(Object... params) {
-            Log.d("ACCOUNTSACTIVITY", "InitTask() doInBackground - ie update f/x rate - has just run");
-            if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
-                AccountDB.updateExchangeRates();
-            }
-            Database.deleteUnlinkedRepeatingTransactions();
-            this.addedTransactions = TransactionDB.addRepeatingTransactions();
-            return null;
-        }
-
-        protected void onPostExecute(Object result) {
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            if (activity == null || activity.isFinishing()) return;
-
-            //noinspection SynchronizeOnNonFinalField
-            synchronized (activity.adapter) {
-                activity.reloadData();
-                activity.reloadBalanceBar();
-                activity.reloadCharts();
-                if (activity.adapter.getCount() == 0 && (activity.tipDialog == null || !activity.tipDialog.isShowing())) {
-                    activity.showMenuDialog();
-                }
-            }
-            AccountsActivity.initTask = null;
-        }
-    }
-
     private void graphReloadCallback() {
         if (this.theChartView != null) {
             reloadChartHeader(this.theChartView.dataSource.numberOfDataPointsInSeries(this.theChartView, 0) - 1);
@@ -628,7 +611,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
         showCorrectChart();
         this.graphButtonEnabled = true;
-        this.graphTask = null;
     }
 
     private void showCorrectChart() {
@@ -752,7 +734,29 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.balanceBar.balanceAmountTextView.setVisibility(View.GONE);
         this.balanceBar.balanceTypeTextView.setVisibility(View.GONE);
         this.balanceBar.progressBar.setVisibility(View.VISIBLE);
-        new BalanceTask(this).execute();
+
+        executor.execute(() -> {
+            int pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
+            if (pref == Enums.kBalanceTypeFiltered /*5*/) {
+                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
+                pref = Enums.kBalanceTypeCurrent /*2*/;
+            }
+            double totalWorth = totalWorth(pref);
+            final int finalPref = pref;
+            runOnUiThread(() -> {
+                if (isFinishing()) return;
+                balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
+                balanceBar.balanceAmountTextView.setTextColor(totalWorth < 0.0d ? ContextCompat.getColor(this, R.color.theme_red_label_color_on_black) : ContextCompat.getColor(this, R.color.black_theme_text));
+                balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(totalWorth));
+                balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
+                balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(finalPref));
+                balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text));
+                balanceBar.progressBar.setVisibility(View.GONE);
+                synchronized (adapter) {
+                    reloadData();
+                }
+            });
+        });
     }
 
 //    TODO: Figure out what this callback method is supposed to do and correct
@@ -1051,7 +1055,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void exportQIFToSD() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -1092,7 +1097,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void exportOFXToSD() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -1196,7 +1202,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     protected void generateQIFForEmail() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -1271,7 +1278,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void generateOFXForEmail() {
-        final ProgressDialog pd = new ProgressDialog(this.context);
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
         pd.show();
         new Thread() {
             public void run() {
@@ -1391,11 +1399,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     }
                 }).setCancelable(false).create();
             case IMPORT_PROGRESS_DIALOG /*9*/:
-                this.progressDialog = new ProgressDialog(this);
-                this.progressDialog.setProgressStyle(ACCOUNT_REQUEST_FILTER);
-                this.progressDialog.setMessage("Transferring...\n\nWarning: This may take several minutes");
-                this.progressDialog.setCancelable(true);
-                return this.progressDialog;
+                return null;
             case DIALOG_REPORTS /*10*/:
                 return new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -1519,44 +1523,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             createHandler();
         }
         return this.mHandler;
-    }
-
-    private static class BalanceTask extends AsyncTask<Object, Void, Object> {
-        private final WeakReference<AccountsActivity> accountsActivityWeakReference;
-        private int pref;
-        private double totalWorth;
-
-        private BalanceTask(AccountsActivity context) {
-            this.totalWorth = 0.0d;
-            this.pref = 0;
-            accountsActivityWeakReference = new WeakReference<>(context);
-        }
-
-        protected Object doInBackground(Object... params) {
-            this.pref = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-            if (this.pref == Enums.kBalanceTypeFiltered /*5*/) {
-                Prefs.setPref(Prefs.BALANCETYPE, Enums.kBalanceTypeCurrent /*2*/);
-                this.pref = Enums.kBalanceTypeCurrent /*2*/;
-            }
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            this.totalWorth = activity.totalWorth(this.pref);
-            return null;
-        }
-
-        protected void onPostExecute(Object result) {
-            AccountsActivity activity = accountsActivityWeakReference.get();
-            if (activity == null || activity.isFinishing()) return;
-            activity.balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceAmountTextView.setTextColor(this.totalWorth < 0.0d ? ContextCompat.getColor(activity, R.color.theme_red_label_color_on_black) : ContextCompat.getColor(activity, R.color.black_theme_text /*WHITE*/));
-            activity.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(this.totalWorth));
-            activity.balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
-            activity.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(this.pref));
-            activity.balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(activity, R.color.black_theme_text));
-            activity.balanceBar.progressBar.setVisibility(View.GONE);
-            synchronized (activity.adapter) {
-                activity.reloadData();
-            }
-        }
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
