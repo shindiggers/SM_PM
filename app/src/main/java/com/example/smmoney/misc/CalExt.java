@@ -307,20 +307,19 @@ public class CalExt {
     }
 
     public static String descriptionWithShortDate(GregorianCalendar cal) {
-        return DateFormat.getDateFormat(SMMoney.getAppContext()).format(new Date(cal.getTimeInMillis()));
+        return DateFormat.getDateFormat(SMMoney.getAppContext()).format(cal.getTime());
     }
 
     private static String descriptionWithMediumDateAndTime(GregorianCalendar cal) {
-        Date newDate = new Date(cal.getTimeInMillis());
-        return DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(newDate) + " " + DateFormat.getTimeFormat(SMMoney.getAppContext()).format(newDate);
+        return DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(cal.getTime()) + " " + DateFormat.getTimeFormat(SMMoney.getAppContext()).format(cal.getTime());
     }
 
     public static String descriptionWithShortTime(GregorianCalendar cal) {
-        return DateFormat.getTimeFormat(SMMoney.getAppContext()).format(new Date(cal.getTimeInMillis()));
+        return DateFormat.getTimeFormat(SMMoney.getAppContext()).format(cal.getTime());
     }
 
     public static String descriptionWithMediumDate(GregorianCalendar cal) {
-        return DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(new Date(cal.getTimeInMillis()));
+        return DateFormat.getMediumDateFormat(SMMoney.getAppContext()).format(cal.getTime());
     }
 
     public static String descriptionWithDateTime(GregorianCalendar cal) {
@@ -328,17 +327,15 @@ public class CalExt {
     }
 
     public static String descriptionWithTimestamp(GregorianCalendar cal) {
-        Date newDate = new Date(cal.getTimeInMillis());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd'T'HHmmss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdf.format(newDate);
+        return sdf.format(cal.getTime());
     }
 
     public static String descriptionWithISO861Date(GregorianCalendar cal) {
-        Date newDate = new Date(cal.getTimeInMillis());
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss", Locale.getDefault());
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-        return sdf.format(newDate);
+        return sdf.format(cal.getTime());
     }
 
     public static GregorianCalendar dateFromDescriptionWithISO861Date(String aString) {
@@ -384,8 +381,12 @@ public class CalExt {
         GregorianCalendar newCal = new GregorianCalendar();
         try {
             Date theTime = DateFormat.getTimeFormat(SMMoney.getAppContext()).parse(str);
-            newCal.set(Calendar.HOUR_OF_DAY, theTime.getHours());
-            newCal.set(Calendar.MINUTE, theTime.getMinutes());
+            if (theTime != null) {
+                Calendar timeCal = Calendar.getInstance();
+                timeCal.setTime(theTime);
+                newCal.set(Calendar.HOUR_OF_DAY, timeCal.get(Calendar.HOUR_OF_DAY));
+                newCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
+            }
         } catch (ParseException e) {
             e.printStackTrace();
         }
