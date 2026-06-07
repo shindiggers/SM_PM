@@ -80,8 +80,12 @@ class SplitsRowAdapter extends BaseAdapter {
                 Intent i = new Intent(SplitsRowAdapter.this.mContext, SplitsEditActivity.class);
                 i.putExtra("Split", holder.split);
                 i.putExtra("Transaction", SplitsRowAdapter.this.transaction);
-                i.putExtra("SplitIndex", SplitsRowAdapter.this.elements.indexOf(holder.split));
-                ((Activity) SplitsRowAdapter.this.mContext).startActivityForResult(i, 3);
+                int index = SplitsRowAdapter.this.elements.indexOf(holder.split);
+                i.putExtra("SplitIndex", index);
+
+                if (SplitsRowAdapter.this.mContext instanceof SplitsActivity) {
+                    ((SplitsActivity) SplitsRowAdapter.this.mContext).editSplitLauncher.launch(i);
+                }
             }
         };
     }

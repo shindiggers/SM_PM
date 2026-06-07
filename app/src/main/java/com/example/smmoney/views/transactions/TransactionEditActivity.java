@@ -13,15 +13,10 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
-import android.database.Cursor;
-import android.graphics.Bitmap;
-import android.graphics.Bitmap.CompressFormat;
-import android.graphics.BitmapFactory;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -51,7 +46,10 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -90,8 +88,7 @@ import com.example.smmoney.views.splits.SplitsActivity;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -133,6 +130,164 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private final int REQUEST_TRANSFER = 33;
     private final int TIME_DIALOG_ID = 5;
     private final Timer clearTimer = new Timer();
+
+    final ActivityResultLauncher<Intent> photoOptionLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String fileNamee = result.getData().getExtras().getString("imageName");
+            this.deletedImages.add(fileNamee);
+            this.transaction.setImageLocation(this.transaction.getImageLocation().replace(fileNamee + ";", ""));
+            reloadData();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> accountLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.accountTextView.setText(result.getData().getStringExtra("selection"));
+            clearDropDownsTimerStart();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> payeeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.payeeEditText.setText(result.getData().getStringExtra("selection"));
+            clearDropDownsTimerStart();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> categoryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.categoryEditText.setText(result.getData().getStringExtra("selection"));
+            clearDropDownsTimerStart();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> classLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.classEditText.setText(result.getData().getStringExtra("selection"));
+            clearDropDownsTimerStart();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> idLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.idEditText.setText(result.getData().getStringExtra("selection"));
+            clearDropDownsTimerStart();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> noteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == -1 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.transaction.setMemo(selection);
+            setNotesText(selection);
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            if (this.transaction != null) {
+                this.transaction.hydrated = true;
+                this.transaction.dirty = true;
+            }
+            reloadData();
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> repeatingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            this.transaction.hydrated = true;
+            this.transaction.dirty = true;
+            this.repeatingTransaction = null;
+            this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
+            this.repeatingTransaction.getTransaction().hydrated = false;
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> transferLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.payeeEditText.setText(selection);
+            updateXrates();
+            getCells();
+        } else if (this.transferButton.isChecked()) {
+            this.withdrawalButton.setChecked(true);
+            getCells();
+        }
+    });
+    private final ActivityResultLauncher<Intent> currencyLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            try {
+                Bundle b = result.getData().getExtras();
+                this.transaction.setCurrencyCode(b.getString("currency"));
+                this.transaction.setXrate(b.getDouble("xrate"));
+                this.transaction.setSubTotal(b.getDouble("amount"));
+                loadAmountXrateValues();
+                getCells();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
+        if (result) {
+            try {
+                String fileName = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
+                File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+                if (!photoDir.exists()) photoDir.mkdirs();
+                File photoFile = new File(photoDir, fileName + ".jpg");
+
+                // Copy from tempPhotoPath to photoFile
+                try (InputStream in = new FileInputStream(this.tempPhotoPath);
+                     FileOutputStream out = new FileOutputStream(photoFile)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = in.read(buffer)) > 0) {
+                        out.write(buffer, 0, len);
+                    }
+                }
+
+                String current = this.transaction.getImageLocation();
+                this.transaction.setImageLocation((current == null ? "" : current) + fileName + ".jpg;");
+                this.newlyAddedImages.add(fileName);
+                this.photoCell.setImageLocationString(this.transaction.getImageLocation());
+                getCells();
+                reloadData();
+                this.photoCell.invalidate();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
+    private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
+        if (result != null) {
+            try {
+                String fileName = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
+                File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+                if (!photoDir.exists()) photoDir.mkdirs();
+                File photoFile = new File(photoDir, fileName + ".jpg");
+
+                try (InputStream inputStream = getContentResolver().openInputStream(result);
+                     FileOutputStream outputStream = new FileOutputStream(photoFile)) {
+                    byte[] buffer = new byte[1024];
+                    int bytesRead;
+                    while ((bytesRead = inputStream.read(buffer)) != -1) {
+                        outputStream.write(buffer, 0, bytesRead);
+                    }
+                }
+
+                String current = this.transaction.getImageLocation();
+                this.transaction.setImageLocation((current == null ? "" : current) + fileName + ".jpg;");
+                this.newlyAddedImages.add(fileName);
+                getCells();
+                reloadData();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    });
+
     private TextView accountTextView;
     private EditText amountEditText;
     private TextView foreignAmountTextView;
@@ -236,6 +391,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             return;
         }
 
+        this.transaction.hydrate();
+        this.transaction.hydrate();
         this.currentActivity = this;
         this.dateChanged = Enums.DateChangeTypeNone /*0*/;
         this.repeatingChanged = Enums.RepeatingChangeTypeNone /*0*/;
@@ -353,7 +510,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     }
                     i.putExtra("Transaction", TransactionEditActivity.this.transaction);
                     i.putExtra("RepeatingTransaction", TransactionEditActivity.this.repeatingTransaction);
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_REPEATING /*32*/);
+                    repeatingLauncher.launch(i);
                     return;
                 }
                 AccountsActivity.displayLiteDialog(TransactionEditActivity.this);
@@ -363,8 +520,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         aView = outterView.findViewById(R.id.accountbutton);
         theViews.add(aView);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
-        aView.setOnClickListener(getLookupListClickListener());
-        aView.setTag(3 /*3 = 'Accounts' type for LookupsListActivity*/); /* This tag is read in above onClickListener and sets the LookupsListActivity.java to be used in the switch statement to decide which lookups list to display */
+        aView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TransactionEditActivity.this.getCells();
+                Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
+                i.putExtra("type", 3);
+                accountLauncher.launch(i);
+            }
+        });
         this.accountTextView = aView.findViewById(R.id.accounttextview);
         ((TextView) outterView.findViewById(R.id.account_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -381,7 +545,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 TransactionEditActivity.this.getCells();
                 Intent i = new Intent(TransactionEditActivity.this.currentActivity, CategoryLookupListActivity.class);
                 i.putExtra("payee", TransactionEditActivity.this.payeeEditText.getText().toString());
-                TransactionEditActivity.this.currentActivity.startActivityForResult(i, 5); /* in LookupsListActivity.class, 5 = 'Categories' type for switch statement*/
+                categoryLauncher.launch(i);
             }
         });
         this.categoryEditText = cView.findViewById(R.id.categoryedittext); // categoryEditText is an AutoCompleteTextView
@@ -410,15 +574,14 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 if (TransactionEditActivity.this.transaction.isTransfer()) {
                     Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
                     i.putExtra("type", Enums.kTransactionTypeTransferFrom /*3*/);
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_TRANSFER /*33*/);
+                    transferLauncher.launch(i);
                     return;
                 }
                 Intent i = new Intent(TransactionEditActivity.this.currentActivity, CategoryLookupListActivity.class);
                 i.putExtra("category", TransactionEditActivity.this.categoryEditText.getText().toString());
-                TransactionEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                payeeLauncher.launch(i);
             }
         });
-        pView.setTag(4 /*4 = 'Category' type for LookupsListActivity*/); /* This tag is read in above onClickListener and set the LookupsListActivity.java to be used in the switch statement to decide which lookups list to display */
         this.payeeEditText = pView.findViewById(R.id.payeetextview);
         this.payeeEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.payeeEditText.setThreshold(2);
@@ -482,7 +645,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     } catch (NullPointerException e) {
                         e.printStackTrace();
                     }
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, REQUEST_CURRENCY /*34*/);
+                    currencyLauncher.launch(i);
                 }
             });
         } else {
@@ -493,8 +656,15 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         ((TextView) outterView.findViewById(R.id.amount_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         aView = outterView.findViewById(R.id.idbutton);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
-        aView.setOnClickListener(getLookupListClickListener());
-        aView.setTag(7 /*7 = 'ID' type for LookupsListActivity*/); /* This tag is read in above onClickListener and set the LookupsListActivity.java to be used in the switch statement to decide which lookups list to display */
+        aView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TransactionEditActivity.this.getCells();
+                Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
+                i.putExtra("type", 7);
+                idLauncher.launch(i);
+            }
+        });
         this.idEditText = aView.findViewById(R.id.idedittext);
         selectableViews.add(this.idEditText);
         this.idEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
@@ -533,8 +703,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 }
                 TransactionEditActivity.this.getCells();
                 Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
-                i.putExtra("type", 6 /* 6 = 'ID' type in LookupsListActivity.java switch statement */);
-                TransactionEditActivity.this.currentActivity.startActivityForResult(i, 6);
+                i.putExtra("type", 6 /* 6 = 'ClassName' type in LookupsListActivity.java switch statement */);
+                classLauncher.launch(i);
             }
         });
         this.classEditText = aView.findViewById(R.id.classedittext);
@@ -789,7 +959,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
 
     private void getCells() {
         Log.d(TAG, "getCells() called");
-        this.transaction.hydrate();
         saveAmountXrates();
         this.transaction.setDateFromString(this.dateTextView.getText().toString());
         if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
@@ -815,8 +984,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
 
     private void deleteDeletedImages() {
         Log.d(TAG, "deleteDeletedImages() called");
+        File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
         for (String deletedImage : this.deletedImages) {
-            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", deletedImage).delete()) {
+            if (!new File(photoDir, deletedImage).delete()) {
                 int hmm = 1;
             }
         }
@@ -824,8 +994,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
 
     private void deleteNewlyAddedImages() {
         Log.d(TAG, "deleteNewlyAddedImages() called");
+        File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
         for (String newlyAddedImage : this.newlyAddedImages) {
-            if (!new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/", newlyAddedImage + ".jpg").delete()) {
+            if (!new File(photoDir, newlyAddedImage + ".jpg").delete()) {
                 int hmm = 1;
             }
         }
@@ -1031,7 +1202,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         getCells();
         Intent i = new Intent(this, SplitsActivity.class);
         i.putExtra("Transaction", this.transaction);
-        startActivityForResult(i, REQUEST_SPLITS /*31*/);
+        i.putExtra("dontShowPass", "");
+        splitsLauncher.launch(i);
     }
 
     @SuppressWarnings("unused")
@@ -1200,10 +1372,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             multiplier *= this.transaction.getXrate();
         }
-        //this.transaction.setSubTotal(Math.abs(amount) * multiplier);
-        this.transaction.setSubTotal(Math.abs(amount) * multiplier);
+
+        double newSubTotal = Math.abs(amount) * multiplier;
+        this.transaction.setSubTotal(newSubTotal);
+
+        // Only auto-update the first split if we aren't currently using multiple splits
         if (this.transaction.getNumberOfSplits() <= 1) {
-            this.transaction.setAmount(this.transaction.getSubTotal());
+            this.transaction.setAmount(newSubTotal);
         }
     }
 
@@ -1425,185 +1600,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.clearTimer.schedule(new ClearTask(), 750);
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        Log.d(TAG, "onActivityResult() called with: requestCode = [" + requestCode + "], resultCode = [" + resultCode + "], data = [" + data + "]");
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            String selection = "";
-            if (!(data == null || data.getExtras() == null)) {
-                selection = data.getExtras().getString("selection");
-            }
-            File file;
-            switch (requestCode) {
-                case SplitsActivity.REQUEST_EDIT /*3*/:
-                    this.accountTextView.setText(selection);
-                    clearDropDownsTimerStart();
-                    break;
-                case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                case LookupsListActivity.ACCOUNT_LOOKUP_TRANS /*17*/:
-                    this.payeeEditText.setText(selection);
-                    clearDropDownsTimerStart();
-                    break;
-                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                    this.categoryEditText.setText(selection);
-                    clearDropDownsTimerStart();
-                    break;
-                case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                    this.classEditText.setText(selection);
-                    clearDropDownsTimerStart();
-                    break;
-                case LookupsListActivity.ID_LOOKUP /*7*/:
-                    this.idEditText.setText(selection);
-                    clearDropDownsTimerStart();
-                    break;
-                case NOTE_EDIT_BUTTON /*30*/:
-                    break;
-                case REQUEST_SPLITS /*31*/:
-                    this.transaction = (TransactionClass) data.getExtras().get("Transaction");
-                    this.transaction.dirty = true;
-                    reloadData();
-                    break;
-                case REQUEST_REPEATING /*32*/:
-                    Log.d(TAG, "onActivityResult: REQUEST_REPETING");
-                    this.transaction = (TransactionClass) data.getExtras().get("Transaction");
-                    this.transaction.hydrated = true;
-                    this.transaction.dirty = true;
-                    this.repeatingTransaction = null;
-                    this.repeatingTransaction = (RepeatingTransactionClass) data.getExtras().get("RepeatingTransaction");
-                    this.repeatingTransaction.getTransaction().hydrated = false;
-                    break;
-                case REQUEST_TRANSFER /*33*/:
-                    if (selection == null || selection.length() == 0) {
-                        this.withdrawalButton.setChecked(true);
-                    }
-                    this.payeeEditText.setText(selection);
-                    updateXrates();
-                    break;
-                case REQUEST_CURRENCY /*34*/:
-                    try {
-                        Bundle b = data.getExtras();
-                        this.transaction.setCurrencyCode(b.getString("currency"));
-                        this.transaction.setXrate(b.getDouble("xrate"));
-                        this.transaction.setSubTotal(b.getDouble("amount"));
-                        loadAmountXrateValues();
-                        break;
-                    } catch (NullPointerException e) {
-                        break;
-                    }
-                case REQUEST_CAMERA_NEW /*35*/:
-                    FileChannel inChannel = null;
-                    FileChannel outChannel = null;
-                    String fileName;
-                    try {
-                        Object obj;
-                        fileName = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
-                        this.newlyAddedImages.add(fileName);
-                        file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, fileName + ".jpg");
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        boolean wtff = file.createNewFile();
-                        inChannel = new FileInputStream(this.tempPhotoPath).getChannel();
-                        outChannel = new FileOutputStream(file).getChannel();
-                        inChannel.transferTo(0, inChannel.size(), outChannel);
-                        if (inChannel != null) {
-                            try {
-                                inChannel.close();
-                            } catch (IOException e2) {
-                                e2.printStackTrace();
-                            }
-                        }
-                        if (outChannel != null) {
-                            try {
-                                outChannel.close();
-                            } catch (IOException e22) {
-                                e22.printStackTrace();
-                            }
-                        }
-                        TransactionClass transactionClass = this.transaction;
-                        if (this.transaction.getImageLocation() == null) {
-                            obj = "";
-                        } else {
-                            obj = this.transaction.getImageLocation();
-                        }
-                        transactionClass.setImageLocation(obj + fileName + ".jpg;");
-                        break;
-                    } catch (Exception e3) {
-                        e3.printStackTrace();
-                        if (inChannel != null) {
-                            try {
-                                inChannel.close();
-                            } catch (IOException e222) {
-                                e222.printStackTrace();
-                            }
-                        }
-                        if (outChannel != null) {
-                            try {
-                                outChannel.close();
-                                return;
-                            } catch (IOException e2222) {
-                                e2222.printStackTrace();
-                                return;
-                            }
-                        }
-                        return;
-                    } catch (Throwable th) {
-                        if (inChannel != null) {
-                            try {
-                                inChannel.close();
-                            } catch (IOException e22222) {
-                                e22222.printStackTrace();
-                            }
-                        }
-                        if (outChannel != null) {
-                            try {
-                                outChannel.close();
-                            } catch (IOException e222222) {
-                                e222222.printStackTrace();
-                            }
-                        }
-                    }
-                case REQUEST_CAMERA_PICK /*36*/:
-                    String fileName2 = this.payeeEditText.getText().toString() + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar());
-                    String[] filePathColumn = new String[]{"_data"};
-                    Cursor cursor = getContentResolver().query(data.getData(), filePathColumn, null, null, null);
-                    cursor.moveToFirst();
-                    String filePath = cursor.getString(cursor.getColumnIndexOrThrow(filePathColumn[0]));
-                    cursor.close();
-                    Bitmap yourSelectedImage = BitmapFactory.decodeFile(filePath);
-                    try {
-                        file = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/");
-                        file = new File(file, fileName2 + ".jpg");
-                        if (!file.exists()) {
-                            file.mkdirs();
-                        }
-                        boolean fail = file.createNewFile();
-                        yourSelectedImage.compress(CompressFormat.JPEG, 90, new FileOutputStream(file));
-                        this.transaction.setImageLocation((this.transaction.getImageLocation() == null ? "" : this.transaction.getImageLocation()) + fileName2 + ".jpg;");
-                        this.newlyAddedImages.add(fileName2);
-                        break;
-                    } catch (Exception e32) {
-                        e32.printStackTrace();
-                        break;
-                    }
-                case REQUEST_PHOTO_OPTION /*37*/:
-                    String fileNamee = data.getExtras().getString("imageName");
-                    this.deletedImages.add(fileNamee);
-                    this.transaction.setImageLocation(this.transaction.getImageLocation().replace(fileNamee + ";", ""));
-                    reloadData();
-                    break;
-            }
-            if (resultCode == -1) {
-                this.transaction.setMemo(selection);
-                setNotesText(selection);
-            }
-            getCells();
-        } else if (this.transferButton.isChecked() && 33 == requestCode) {
-            this.withdrawalButton.setChecked(true);
-        }
-    }
-
     protected Dialog onCreateDialog(int id) {
         Builder builder;
         switch (id) {
@@ -1667,19 +1663,23 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 builder.setMessage("Choose existing or take new");
                 builder.setPositiveButton("New", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        String tempPhotoDir = SMMoney.getExternalPocketMoneyDirectory();
-                        TransactionEditActivity.this.tempPhotoPath = new File(tempPhotoDir, "temp.jpeg");
-                        Intent takePictureIntent = new Intent("android.media.action.IMAGE_CAPTURE");
-                        takePictureIntent.putExtra("output", Uri.fromFile(TransactionEditActivity.this.tempPhotoPath));
-                        TransactionEditActivity.this.startActivityForResult(takePictureIntent, REQUEST_CAMERA_NEW /*35*/);
+                        try {
+                            File cacheDir = getExternalCacheDir();
+                            TransactionEditActivity.this.tempPhotoPath = new File(cacheDir, "temp.jpg");
+                            if (tempPhotoPath.exists()) tempPhotoPath.delete();
+                            tempPhotoPath.createNewFile();
+
+                            Uri photoUri = FileProvider.getUriForFile(TransactionEditActivity.this, "com.example.fileprovider", TransactionEditActivity.this.tempPhotoPath);
+                            cameraLauncher.launch(photoUri);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     }
                 });
                 builder.setNegativeButton("Choose", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
-                        Intent photoPickerIntent = new Intent("android.intent.action.PICK");
-                        photoPickerIntent.setType("image/*");
-                        TransactionEditActivity.this.startActivityForResult(photoPickerIntent, REQUEST_CAMERA_PICK /*36*/);
+                        galleryLauncher.launch("image/*");
                     }
                 });
                 return builder.create();
@@ -1764,19 +1764,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 if ((Integer) view.getTag() == NOTE_EDIT_BUTTON) { /*30*/
                     Intent i = new Intent(TransactionEditActivity.this.currentActivity, NoteEditor.class);
                     i.putExtra("note", TransactionEditActivity.this.transaction.getMemo());
-                    TransactionEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                    noteLauncher.launch(i);
                 }
-            }
-        };
-    }
-
-    private View.OnClickListener getLookupListClickListener() {
-        return new View.OnClickListener() {
-            public void onClick(View view) {
-                TransactionEditActivity.this.getCells();
-                Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
-                i.putExtra("type", ((Integer) view.getTag()).intValue());
-                TransactionEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
             }
         };
     }
@@ -1807,7 +1796,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         TransactionEditActivity.this.getCells();
                         Intent i = new Intent(TransactionEditActivity.this.currentActivity, LookupsListActivity.class);
                         i.putExtra("type", 3 /* LOOKUP TYPE - see LookupsListActivity.class switch statement */);
-                        TransactionEditActivity.this.currentActivity.startActivityForResult(i, 33);
+                        transferLauncher.launch(i);
                     }
                     TransactionEditActivity.this.getCells();
                     TransactionEditActivity.this.reloadData();

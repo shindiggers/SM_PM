@@ -19,6 +19,9 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
@@ -50,6 +53,58 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private final int NOTE_EDIT_BUTTON = 30;
     @SuppressWarnings("FieldCanBeLocal")
     private final int REQUEST_CURRENCY = 31;
+
+    private final ActivityResultLauncher<Intent> noteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == -1 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.split.setMemo(selection);
+            setNotesText(selection);
+            getCells();
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> currencyLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            Bundle b = result.getData().getExtras();
+            try {
+                this.split.setCurrencyCode(b.getString("currency"));
+                this.split.setXrate(b.getDouble("xrate"));
+                this.split.setAmount(b.getDouble("amount"));
+                loadAmountXrateValues();
+                getCells();
+            } catch (NullPointerException e) {
+                e.printStackTrace();
+            }
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> lookupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            int type = result.getResultCode();
+            if (type == 5) {
+                this.split.setCategory(selection);
+                this.categoryEditText.setText(selection);
+            } else if (type == 6) {
+                this.split.setClassName(selection);
+                this.classEditText.setText(selection);
+            } else if (type == 3) {
+                this.split.setTransferToAccount(selection);
+                this.transToTextView.setText(selection);
+                updateXrates();
+            }
+            loadCells();
+        } else if (result.getResultCode() == 0 && result.getData() != null) {
+            // LookupsListActivity might not return an intent on cancel, but we handle it just in case
+            int type = result.getData().getIntExtra("type", -1);
+            if (type == 3) {
+                this.withdrawalButton.setChecked(true);
+                this.split.setTransferToAccount("");
+                loadCells();
+            }
+        }
+    });
+
     private EditText amountEditText;
     private TextView amountXrateTextView;
     private AutoCompleteTextView categoryEditText;
@@ -78,7 +133,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.split = (SplitsClass) getIntent().getExtras().get("Split");
         this.split.hydrated = true;
         this.splitTransactionType = this.split.getTransactionType();
-        this.splitIndex = getIntent().getExtras().getInt("SplitIndex");
+        this.splitIndex = getIntent().getIntExtra("SplitIndex", -1);
         setResult(0);
         this.currentActivity = this;
         setContentView(R.layout.split_edit);
@@ -110,6 +165,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.transToLayout = findViewById(R.id.transtobutton);
         this.transToTitleTextView = findViewById(R.id.transtolabel);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
+        this.amountEditText.setShowSoftInputOnFocus(false);
         //this.categoryEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, CategoryClass.allCategoryNamesInDatabase()));
         // TODO Customise the simple_list_item_1 so that it looks how it should. Just used here to make code work as original code above does not point to a TextView and therefore crashes!!
         this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CategoryClass.allCategoryNamesInDatabase()));
@@ -121,7 +177,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
             public void onClick(View view) {
                 Intent i = new Intent(SplitsEditActivity.this.currentActivity, NoteEditor.class);
                 i.putExtra("note", SplitsEditActivity.this.split.getMemo());
-                SplitsEditActivity.this.currentActivity.startActivityForResult(i, 30);
+                noteLauncher.launch(i);
             }
         });
         LinearLayout v = (LinearLayout) this.categoryEditText.getParent();
@@ -136,7 +192,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                     Intent i = new Intent(SplitsEditActivity.this.currentActivity, ExchangeRateActivity.class);
                     i.putExtra("transaction", SplitsEditActivity.this.transaction);
                     i.putExtra("split", SplitsEditActivity.this.split);
-                    SplitsEditActivity.this.currentActivity.startActivityForResult(i, 31);
+                    currencyLauncher.launch(i);
                 }
             });
         } else {
@@ -151,7 +207,9 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                 SplitsEditActivity.this.save();
                 SplitsEditActivity.this.editTextDidFinishChanging(2);
                 Intent i = new Intent();
-                i.putExtra("SplitIndex", SplitsEditActivity.this.splitIndex);
+                if (SplitsEditActivity.this.splitIndex != -1) {
+                    i.putExtra("SplitIndex", SplitsEditActivity.this.splitIndex);
+                }
                 i.putExtra("Split", SplitsEditActivity.this.split);
                 i.putExtra("transaction", SplitsEditActivity.this.transaction);
                 SplitsEditActivity.this.setResult(1, i);
@@ -224,7 +282,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     }
 
     private void getCells() {
-        this.transaction.hydrate();
         this.split.setTransferToAccount(this.transToTextView.getText().toString());
         this.split.setCategory(this.categoryEditText.getText().toString());
         this.split.setMemo(this.memoEditText.getText().toString());
@@ -347,51 +404,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private void editTextDidChange(int editTextCode) {
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            String selection = null;
-            if (data != null) {
-                Bundle extras = data.getExtras();
-                if (extras != null) {
-                    selection = extras.getString("selection");
-                }
-            }
-            switch (requestCode) {
-                case SplitsActivity.REQUEST_EDIT /*3*/:
-                    this.transToTextView.setText(selection);
-                    updateXrates();
-                    break;
-                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                    this.categoryEditText.setText(selection);
-                    break;
-                case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                    this.classEditText.setText(selection);
-                    break;
-                case NOTE_EDIT_BUTTON /*30*/:
-                    break;
-                case REQUEST_CURRENCY /*31*/:
-                    Bundle b = data.getExtras();
-                    try {
-                        this.split.setCurrencyCode(b.getString("currency"));
-                        this.split.setXrate(b.getDouble("xrate"));
-                        this.split.setAmount(b.getDouble("amount"));
-                        loadAmountXrateValues();
-                        break;
-                    } catch (NullPointerException e) {
-                        break;
-                    }
-            }
-            if (resultCode == -1) {
-                this.split.setMemo(selection);
-                setNotesText(selection);
-            }
-            getCells();
-        } else if (requestCode == 3) {
-            this.withdrawalButton.setChecked(true);
-        }
-    }
-
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == 4 && this.currencyKeyboard.hide()) {
             return false;
@@ -411,11 +423,14 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     }
 
     private OnClickListener getLookupListClickListener() {
-        return new OnClickListener() {
+        return new View.OnClickListener() {
             public void onClick(View view) {
+                // Save current UI state into the 'split' object before leaving
+                SplitsEditActivity.this.getCells();
+
                 Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
                 i.putExtra("type", ((Integer) view.getTag()).intValue());
-                SplitsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                lookupLauncher.launch(i);
             }
         };
     }
@@ -444,7 +459,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                             SplitsEditActivity.this.getCells();
                             Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
                             i.putExtra("type", 3);
-                            SplitsEditActivity.this.currentActivity.startActivityForResult(i, 3);
+                            lookupLauncher.launch(i);
                         }
                     }
                     SplitsEditActivity.this.setType();

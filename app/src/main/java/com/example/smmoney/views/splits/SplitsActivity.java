@@ -15,6 +15,9 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
@@ -31,7 +34,25 @@ import java.util.Objects;
 public class SplitsActivity extends PocketMoneyActivity {
     public static final int REQUEST_EDIT = 3;
     public static final int RESULT_CHANGED = 1;
-    private static final int RESULT_NO_CHANGE = 0;
+
+    public static final int RESULT_NO_CHANGE = 0;
+    final ActivityResultLauncher<Intent> editSplitLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == RESULT_CHANGED && result.getData() != null) {
+                    Intent data = result.getData();
+                    SplitsClass split = (SplitsClass) data.getExtras().get("Split");
+                    int index = data.getIntExtra("SplitIndex", -1);
+                    if (index != -1) {
+                        this.transaction.getSplits().remove(index);
+                        this.transaction.getSplits().add(index, split);
+                    } else {
+                        this.transaction.addSplit(split);
+                    }
+                    reloadData();
+                }
+            }
+    );
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
     @SuppressWarnings("FieldCanBeLocal")
@@ -59,7 +80,18 @@ public class SplitsActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.context = this;
-        this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
+        Intent intent = getIntent();
+        if (intent != null && intent.getExtras() != null) {
+            this.transaction = (TransactionClass) intent.getExtras().get("Transaction");
+            if (this.transaction != null) {
+                this.transaction.hydrated = true;
+                this.transaction.dirty = true;
+            }
+        }
+        if (this.transaction == null) {
+            finish();
+            return;
+        }
         this.originalSubtotal = this.transaction.getSubTotal();
         FrameLayout layout = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.splits, null);
         this.splitsTotalTextView = layout.findViewById(R.id.splitssplitstotal);
@@ -187,7 +219,8 @@ public class SplitsActivity extends PocketMoneyActivity {
         Intent i = new Intent(this, SplitsEditActivity.class);
         i.putExtra("Transaction", this.transaction);
         i.putExtra("Split", split);
-        startActivityForResult(i, REQUEST_NEW/*1*/);
+        i.putExtra("SplitIndex", -1);
+        editSplitLauncher.launch(i);
     }
 
     private void remainderAction() {
@@ -198,7 +231,8 @@ public class SplitsActivity extends PocketMoneyActivity {
         Intent i = new Intent(this, SplitsEditActivity.class);
         i.putExtra("Transaction", this.transaction);
         i.putExtra("Split", split);
-        startActivityForResult(i, REQUEST_REMAINDER/*2*/);
+        i.putExtra("SplitIndex", -1);
+        editSplitLauncher.launch(i);
     }
 
     private void adjustSplitsAction() {
@@ -243,31 +277,6 @@ public class SplitsActivity extends PocketMoneyActivity {
         }
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            SplitsClass split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
-            switch (requestCode) {
-                case RESULT_CHANGED /*1*/:
-                case REQUEST_REMAINDER /*2*/:
-                    if (resultCode == RESULT_CHANGED) {
-                        this.transaction.addSplit(split);
-                        return;
-                    }
-                    return;
-                case REQUEST_EDIT /*3*/:
-                    if (resultCode == RESULT_CHANGED) {
-                        this.transaction.getSplits().remove(data.getExtras().getInt("SplitIndex"));
-                        this.transaction.getSplits().add(data.getExtras().getInt("SplitIndex"), split);
-                        return;
-                    }
-                    return;
-                default:
-
-            }
-        }
-    }
-
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         SplitsRowHolder aHolder = (SplitsRowHolder) v.getTag();
@@ -285,7 +294,18 @@ public class SplitsActivity extends PocketMoneyActivity {
                 Intent anIntent = new Intent(this, SplitsEditActivity.class);
                 anIntent.putExtra("Transaction", (TransactionClass) Objects.requireNonNull(b).get("Transaction"));
                 anIntent.putExtra("Split", (SplitsClass) b.get("Split"));
-                startActivityForResult(anIntent, REQUEST_EDIT /*3*/);
+                // Add the index so we know which one to replace in the launcher callback
+                int index = -1;
+                SplitsClass target = (SplitsClass) b.get("Split");
+                for (int i = 0; i < this.transaction.getSplits().size(); i++) {
+                    if (this.transaction.getSplits().get(i).getAmount() == target.getAmount() &&
+                            Objects.equals(this.transaction.getSplits().get(i).getCategory(), target.getCategory())) {
+                        index = i;
+                        break;
+                    }
+                }
+                anIntent.putExtra("SplitIndex", index);
+                editSplitLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 this.transaction.deleteSplitAtIndex(this.transaction.getSplits().indexOf(Objects.requireNonNull(b).get("Split")));
@@ -298,7 +318,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == 4) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
             setTransactionAsResult();
         }
         return super.onKeyDown(keyCode, event);

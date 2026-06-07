@@ -29,6 +29,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
@@ -361,11 +362,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setLimitFromString(String str) {
         setLimit(numberFromString(str));
-        if (str == null || str.length() <= 0) {
-            setNoLimit(true);
-        } else {
-            setNoLimit(false);
-        }
+        setNoLimit(str == null || str.length() <= 0);
     }
 
     public String limitAsString() {
@@ -1191,7 +1188,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 case "overdraftAccount":
                     Class<?> c = getClass();
                     try {
-                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                     } catch (Exception e2) {
                         Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml [" + localName + "]");
                     }

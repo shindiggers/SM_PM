@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -753,7 +754,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             case "category":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -1017,15 +1018,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         body.text(text == null ? "" : encode(text));
     }
 
-    private static class BudgetPeriodInfo {
-        final GregorianCalendar date;
-        final int daysInPeriod;
-        final int daysLeft;
-
-        BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
-            this.daysLeft = daysLeft;
-            this.daysInPeriod = daysInPeriod;
-            this.date = date;
-        }
+    private record BudgetPeriodInfo(int daysLeft, int daysInPeriod, GregorianCalendar date) {
     }
 }

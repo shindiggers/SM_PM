@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -312,11 +313,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
                 setDeleted(z);
                 break;
             case "class":
-                try {
-                    setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                } catch (UnsupportedEncodingException e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
-                }
+                setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 break;
             case "serverID":
                 setServerID(this.currentElementValue);

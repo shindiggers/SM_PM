@@ -1,6 +1,5 @@
 package com.example.smmoney.views.desktopsync;
 
-import android.os.Environment;
 import android.util.Log;
 
 import com.example.smmoney.SMMoney;
@@ -573,7 +572,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
         String fileName = this.imageFilenames.get(this.imageSentCounter);
         String start = "PHOTO:<image><imagedata>";
         String end = "</imagedata><filename>" + fileName + "</filename></image>";
-        File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
+        File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+        File f = new File(photoDir, fileName);
         if (f.exists()) {
             BufferedInputStream fin = null;
             try {
@@ -1042,14 +1042,14 @@ public class PocketMoneySyncClass extends DefaultHandler {
 
     private String stringFromDataExcluding(String substring) {
         String sData;
-        sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
+        sData = new String(this.data, StandardCharsets.UTF_8);
         this.data = null;
         return sData.substring(substring.length());
     }
 
     private int intFromDataExcluding(String substring) {
         String sData;
-        sData = new String(this.data, 0, this.data.length, StandardCharsets.UTF_8);
+        sData = new String(this.data, StandardCharsets.UTF_8);
         this.data = null;
         return Integer.parseInt(sData.substring(substring.length()));
     }
@@ -1142,34 +1142,13 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return packagedData;
     }
 
-    static class AnonymousClass1TempTransAccountClass {
-        final String account;
-        final String serverID;
-
-        AnonymousClass1TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
-        }
+    record AnonymousClass1TempTransAccountClass(String serverID, String account) {
     }
 
-    static class AnonymousClass2TempTransAccountClass {
-        final String account;
-        final String serverID;
-
-        AnonymousClass2TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
-        }
+    record AnonymousClass2TempTransAccountClass(String serverID, String account) {
     }
 
-    static class AnonymousClass3TempTransAccountClass {
-        final String account;
-        final String serverID;
-
-        AnonymousClass3TempTransAccountClass(String serverID, String account) {
-            this.serverID = serverID;
-            this.account = account;
-        }
+    record AnonymousClass3TempTransAccountClass(String serverID, String account) {
     }
 
     public static void printToFile(String sData, String file) {

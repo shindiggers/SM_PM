@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -936,25 +937,13 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 setCleared(Integer.parseInt(this.currentElementValue));
                 break;
             case "account":
-                try {
-                    setAccount(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                } catch (UnsupportedEncodingException e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
-                }
+                setAccount(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 break;
             case "categoryID":
-                try {
-                    setCategory(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                } catch (UnsupportedEncodingException e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
-                }
+                setCategory(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 break;
             case "classID":
-                try {
-                    setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                } catch (UnsupportedEncodingException e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
-                }
+                setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 break;
             case "serverID":
                 setServerID(this.currentElementValue);
@@ -966,7 +955,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             case "filterName":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }

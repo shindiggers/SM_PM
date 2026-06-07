@@ -1,5 +1,8 @@
 package com.example.smmoney.views;
 
+import static android.view.KeyEvent.KEYCODE_BACK;
+import static android.view.KeyEvent.KEYCODE_HOME;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -7,11 +10,6 @@ import android.view.KeyEvent;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.accounts.AccountsActivity;
-import com.example.smmoney.views.budgets.BudgetsActivity;
-
-import static android.view.KeyEvent.KEYCODE_BACK;
-import static android.view.KeyEvent.KEYCODE_HOME;
 
 public abstract class PocketMoneyActivity extends AppCompatActivity {
     private boolean isStartingActivity = false;
@@ -80,7 +78,8 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
             startActivity(new Intent(this, PasswordActivity.class));
         } else if (keyCode == KEYCODE_BACK) {
             Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
-            if (getClass().equals(AccountsActivity.class) || getClass().equals(BudgetsActivity.class)) {
+            String className = getClass().getSimpleName();
+            if (className.equals("AccountsActivity") || className.equals("BudgetsActivity")) {
                 startActivity(new Intent(this, PasswordActivity.class));
             }
         }

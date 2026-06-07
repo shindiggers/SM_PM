@@ -3,7 +3,6 @@ package com.example.smmoney.records;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
-import android.os.Environment;
 import android.util.Log;
 import android.util.Xml;
 
@@ -35,9 +34,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Field;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -59,9 +58,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     private boolean cleared;
     private String currentElementValue;
     @SuppressWarnings("unused")
-    private int currentImage;
+    private final int currentImage;
     @SuppressWarnings("unused")
-    private int currentIndex;
+    private final int currentIndex;
     private byte[] data;
     @SuppressWarnings("unused")
     private String dataString;
@@ -81,10 +80,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     private SplitsClass parserSplit;
     private String payee;
     @SuppressWarnings("unused")
-    private boolean readingInImage;
+    private final boolean readingInImage;
     public double runningBalance;
     @SuppressWarnings("unused")
-    private StringBuilder sb;
+    private final StringBuilder sb;
     private ArrayList<SplitsClass> splits;
     private ArrayList<SplitsClass> splitsDeleted;
     private double subTotal;
@@ -265,7 +264,8 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         if (withImages) {
             try {
                 String imgdata = "<imagedata>";
-                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
+                File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+                File f = new File(photoDir, fileName);
                 if (f.exists()) {
                     FileInputStream fin = new FileInputStream(f.getAbsolutePath());
                     int totalRead = 0;
@@ -323,7 +323,8 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         try {
             body.startTag(null, "image");
             if (withImages) {
-                File f = new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + fileName);
+                File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+                File f = new File(photoDir, fileName);
                 if (f.exists()) {
                     FileInputStream fin = new FileInputStream(f.getAbsolutePath());
                     int totalRead = 0;
@@ -968,6 +969,11 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     public void hydrate() {
         if (!this.hydrated) {
+            if (this.transactionID == 0) {
+                this.hydrated = true;
+                this.hydratedSplits = true;
+                return;
+            }
             new SQLiteQueryBuilder().setTables(Database.TRANSACTIONS_TABLE_NAME);
             @SuppressWarnings("unused") String selection = "transactionID=" + this.transactionID;
             @SuppressWarnings("unused") String[] projection = new String[]{"deleted", "timestamp", "type", "date", "cleared", "accountID", "payee", "checkNumber", "ofxID", "image", "subTotal", "serverID"};
@@ -1070,6 +1076,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
 
     private void hydrateSplits() {
         if (!this.hydratedSplits) {
+            if (this.transactionID == 0) {
+                this.hydratedSplits = true;
+                return;
+            }
             new SQLiteQueryBuilder().setTables(Database.SPLITS_TABLE_NAME);
             @SuppressWarnings("unused") String selection = "transactionID=" + this.transactionID;
             @SuppressWarnings("unused") String[] projection = new String[]{"splitID"};
@@ -1141,8 +1151,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 if (this.data != null) {
                     try {
                         //noinspection ResultOfMethodCallIgnored
-                        new File(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/").mkdirs();
-                        FileOutputStream fos = new FileOutputStream(Environment.getDataDirectory() + "/data/" + SMMoney.getAppContext().getPackageName() + "/photos/" + this.currentElementValue);
+                        File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+                        photoDir.mkdirs();
+                        FileOutputStream fos = new FileOutputStream(new File(photoDir, this.currentElementValue));
                         int length = this.data.length;
                         int loops = (length / 500000) + 1;
                         for (int i = 0; i < loops; i++) {
@@ -1189,9 +1200,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             case "image":
                 if (!(this.currentElementValue.length() <= 0 || this.currentElementValue.contains("\n"))) {
                     try {
-                        setImageLocation(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                    } catch (UnsupportedEncodingException e) {
-                        Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                        setImageLocation(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 break;
@@ -1207,7 +1218,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 } catch (Exception e3) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -1215,9 +1226,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             }
             case "class":
                 try {
-                    this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
-                } catch (UnsupportedEncodingException e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + this.currentElementValue + " xml[" + localName + "]");
+                    this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
                 break;
             case "currencyCode":
@@ -1228,7 +1239,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this.parserSplit, URLDecoder.decode(this.currentElementValue, java.nio.charset.StandardCharsets.UTF_8.toString()));
+                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
                 } catch (Exception e4) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }

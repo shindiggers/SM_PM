@@ -247,6 +247,11 @@ public class SplitsClass implements Serializable {
 
     public void hydrate() {
         if (!this.hydrated) {
+            // Do not load from DB if this is a new record or if we've already started editing it
+            if (this.splitID == 0 || this.dirty) {
+                this.hydrated = true;
+                return;
+            }
             new SQLiteQueryBuilder().setTables(Database.SPLITS_TABLE_NAME);
             @SuppressWarnings("unused") String selection = "splitID=" + this.splitID;
             @SuppressWarnings("unused") String[] projection = new String[]{"transactionID", "amount", "xrate", "categoryID", "classID", "memo", "transferToAccountID", "currencyCode"};
