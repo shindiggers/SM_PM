@@ -29,6 +29,8 @@ import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -57,6 +59,14 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private final int MENU_QUIT = 5;
     private final int MENU_VIEW = 4;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                reloadData();
+            }
+    );
+
     private BudgetsRowAdapter adapter;
     private BalanceBar balanceBar;
     private TextView budgetDisplay;
@@ -271,7 +281,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private void newBudget() {
         Intent i = new Intent(this, BudgetsEditActivity.class);
         i.putExtra("Category", new CategoryClass());
-        startActivity(i);
+        editLauncher.launch(i);
     }
 
     private void deleteBudget(final CategoryClass cat) {
@@ -349,7 +359,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 if (b != null) {
                     anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
                 }
-                startActivity(anIntent);
+                editLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {

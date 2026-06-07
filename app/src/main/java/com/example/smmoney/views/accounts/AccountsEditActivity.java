@@ -17,6 +17,9 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
@@ -42,6 +45,41 @@ import java.util.Objects;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
     public final int NOTE_EDIT_BUTTON = 3;
+
+    private final ActivityResultLauncher<Intent> typeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.type.setText(selection);
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> iconLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            if (selection != null) {
+                this.iconResourceID = Integer.parseInt(selection);
+            }
+            this.icon.setImageResource(this.iconResourceID);
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> noteLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() == -1 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.account.setNotes(selection);
+            if (selection != null) {
+                setNotesText(selection);
+            }
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> ktcLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.keepTheChangeAccountTextView.setText(selection);
+        }
+    });
+
     private AccountClass account;
     private EditText accountName;
     private EditText accountNumber;
@@ -360,62 +398,28 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         });
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            String selection;
-            try {
-                if (data.getExtras() != null) {
-                    selection = data.getExtras().getString("selection");
-                    switch (requestCode) {
-                        case SplitsActivity.RESULT_CHANGED /*1*/:
-                            this.type.setText(selection);
-                            return;
-                        case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                            if (selection != null) {
-                                this.iconResourceID = Integer.parseInt(selection);
-                            }
-                            this.icon.setImageResource(this.iconResourceID);
-                            return;
-                        case SplitsActivity.REQUEST_EDIT /*3*/:
-                            if (resultCode == -1) {
-                                this.account.setNotes(selection);
-                                if (selection != null) {
-                                    setNotesText(selection);
-                                }
-                                return;
-                            }
-                            return;
-                        case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
-                            this.keepTheChangeAccountTextView.setText(selection);
-                            return;
-                        default:
-                    }
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
     private View.OnClickListener getBtnClickListener() {
         return new View.OnClickListener() {
             public void onClick(View view) {
                 Intent i;
                 switch ((Integer) view.getTag()) {
                     case SplitsActivity.RESULT_CHANGED /*1*/:
+                        i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
+                        i.putExtra("type", 1);
+                        typeLauncher.launch(i);
+                        return;
                     case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
                         i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
-                        i.putExtra("type", ((Integer) view.getTag()).intValue());
-                        AccountsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                        i.putExtra("type", 18);
+                        ktcLauncher.launch(i);
                         return;
                     case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                        AccountsEditActivity.this.currentActivity.startActivityForResult(new Intent(AccountsEditActivity.this.currentActivity, AccountTypeIconGridActivity.class), 2);
+                        iconLauncher.launch(new Intent(AccountsEditActivity.this.currentActivity, AccountTypeIconGridActivity.class));
                         return;
                     case NOTE_EDIT_BUTTON /*3*/:
                         i = new Intent(AccountsEditActivity.this.currentActivity, NoteEditor.class);
                         i.putExtra("note", AccountsEditActivity.this.account.getNotes());
-                        AccountsEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                        noteLauncher.launch(i);
                         return;
                     default:
                 }

@@ -13,6 +13,9 @@ import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -25,6 +28,13 @@ import java.util.Objects;
 public class FiltersMainActivity extends PocketMoneyActivity {
     public static final int FILTER_EDIT_NEW = 1;
     public static final int FILTER_EDIT_OLD = 2;
+
+    final ActivityResultLauncher<Intent> filterEditLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.filter = (FilterClass) result.getData().getExtras().get("Filter");
+        }
+    });
+
     private static final int FILTER_RESULT_NOCHANGE = 2;
     private static final int FILTER_RESULT_SELECTED = 1;
     private final int CMENU_DELETE = 3;
@@ -99,7 +109,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             public void onClick(View v) {
                 Intent i = new Intent(FiltersMainActivity.this.context, FilterEditActivity.class);
                 i.putExtra("Filter", FiltersMainActivity.this.filter);
-                FiltersMainActivity.this.context.startActivityForResult(i, FiltersMainActivity.FILTER_RESULT_SELECTED);
+                filterEditLauncher.launch(i);
             }
         });
         theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -138,15 +148,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         finish();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            if (requestCode == FILTER_RESULT_SELECTED) {
-                this.filter = (FilterClass) Objects.requireNonNull(data.getExtras()).get("Filter");
-            }
-        }
-    }
-
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_NEW, 0, Locales.kLOC_FILTER_NEW).setIcon(R.drawable.abouticon);
         return true;
@@ -158,7 +159,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             FilterClass newFilter = new FilterClass();
             newFilter.setAccount(this.filter.getAccount());
             i.putExtra("Filter", newFilter);
-            this.context.startActivity(i);
+            filterEditLauncher.launch(i);
             return true;
         }
         return false;
@@ -186,7 +187,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
                 if (b != null) {
                     intent.putExtra("Filter", (FilterClass) b.get("Filter"));
                 }
-                startActivity(intent);
+                filterEditLauncher.launch(intent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {

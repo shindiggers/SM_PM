@@ -117,7 +117,11 @@ class RepeatingRowAdapter extends BaseAdapter {
                 RepeatingRowHolder holder = (RepeatingRowHolder) view.getTag();
                 Intent i = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
                 i.putExtra("Transaction", holder.transaction);
-                RepeatingRowAdapter.this.mContext.startActivity(i);
+                if (RepeatingRowAdapter.this.mContext instanceof RepeatingActivity) {
+                    ((RepeatingActivity) RepeatingRowAdapter.this.mContext).editLauncher.launch(i);
+                } else {
+                    RepeatingRowAdapter.this.mContext.startActivity(i);
+                }
             }
         };
     }

@@ -119,7 +119,7 @@ class AccountRowAdapter extends BaseAdapter {
             while (i < this.sectionedAccounts.size()) {
                 if (currentIndex == position) {
                     if (this.sectionedAccounts.get(i).size() > 0 || i == this.sectionedAccounts.size() - 1) {
-                        return String.valueOf('H') + this.sectionedAccountStrings[i];
+                        return 'H' + this.sectionedAccountStrings[i];
                     }
                 } else if (this.sectionedAccounts.get(i).size() + currentIndex >= position) {
                     if (getShowSection(i)) {
@@ -136,43 +136,43 @@ class AccountRowAdapter extends BaseAdapter {
             int newPos = position - currentIndex;
             if (newPos == 0) {
                 if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                    return String.valueOf('C') + Locales.kLOC_ALL_TRANSACTIONS;
+                    return 'C' + Locales.kLOC_ALL_TRANSACTIONS;
                 }
                 if (Prefs.getBooleanPref(Prefs.FILTERS)) {
-                    return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
+                    return 'C' + Locales.kLOC_TOOLS_FILTERS;
                 }
-                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+                return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
             } else if (newPos != 1) {
-                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+                return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
             } else {
                 if (Prefs.getBooleanPref(Prefs.FILTERS) && Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                    return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
+                    return 'C' + Locales.kLOC_TOOLS_FILTERS;
                 }
                 if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                    return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+                    return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
                 }
                 return null;
             }
         }
         if (position == this.elements.size()) {
             if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                return String.valueOf('C') + Locales.kLOC_ALL_TRANSACTIONS;
+                return 'C' + Locales.kLOC_ALL_TRANSACTIONS;
             }
             if (Prefs.getBooleanPref(Prefs.FILTERS)) {
-                return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
+                return 'C' + Locales.kLOC_TOOLS_FILTERS;
             }
             if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+                return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
             }
         } else if (position == this.elements.size() + 1) {
             if (Prefs.getBooleanPref(Prefs.FILTERS) && Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-                return String.valueOf('C') + Locales.kLOC_TOOLS_FILTERS;
+                return 'C' + Locales.kLOC_TOOLS_FILTERS;
             }
             if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-                return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+                return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
             }
         } else if (position == this.elements.size() + 2) {
-            return String.valueOf('C') + Locales.kLOC_REPEATING_TRANSACTIONS;
+            return 'C' + Locales.kLOC_REPEATING_TRANSACTIONS;
         }
         return this.elements.get(position);
     }
@@ -227,7 +227,11 @@ class AccountRowAdapter extends BaseAdapter {
                     trans.getSplits().get(0).dirty = false;
                     trans.dirty = false;
                     i.putExtra("Transaction", trans);
-                    AccountRowAdapter.this.mContext.startActivity(i);
+                    if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
+                        ((AccountsActivity) AccountRowAdapter.this.mContext).editLauncher.launch(i);
+                    } else {
+                        AccountRowAdapter.this.mContext.startActivity(i);
+                    }
                 }
             });
             convertView.setTag(holder);

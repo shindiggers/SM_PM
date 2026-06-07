@@ -1,6 +1,5 @@
 package com.example.smmoney.views.repeating;
 
-import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,6 +22,9 @@ import android.widget.ImageView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
@@ -44,6 +46,29 @@ import java.util.Objects;
 
 public class RepeatingEditActivity extends PocketMoneyActivity {
     private final int REQUEST_ENDON = 1;
+
+    private final ActivityResultLauncher<Intent> frequencyLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            this.frequencyTextView.setText(result.getData().getStringExtra("selection"));
+            this.repeatingTransaction.hydrated = true;
+            save();
+            reloadData();
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> endOnLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            if (result.getResultCode() != EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
+                this.endOnTextView.setText(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+            } else {
+                this.endOnTextView.setText(result.getData().getStringExtra("Date"));
+            }
+            this.repeatingTransaction.hydrated = true;
+            save();
+            reloadData();
+        }
+    });
+
     private Context context;
     private String[] daysOfWeek;
     private TextView endOnTextView;
@@ -160,14 +185,14 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             public void onClick(View v) {
                 Intent i = new Intent(RepeatingEditActivity.this.context, LookupsListActivity.class);
                 i.putExtra("type", 16);
-                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, LookupsListActivity.REPEAT_TYPE /*16*/);
+                frequencyLauncher.launch(i);
             }
         });
         ((View) this.endOnTextView.getParent()).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 Intent i = new Intent(RepeatingEditActivity.this.context, EndOnDateActivity.class);
                 i.putExtra("Date", RepeatingEditActivity.this.endOnTextView.getText().toString());
-                ((Activity) RepeatingEditActivity.this.context).startActivityForResult(i, REQUEST_ENDON/*1*/);
+                endOnLauncher.launch(i);
             }
         });
         this.everyTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -482,27 +507,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         i.putExtra("Transaction", this.transaction);
         i.putExtra("RepeatingTransaction", this.repeatingTransaction);
         setResult(1, i);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            switch (requestCode) {
-                case REQUEST_ENDON /*1*/:
-                    if (resultCode != EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
-                        this.endOnTextView.setText(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                    } else {
-                        this.endOnTextView.setText(Objects.requireNonNull(data.getExtras()).getString("Date"));
-                    }
-                    break;
-                case LookupsListActivity.REPEAT_TYPE /*16*/:
-                    this.frequencyTextView.setText(Objects.requireNonNull(data.getExtras()).getString("selection"));
-                    break;
-            }
-            this.repeatingTransaction.hydrated = true;
-            save();
-            reloadData();
-        }
     }
 
     private View.OnClickListener getDayClickListener(final ImageView check) {

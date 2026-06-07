@@ -1,10 +1,13 @@
 package com.example.smmoney.views;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.Prefs;
@@ -12,7 +15,12 @@ import com.example.smmoney.views.accounts.AccountsActivity;
 
 import java.io.File;
 
-public class LaunchActivity extends Activity {
+public class LaunchActivity extends AppCompatActivity {
+    private final ActivityResultLauncher<Intent> mainLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        Log.d("LAUNCHACTIVITY", "mainLauncher has just returned");
+        finish();
+    });
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("LAUNCHACTIVITY", "onCreate() - restoring previous state");
@@ -42,14 +50,8 @@ public class LaunchActivity extends Activity {
             z = pass != null && pass.length() > 0;
             Log.d("LAUNCHACTIVITY", "Show passowrd screen var 'z' = " + z);
             i.putExtra(str, z);
-            startActivityForResult(i, 0);
+            mainLauncher.launch(i);
         }
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        Log.d("LAUNCHACTIVITY", "onActivityResult has just returned");
-        finish();
     }
 
     protected void onDestroy() {

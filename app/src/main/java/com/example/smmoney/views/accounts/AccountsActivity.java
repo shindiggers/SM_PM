@@ -227,6 +227,13 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
     );
 
+    public final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                reloadData();
+            }
+    );
+
     private final ActivityResultLauncher<Intent> budgetLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {

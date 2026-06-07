@@ -180,6 +180,13 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private TextView titleTextView;
     private WakeLock wakeLock;
 
+    final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                reloadData();
+                reloadBalanceBar();
+            }
+    );
     private final ActivityResultLauncher<Intent> filterLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -350,7 +357,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         trans.dirty = false;
         trans.getSplits().get(0).dirty = false; // trans.getSplits() returns an ArrayList. get(0) gets the 0th element of the ArrayList. dirty = false tells system this is not an exisiting Transaction so don't update Database
         i.putExtra("Transaction", trans);
-        startActivity(i); // starts Transaction activity (I think?) and passes trans TransactionClass object with properties as set by code logic above
+        editLauncher.launch(i); // starts Transaction activity (I think?) and passes trans TransactionClass object with properties as set by code logic above
     }
 
     private void adjustBalance() {
@@ -872,7 +879,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 if (b != null) {
                     anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
                 }
-                startActivity(anIntent);
+                editLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {

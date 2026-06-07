@@ -101,7 +101,11 @@ class FilterRowAdapter extends BaseAdapter {
                 FilterRowHolder vw = (FilterRowHolder) ((View) v.getParent()).getTag();
                 Intent intent = new Intent(FilterRowAdapter.this.delegate, FilterEditActivity.class);
                 intent.putExtra("Filter", vw.filter);
-                FilterRowAdapter.this.delegate.startActivity(intent);
+                if (FilterRowAdapter.this.delegate instanceof FiltersMainActivity) {
+                    FilterRowAdapter.this.delegate.filterEditLauncher.launch(intent);
+                } else {
+                    FilterRowAdapter.this.delegate.startActivity(intent);
+                }
             }
         };
     }

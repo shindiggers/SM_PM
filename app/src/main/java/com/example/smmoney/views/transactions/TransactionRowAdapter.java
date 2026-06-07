@@ -113,7 +113,11 @@ class TransactionRowAdapter extends BaseAdapter {
                 TransactionRowHolder holder = (TransactionRowHolder) view.getTag();
                 Intent i = new Intent(TransactionRowAdapter.this.mContext, TransactionEditActivity.class);
                 i.putExtra("Transaction", holder.transaction);
-                TransactionRowAdapter.this.mContext.startActivity(i);
+                if (TransactionRowAdapter.this.mContext instanceof TransactionsActivity) {
+                    ((TransactionsActivity) TransactionRowAdapter.this.mContext).editLauncher.launch(i);
+                } else {
+                    TransactionRowAdapter.this.mContext.startActivity(i);
+                }
             }
         };
     }

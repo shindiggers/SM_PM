@@ -26,6 +26,8 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.smmoney.R;
@@ -63,6 +65,14 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private BalanceBar balanceBar;
     private FilterClass filter;
     private boolean isProcessingToDate = false;
+
+    final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                reloadData();
+            }
+    );
+
     private PocketMoneyProgressDialog progressDialog = null;
     @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -231,7 +241,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     TransactionClass trans = new TransactionClass();
                     trans.isRepeatingTransaction = true;
                     i.putExtra("Transaction", trans);
-                    startActivity(i);
+                    editLauncher.launch(i);
                     return true;
                 }
                 AccountsActivity.displayLiteDialog(this);
@@ -261,7 +271,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 if (b != null) {
                     anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
                 }
-                startActivity(anIntent);
+                editLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 TransactionClass transaction = null;

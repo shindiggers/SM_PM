@@ -25,6 +25,9 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
@@ -48,6 +51,26 @@ import java.util.Iterator;
 
 public class BudgetsEditActivity extends PocketMoneyActivity {
     private final int CMENU_DELETE = 1;
+
+    private final ActivityResultLauncher<Intent> lookupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            int type = result.getResultCode();
+            switch (type) {
+                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                    this.categoryEditText.setText(selection);
+                    break;
+                case LookupsListActivity.BUDGET_TYPE /*19*/:
+                    this.budgetTypeTextView.setText(selection);
+                    break;
+                case LookupsListActivity.BUDGET_PERIOD /*20*/:
+                    this.periodTextView.setText(selection);
+                    break;
+            }
+            getCells();
+        }
+    });
+
     private final int DIALOG_BUDGET = 1;
     private final int DIALOG_PICKDATE = 2;
     private View addBudgetCell;
@@ -114,10 +137,10 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 BudgetsEditActivity.this.getCells();
                 Intent i = new Intent(BudgetsEditActivity.this, LookupsListActivity.class);
                 i.putExtra("type", 5);
-                BudgetsEditActivity.this.startActivityForResult(i, 5);
+                lookupLauncher.launch(i);
             }
         });
-        this.categoryEditText = (AutoCompleteTextView) aView.findViewById(R.id.categoryedittext);
+        this.categoryEditText = aView.findViewById(R.id.categoryedittext);
         this.categoryEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         ((TextView) aView.findViewById(R.id.categorytextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         ((TextView) this.outterView.findViewById(R.id.category_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -127,7 +150,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 BudgetsEditActivity.this.getCells();
                 Intent i = new Intent(BudgetsEditActivity.this, LookupsListActivity.class);
                 i.putExtra("type", 19);
-                BudgetsEditActivity.this.startActivityForResult(i, 19);
+                lookupLauncher.launch(i);
             }
         });
         theViews.add(aView);
@@ -141,7 +164,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 BudgetsEditActivity.this.getCells();
                 Intent i = new Intent(BudgetsEditActivity.this, LookupsListActivity.class);
                 i.putExtra("type", 20);
-                BudgetsEditActivity.this.startActivityForResult(i, 20);
+                lookupLauncher.launch(i);
             }
         });
         theViews.add(aView);
@@ -416,32 +439,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             return true;
         }
         return super.onContextItemSelected(item);
-    }
-
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            String selection;
-            try {
-                if (data.getExtras() != null) {
-                    selection = data.getExtras().getString("selection");
-                    switch (requestCode) {
-                        case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                            this.categoryEditText.setText(selection);
-                            break;
-                        case LookupsListActivity.BUDGET_TYPE /*19*/:
-                            this.budgetTypeTextView.setText(selection);
-                            break;
-                        case LookupsListActivity.BUDGET_PERIOD /*20*/:
-                            this.periodTextView.setText(selection);
-                            break;
-                    }
-                    getCells();
-                }
-            } catch (NullPointerException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     protected Dialog onCreateDialog(int id) {

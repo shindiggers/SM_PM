@@ -9,9 +9,11 @@ import android.widget.FrameLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
@@ -24,6 +26,63 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class FilterEditActivity extends PocketMoneyActivity {
+    private final ActivityResultLauncher<Intent> customDateLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            Intent data = result.getData();
+            GregorianCalendar gregorianCalendar = null;
+            String date = data.getStringExtra("FromDate");
+            if (date != null) {
+                this.filter.setDateFrom(date.equals("*") ? null : CalExt.dateFromDescriptionWithMediumDate(date));
+            }
+            date = data.getStringExtra("ToDate");
+            if (date != null && !date.equals("*")) {
+                gregorianCalendar = CalExt.dateFromDescriptionWithMediumDate(date);
+            }
+            this.filter.setDateTo(gregorianCalendar);
+            this.datesTextView.setText(this.filter.customDateString());
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> lookupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            int type = result.getResultCode();
+            switch (type) {
+                case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
+                    this.transactionTypeTextView.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
+                    this.accountsTextView.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_DATES /*10*/:
+                    if (selection != null && selection.contains(Locales.kLOC_FILTER_DATES_CUSTOM)) {
+                        Intent i = new Intent(this, FromToDateActivity.class);
+                        i.putExtra("FromDate", this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateFrom()) : "*");
+                        i.putExtra("ToDate", this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateTo()) : "*");
+                        customDateLauncher.launch(i);
+                    }
+                    this.datesTextView.setText(selection);
+                    this.filter.setDate(selection);
+                    break;
+                case LookupsListActivity.FILTER_PAYEES /*11*/:
+                    this.payeeEditText.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_IDS /*12*/:
+                    this.idEditText.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_CLEARED /*13*/:
+                    this.clearedTextView.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_CATEGORIES /*14*/:
+                    this.categoriesTextView.setText(selection);
+                    break;
+                case LookupsListActivity.FILTER_CLASSES /*15*/:
+                    this.classesTextView.setText(selection);
+                    break;
+            }
+        }
+    });
+
     private TextView accountsTextView;
     private EditText categoriesTextView;
     private EditText classesTextView;
@@ -198,62 +257,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.filter.saveToDatabase();
     }
 
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        GregorianCalendar gregorianCalendar = null;
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode != 0) {
-            String selection = Objects.requireNonNull(data.getExtras()).getString("selection");
-            switch (requestCode) {
-                case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
-                    this.transactionTypeTextView.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
-                    this.accountsTextView.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_DATES /*10*/:
-                    if (selection != null && selection.contains(Locales.kLOC_FILTER_DATES_CUSTOM)) {
-                        Intent i = new Intent(this, FromToDateActivity.class);
-                        i.putExtra("FromDate", this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateFrom()) : "*");
-                        i.putExtra("ToDate", this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateTo()) : "*");
-                        int REQUEST_CUSTOM_DATE = 30;
-                        startActivityForResult(i, REQUEST_CUSTOM_DATE);
-                    }
-                    this.datesTextView.setText(selection);
-                    this.filter.setDate(selection);
-                    return;
-                case LookupsListActivity.FILTER_PAYEES /*11*/:
-                    this.payeeEditText.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_IDS /*12*/:
-                    this.idEditText.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_CLEARED /*13*/:
-                    this.clearedTextView.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_CATEGORIES /*14*/:
-                    this.categoriesTextView.setText(selection);
-                    return;
-                case LookupsListActivity.FILTER_CLASSES /*15*/:
-                    this.classesTextView.setText(selection);
-                    return;
-                case Enums.kDesktopSyncStateSendPhotos /*30*/:
-                    String date = data.getExtras().getString("FromDate");
-                    if (date != null) {
-                        this.filter.setDateFrom(date.equals("*") ? null : CalExt.dateFromDescriptionWithMediumDate(date));
-                    }
-                    date = data.getExtras().getString("ToDate");
-                    FilterClass filterClass = this.filter;
-                    if (date != null && !date.equals("*")) {
-                        gregorianCalendar = CalExt.dateFromDescriptionWithMediumDate(date);
-                    }
-                    filterClass.setDateTo(gregorianCalendar);
-                    this.datesTextView.setText(this.filter.customDateString());
-                    return;
-                default:
-            }
-        }
-    }
-
     private OnClickListener getLookupListClickListener() {
         return new OnClickListener() {
             public void onClick(View view) {
@@ -261,7 +264,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
                 i.putExtra("type", ((Integer) view.getTag()).intValue());
                 i.putExtra("FromDate", FilterEditActivity.this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateFrom()) : "*");
                 i.putExtra("ToDate", FilterEditActivity.this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateTo()) : "*");
-                FilterEditActivity.this.currentActivity.startActivityForResult(i, (Integer) view.getTag());
+                lookupLauncher.launch(i);
             }
         };
     }
