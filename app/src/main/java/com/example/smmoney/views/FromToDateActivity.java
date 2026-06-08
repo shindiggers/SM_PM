@@ -2,7 +2,6 @@ package com.example.smmoney.views;
 
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -95,43 +94,35 @@ public class FromToDateActivity extends PocketMoneyActivity {
     private OnClickListener getOnDateClickListener() {
         return new OnClickListener() {
             public void onClick(View v) {
-                boolean isFromDate;
-                int i = 0;
-                int i2 = FromToDateActivity.FROMTODATE_RESULT_SELECTED;
-                isFromDate = v == FromToDateActivity.this.fromDate;
-                FromToDateActivity.this.leftNoneButton.setVisibility(isFromDate ? View.GONE : View.VISIBLE);
+                boolean isFromDate = v == FromToDateActivity.this.fromDate;
+
+                // Toggle visibility of helpers based on which date is being picked
+                int visibilityLeft = isFromDate ? View.GONE : View.VISIBLE;
+                int visibilityRight = isFromDate ? View.VISIBLE : View.GONE;
+
+                FromToDateActivity.this.leftNoneButton.setVisibility(visibilityLeft);
                 FromToDateActivity.this.leftNoneButton.invalidate();
-                FromToDateActivity.this.leftTodayButton.setVisibility(isFromDate ? View.GONE : View.VISIBLE);
+                FromToDateActivity.this.leftTodayButton.setVisibility(visibilityLeft);
                 FromToDateActivity.this.leftTodayButton.invalidate();
-                FromToDateActivity.this.rightNoneButton.setVisibility(isFromDate ? View.VISIBLE : View.GONE);
+
+                FromToDateActivity.this.rightNoneButton.setVisibility(visibilityRight);
                 FromToDateActivity.this.rightNoneButton.invalidate();
-                Button access$5 = FromToDateActivity.this.rightTodayButton;
-                if (!isFromDate) {
-                    i = FromToDateActivity.FROMTODATE_RESULT_SELECTED;
-                }
-                access$5.setVisibility(i);
+                FromToDateActivity.this.rightTodayButton.setVisibility(visibilityRight);
                 FromToDateActivity.this.rightTodayButton.invalidate();
-                FromToDateActivity fromToDateActivity = FromToDateActivity.this;
-                if (!isFromDate) {
-                    i2 = 2;
-                }
-                fromToDateActivity.showDialog(i2);
+
+                FromToDateActivity.this.showDatePickerDialog(isFromDate);
             }
         };
     }
 
-    protected Dialog onCreateDialog(int id) {
-        if (id != FROMDATE_DIALOG_ID && id != TODATE_DIALOG_ID) {
-            return null;
-        }
+    private void showDatePickerDialog(boolean isFromDate) {
         GregorianCalendar theDate;
-        boolean isFromDate = id == FROMTODATE_RESULT_SELECTED;
         if ((isFromDate ? this.fromDate : this.toDate).getText().toString().equals("*")) {
             theDate = new GregorianCalendar();
         } else {
             theDate = CalExt.dateFromDescriptionWithMediumDate((isFromDate ? this.fromDate : this.toDate).getText().toString());
         }
-        return new DatePickerDialog(this, getDateListener(isFromDate), theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_WEEK));
+        new DatePickerDialog(this, getDateListener(isFromDate), theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private OnDateSetListener getDateListener(boolean isAFromDate) {

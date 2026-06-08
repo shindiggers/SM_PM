@@ -5,7 +5,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
-import android.app.Dialog;
 import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
@@ -495,7 +494,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.timeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.timeTextView.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TransactionEditActivity.this.showDialog(TIME_DIALOG_ID /*5*/);
+                TransactionEditActivity.this.showTimePickerDialog();
             }
         });
         this.repeatingImageView = aView.findViewById(R.id.repeatingimageview);
@@ -760,9 +759,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 TransactionEditActivity.this.getCells();
                 TransactionEditActivity.this.deleteDeletedImages();
                 if (TransactionEditActivity.this.accountTextView.getText() == null || TransactionEditActivity.this.accountTextView.getText().toString().length() == 0) {
-                    TransactionEditActivity.this.showDialog(DIALOG_NEED_ACCOUNT /*6*/);
+                    TransactionEditActivity.this.showNeedAccountDialog();
                 } else if (TransactionEditActivity.this.transaction.isRepeatingTransaction && (TransactionEditActivity.this.repeatingTransaction == null || !TransactionEditActivity.this.repeatingTransaction.isRepeating())) {
-                    TransactionEditActivity.this.showDialog(DIALOG_NEED_REPEATING /*7*/);
+                    TransactionEditActivity.this.showNeedRepeatingDialog();
                 } else if (TransactionEditActivity.this.transaction.transactionID == 0 || TransactionEditActivity.this.transaction.isRepeatingTransaction || TransactionEditActivity.this.repeatingTransaction.repeatingID <= 0 || !TransactionEditActivity.this.repeatingTransaction.isRepeating() || TransactionEditActivity.this.dateChanged != 0) {
                     TransactionEditActivity.this.saveAction();
                 } else {
@@ -1256,7 +1255,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         Log.d(TAG, "includeFeeAction() called");
         AccountClass account = AccountDB.recordFor(this.accountTextView.getText().toString());
         if (account.getFee() <= 0.0d) {
-            showDialog(DIALOG_FEE /*4*/);
+            showFeeDialog();
             return;
         }
         save();
@@ -1600,12 +1599,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.clearTimer.schedule(new ClearTask(), 750);
     }
 
-    protected Dialog onCreateDialog(int id) {
-        Builder builder;
-        switch (id) {
-            case DIALOG_DELETECONFIRM /*2*/:
-                builder = new Builder(this);
-                builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
+    private void showDeleteConfirmDialog() {
+        new Builder(this)
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
                     }
@@ -1613,12 +1609,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     public void onClick(DialogInterface dialog, int item) {
                         TransactionEditActivity.this.deleteConfirmed();
                     }
-                });
-                return builder.create();
-            case DIALOG_DUPLICATE /*3*/:
-                builder = new Builder(this);
-                builder.setTitle(Locales.kLOC_DUPLICATE_TRANSACTION_TITLE);
-                builder.setNegativeButton(Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, new OnClickListener() {
+                }).show();
+    }
+
+    private void showDuplicateDialog() {
+        new Builder(this)
+                .setTitle(Locales.kLOC_DUPLICATE_TRANSACTION_TITLE)
+                .setNegativeButton(Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         TransactionEditActivity.this.duplicateTransaction(false);
                     }
@@ -1626,42 +1623,48 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     public void onClick(DialogInterface dialog, int item) {
                         TransactionEditActivity.this.duplicateTransaction(true);
                     }
-                });
-                return builder.create();
-            case DIALOG_FEE /*4*/:
-                builder = new Builder(this);
-                builder.setMessage(Locales.kLOC_FEE_MISSING_ALERT);
-                builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+                }).show();
+    }
+
+    private void showFeeDialog() {
+        new Builder(this)
+                .setMessage(Locales.kLOC_FEE_MISSING_ALERT)
+                .setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
                     }
-                });
-                return builder.create();
-            case TIME_DIALOG_ID /*5*/:
-                GregorianCalendar theTime = this.transaction.getDate();
-                return new TimePickerDialog(this, this.mTimeSetListener, theTime.get(Calendar.HOUR_OF_DAY), theTime.get(Calendar.MINUTE), DateFormat.is24HourFormat(this));
-            case DIALOG_NEED_ACCOUNT /*6*/:
-                builder = new Builder(this);
-                builder.setMessage(Locales.kLOC_EDIT_TRANSACTION_MISSINGACCOUNT);
-                builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+                }).show();
+    }
+
+    private void showTimePickerDialog() {
+        GregorianCalendar theTime = this.transaction.getDate();
+        new TimePickerDialog(this, this.mTimeSetListener, theTime.get(Calendar.HOUR_OF_DAY), theTime.get(Calendar.MINUTE), DateFormat.is24HourFormat(this)).show();
+    }
+
+    private void showNeedAccountDialog() {
+        new Builder(this)
+                .setMessage(Locales.kLOC_EDIT_TRANSACTION_MISSINGACCOUNT)
+                .setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
                     }
-                });
-                return builder.create();
-            case DIALOG_NEED_REPEATING /*7*/:
-                builder = new Builder(this);
-                builder.setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.\n\nTap the calendar icon to the right of the Date to configure the repeating info for this transaction.");
-                builder.setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+                }).show();
+    }
+
+    private void showNeedRepeatingDialog() {
+        new Builder(this)
+                .setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.\n\nTap the calendar icon to the right of the Date to configure the repeating info for this transaction.")
+                .setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
                     }
-                });
-                return builder.create();
-            case DIALOG_CAMERA /*8*/:
-                builder = new Builder(this);
-                builder.setMessage("Choose existing or take new");
-                builder.setPositiveButton("New", new OnClickListener() {
+                }).show();
+    }
+
+    private void showCameraDialog() {
+        new Builder(this)
+                .setMessage("Choose existing or take new")
+                .setPositiveButton("New", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         try {
                             File cacheDir = getExternalCacheDir();
@@ -1675,17 +1678,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                             e.printStackTrace();
                         }
                     }
-                });
-                builder.setNegativeButton("Choose", new OnClickListener() {
+                })
+                .setNegativeButton("Choose", new OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         dialog.dismiss();
                         galleryLauncher.launch("image/*");
                     }
-                });
-                return builder.create();
-            default:
-                return null;
-        }
+                }).show();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -1710,16 +1709,16 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 splitsAction();
                 break;
             case MENU_DUPE /*2*/:
-                showDialog(DIALOG_DUPLICATE /*3*/);
+                showDuplicateDialog();
                 break;
             case MENU_FEE /*3*/:
                 includeFeeAction();
                 break;
             case MENU_CAMERA /*4*/:
-                showDialog(DIALOG_CAMERA /*8*/);
+                showCameraDialog();
                 break;
             case MENU_DELETE /*5*/:
-                showDialog(DIALOG_DELETECONFIRM /*2*/);
+                showDeleteConfirmDialog();
                 break;
             case MENU_SAVE /*6*/:
                 Log.d(TAG, "onOptionsItemSelected() called with: item = [" + item + "] - i.e. MENU_SAVE");
@@ -1749,10 +1748,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         saveAction();
                         break;
                     }
-                    showDialog(DIALOG_NEED_REPEATING /*7*/);
+                    showNeedRepeatingDialog();
                     break;
                 }
-                showDialog(DIALOG_NEED_ACCOUNT /*6*/);
+                showNeedAccountDialog();
                 break;
         }
         return false;

@@ -7,7 +7,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
@@ -944,7 +943,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
         this.moreChartsButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                AccountsActivity.this.showDialog(DIALOG_REPORTS /*10*/);
+                AccountsActivity.this.showReportsDialog();
             }
         });
         this.graphSpinner = layout.findViewById(R.id.graphspinner);
@@ -1439,62 +1438,57 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return false;
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case LISCENSING /*8*/:
-                return new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
-                        AccountsActivity.this.finish();
-                    }
-                }).setNegativeButton("Quit", new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent();
-                        i.setAction("android.intent.action.MAIN");
-                        i.addCategory("android.intent.category.HOME");
-                        AccountsActivity.this.context.startActivity(i);
-                    }
-                }).setCancelable(false).create();
-            case IMPORT_PROGRESS_DIALOG /*9*/:
-                return null;
-            case DIALOG_REPORTS /*10*/:
-                return new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        FilterClass f = new FilterClass();
-                        ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
-                        Intent i;
-                        switch (which) {
-                            case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
-                                AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
-                                i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                                PMGlobal.datasource = ds;
-                                AccountsActivity.this.startActivity(i);
-                                return;
-                            case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
-                                CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
-                                i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                                PMGlobal.datasource = ds2;
-                                AccountsActivity.this.startActivity(i);
-                                return;
-                            case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
-                                ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
-                                i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                                PMGlobal.datasource = ds3;
-                                AccountsActivity.this.startActivity(i);
-                                return;
-                            case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
-                                PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
-                                i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                                PMGlobal.datasource = ds4;
-                                AccountsActivity.this.startActivity(i);
-                                return;
-                            default:
-                        }
-                    }
-                }).create();
-            default:
-                return null;
-        }
+    private void showReportsDialog() {
+        new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                FilterClass f = new FilterClass();
+                ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
+                Intent i;
+                switch (which) {
+                    case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
+                        AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
+                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                        PMGlobal.datasource = ds;
+                        AccountsActivity.this.startActivity(i);
+                        return;
+                    case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
+                        CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
+                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                        PMGlobal.datasource = ds2;
+                        AccountsActivity.this.startActivity(i);
+                        return;
+                    case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
+                        ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
+                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                        PMGlobal.datasource = ds3;
+                        AccountsActivity.this.startActivity(i);
+                        return;
+                    case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
+                        PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
+                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                        PMGlobal.datasource = ds4;
+                        AccountsActivity.this.startActivity(i);
+                        return;
+                    default:
+                }
+            }
+        }).show();
+    }
+
+    private void showLicensingDialog() {
+        new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
+                AccountsActivity.this.finish();
+            }
+        }).setNegativeButton("Quit", new OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                Intent i = new Intent();
+                i.setAction("android.intent.action.MAIN");
+                i.addCategory("android.intent.category.HOME");
+                AccountsActivity.this.context.startActivity(i);
+            }
+        }).setCancelable(false).show();
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

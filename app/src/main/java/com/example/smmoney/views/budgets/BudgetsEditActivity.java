@@ -3,7 +3,6 @@ package com.example.smmoney.views.budgets;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
-import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
@@ -218,13 +216,13 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.originalHistoryDateTextView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 BudgetsEditActivity.this.selectedBudgetItem = null;
-                BudgetsEditActivity.this.showDialog(DIALOG_PICKDATE/*2*/);
+                BudgetsEditActivity.this.showDatePickerDialog();
             }
         });
         this.originalHistoryBudgetTextView.setOnClickListener(new OnClickListener() {
             public void onClick(View v) {
                 BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v.getParent()).getTag();
-                BudgetsEditActivity.this.showDialog(DIALOG_BUDGET/*1*/);
+                BudgetsEditActivity.this.showBudgetAmountDialog();
             }
         });
         this.enableVariableBudgetCell = findViewById(R.id.enablevariablebutton);
@@ -441,41 +439,49 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         return super.onContextItemSelected(item);
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DIALOG_BUDGET /*1*/:
-            case DIALOG_PICKDATE /*2*/:
-                double budgetLimit;
-                Builder alert = new Builder(this);
-                final EditText input = new EditText(this);
-                if (this.selectedBudgetItem == null) {
-                    budgetLimit = this.category.getBudgetLimit();
-                } else {
-                    budgetLimit = this.selectedBudgetItem.getBudgetLimit();
-                }
-                input.setText(CurrencyExt.amountAsString(budgetLimit));
-                alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String value = input.getText().toString().trim();
-                        if (BudgetsEditActivity.this.selectedBudgetItem == null) {
-                            BudgetsEditActivity.this.category.setBudgetLimit(CurrencyExt.amountFromString(value));
-                        } else {
-                            BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
-                        }
-                        BudgetsEditActivity.this.reloadData();
-                    }
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                return alert.create();
-            default:
-                return null;
+    private void showDatePickerDialog() {
+        GregorianCalendar theDate;
+        if (this.selectedBudgetItem == null) {
+            if (this.categoryBudgetItems.isEmpty()) {
+                theDate = new GregorianCalendar();
+            } else {
+                theDate = this.categoryBudgetItems.get(0).getDate();
+            }
+        } else {
+            theDate = this.selectedBudgetItem.getDate();
         }
+        new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    private void showBudgetAmountDialog() {
+        double budgetLimit;
+        Builder alert = new Builder(this);
+        final EditText input = new EditText(this);
+        if (this.selectedBudgetItem == null) {
+            budgetLimit = this.category.getBudgetLimit();
+        } else {
+            budgetLimit = this.selectedBudgetItem.getBudgetLimit();
+        }
+        input.setText(CurrencyExt.amountAsString(budgetLimit));
+        alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
+        alert.setView(input);
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                String value = input.getText().toString().trim();
+                if (BudgetsEditActivity.this.selectedBudgetItem == null) {
+                    BudgetsEditActivity.this.category.setBudgetLimit(CurrencyExt.amountFromString(value));
+                } else {
+                    BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
+                }
+                BudgetsEditActivity.this.reloadData();
+            }
+        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                dialog.cancel();
+            }
+        });
+        alert.show();
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

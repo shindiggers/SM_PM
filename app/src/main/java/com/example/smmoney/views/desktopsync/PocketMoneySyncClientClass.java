@@ -47,7 +47,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                 public void run() {
                     PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClientClass.this.delegate;
                     PocketMoneySyncClientClass.this.delegate.getClass();
-                    pocketMoneySyncActivity.showDialog(1);
+                    pocketMoneySyncActivity.showNoHostDialog();
                 }
             });
             e.printStackTrace();

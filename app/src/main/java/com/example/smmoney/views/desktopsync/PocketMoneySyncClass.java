@@ -779,7 +779,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 public void run() {
                     PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClass.this.delegate;
                     PocketMoneySyncClass.this.delegate.getClass();
-                    pocketMoneySyncActivity.showDialog(8);
+                    pocketMoneySyncActivity.showUpgradeDialog();
                     PocketMoneySyncClass.this.delegate.stopSyncing();
                 }
             });

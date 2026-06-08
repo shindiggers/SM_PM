@@ -662,10 +662,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 startActivity(i);
                 break;
             case MENU_TOOLS_FILETRANSFERS /*10*/:
-                showDialog(MENU_FILETRANSFERS /*1*/);
+                showFileTransfersDialog();
                 break;
             case MENU_TOOLS_GOTODATE /*11*/:
-                showDialog(DATE_DIALOG_ID /*8*/);
+                showDatePickerDialog();
                 return true;
             case MENU_TOOLS_ADJUSTBALANCE /*13*/:
                 adjustBalance();
@@ -683,34 +683,31 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return false;
     }
 
-    protected Dialog onCreateDialog(int id) {
-        AlertDialog.Builder builder;
-        switch (id) {
-            case MENU_FILETRANSFERS /*1*/:
-                CharSequence[] items = new CharSequence[]{Locales.kLOC_TOOLS_EMAILREGISTER, Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD};
-                builder = new AlertDialog.Builder(this);
-                builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
-                builder.setItems(items, new DialogInterface.OnClickListener() {
+    private void showFileTransfersDialog() {
+        CharSequence[] items = new CharSequence[]{Locales.kLOC_TOOLS_EMAILREGISTER, Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD};
+        new AlertDialog.Builder(this)
+                .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
+                .setItems(items, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
                             case 0 /*Email register...*/:
-                                TransactionsActivity.this.showDialog(MENU_EMAILTRANSFERS /*3*/);
+                                TransactionsActivity.this.showEmailTransfersDialog();
                                 return;
                             case 1 /*Local storage transfers...*/:
-                                TransactionsActivity.this.showDialog(MENU_SD_EXPORT /*7*/);
+                                TransactionsActivity.this.showSdExportDialog();
                                 return;
                             default:
                         }
                     }
-                });
-                return builder.create();
-            case MENU_EMAILTRANSFERS /*3*/:
-                CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
-                builder = new AlertDialog.Builder(this);
-                builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL);
-                builder.setItems(items3, new DialogInterface.OnClickListener() {
+                }).show();
+    }
+
+    private void showEmailTransfersDialog() {
+        CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
+        new AlertDialog.Builder(this)
+                .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL)
+                .setItems(items3, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
-                        Intent emailIntent = new Intent("android.intent.action.SEND");
                         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                         switch (item) {
                             case EMAIL_QIF /*0*/:
@@ -762,13 +759,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             default:
                         }
                     }
-                });
-                return builder.create();
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                CharSequence[] items4 = new CharSequence[]{"QIF", "TDF", "CSV"};
-                builder = new AlertDialog.Builder(this);
-                builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
-                builder.setItems(items4, new DialogInterface.OnClickListener() {
+                }).show();
+    }
+
+    private void showLookupFileTransfersDialog() {
+        CharSequence[] items4 = new CharSequence[]{"QIF", "TDF", "CSV"};
+        new AlertDialog.Builder(this)
+                .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
+                .setItems(items4, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
                             case EMAIL_QIF /*0*/:
@@ -789,13 +787,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             default:
                         }
                     }
-                });
-                return builder.create();
-            case MENU_SD_EXPORT /*7*/:
-                CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
-                builder = new AlertDialog.Builder(this);
-                builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
-                builder.setItems(items6, new DialogInterface.OnClickListener() {
+                }).show();
+    }
+
+    private void showSdExportDialog() {
+        CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
+        new AlertDialog.Builder(this)
+                .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
+                .setItems(items6, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         switch (item) {
                             case EMAIL_QIF /*0*/:
@@ -831,22 +830,18 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             default:
                         }
                     }
-                });
-                return builder.create();
-            case DATE_DIALOG_ID /*8*/:
-                GregorianCalendar theDate;
-                int firstPosition = ((ListView) findViewById(R.id.the_list)).getFirstVisiblePosition();
-                if (this.adapter.getCount() == 0) {
-                    theDate = new GregorianCalendar();
-                } else {
-                    theDate = ((TransactionClass) this.adapter.getItem(firstPosition)).getDate();
-                }
-                return new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            case IMPORT_PROGRESS_DIALOG /*9*/:
-                return null;
-            default:
-                return null;
+                }).show();
+    }
+
+    private void showDatePickerDialog() {
+        GregorianCalendar theDate;
+        int firstPosition = ((ListView) findViewById(R.id.the_list)).getFirstVisiblePosition();
+        if (this.adapter.getCount() == 0) {
+            theDate = new GregorianCalendar();
+        } else {
+            theDate = ((TransactionClass) this.adapter.getItem(firstPosition)).getDate();
         }
+        new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @SuppressWarnings("unused")

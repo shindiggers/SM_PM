@@ -3,7 +3,6 @@ package com.example.smmoney.views.repeating;
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
@@ -247,7 +246,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 AccountsActivity.displayLiteDialog(this);
                 return true;
             case MENU_PROCESS /*2*/:
-                showDialog(DATE_DIALOG_ID);
+                showDatePickerDialog();
                 return true;
             default:
                 return false;
@@ -289,32 +288,27 @@ public class RepeatingActivity extends PocketMoneyActivity {
         }
     }
 
-    protected Dialog onCreateDialog(int id) {
-        switch (id) {
-            case DATE_DIALOG_ID /*1*/:
-                GregorianCalendar theDate = new GregorianCalendar();
-                return new DatePickerDialog(this, new OnDateSetListener() {
-                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        if (!RepeatingActivity.this.isProcessingToDate) {
-                            RepeatingActivity.this.isProcessingToDate = true;
-                            final GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-                            new Thread() {
+    private void showDatePickerDialog() {
+        GregorianCalendar theDate = new GregorianCalendar();
+        new DatePickerDialog(this, new OnDateSetListener() {
+            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                if (!RepeatingActivity.this.isProcessingToDate) {
+                    RepeatingActivity.this.isProcessingToDate = true;
+                    final GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                    new Thread() {
+                        public void run() {
+                            TransactionDB.addRepeatingEventsThroughDate(newCal, RepeatingActivity.this);
+                            RepeatingActivity.this.runOnUiThread(new Runnable() {
                                 public void run() {
-                                    TransactionDB.addRepeatingEventsThroughDate(newCal, RepeatingActivity.this);
-                                    RepeatingActivity.this.runOnUiThread(new Runnable() {
-                                        public void run() {
-                                            RepeatingActivity.this.reloadData();
-                                            RepeatingActivity.this.finishProgressBar();
-                                        }
-                                    });
+                                    RepeatingActivity.this.reloadData();
+                                    RepeatingActivity.this.finishProgressBar();
                                 }
-                            }.start();
+                            });
                         }
-                    }
-                }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH));
-            default:
-                return null;
-        }
+                    }.start();
+                }
+            }
+        }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     public void updateProgressBar(int progress) {

@@ -61,7 +61,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                             }
                             PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncServerClass.this.delegate;
                             PocketMoneySyncServerClass.this.delegate.getClass();
-                            pocketMoneySyncActivity.showDialog(4);
+                            pocketMoneySyncActivity.showOpenConnectionDialog();
                         } catch (SocketException | InterruptedIOException e) {
                             e.printStackTrace();
                         } catch (IOException e3) {
@@ -238,7 +238,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
             FileInputStream fi = new FileInputStream(new File(SMMoney.getTempFile()).getAbsolutePath());
             fi.read(buff, 0, "RESTORE".length());
             fi.close();
-            String sData = new String(buff, 0, buff.length, StandardCharsets.UTF_8);
+            String sData = new String(buff, StandardCharsets.UTF_8);
             this.restoreFromServer = sData.startsWith("RESTORE");
             if (sData.startsWith("FAIL")) {
                 return false;
