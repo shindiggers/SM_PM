@@ -59,10 +59,10 @@ public class PocketMoneySyncClass extends DefaultHandler {
 
     protected void processRecentAccounts(PocketMoneyRecordClass[] recentChanges) {
         if (recentChanges != null) {
-            AnonymousClass1TempTransAccountClass tempAct;
+            TempAccountRecord tempAct;
             AccountClass act;
-            ArrayList<AnonymousClass1TempTransAccountClass> overdraftAccounts = new ArrayList<>();
-            ArrayList<AnonymousClass1TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
+            ArrayList<TempAccountRecord> overdraftAccounts = new ArrayList<>();
+            ArrayList<TempAccountRecord> keepTheChangeAccounts = new ArrayList<>();
             for (PocketMoneyRecordClass rec : recentChanges) {
                 AccountClass record = (AccountClass) rec;
                 if (record.serverID == null || record.serverID.length() <= 0) {
@@ -79,15 +79,15 @@ public class PocketMoneySyncClass extends DefaultHandler {
                         record.accountID = 0;
                     }
                     if (record.getOverdraftAccount() != null && record.getOverdraftAccount().length() > 0) {
-                        overdraftAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getOverdraftAccount()));
+                        overdraftAccounts.add(new TempAccountRecord(record.serverID, record.getOverdraftAccount()));
                     }
                     if (record.getKeepTheChangeAccount() != null && record.getKeepTheChangeAccount().length() > 0) {
-                        keepTheChangeAccounts.add(new AnonymousClass1TempTransAccountClass(record.serverID, record.getKeepTheChangeAccount()));
+                        keepTheChangeAccounts.add(new TempAccountRecord(record.serverID, record.getKeepTheChangeAccount()));
                     }
                     record.saveToDataBaseAndUpdateTimeStamp(true);
                 }
             }
-            Iterator<AnonymousClass1TempTransAccountClass> it = keepTheChangeAccounts.iterator();
+            Iterator<TempAccountRecord> it = keepTheChangeAccounts.iterator();
             while (it.hasNext()) {
                 tempAct = it.next();
                 act = AccountClass.recordWithServerID(tempAct.serverID);
@@ -875,21 +875,21 @@ public class PocketMoneySyncClass extends DefaultHandler {
     }
 
     void processAccounts(ArrayList<AccountClass> accounts) {
-        ArrayList<AnonymousClass2TempTransAccountClass> overdraftAccounts = new ArrayList<>();
-        ArrayList<AnonymousClass2TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
+        ArrayList<TempAccountRecord> overdraftAccounts = new ArrayList<>();
+        ArrayList<TempAccountRecord> keepTheChangeAccounts = new ArrayList<>();
         Iterator<AccountClass> it = accounts.iterator();
         while (it.hasNext()) {
             AccountClass act = it.next();
             if (act.getOverdraftAccount() != null && act.getOverdraftAccount().length() > 0) {
-                overdraftAccounts.add(new AnonymousClass2TempTransAccountClass(act.serverID, act.getOverdraftAccount()));
+                overdraftAccounts.add(new TempAccountRecord(act.serverID, act.getOverdraftAccount()));
             }
             if (act.getKeepTheChangeAccount() != null && act.getKeepTheChangeAccount().length() > 0) {
-                keepTheChangeAccounts.add(new AnonymousClass2TempTransAccountClass(act.serverID, act.getKeepTheChangeAccount()));
+                keepTheChangeAccounts.add(new TempAccountRecord(act.serverID, act.getKeepTheChangeAccount()));
             }
         }
-        Iterator<AnonymousClass2TempTransAccountClass> it2 = keepTheChangeAccounts.iterator();
+        Iterator<TempAccountRecord> it2 = keepTheChangeAccounts.iterator();
         while (it2.hasNext()) {
-            AnonymousClass2TempTransAccountClass tempAct = it2.next();
+            TempAccountRecord tempAct = it2.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -898,8 +898,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
         }
         it2 = overdraftAccounts.iterator();
-        while (it.hasNext()) {
-            AnonymousClass2TempTransAccountClass tempAct = it2.next();
+        while (it2.hasNext()) {
+            TempAccountRecord tempAct = it2.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -915,8 +915,8 @@ public class PocketMoneySyncClass extends DefaultHandler {
         String endTag = "</" + recordTag + ">";
         String startList = "<" + listTag + ">";
         String endList = "</" + listTag + ">";
-        ArrayList<AnonymousClass3TempTransAccountClass> overdraftAccounts = new ArrayList<>();
-        ArrayList<AnonymousClass3TempTransAccountClass> keepTheChangeAccounts = new ArrayList<>();
+        ArrayList<TempAccountRecord> overdraftAccounts = new ArrayList<>();
+        ArrayList<TempAccountRecord> keepTheChangeAccounts = new ArrayList<>();
         int currentIndex = sData.indexOf(startList);
         int endIndex = sData.indexOf(endList);
         if (currentIndex == -1 || endIndex == -1) {
@@ -934,10 +934,10 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 AccountClass record = new AccountClass();
                 record.updateWithXML(taggedString);
                 if (record.getOverdraftAccount() != null && record.getOverdraftAccount().length() > 0) {
-                    overdraftAccounts.add(new AnonymousClass3TempTransAccountClass(record.serverID, record.getOverdraftAccount()));
+                    overdraftAccounts.add(new TempAccountRecord(record.serverID, record.getOverdraftAccount()));
                 }
                 if (record.getKeepTheChangeAccount() != null && record.getKeepTheChangeAccount().length() > 0) {
-                    keepTheChangeAccounts.add(new AnonymousClass3TempTransAccountClass(record.serverID, record.getKeepTheChangeAccount()));
+                    keepTheChangeAccounts.add(new TempAccountRecord(record.serverID, record.getKeepTheChangeAccount()));
                 }
                 processRecentAccount(record);
             } catch (Exception e) {
@@ -946,9 +946,9 @@ public class PocketMoneySyncClass extends DefaultHandler {
             }
             currentIndex = xmlBlock.indexOf(startTag, endIndex) + startTag.length();
         }
-        Iterator<AnonymousClass3TempTransAccountClass> it = keepTheChangeAccounts.iterator();
+        Iterator<TempAccountRecord> it = keepTheChangeAccounts.iterator();
         while (it.hasNext()) {
-            AnonymousClass3TempTransAccountClass tempAct = it.next();
+            TempAccountRecord tempAct = it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -958,7 +958,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         }
         it = overdraftAccounts.iterator();
         while (it.hasNext()) {
-            AnonymousClass3TempTransAccountClass tempAct = it.next();
+            TempAccountRecord tempAct = it.next();
             AccountClass act = AccountClass.recordWithServerID(tempAct.serverID);
             if (act != null) {
                 act.hydrate();
@@ -1142,13 +1142,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         return packagedData;
     }
 
-    record AnonymousClass1TempTransAccountClass(String serverID, String account) {
-    }
-
-    record AnonymousClass2TempTransAccountClass(String serverID, String account) {
-    }
-
-    record AnonymousClass3TempTransAccountClass(String serverID, String account) {
+    record TempAccountRecord(String serverID, String account) {
     }
 
     public static void printToFile(String sData, String file) {

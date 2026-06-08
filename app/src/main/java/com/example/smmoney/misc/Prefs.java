@@ -156,46 +156,37 @@ public class Prefs {
     public static final String VIEWACCOUNTS = "prefsaccountsviewoptionsshowaccounts";
     private static SharedPreferences sharedPrefs = null;
 
-    static class AnonymousClass1 implements OnClickListener {
-        private final /* synthetic */ Context val$cont;
-
-        AnonymousClass1(Context context) {
-            this.val$cont = context;
-        }
-
-        public void onClick(DialogInterface dialog, int id) {
-            Builder alt_bld = new Builder(this.val$cont);
-            Builder cancelable = alt_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?").setCancelable(false);
-            CharSequence charSequence = Locales.kLOC_GENERAL_YES;
-            cancelable.setPositiveButton(charSequence, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    Prefs.importDB(AnonymousClass1.this.val$cont);
-                }
-            }).setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
-            alt_bld.create().show();
-        }
-    }
-
-    static class AnonymousClass2 implements OnClickListener {
-        private final /* synthetic */ Context val$cont;
-
-        AnonymousClass2(Context context) {
-            this.val$cont = context;
-        }
-
-        public void onClick(DialogInterface dialog, int id) {
-            Prefs.exportDB(this.val$cont);
-            dialog.cancel();
-        }
-    }
-
-    public static void processDataBase(Context context) {
+    public static void processDataBase(final Context context) {
         Builder alt_bld = new Builder(context);
-        alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing").setCancelable(false).setPositiveButton("Import", new AnonymousClass1(context)).setNegativeButton("Export", new AnonymousClass2(context));
+        alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing")
+                .setCancelable(false)
+                .setPositiveButton("Import", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Builder sub_bld = new Builder(context);
+                        sub_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?")
+                                .setCancelable(false)
+                                .setPositiveButton(Locales.kLOC_GENERAL_YES, new OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        Prefs.importDB(context);
+                                    }
+                                })
+                                .setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                })
+                                .create()
+                                .show();
+                    }
+                })
+                .setNegativeButton("Export", new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Prefs.exportDB(context);
+                        dialog.cancel();
+                    }
+                });
         alt_bld.create().show();
     }
 

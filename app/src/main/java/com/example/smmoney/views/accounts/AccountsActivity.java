@@ -258,25 +258,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
     );
 
-    static class AnonymousClass49 implements OnClickListener {
-        private final /* synthetic */ Activity val$c;
-
-        AnonymousClass49(Activity activity) {
-            this.val$c = activity;
-        }
-
-        public void onClick(DialogInterface dialog, int id) {
-            String str;
-            String str2 = "android.intent.action.VIEW";
-            if (AccountsActivity.IS_GOOGLE_MARKET) {
-                str = "http://market.android.com/details?id=com.catamount.pocketmoney";
-            } else {
-                str = "http://www.amazon.com/gp/product/B004JVI48G";
-            }
-            this.val$c.startActivity(new Intent(str2, Uri.parse(str)));
-        }
-    }
-
     @SuppressWarnings("EmptyMethod")
     private void testTest() {
     }
@@ -1555,13 +1536,28 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return true;
     }
 
-    public static void displayLiteDialog(Activity c) {
+    public static void displayLiteDialog(final Activity c) {
         AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle(Locales.kLOC_LITE_UPGRADE).setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID).setCancelable(false).setPositiveButton(Locales.kLOC_LITE_BUYIT, new AnonymousClass49(c)).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        builder.setTitle(Locales.kLOC_LITE_UPGRADE)
+                .setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID)
+                .setCancelable(false)
+                .setPositiveButton(Locales.kLOC_LITE_BUYIT, new OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String str;
+                        if (AccountsActivity.IS_GOOGLE_MARKET) {
+                            str = "http://market.android.com/details?id=com.catamount.pocketmoney";
+                        } else {
+                            str = "http://www.amazon.com/gp/product/B004JVI48G";
+                        }
+                        c.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(str)));
+                    }
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
         builder.create().show();
     }
 

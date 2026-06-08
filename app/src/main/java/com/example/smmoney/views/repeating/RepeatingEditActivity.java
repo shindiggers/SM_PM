@@ -524,34 +524,34 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                     return;
                 }
                 int i3;
-                ImageView access$6 = RepeatingEditActivity.this.sundayCheck;
+                ImageView dayCheck = RepeatingEditActivity.this.sundayCheck;
                 if (check == RepeatingEditActivity.this.sundayCheck) {
                     i3 = View.VISIBLE /*0*/;
                 } else {
                     i3 = View.GONE /*8*/;
                 }
-                access$6.setVisibility(i3);
-                access$6 = RepeatingEditActivity.this.mondayCheck;
+                dayCheck.setVisibility(i3);
+                dayCheck = RepeatingEditActivity.this.mondayCheck;
                 if (check == RepeatingEditActivity.this.mondayCheck) {
                     i3 = View.VISIBLE /*0*/;
                 } else {
                     i3 = View.GONE /*8*/;
                 }
-                access$6.setVisibility(i3);
-                access$6 = RepeatingEditActivity.this.tuesdayCheck;
+                dayCheck.setVisibility(i3);
+                dayCheck = RepeatingEditActivity.this.tuesdayCheck;
                 if (check == RepeatingEditActivity.this.tuesdayCheck) {
                     i3 = View.VISIBLE /*0*/;
                 } else {
                     i3 = View.GONE /*8*/;
                 }
-                access$6.setVisibility(i3);
-                access$6 = RepeatingEditActivity.this.wednesdayCheck;
+                dayCheck.setVisibility(i3);
+                dayCheck = RepeatingEditActivity.this.wednesdayCheck;
                 if (check == RepeatingEditActivity.this.wednesdayCheck) {
                     i3 = View.VISIBLE /*0*/;
                 } else {
                     i3 = View.GONE /*8*/;
                 }
-                access$6.setVisibility(i3);
+                dayCheck.setVisibility(i3);
                 imageView = RepeatingEditActivity.this.thursdayCheck;
                 if (check != RepeatingEditActivity.this.thursdayCheck) {
                     i2 = View.GONE /*8*/;
