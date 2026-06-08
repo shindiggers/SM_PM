@@ -19,7 +19,7 @@ import java.util.Locale;
 public class SMMoney extends Application {
     public static final String TAG = "com.catamount.pocketmon";
     private static Context context;
-    private static int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 1;
+    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 1;
 
     public void onCreate() {
         super.onCreate();
@@ -63,11 +63,12 @@ public class SMMoney extends Application {
     }
 
     public static String getExternalPocketMoneyDirectory() {
-        File dir = new File(Prefs.getStringPref(Prefs.EXPORT_STOREDEVICE).concat("/data/SMMoney/"));
-        if (!dir.exists()) {
-            dir.mkdirs();
+        File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        File pocketMoneyDir = new File(downloadsDir, "PocketMoneyBackup");
+        if (!pocketMoneyDir.exists()) {
+            pocketMoneyDir.mkdirs();
         }
-        return dir.toString() + "/";
+        return pocketMoneyDir.getAbsolutePath() + "/";
     }
 
     public static String[] getExternalMounts() {

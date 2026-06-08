@@ -2,7 +2,6 @@ package com.example.smmoney.importexport;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Environment;
 import android.os.Message;
 import android.util.Log;
 
@@ -23,7 +22,6 @@ import com.example.smmoney.views.HandlerActivity;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -61,7 +59,7 @@ public class ImportExportTDF {
         try {
             CSVReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(filePath)), encodingStr));
         } catch (FileNotFoundException e) {
-            displayError("Error reading QIF file: " + e.toString(), false);
+            displayError("Error reading QIF file: " + e, false);
             Log.v("FileReader", "File Not Found");
             return;
         } catch (UnsupportedEncodingException e2) {
@@ -80,7 +78,7 @@ public class ImportExportTDF {
             this.numberOfLines = this.lines.size();
             this.currentLine = 0;
         } catch (IOException e3) {
-            displayError("Error reading QIF file: " + e3.toString(), false);
+            displayError("Error reading QIF file: " + e3, false);
             e3.printStackTrace();
         }
         this.importFileExists = true;
@@ -271,32 +269,24 @@ public class ImportExportTDF {
     }
 
     public boolean exportRecords() {
-        IOException e;
         String TDFData = generateData();
-        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        String pmExternalPath = Environment.getExternalStorageDirectory().getAbsolutePath();
+        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String fileName = "SMMoney.txt";
         try {
+            String filePath = pmExternalPath + fileName;
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
-            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
-            if (!dir.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                dir.mkdirs();
-            }
             BufferedWriter tdfWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
             try {
                 tdfWriter.write(TDFData);
                 tdfWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"));
+                ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileName + "' placed in Download/PocketMoneyBackup"));
                 return true;
-            } catch (IOException e2) {
-                e = e2;
+            } catch (IOException e) {
                 Log.i("Export writing error-0", e.toString());
                 displayError(e.toString(), false);
                 return false;
             }
-        } catch (IOException e3) {
-            e = e3;
+        } catch (IOException e) {
             Log.i("Export writing error-0", e.toString());
             displayError(e.toString(), false);
             return false;
@@ -348,32 +338,24 @@ public class ImportExportTDF {
     }
 
     public boolean exportRecords(ArrayList<TransactionClass> transactions) {
-        IOException e;
         String TDFData = generateData(transactions);
-        //String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+        String fileName = "SMMoney.txt";
         try {
+            String filePath = pmExternalPath + fileName;
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = pmExternalPath + "/PocketMoneyBackup/" + "SMMoney.txt";
-            File dir = new File(filePath.substring(0, filePath.indexOf("/SMMoney/") + "/SMMoney/".length()));
-            if (!dir.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                dir.mkdirs();
-            }
             BufferedWriter TDFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
             try {
                 TDFWriter.write(TDFData);
                 TDFWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + filePath.substring(pmExternalPath.length()) + "' placed in Download/PocketMoneyBackup"), 500);
+                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileName + "' placed in Download/PocketMoneyBackup"), 500);
                 return true;
-            } catch (IOException e2) {
-                e = e2;
+            } catch (IOException e) {
                 Log.i("Export writing error", e.toString());
                 displayError(e.toString(), false);
                 return false;
             }
-        } catch (IOException e3) {
-            e = e3;
+        } catch (IOException e) {
             Log.i("Export writing error", e.toString());
             displayError(e.toString(), false);
             return false;

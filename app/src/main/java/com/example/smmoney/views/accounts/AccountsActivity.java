@@ -95,6 +95,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -493,8 +494,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             switch (AccountsActivity.this.msgEmail) {
                                 case EMAIL_QIF /*0*/:
                                     emailIntent.setType("text/qif");
-                                    File qifFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedQifFile = new File(qifFile, "SMMoney.qif");
+                                    String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+                                    File sharedQifFile = new File(pmExternalPath, "SMMoney.qif");
                                     Uri contentUriQif = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedQifFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
@@ -513,8 +514,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     break;
                                 case EMAIL_TDF /*1*/:
                                     emailIntent.setType("text/txt");
-                                    File txtFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedTxtFile = new File(txtFile, "SMMoney.txt");
+                                    String pmExternalPathTdf = SMMoney.getExternalPocketMoneyDirectory();
+                                    File sharedTxtFile = new File(pmExternalPathTdf, "SMMoney.txt");
                                     Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
@@ -533,8 +534,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     break;
                                 case EMAIL_CSV /*2*/:
                                     emailIntent.setType("text/csv");
-                                    File csvFile = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-                                    File sharedCsvFile = new File(csvFile, "SMMoney.csv");
+                                    String pmExternalPathCsv = SMMoney.getExternalPocketMoneyDirectory();
+                                    File sharedCsvFile = new File(pmExternalPathCsv, "SMMoney.csv");
                                     Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
@@ -553,17 +554,18 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     break;
                                 case EMAIL_OFX /*3*/:
                                     Log.i(TAG, "EMAIL_OFX IN ACCOUNTSACTIVITY HANDLER - START");
-                                    Intent emailOfxIntent = new Intent("android.intent.action.SEND_MULTIPLR");
+                                    Intent emailOfxIntent = new Intent("android.intent.action.SEND_MULTIPLE");
                                     emailOfxIntent.setType("text/ofx");
                                     ArrayList<Uri> fileNames = new ArrayList<>();
-                                    File ofxDir = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
+                                    String ofxDirPath = SMMoney.getExternalPocketMoneyDirectory();
+                                    File ofxDir = new File(ofxDirPath);
                                     File[] ofxFiles;
                                     ofxFiles = ofxDir.listFiles();
-                                    for (File file : ofxFiles) {
-                                        String fName = file.getName();
-                                        File fileToAdd = new File(ofxDir, fName);
-                                        Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
-                                        fileNames.add(contentUriOfx);
+                                    if (ofxFiles != null) {
+                                        for (File file : ofxFiles) {
+                                            Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", file);
+                                            fileNames.add(contentUriOfx);
+                                        }
                                     }
                                     emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
@@ -1147,7 +1149,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         pd.show();
         new Thread() {
             public void run() {
-                String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                 FilterClass filter = new FilterClass();
                 final ArrayList<Uri> fileNames = new ArrayList<>();
                 ArrayList<String> accNames = new ArrayList<>();
@@ -1163,9 +1165,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 for (String item : array) {
                     filter.setAccount(item);
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
-                    fileNames.add(Uri.parse("file://" + fileName));
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileName);
+                    String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
+                    fileNames.add(Uri.parse("file://" + filePath));
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
                     exportofx.accountNameBeingImported = item;
                     exportofx.filter = filter;
                     exportofx.exportRecords(query);
@@ -1178,12 +1180,22 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private void backupToSD() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
         alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
-        alert.setMessage(Locales.kLOC_TRANSFERS_BACKUPFILE_INFO);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+        alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                Prefs.exportDB(AccountsActivity.this);
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+                File src = new File(Environment.getDataDirectory() + "/data/" + getPackageName() + "/databases/SMMoneyDB.sql");
+                File dst = new File(pmExternalPath, "SMMoneyDB.sql");
+                try {
+                    Prefs.copyFile(src, dst);
+                    Toast.makeText(AccountsActivity.this, "Backup complete", Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(AccountsActivity.this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                }
             }
         });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
         alert.show();
     }
 
@@ -1253,7 +1265,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         new Thread() {
             public void run() {
                 boolean exportSeperately = Prefs.getBooleanPref(Prefs.QIF_EXPORT_SEPERATELY);
-                String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                 AccountsActivity.this.msgEmail = EMAIL_QIF;
                 AccountsActivity.this.shouldEmail = true;
                 FilterClass filter = new FilterClass();
@@ -1269,14 +1281,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         }
                     }
                     String[] array = accNames.toArray(new String[0]);
-                    //int length = array.length;
                     for (String item : array) {
                         filter.setAccount(item);
                         ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                        String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
-                        fileNames.add(Uri.parse("file://" + fileName));
+                        String fileName = item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
+                        String filePath = pmExternalPath + fileName;
+                        fileNames.add(Uri.parse("file://" + filePath));
                         exportqif = new ImportExportQIF(AccountsActivity.this);
-                        exportqif.QIFPath = fileName;
+                        exportqif.QIFPath = filePath;
                         exportqif.accountNameBeingImported = item;
                         exportqif.setFilter(filter);
                         exportqif.exportRecords(query);
@@ -1289,7 +1301,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         }
                     });
                 } else {
-                    AccountsActivity.this.emailFileLocation = Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup/SMMoney.qif";
+                    AccountsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.qif";
                     String fl = AccountsActivity.this.emailFileLocation;
                     exportqif = new ImportExportQIF(AccountsActivity.this);
                     exportqif.QIFPath = fl;
@@ -1328,7 +1340,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         pd.show();
         new Thread() {
             public void run() {
-                String fileDir = Environment.getExternalStorageDirectory().getAbsolutePath();
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                 AccountsActivity.this.msgEmail = EMAIL_OFX;
                 AccountsActivity.this.shouldEmail = true;
                 FilterClass filter = new FilterClass();
@@ -1346,9 +1358,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 for (String item : array) {
                     filter.setAccount(item);
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    String fileName = fileDir + "/PocketMoneyBackup/" + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
-                    fileNames.add(Uri.parse("file://" + fileName));
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, fileName);
+                    String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
+                    fileNames.add(Uri.parse("file://" + filePath));
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
                     exportofx.accountNameBeingImported = item;
                     exportofx.filter = filter;
                     exportofx.exportRecords(query);

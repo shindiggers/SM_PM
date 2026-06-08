@@ -43,14 +43,14 @@ public class ImportExportOFX {
     @SuppressWarnings("unused")
     int numberOfLines;
     @SuppressWarnings("unused")
-    private DateFormat dateFormatter;
+    private final DateFormat dateFormatter;
     public FilterClass filter;
     @SuppressWarnings("unused")
-    private String defaultCurrencyCode;
+    private final String defaultCurrencyCode;
     @SuppressWarnings("unused")
     private HandlerActivity act;
     @SuppressWarnings("unused")
-    private NumberFormat numberFormatter;
+    private final NumberFormat numberFormatter;
     private OFXClass ofxData;
     public String path;
 
@@ -236,37 +236,36 @@ public class ImportExportOFX {
     public boolean exportRecords(List<TransactionClass> transactions) {
         String ofxData = this.generateData(transactions);
         String fileDir = this.path;
-        IOException ioException;
         BufferedWriter bufferedWriter;
         try {
             String ofxEncoding = Prefs.getStringPref("prefsdatatransfersfileencoding");
-            File file = new File(fileDir.substring(0, 1 + fileDir.lastIndexOf("/")));
-            if (!file.exists()) {
-                //noinspection ResultOfMethodCallIgnored
-                file.mkdirs();
+            // Ensure the directory exists
+            File file = new File(fileDir);
+            File parentDir = file.getParentFile();
+            if (parentDir != null && !parentDir.exists()) {
+                parentDir.mkdirs();
             }
 
             bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), ofxEncoding));
             try {
                 bufferedWriter.write(ofxData);
                 bufferedWriter.close();
+                String fileName = file.getName();
                 ((HandlerActivity) this.context).getHandler().
                         sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).
                                         getHandler(),
                                 5,
-                                "File '" + fileDir.substring(fileDir.lastIndexOf("/") + 1) + "' placed in Download/PocketMoneyBackup"),
+                                        "File '" + fileName + "' placed in Download/PocketMoneyBackup"),
                                 500);
                 return true;
-            } catch (IOException e2) {
-                ioException = e2;
-                Log.v("Export writing error", ioException.toString());
-                displayError(e2.toString());
+            } catch (IOException e) {
+                Log.v("Export writing error", e.toString());
+                displayError(e.toString());
                 return false;
             }
-        } catch (IOException e3) {
-            ioException = e3;
-            Log.v("Export writing error", ioException.toString());
-            displayError(e3.toString());
+        } catch (IOException e) {
+            Log.v("Export writing error", e.toString());
+            displayError(e.toString());
             return false;
         }
     }
@@ -293,7 +292,7 @@ public class ImportExportOFX {
         try {
             QIFReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(this.path)), encodingStr));
         } catch (FileNotFoundException e) {
-            displayError("Error reading QIF file: " + e.toString());
+            displayError("Error reading QIF file: " + e);
             Log.v("FileReader", "File Not Found");
             return;
         } catch (UnsupportedEncodingException e2) {
@@ -313,7 +312,7 @@ public class ImportExportOFX {
                 strBuff.append(readLine);
                 strBuff.append("\n");
             } catch (IOException e3) {
-                displayError("Error reading QIF file: " + e3.toString());
+                displayError("Error reading QIF file: " + e3);
                 e3.printStackTrace();
             }
         }

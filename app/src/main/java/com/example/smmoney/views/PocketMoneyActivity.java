@@ -65,7 +65,7 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == PasswordActivity.PASSWORD_INCORRECT) {
+        if (requestCode == 9999 && resultCode == PasswordActivity.PASSWORD_INCORRECT) {
             setResult(PasswordActivity.PASSWORD_INCORRECT);
             finish();
         }

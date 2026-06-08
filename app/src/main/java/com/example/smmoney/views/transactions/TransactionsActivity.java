@@ -44,8 +44,10 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.core.content.FileProvider;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.importexport.ImportExportCSV;
@@ -538,9 +540,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         pd.show();
         new Thread() {
             public void run() {
-                String fileDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                 ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(TransactionsActivity.this._filter);
-                ImportExportOFX exportofx = new ImportExportOFX(TransactionsActivity.this.context, fileDir + "/PocketMoneyBackup/" + (TransactionsActivity.this._filter.allAccounts() ? "SMMoney" : TransactionsActivity.this._filter.getAccount()) + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx");
+                String fileName = (TransactionsActivity.this._filter.allAccounts() ? "SMMoney" : TransactionsActivity.this._filter.getAccount()) + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
+                ImportExportOFX exportofx = new ImportExportOFX(TransactionsActivity.this.context, pmExternalPath + fileName);
                 exportofx.filter = TransactionsActivity.this._filter;
                 if (!TransactionsActivity.this._filter.allAccounts()) {
                     exportofx.accountNameBeingImported = TransactionsActivity.this._filter.getAccount();
@@ -556,7 +559,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         emailIntent.setType("text/ofx");
         Prefs.exportDB(this);
         for (String fileName : fileNames) {
-            emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + fileName));
+            Uri contentUri = FileProvider.getUriForFile(this, "com.example.fileprovider", new File(fileName));
+            emailIntent.putExtra("android.intent.extra.STREAM", contentUri);
         }
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney OFX/QFX File");
         emailIntent.putExtra("android.intent.extra.TEXT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "OFX/QFX", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
@@ -707,12 +711,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 builder.setItems(items3, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int item) {
                         Intent emailIntent = new Intent("android.intent.action.SEND");
-                        String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
+                        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                         switch (item) {
                             case EMAIL_QIF /*0*/:
                                 TransactionsActivity.this.msgEmail = 0;
                                 TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/SMMoney.qif";
+                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.qif";
                                 Log.i("****** EMAIL", "EXPORTING QIF");
                                 final String fl = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
@@ -727,7 +731,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             case EMAIL_TDF /*1*/:
                                 TransactionsActivity.this.msgEmail = 1;
                                 TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/SMMoney.txt";
+                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.txt";
                                 final String fl2 = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
                                     public void run() {
@@ -741,7 +745,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             case EMAIL_CSV /*2*/:
                                 TransactionsActivity.this.msgEmail = 2;
                                 TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "/PocketMoneyBackup/SMMoney.csv";
+                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.csv";
                                 final String fl3 = TransactionsActivity.this.emailFileLocation;
                                 new Thread() {
                                     public void run() {
@@ -949,21 +953,27 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                                 case EMAIL_QIF /*0*/:
                                     Log.i("****EMAIL", "Should Email");
                                     emailIntent.setType("text/qif");
-                                    emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
+                                    File qifFile = new File(TransactionsActivity.this.emailFileLocation);
+                                    Uri qifUri = FileProvider.getUriForFile(TransactionsActivity.this, "com.example.fileprovider", qifFile);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", qifUri);
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "QIF"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
                                     emailLauncher.launch(emailIntent);
                                     break;
                                 case EMAIL_TDF /*1*/:
                                     emailIntent.setType("text/txt");
-                                    emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
+                                    File tdfFile = new File(TransactionsActivity.this.emailFileLocation);
+                                    Uri tdfUri = FileProvider.getUriForFile(TransactionsActivity.this, "com.example.fileprovider", tdfFile);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", tdfUri);
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "TDF"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "TDF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
                                     emailLauncher.launch(emailIntent);
                                     break;
                                 case EMAIL_CSV /*2*/:
                                     emailIntent.setType("text/csv");
-                                    emailIntent.putExtra("android.intent.extra.STREAM", Uri.parse("file://" + TransactionsActivity.this.emailFileLocation));
+                                    File csvFile = new File(TransactionsActivity.this.emailFileLocation);
+                                    Uri csvUri = FileProvider.getUriForFile(TransactionsActivity.this, "com.example.fileprovider", csvFile);
+                                    emailIntent.putExtra("android.intent.extra.STREAM", csvUri);
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "CSV"));
                                     emailIntent.putExtra("android.intent.extra.TEXT", TransactionsActivity.this.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "CSV", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
                                     emailLauncher.launch(emailIntent);
