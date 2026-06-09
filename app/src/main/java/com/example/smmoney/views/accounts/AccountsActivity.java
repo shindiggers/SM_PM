@@ -333,7 +333,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.d("ACCOUNTSACTIVITY", "i =" + ContextCompat.checkSelfPermission(this, "android.permission.READ_PHONE_STATE"));
         Log.d("ACCOUNTSACTIVITY", "onCreate() has just run");
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "AccountsActivity:DoNotDimScreen");
         this.context = this;
@@ -1566,7 +1565,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     protected void showWriteExternalStoraageStatePermission(int requestCode) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1574,70 +1573,56 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 } else {
                     requestPermission(requestCode);
                 }
-            } else {
-                switch (requestCode) {
-                    case PERMISSION_EMAIL_QIF: {
-                        generateQIFForEmail();
-                        break;
-                    }
-                    case PERMISSION_EMAIL_TDF: {
-                        generateTDFForEmail();
-                        break;
-                    }
-                    case PERMISSION_EMAIL_CSV: {
-                        generateCSVForEmail();
-                        break;
-                    }
-                    case PERMISSION_EMAIL_OFX: {
-                        generateOFXForEmail();
-                        break;
-                    }
-                    case PERMISSION_EMAIL_DB: {
-                        generateBackupForEmail();
-                        break;
-                    }
-                    case PERMISSION_BACKUP_DB: {
-                        backupToSD();
-                        break;
-                    }
-                    case PERMISSION_RESTORE_DB: {
-                        restoreFromSD();
-                        break;
-                    }
-                    case PERMISSION_RESTORE_QIF: {
-                        importQIFFromSD();
-                        break;
-                    }
-                    case PERMISSION_RESTORE_TDF: {
-                        importTDFFromSD();
-                        break;
-                    }
-                    case PERMISSION_RESTORE_CSV: {
-                        importCSVFromSD();
-                        break;
-                    }
-                    case PERMISSION_RESTORE_OFX: {
-                        importOFXFromSD();
-                        break;
-                    }
-                    case PERMISSION_BACKUP_QIF: {
-                        exportQIFToSD();
-                        break;
-                    }
-                    case PERMISSION_BACKUP_TDF: {
-                        exportTDFToSD();
-                        break;
-                    }
-                    case PERMISSION_BACKUP_CSV: {
-                        exportCSVToSD();
-                        break;
-                    }
-                    case PERMISSION_BACKUP_OFX: {
-                        exportOFXToSD();
-                        break;
-                    }
-                }
+                return;
             }
+        }
+        // Proceed if permission is granted or if we are on Android 10+ (where we use legacy storage or scoped paths)
+        switch (requestCode) {
+            case PERMISSION_EMAIL_QIF:
+                generateQIFForEmail();
+                break;
+            case PERMISSION_EMAIL_TDF:
+                generateTDFForEmail();
+                break;
+            case PERMISSION_EMAIL_CSV:
+                generateCSVForEmail();
+                break;
+            case PERMISSION_EMAIL_OFX:
+                generateOFXForEmail();
+                break;
+            case PERMISSION_EMAIL_DB:
+                generateBackupForEmail();
+                break;
+            case PERMISSION_BACKUP_DB:
+                backupToSD();
+                break;
+            case PERMISSION_RESTORE_DB:
+                restoreFromSD();
+                break;
+            case PERMISSION_RESTORE_QIF:
+                importQIFFromSD();
+                break;
+            case PERMISSION_RESTORE_TDF:
+                importTDFFromSD();
+                break;
+            case PERMISSION_RESTORE_CSV:
+                importCSVFromSD();
+                break;
+            case PERMISSION_RESTORE_OFX:
+                importOFXFromSD();
+                break;
+            case PERMISSION_BACKUP_QIF:
+                exportQIFToSD();
+                break;
+            case PERMISSION_BACKUP_TDF:
+                exportTDFToSD();
+                break;
+            case PERMISSION_BACKUP_CSV:
+                exportCSVToSD();
+                break;
+            case PERMISSION_BACKUP_OFX:
+                exportOFXToSD();
+                break;
         }
     }
 

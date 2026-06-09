@@ -19,7 +19,6 @@ import java.util.Locale;
 public class SMMoney extends Application {
     public static final String TAG = "com.catamount.pocketmon";
     private static Context context;
-    private static final int MY_PERMISSIONS_REQUEST_READ_PHONE_STATE = 1;
 
     public void onCreate() {
         super.onCreate();
@@ -35,18 +34,13 @@ public class SMMoney extends Application {
     }
 
     public static String getID() {
-        String udid = null;
-        if (context.getPackageManager().hasSystemFeature("android.hardware.telephony")) {
+        String udid = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
 
-            udid = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-
-            if (udid == null || Prefs.getBooleanPref(Prefs.USINGUUID)) {
-                udid = Prefs.getUUID();
-                Prefs.setPref(Prefs.USINGUUID, true);
-            }
-            Log.i(TAG, "uuid=" + udid);
-            return udid;
+        if (udid == null || Prefs.getBooleanPref(Prefs.USINGUUID)) {
+            udid = Prefs.getUUID();
+            Prefs.setPref(Prefs.USINGUUID, true);
         }
+        Log.i(TAG, "uuid=" + udid);
         return udid;
     }
 

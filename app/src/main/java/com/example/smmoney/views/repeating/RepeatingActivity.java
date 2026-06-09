@@ -119,6 +119,12 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private TextView titleTextView;
     private WakeLock wakeLock;
 
+    private final ActivityResultLauncher<String> notificationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (!isGranted) {
+            Toast.makeText(this, "Notification permission is recommended for repeating transaction alerts", Toast.LENGTH_LONG).show();
+        }
+    });
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "RepeatingActivity:DoNotDimScreen");
@@ -128,6 +134,12 @@ public class RepeatingActivity extends PocketMoneyActivity {
         setupView();
         setTitle();
         Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                notificationPermissionLauncher.launch(android.Manifest.permission.POST_NOTIFICATIONS);
+            }
+        }
     }
 
     public void onResume() {

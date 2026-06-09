@@ -229,6 +229,14 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             }
         }
     });
+    private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
+        if (isGranted) {
+            showCameraDialog();
+        } else {
+            android.widget.Toast.makeText(this, "Camera permission is required to take photos", android.widget.Toast.LENGTH_SHORT).show();
+        }
+    });
+
     private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
         if (result) {
             try {
@@ -1715,7 +1723,11 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 includeFeeAction();
                 break;
             case MENU_CAMERA /*4*/:
-                showCameraDialog();
+                if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
+                    showCameraDialog();
+                } else {
+                    cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA);
+                }
                 break;
             case MENU_DELETE /*5*/:
                 showDeleteConfirmDialog();
