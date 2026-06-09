@@ -1,13 +1,13 @@
 package com.example.smmoney.views;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -19,79 +19,27 @@ import android.widget.EditText;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Enums;
 
 import java.text.DecimalFormatSymbols;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
+@SuppressWarnings("deprecation")
 public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, OnKeyListener {
     private final Context context;
     private EditText editText;
-    private Hashtable<String, String> keyValues = null;
-    @SuppressWarnings("unused")
-    int originalScrollViewHeight;
-    @SuppressWarnings("FieldCanBeLocal")
-    private int keyboardSize;
+    private Map<String, String> keyValues = null;
     private View toolbar;
     private boolean toolbarEnabled = true;
 
-    private static class MyScanner {
-        String amount = null;
-        final int end;
-        int index = 0;
-        char sign = '\u0000';
-        StringBuffer strBuff;
-        final char[] theChars;
-
-        MyScanner(String s) {
-            this.theChars = s.toCharArray();
-            this.end = this.theChars.length;
-        }
-
-        boolean findNext() {
-            if (this.index >= this.end) {
-                return false;
-            }
-            int i = this.index;
-            this.index = i + 1;
-            this.sign = this.theChars[i];
-            this.strBuff = new StringBuffer();
-            while (this.index != this.end) {
-                if (isDelimeter(this.theChars[this.index])) {
-                    break;
-                }
-            }
-            this.amount = this.strBuff.toString();
-            return true;
-        }
-
-        private boolean isDelimeter(char c) {
-            switch (c) {
-                case Enums.kDesktopSyncStateReceivingPhotoACK /*42*/:
-                case Enums.kDesktopSyncStatePhotoACKReceived /*43*/:
-                case Enums.kDesktopSyncStatePhotoACKProcessed /*45*/:
-                case Enums.kDesktopSyncStateSentRecentChanges /*47*/:
-                    return true;
-                default:
-                    this.strBuff.append(c);
-                    this.index++;
-                    return false;
-            }
-        }
-
-        private void firstNumber() {
-            this.strBuff = new StringBuffer();
-            if (this.index == 0 && this.index != this.end && this.theChars[this.index] == '-') {
-                this.index++;
-            }
-            while (this.index != this.end) {
-                if (isDelimeter(this.theChars[this.index])) {
-                    break;
-                }
-            }
-            this.amount = this.strBuff.toString();
-        }
+    private void init() {
+        setKeyboard(new Keyboard(this.context, R.xml.keyboard));
+        setEnabled(true);
+        setPreviewEnabled(false);
+        setOnKeyListener(this);
+        setOnKeyboardActionListener(this);
+        initKeyCodes();
     }
 
     public CurrencyKeyboard(Context context, AttributeSet attrs, int defStyle) {
@@ -106,14 +54,8 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         init();
     }
 
-    private void init() {
-        setKeyboard(new Keyboard(this.context, R.xml.keyboard));
-        setEnabled(true);
-        setPreviewEnabled(true);
-        setOnKeyListener(this);
-        setOnKeyboardActionListener(this);
-        initKeyCodes();
-        this.keyboardSize = (int) (((double) ((Activity) this.context).getWindowManager().getDefaultDisplay().getHeight()) * 0.4425d);
+    private char decimalSeparator() {
+        return new DecimalFormatSymbols().getDecimalSeparator();
     }
 
     @SuppressLint("ClickableViewAccessibility")
@@ -168,8 +110,19 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.toolbarEnabled = toolbarEnabled;
     }
 
-    private char decimalSeperator() {
-        return new DecimalFormatSymbols().getDecimalSeparator();
+    private void processMath() {
+        String newValue = null;
+        try {
+            newValue = processMath(this.editText.getText().toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (newValue != null) {
+            this.editText.setText(newValue);
+            this.editText.setSelection(this.editText.getText().toString().length());
+            return;
+        }
+        this.editText.setText("0");
     }
 
     private void show() {
@@ -196,19 +149,24 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         return isShowing;
     }
 
-    private void processMath() {
-        String newValue = null;
-        try {
-            newValue = processMath(this.editText.getText().toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        if (newValue != null) {
-            this.editText.setText(newValue);
-            this.editText.setSelection(this.editText.getText().toString().length());
-            return;
-        }
-        this.editText.setText(0);
+    private void initKeyCodes() {
+        this.keyValues = new HashMap<>();
+        this.keyValues.put(String.valueOf(7), "0");
+        this.keyValues.put(String.valueOf(8), "1");
+        this.keyValues.put(String.valueOf(9), "2");
+        this.keyValues.put(String.valueOf(10), "3");
+        this.keyValues.put(String.valueOf(11), "4");
+        this.keyValues.put(String.valueOf(12), "5");
+        this.keyValues.put(String.valueOf(13), "6");
+        this.keyValues.put(String.valueOf(14), "7");
+        this.keyValues.put(String.valueOf(15), "8");
+        this.keyValues.put(String.valueOf(16), "9");
+        this.keyValues.put(String.valueOf(81), "+");
+        this.keyValues.put(String.valueOf(69), "-");
+        this.keyValues.put(String.valueOf(76), "/");
+        this.keyValues.put(String.valueOf(17), "*");
+        this.keyValues.put(String.valueOf(55), "00");
+        this.keyValues.put(String.valueOf(56), String.valueOf(decimalSeparator()));
     }
 
     public String processMath(String currentValue) {
@@ -260,24 +218,42 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         return CurrencyExt.exchangeRateAsString(plusDouble);
     }
 
-    private void initKeyCodes() {
-        this.keyValues = new Hashtable<>();
-        this.keyValues.put(Integer.toString(7), "0");
-        this.keyValues.put(Integer.toString(8), "1");
-        this.keyValues.put(Integer.toString(9), "2");
-        this.keyValues.put(Integer.toString(10), "3");
-        this.keyValues.put(Integer.toString(11), "4");
-        this.keyValues.put(Integer.toString(12), "5");
-        this.keyValues.put(Integer.toString(13), "6");
-        this.keyValues.put(Integer.toString(14), "7");
-        this.keyValues.put(Integer.toString(15), "8");
-        this.keyValues.put(Integer.toString(16), "9");
-        this.keyValues.put(Integer.toString(81), "+");
-        this.keyValues.put(Integer.toString(69), "-");
-        this.keyValues.put(Integer.toString(76), "/");
-        this.keyValues.put(Integer.toString(17), "*");
-        this.keyValues.put(Integer.toString(55), "00");
-        this.keyValues.put(Integer.toString(56), String.valueOf(decimalSeperator()));
+    public void onKey(int primaryCode, int[] keyCodes) {
+        Editable editable = this.editText.getText();
+        int start = this.editText.getSelectionStart();
+        if (primaryCode == 70 /*'Hide/Done' key*/) {
+            hide();
+        } else if (primaryCode == 28 /*'C' key */) {
+            this.editText.setText("");
+        } else if (primaryCode == 67 /*'del' key*/) {
+            int end = this.editText.getSelectionEnd();
+            if (start > 0 || start != end) {
+                if (start == end) {
+                    editable.delete(start - 1, start);
+                } else {
+                    editable.delete(start, end);
+                }
+            }
+        } else if (primaryCode == 66 /*'Next' key*/) {
+            View v = this.editText.focusSearch(FOCUS_DOWN);
+            if (v != null) {
+                v.requestFocus();
+                ((EditText) v).setSelection(((EditText) v).getText().length());
+                if (!(((EditText) v).getInputType() == 8194)) { /*8194 = HEX2002 = numberDecimal type see https://developer.android.com/reference/android/widget/TextView.html#attr_android%3AinputType*/
+                    ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
+                }
+                return;
+            }
+            hide();
+        } else {
+            String val = this.keyValues.get(String.valueOf(primaryCode));
+            if (val != null) {
+                // Ignore operators (+, -, *, /) as they aren't supported by numberDecimal inputType
+                if (primaryCode != 81 && primaryCode != 76 && primaryCode != 17 && primaryCode != 69) {
+                    editable.insert(start, val);
+                }
+            }
+        }
     }
 
     public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -305,53 +281,61 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     public void onPress(int primaryCode) {
     }
 
-    public void onKey(int primaryCode, int[] keyCodes) {
-        if (primaryCode == 70 /*'=' key*/) {
-            processMath();
-        } else if (primaryCode == 28 /*'C' key */) {
-            this.editText.setText("");
-        } else if (primaryCode == 67 /*'del' key*/) {
-            if (this.editText.getText().toString().length() > 0) {
-                int i = this.editText.getSelectionStart();
-                String theText = this.editText.getText().toString();
-                if (i == 0) {
-                    return;
-                }
-                if (i == theText.length()) {
-                    this.editText.setText(this.editText.getText().toString().substring(0, this.editText.getText().toString().length() - 1));
-                    this.editText.setSelection(i - 1);
-                    return;
-                }
-                String firstHalf = theText.substring(0, i - 1);
-                this.editText.setText(firstHalf + theText.substring(i));
-                this.editText.setSelection(i - 1);
+    private static class MyScanner {
+        String amount = null;
+        final int end;
+        int index = 0;
+        char sign = '\u0000';
+        StringBuilder strBuff;
+        final char[] theChars;
+
+        MyScanner(String s) {
+            this.theChars = s.toCharArray();
+            this.end = this.theChars.length;
+        }
+
+        boolean findNext() {
+            if (this.index >= this.end) {
+                return false;
             }
-        } else if (primaryCode == 66 /*'Next' key*/) {
-            View v = this.editText.focusSearch(FOCUS_DOWN);
-            if (v != null) {
-                v.requestFocus();
-                ((EditText) v).setSelection(((EditText) v).getText().length());
-                if (!(((EditText) v).getInputType() == 8194)) { /*8194 = HEX2002 = numberDecimal type see https://developer.android.com/reference/android/widget/TextView.html#attr_android%3AinputType*/
-                    ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
+            int i = this.index;
+            this.index = i + 1;
+            this.sign = this.theChars[i];
+            this.strBuff = new StringBuilder();
+            while (this.index != this.end) {
+                if (isDelimiter(this.theChars[this.index])) {
+                    break;
                 }
-                return;
             }
-            hide();
-        } else {
-            int i = this.editText.getSelectionStart();
-            String theText = this.editText.getText().toString();
-            if (i == 0) {
-                if (primaryCode != 81 && primaryCode != 76 && primaryCode != 17 && primaryCode != 69) {
-                    this.editText.setText(this.keyValues.get(Integer.toString(primaryCode)) + this.editText.getText().toString());
-                    this.editText.setSelection(1);
+            this.amount = this.strBuff.toString();
+            return true;
+        }
+
+        private boolean isDelimiter(char c) {
+            switch (c) {
+                case '*':
+                case '+':
+                case '-':
+                case '/':
+                    return true;
+                default:
+                    this.strBuff.append(c);
+                    this.index++;
+                    return false;
+            }
+        }
+
+        private void firstNumber() {
+            this.strBuff = new StringBuilder();
+            if (this.index == 0 && this.index != this.end && this.theChars[this.index] == '-') {
+                this.index++;
+            }
+            while (this.index != this.end) {
+                if (isDelimiter(this.theChars[this.index])) {
+                    break;
                 }
-            } else if (i == theText.length()) {
-                this.editText.append(this.keyValues.get(Integer.toString(primaryCode)));
-            } else {
-                String firstHalf = theText.substring(0, i);
-                this.editText.setText(firstHalf + this.keyValues.get(Integer.toString(primaryCode)) + theText.substring(i));
-                this.editText.setSelection(i + 1);
             }
+            this.amount = this.strBuff.toString();
         }
     }
 }
