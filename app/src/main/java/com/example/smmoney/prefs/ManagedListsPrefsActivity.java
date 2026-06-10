@@ -9,10 +9,10 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 
-public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivityV2 {
+public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

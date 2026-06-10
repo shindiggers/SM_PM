@@ -16,13 +16,13 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 
 import java.util.GregorianCalendar;
 
-public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
+public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private Preference asOfDatePref;
     private ListPreference showAccountsListPref;
 

@@ -12,12 +12,12 @@ import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 import java.util.ArrayList;
 import java.util.Currency;
 
-public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivityV2 {
+public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference listPref;
     private CheckBoxPreference multipleCurrencyPref;
 

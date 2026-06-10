@@ -11,9 +11,9 @@ import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
+public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference sortOnListPref;
     private ListPreference sortOrderPref;
 

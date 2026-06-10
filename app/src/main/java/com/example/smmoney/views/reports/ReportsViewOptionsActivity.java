@@ -12,9 +12,9 @@ import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
+public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference chartTypePref;
     private ListPreference sortDirectionPref;
     private ListPreference sortOnPref;

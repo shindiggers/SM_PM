@@ -15,9 +15,9 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivityV2 {
+public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference sortOnPref;
     private Preference startOnDate;
 

@@ -97,8 +97,6 @@ public class PhotoReceiptsCell extends View {
                     intent.putExtra("imageName", this.imageNames.get(i));
                     if (this.context instanceof TransactionEditActivity) {
                         ((TransactionEditActivity) this.context).photoOptionLauncher.launch(intent);
-                    } else {
-                        ((Activity) this.context).startActivityForResult(intent, 37);
                     }
                     return true;
                 }

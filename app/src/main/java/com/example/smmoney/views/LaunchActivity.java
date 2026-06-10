@@ -38,18 +38,14 @@ public class LaunchActivity extends AppCompatActivity {
         }
     }
 
+    private boolean alreadyLaunched = false;
+
     public void onResume() {
         super.onResume();
-        if (!Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
-            Log.d("LAUNCHACTIVITY", "onResume - !Prefs.getBooleanPref(Prefs.SHUTTINGDOWN) = FALSE");
-            boolean z;
+        if (!alreadyLaunched && !Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
+            alreadyLaunched = true;
+            Log.d("LAUNCHACTIVITY", "onResume - launching AccountsActivity");
             Intent i = new Intent(this, AccountsActivity.class);
-            String pass = Prefs.getStringPref(Prefs.PASSWORD);
-            Log.d("LAUNCHACTIVITY", "String pass = " + pass);
-            String str = "showPasswordScreen";
-            z = pass != null && pass.length() > 0;
-            Log.d("LAUNCHACTIVITY", "Show passowrd screen var 'z' = " + z);
-            i.putExtra(str, z);
             mainLauncher.launch(i);
         }
     }

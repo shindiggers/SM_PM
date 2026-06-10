@@ -25,8 +25,8 @@ public class PocketMoneyPreferenceFragment extends PreferenceFragmentCompat {
         if (xmlResId != 0) {
             setPreferencesFromResource(xmlResId, rootKey);
         }
-        if (getActivity() instanceof PocketMoneyPreferenceActivityV2) {
-            ((PocketMoneyPreferenceActivityV2) getActivity()).onPreferencesCreated(this);
+        if (getActivity() instanceof PocketMoneyPreferenceActivity) {
+            ((PocketMoneyPreferenceActivity) getActivity()).onPreferencesCreated(this);
         }
     }
 

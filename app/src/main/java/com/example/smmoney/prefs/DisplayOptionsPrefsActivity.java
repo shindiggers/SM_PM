@@ -15,9 +15,9 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.LaunchActivity;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivityV2 {
+public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

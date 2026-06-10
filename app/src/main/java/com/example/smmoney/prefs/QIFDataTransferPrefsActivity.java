@@ -10,9 +10,9 @@ import com.example.smmoney.R;
 import com.example.smmoney.importexport.ImportExportQIF;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
-import com.example.smmoney.views.PocketMoneyPreferenceActivityV2;
+import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivityV2 {
+public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity {
     private ListPreference dateFormatListPref;
     private ListPreference dateSeparatorListPref;
     private ListPreference numberFormatListPref;
