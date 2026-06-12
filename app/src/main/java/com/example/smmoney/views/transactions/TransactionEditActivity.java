@@ -445,7 +445,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     @Override
     public boolean onSupportNavigateUp() {
         Log.d(TAG, "onSupportNavigateUp() called");
-        onBackPressed();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 
@@ -764,32 +764,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         button.setTextColor(-1);
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TransactionEditActivity.this.getCells();
-                TransactionEditActivity.this.deleteDeletedImages();
-                if (TransactionEditActivity.this.accountTextView.getText() == null || TransactionEditActivity.this.accountTextView.getText().toString().length() == 0) {
-                    TransactionEditActivity.this.showNeedAccountDialog();
-                } else if (TransactionEditActivity.this.transaction.isRepeatingTransaction && (TransactionEditActivity.this.repeatingTransaction == null || !TransactionEditActivity.this.repeatingTransaction.isRepeating())) {
-                    TransactionEditActivity.this.showNeedRepeatingDialog();
-                } else if (TransactionEditActivity.this.transaction.transactionID == 0 || TransactionEditActivity.this.transaction.isRepeatingTransaction || TransactionEditActivity.this.repeatingTransaction.repeatingID <= 0 || !TransactionEditActivity.this.repeatingTransaction.isRepeating() || TransactionEditActivity.this.dateChanged != 0) {
-                    TransactionEditActivity.this.saveAction();
-                } else {
-                    Builder b = new Builder(TransactionEditActivity.this);
-                    b.setTitle("Edit");
-                    b.setMessage("Change the information of the transaction and repeating event, or change the information of only this transaction?");
-                    b.setPositiveButton("Both", new OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeUpdateRepeating /*2*/;
-                            TransactionEditActivity.this.saveAction();
-                        }
-                    });
-                    b.setNegativeButton("This item only", new OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeSeparateTransactionFromRepeating /*1*/;
-                            TransactionEditActivity.this.saveAction();
-                        }
-                    });
-                    b.create().show();
-                }
+                TransactionEditActivity.this.saveButtonAction();
             }
         });
         button = findViewById(R.id.cancel_button);
@@ -820,6 +795,35 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.categoryEditText.setKeyListener(new MyKeyListener(this.categoryEditText.getKeyListener(), EDITTEXT_CATEGORY /*2*/));
         this.idEditText.setKeyListener(new MyKeyListener(this.idEditText.getKeyListener(), EDITTEXT_ID /*4*/));
         this.classEditText.setKeyListener(new MyKeyListener(this.classEditText.getKeyListener(), EDITTEXT_CLASS /*5*/));
+    }
+
+    private void saveButtonAction() {
+        getCells();
+        deleteDeletedImages();
+        if (this.accountTextView.getText() == null || this.accountTextView.getText().toString().length() == 0) {
+            showNeedAccountDialog();
+        } else if (this.transaction.isRepeatingTransaction && (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating())) {
+            showNeedRepeatingDialog();
+        } else if (this.transaction.transactionID == 0 || this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID <= 0 || !this.repeatingTransaction.isRepeating() || this.dateChanged != 0) {
+            saveAction();
+        } else {
+            Builder b = new Builder(this);
+            b.setTitle(Locales.kLOC_GENERAL_EDIT);
+            b.setMessage(Locales.kLOC_EDIT_TRANSACTION_CHANGE_INFO);
+            b.setPositiveButton(Locales.kLOC_EDIT_TRANSACTION_CHANGE_BOTH, new OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeUpdateRepeating /*2*/;
+                    TransactionEditActivity.this.saveAction();
+                }
+            });
+            b.setNegativeButton(Locales.kLOC_EDIT_TRANSACTION_CHANGE_THIS, new OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeSeparateTransactionFromRepeating /*1*/;
+                    TransactionEditActivity.this.saveAction();
+                }
+            });
+            b.create().show();
+        }
     }
 
     private void saveAction() {
@@ -1705,13 +1709,17 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             menu.add(0, MENU_CAMERA /*4*/, 0, "Camera").setIcon(R.drawable.ic_arrow_drop_down_circle);
         }
         menu.add(0, MENU_DELETE /*5*/, 0, Locales.kLOC_GENERAL_DELETE).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        MenuItem item = menu.add(0, MENU_SAVE /*6*/, 0, "Save");
+        MenuItem item = menu.add(0, MENU_SAVE /*6*/, 0, Locales.kLOC_GENERAL_SAVE);
         item.setIcon(R.drawable.ic_save_white_24dp);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS /*2*/);
         return true;
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            getOnBackPressedDispatcher().onBackPressed();
+            return true;
+        }
         switch (item.getItemId()) {
             case MENU_SPLIT /*1*/:
                 splitsAction();
@@ -1734,39 +1742,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 break;
             case MENU_SAVE /*6*/:
                 Log.d(TAG, "onOptionsItemSelected() called with: item = [" + item + "] - i.e. MENU_SAVE");
-                getCells();
-                deleteDeletedImages();
-                if (this.accountTextView.getText() != null && this.accountTextView.getText().toString().length() != 0) {
-                    if (!this.transaction.isRepeatingTransaction || (this.repeatingTransaction != null && this.repeatingTransaction.isRepeating())) {
-                        if (this.transaction.transactionID != 0 && !this.transaction.isRepeatingTransaction && this.repeatingTransaction.repeatingID > 0 && this.repeatingTransaction.isRepeating() && this.dateChanged == 0) {
-                            Builder b = new Builder(this);
-                            b.setTitle("Edit");
-                            b.setMessage("Change the information of the transaction and repeating event, or change the information of only this transaction?");
-                            b.setPositiveButton("Both", new OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeUpdateRepeating /*2*/;
-                                    TransactionEditActivity.this.saveAction();
-                                }
-                            });
-                            b.setNegativeButton("This item only", new OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    TransactionEditActivity.this.repeatingChanged = Enums.RepeatingChangeTypeSeparateTransactionFromRepeating /*1*/;
-                                    TransactionEditActivity.this.saveAction();
-                                }
-                            });
-                            b.create().show();
-                            break;
-                        }
-                        saveAction();
-                        break;
-                    }
-                    showNeedRepeatingDialog();
-                    break;
-                }
-                showNeedAccountDialog();
+                saveButtonAction();
                 break;
         }
-        return false;
+        return super.onOptionsItemSelected(item);
     }
 
     private View.OnClickListener getBtnClickListener() {

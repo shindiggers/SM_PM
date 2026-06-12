@@ -1,68 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <TextView
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:nextFocusRight="@+id/save_button"
-            android:nextFocusDown="@+id/accountname"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/accounts_edi_cancel"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/accounts_edit_title"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            tools:text="Account Info" />
-
-        <TextView
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:nextFocusLeft="@+id/cancel_button"
-            android:nextFocusDown="@+id/accountname"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/accounts_edit_save"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-    </FrameLayout>
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
         android:fillViewport="true"
         android:orientation="vertical"
         android:scrollbarStyle="insideOverlay">

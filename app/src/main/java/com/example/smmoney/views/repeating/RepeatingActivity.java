@@ -134,6 +134,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
         setupView();
         setTitle();
         Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.POST_NOTIFICATIONS) != android.content.pm.PackageManager.PERMISSION_GRANTED) {
@@ -241,6 +242,12 @@ public class RepeatingActivity extends PocketMoneyActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
         menu.add(0, MENU_PROCESS, 0, Locales.kLOC_REPEATING_PROCESSTODATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        return true;
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        finish();
         return true;
     }
 

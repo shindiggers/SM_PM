@@ -1,64 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="10dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/kLOC_GENERAL_CANCEL"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/transaction_edit_save"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_weight="1.0"
         android:fadingEdge="vertical"
         android:fillViewport="true"
@@ -72,16 +22,11 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:orientation="vertical"
-                android:padding="0dp">
+                android:layout_height="40dp">
 
                 <com.example.makeramen.segmented.SegmentedRadioGroup
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
                     android:orientation="horizontal">
 
                     <RadioButton
@@ -91,9 +36,7 @@
                         android:layout_weight="1.0"
                         android:button="@null"
                         android:checked="true"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
+                        android:gravity="center"
                         android:text="@string/kLOC_GENERAL_WITHDRAWAL"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -104,9 +47,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1.0"
                         android:button="@null"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
+                        android:gravity="center"
                         android:text="@string/kLOC_GENERAL_DEPOSIT"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -117,9 +58,7 @@
                         android:layout_height="40dp"
                         android:layout_weight="1.0"
                         android:button="@null"
-                        android:gravity="center_vertical|center_horizontal"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
+                        android:gravity="center"
                         android:text="@string/kLOC_GENERAL_TRANSFER"
                         android:textAppearance="?android:textAppearanceMedium"
                         android:textColor="@color/radio_text_color_unchecked" />
@@ -140,7 +79,7 @@
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -181,7 +120,7 @@
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -221,7 +160,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -277,7 +216,7 @@
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -317,7 +256,7 @@
                 android:layout_height="wrap_content"
                 android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -357,14 +296,12 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+        android:layout_height="wrap_content">
 
         <FrameLayout
             android:id="@+id/keyboard_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
             android:background="#000000"
             android:visibility="gone" />
 

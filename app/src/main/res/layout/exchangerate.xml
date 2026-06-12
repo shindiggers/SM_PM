@@ -1,37 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <!--            android:textAppearance="@color/black_theme_text"-->
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginStart="16dp"
-            android:gravity="start|center_vertical"
-            android:text="@string/title"
-            android:textStyle="bold"
-            app:fontFamily="sans-serif-medium" />
-
-    </FrameLayout>
-
     <LinearLayout
         android:id="@+id/linearLayout1"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_weight="1.0"
         android:orientation="vertical">
 
@@ -45,7 +23,6 @@
                 android:id="@+id/FrameLayout01"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
@@ -54,7 +31,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="5dp"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
 
                 <EditText
@@ -66,10 +42,7 @@
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
-
-                    android:nextFocusDown="@id/exchange_rate_edit_text"
-                    android:text=""
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:nextFocusDown="@id/exchange_rate_edit_text" />
 
                 <TextView
                     android:id="@+id/foreign_text_view"
@@ -93,7 +66,6 @@
                 android:id="@+id/FrameLayout02"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
@@ -102,7 +74,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="5dp"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE" />
 
                 <EditText
@@ -114,9 +85,7 @@
                     android:hint="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
-                    android:nextFocusDown="@id/account_amount_edit_text"
-                    android:text="@string/accounts_view_net_worth"
-                    android:textIsSelectable="true" />
+                    android:nextFocusDown="@id/account_amount_edit_text" />
 
                 <Button
                     android:id="@+id/invert_button"
@@ -132,7 +101,6 @@
                 android:id="@+id/FrameLayout03"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1.0"
                 android:paddingStart="16dp"
                 android:paddingEnd="16dp">
 
@@ -159,8 +127,7 @@
                     android:layout_marginStart="120dp"
                     android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
                     android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:text="" />
+                    android:inputType="numberDecimal" />
 
             </FrameLayout>
 
@@ -226,9 +193,8 @@
 
     <com.example.smmoney.views.CurrencyKeyboard
         android:id="@+id/keyboardView"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:focusable="true"
         android:focusableInTouchMode="true"
         android:visibility="gone"

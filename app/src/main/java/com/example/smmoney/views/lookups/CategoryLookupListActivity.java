@@ -1,8 +1,8 @@
 package com.example.smmoney.views.lookups;
 
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -20,6 +20,8 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+
+import androidx.appcompat.app.AlertDialog;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
@@ -45,8 +47,6 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
     private LayoutInflater mInflater;
     private String payee;
     private boolean progUpdate = false;
-    @SuppressWarnings("FieldCanBeLocal")
-    private TextView titleTextView;
 
     private class CatPayeeRowAdapter extends BaseAdapter {
         List<String> allCategories;
@@ -124,18 +124,21 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         this.mInflater = LayoutInflater.from(this);
         setResult(0);
         setupView();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(this.isCategoryLookup ? Locales.kLOC_GENERAL_CATEGORY_TITLE : Locales.kLOC_GENERAL_PAYEE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 
     private void setupView() {
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setText(this.isCategoryLookup ? Locales.kLOC_GENERAL_CATEGORY_TITLE : Locales.kLOC_GENERAL_PAYEE);
-        this.titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                CategoryLookupListActivity.this.openOptionsMenu();
-            }
-        });
-        findViewById(R.id.the_tool_bar).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.adapter = new CatPayeeRowAdapter();
         this.listView = findViewById(R.id.listView);
         this.listView.setAdapter(this.adapter);
@@ -186,13 +189,13 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
         final String originalString;
-        Builder alert;
+        AlertDialog.Builder alert;
         final EditText input;
         switch (item.getItemId()) {
             case CMENU_EDIT /*1*/:
                 // int theItem = this.currentType; ** Coded out as inspection showed theItem was never used
                 originalString = this.adapter.getItem(info.position);
-                alert = new Builder(this);
+                alert = new AlertDialog.Builder(this);
                 input = new EditText(this);
                 input.setText(originalString);
                 alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
@@ -200,7 +203,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         final String value = input.getText().toString().trim();
-                        Builder b = new Builder(CategoryLookupListActivity.this);
+                        AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this);
                         b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                         b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
                         CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
@@ -226,6 +229,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                                 CategoryLookupListActivity.this.reloadData();
                             }
                         });
+                        b.create().show();
                     }
                 });
                 alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
@@ -247,7 +251,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 return true;
             case CMENU_SUBCATEGORY /*4*/:
                 originalString = this.adapter.getItem(info.position);
-                alert = new Builder(this);
+                alert = new AlertDialog.Builder(this);
                 input = new EditText(this);
                 alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
                 alert.setView(input);

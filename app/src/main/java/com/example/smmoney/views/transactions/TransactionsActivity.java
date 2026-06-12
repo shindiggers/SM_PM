@@ -32,7 +32,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.RadioButton;
@@ -252,7 +251,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 
@@ -291,14 +290,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.allButton = aView.findViewById(R.id.allbutton);
         ((RadioGroup) aView).setOnCheckedChangeListener(getRadioChangedListener());
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        layout.findViewById(R.id.add_button).setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                TransactionsActivity.this.newTransaction();
-            }
-        });
-        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
     }
 
     private void toggleSearch() {

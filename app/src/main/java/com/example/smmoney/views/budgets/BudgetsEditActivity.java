@@ -5,11 +5,13 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -48,6 +50,7 @@ import java.util.GregorianCalendar;
 import java.util.Iterator;
 
 public class BudgetsEditActivity extends PocketMoneyActivity {
+    private static final int MENU_SAVE = 1;
     private final int CMENU_DELETE = 1;
 
     private final ActivityResultLauncher<Intent> lookupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -113,8 +116,35 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.deletedCategoryBudgetItems = new ArrayList<>();
         setupButtons();
         loadCells();
-        setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
-        getSupportActionBar().hide();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_BUDGETS_EDIT_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        item.setIcon(R.drawable.ic_save_white_24dp);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_SAVE) {
+            saveAction();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     protected void onResume() {
@@ -125,8 +155,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private void setupButtons() {
         ArrayList<View> theViews = new ArrayList<>();
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((TextView) findViewById(R.id.title_text_view)).setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.outterView = findViewById(R.id.outter_layout);
         View aView = this.outterView.findViewById(R.id.categorybutton);
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());

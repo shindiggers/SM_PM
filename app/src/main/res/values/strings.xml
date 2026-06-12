@@ -60,6 +60,7 @@
     <string name="kLOC_GENERAL_DELETE">Delete</string>
     <string name="kLOC_GENERAL_EDIT">Edit</string>
     <string name="kLOC_GENERAL_DONE">Done</string>
+    <string name="kLOC_GENERAL_SAVE">Save</string>
     <string name="kLOC_GENERAL_TOOLS">Tools</string>
     <string name="kLOC_GENERAL_DATE">Date</string>
     <string name="kLOC_GENERAL_TIME">Time</string>
@@ -499,6 +500,7 @@
     <string name="kLOC_INAPPPURCHASES_THEMESTITLE">Themes</string>
     <string name="kLOC_INAPPPURCHASES_THEMESDESCRIPTION">Enable Themes for a wider variety of colors and fonts. Color themes include Money Green, Silver Bullion, Royal Purple, and Coffee.</string>
     <string name="kLOC_INAPPPURCHASES_PHOTOTITLE">Photo Receipts</string>
+    <string name="kLOC_PHOTO_RECEIPT_TITLE">Photo Receipt</string>
     <string name="kLOC_INAPPPURCHASES_PHOTODESCRIPTION">Never lose a receipt again. Attach up to 3 photos to each transaction. Store the receipt, warranty, image of the purchase, or whatever.</string>
     <string name="kLOC_INAPPPURCHASES_SYNCSERVERTITLE">Sync Server</string>
     <string name="kLOC_INAPPPURCHASES_SYNCSERVERDESCRIPTION">Husbands &amp; wives keep your PocketMoney data in sync, or keep your iPhone in sync with your iPad. Buy now to enable the PM Sync Server on your iOS device.</string>

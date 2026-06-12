@@ -23,7 +23,7 @@ public class MainPrefsActivity extends PocketMoneyActivity {
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.currentTintColor()));
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
     }

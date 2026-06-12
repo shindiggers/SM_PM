@@ -1,8 +1,8 @@
 package com.example.smmoney.misc;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,10 +12,11 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
 import com.example.smmoney.R;
+import com.example.smmoney.views.PocketMoneyActivity;
 
 import java.util.Objects;
 
-public class NoteEditor extends Activity {
+public class NoteEditor extends PocketMoneyActivity {
     private static final int DELETE_ID = 1;
     private static final String ORIGINAL_CONTENT = "origContent";
     private static final int SAVE_ID = 2;
@@ -31,10 +32,25 @@ public class NoteEditor extends Activity {
         }
         setContentView(R.layout.note_editor);
         mText = findViewById(R.id.note_editor_edittext);
-        mText.setTextColor(-16777216);
+        mText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        findViewById(R.id.note_editor_layout).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        
         if (savedInstanceState != null) {
             this.mOriginalContent = savedInstanceState.getString(ORIGINAL_CONTENT);
         }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_ACCOUNT_NOTES_LABEL);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        doneEditing();
+        finish();
+        return true;
     }
 
     protected void onResume() {
@@ -43,7 +59,8 @@ public class NoteEditor extends Activity {
         mText.postDelayed(new ShowKeyboard(), 300); // focus mText and show keyboard
     }
 
-    protected void onSaveInstanceState(Bundle outState) {
+    protected void onSaveInstanceState(@androidx.annotation.NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
         outState.putString(ORIGINAL_CONTENT, mOriginalContent);
     }
 

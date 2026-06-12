@@ -2,6 +2,7 @@ package com.example.smmoney.views.accounts;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewGroup;
@@ -273,11 +274,22 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounttypeicongrid);
-        setTitle("");
         GridView gridview = findViewById(R.id.gridview);
         gridview.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         gridview.setOnItemClickListener(getClickListener());
         gridview.setAdapter(new ImageAdapter(this));
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("Select Icon");
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 
     private OnItemClickListener getClickListener() {

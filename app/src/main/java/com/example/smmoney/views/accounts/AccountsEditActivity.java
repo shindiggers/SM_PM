@@ -1,13 +1,14 @@
 package com.example.smmoney.views.accounts;
 
-import android.app.Activity;
-import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -19,6 +20,8 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -41,9 +44,9 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Locale;
-import java.util.Objects;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
+    private static final int MENU_SAVE = 1;
     public final int NOTE_EDIT_BUTTON = 3;
 
     private final ActivityResultLauncher<Intent> typeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -86,7 +89,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private EditText bankID;
     private EditText checkNumber;
     private TextView currency;
-    private Activity currentActivity;
     private EditText exchangeRate;
     private EditText expires;
     private EditText fee;
@@ -99,28 +101,58 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private EditText limit;
     private TextView notes;
     private EditText phone;
-    private TextView titleTextView;
     private CheckBox totalworth;
     private TextView type;
     private EditText website;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.currentActivity = this;
         setContentView(R.layout.accounts_edit);
-        this.account = (AccountClass) Objects.requireNonNull(getIntent().getExtras()).get("Account");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            this.account = getIntent().getSerializableExtra("Account", AccountClass.class);
+        } else {
+            this.account = (AccountClass) getIntent().getSerializableExtra("Account");
+        }
         loadInfo();
         setupButtons();
-        setTitle();
-        Objects.requireNonNull(getSupportActionBar()).hide();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_ACCOUNT_INFO_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE)
+                .setIcon(R.drawable.ic_save_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_SAVE) {
+            save();
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void onResume() {
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO)) {
-            Builder alert = new Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage(Locales.kLOC_TIP_ACCOUNT_INFO);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int whichButton) {
                     Prefs.setPref(Prefs.HINT_ACCOUNT_INFO, true);
                     dialog.dismiss();
@@ -143,7 +175,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         ((View) this.currency.getParent()).setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-                new Builder(AccountsEditActivity.this).setItems(currencyCodes, new OnClickListener() {
+                new AlertDialog.Builder(AccountsEditActivity.this).setItems(currencyCodes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, final int item) {
                         AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
                         dialog.dismiss();
@@ -156,28 +188,10 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 }).show();
             }
         });
-        TextView button = findViewById(R.id.save_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AccountsEditActivity.this.save();
-                AccountsEditActivity.this.finish();
-            }
-        });
-        button = findViewById(R.id.cancel_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AccountsEditActivity.this.copyDB();
-                AccountsEditActivity.this.finish();
-            }
-        });
+
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) sv.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
 
         ArrayList<View> theViews = new ArrayList<>();
 
@@ -281,13 +295,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-    }
-
-    private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_ACCOUNT_INFO_TITLE/*"Account Info"*/);
     }
 
     private void loadInfo() {
@@ -334,7 +341,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         exchangeRateSuffix.setText(String.format(getString(R.string.equalscurrencysymbol), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
         this.keepTheChangeAccountTextView.setText(this.account.getKeepTheChangeAccount() == null ? "None" : this.account.getKeepTheChangeAccount());
         this.keepTheChangeRoundToEditText.setText(this.account.keepChangeRoundToAsString());
-        this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this.currentActivity);
+        this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this);
         this.icon.setImageResource(this.iconResourceID);
     }
 
@@ -344,7 +351,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             this.account.setTotalWorth(this.totalworth.isChecked());
             this.account.setTypeFromString(this.type.getText().toString());
             try {
-                this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this.currentActivity);
+                this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -390,7 +397,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                     AccountsEditActivity.this.exchangeRate.setText("1");
                     return;
                 }
-                Locale current = getResources().getConfiguration().locale;
+                Locale current = ConfigurationCompat.getLocales(getResources().getConfiguration()).get(0);
 
                 AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
                 AccountsEditActivity.this.exchangeRate.invalidate();
@@ -404,20 +411,20 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 Intent i;
                 switch ((Integer) view.getTag()) {
                     case SplitsActivity.RESULT_CHANGED /*1*/:
-                        i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
+                        i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
                         i.putExtra("type", 1);
                         typeLauncher.launch(i);
                         return;
                     case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
-                        i = new Intent(AccountsEditActivity.this.currentActivity, LookupsListActivity.class);
+                        i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
                         i.putExtra("type", 18);
                         ktcLauncher.launch(i);
                         return;
                     case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                        iconLauncher.launch(new Intent(AccountsEditActivity.this.currentActivity, AccountTypeIconGridActivity.class));
+                        iconLauncher.launch(new Intent(AccountsEditActivity.this, AccountTypeIconGridActivity.class));
                         return;
                     case NOTE_EDIT_BUTTON /*3*/:
-                        i = new Intent(AccountsEditActivity.this.currentActivity, NoteEditor.class);
+                        i = new Intent(AccountsEditActivity.this, NoteEditor.class);
                         i.putExtra("note", AccountsEditActivity.this.account.getNotes());
                         noteLauncher.launch(i);
                         return;

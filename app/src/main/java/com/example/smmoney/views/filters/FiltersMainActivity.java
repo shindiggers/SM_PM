@@ -76,7 +76,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        getOnBackPressedDispatcher().onBackPressed();
         return true;
     }
 

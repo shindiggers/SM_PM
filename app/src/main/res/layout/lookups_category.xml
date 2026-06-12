@@ -1,41 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="8dp"
-            android:gravity="center_vertical"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="normal" />
-
-    </FrameLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ListView
         android:id="@+id/listView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
-        android:layout_marginBottom="30dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1" />
 
     <com.example.makeramen.segmented.SegmentedRadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|center_horizontal"
+        android:layout_gravity="center_horizontal"
         android:orientation="horizontal">
 
         <RadioButton
@@ -67,4 +46,4 @@
 
     </com.example.makeramen.segmented.SegmentedRadioGroup>
 
-</FrameLayout>
+</LinearLayout>

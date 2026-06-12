@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -26,16 +27,28 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
     private final int DELETED = 1;
     private String imageName;
 
+    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.imageName = Objects.requireNonNull(getIntent().getExtras()).getString("imageName");
         setContentView(R.layout.photo_receipt_option);
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_PHOTO_RECEIPT_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
         setupView();
     }
 
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
     private void setupView() {
-        ((TextView) findViewById(R.id.title_text_view)).setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         findViewById(R.id.bottom_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         ImageView imageView = findViewById(R.id.image);
 

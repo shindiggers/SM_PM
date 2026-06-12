@@ -3,9 +3,9 @@ package com.example.smmoney.views;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -14,6 +14,7 @@ import android.widget.TextView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
+import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 import java.util.Calendar;
@@ -30,18 +31,24 @@ public class FromToDateActivity extends PocketMoneyActivity {
     private Button leftTodayButton;
     private Button rightNoneButton;
     private Button rightTodayButton;
-    private TextView titleTextView;
     private Button toDate;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(LayoutInflater.from(this).inflate(R.layout.fromtodate, null));
+        setContentView(R.layout.fromtodate);
         setupView();
-        setTitle("SMMoney");
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_FILTER_DATES_CUSTOM);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
+    @Override
+    public boolean onSupportNavigateUp() {
+        processDates();
+        return true;
     }
 
     private void setupView() {
@@ -58,13 +65,12 @@ public class FromToDateActivity extends PocketMoneyActivity {
         this.leftTodayButton.setOnClickListener(getOnTodayClickListener());
         this.rightTodayButton.setOnClickListener(getOnTodayClickListener());
         Bundle bundle = getIntent().getExtras();
-        this.toDate.setText(bundle.getString("ToDate"));
-        this.fromDate.setText(bundle.getString("FromDate"));
+        if (bundle != null) {
+            this.toDate.setText(bundle.getString("ToDate"));
+            this.fromDate.setText(bundle.getString("FromDate"));
+        }
         ((TextView) findViewById(R.id.arrow_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
     private void processDates() {

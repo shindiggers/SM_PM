@@ -1,66 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:nextFocusRight="@+id/save_button"
-            android:nextFocusDown="@+id/withdrawalbutton"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/kLOC_GENERAL_CANCEL"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/transaction_edit_save"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-    </FrameLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
         android:orientation="vertical"
         android:scrollbarStyle="insideInset">
@@ -72,8 +21,7 @@
 
             <FrameLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:layout_height="wrap_content">
 
                 <TextView
                     android:id="@+id/filter_name_label"
@@ -91,7 +39,7 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_FILTER_NAME"
                     android:importantForAutofill="no"
-                    android:inputType=""
+                    android:inputType="textCapSentences"
                     android:singleLine="true" />
 
             </FrameLayout>
@@ -104,8 +52,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_transaction_type_label"
@@ -136,8 +83,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_accounts_label"
@@ -168,8 +114,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_dates_label"
@@ -200,8 +145,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_payees_label"
@@ -219,7 +163,7 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_PAYEE_TITLE"
                     android:importantForAutofill="no"
-                    android:inputType=""
+                    android:inputType="textCapWords"
                     android:singleLine="true" />
 
                 <ImageView
@@ -236,8 +180,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_ids_label"
@@ -255,7 +198,7 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_ID_TITLE"
                     android:importantForAutofill="no"
-                    android:inputType=""
+                    android:inputType="textCapWords"
                     android:singleLine="true" />
 
                 <ImageView
@@ -272,8 +215,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_cleared_label"
@@ -304,8 +246,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_category_label"
@@ -323,7 +264,7 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_CATEGORY"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType="textCapWords" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -339,8 +280,7 @@
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:orientation="vertical">
+                android:background="@drawable/list_selector_bg_blue_alt">
 
                 <TextView
                     android:id="@+id/filter_classes_label"
@@ -358,7 +298,7 @@
                     android:layout_marginStart="100dp"
                     android:hint="@string/kLOC_GENERAL_CLASS"
                     android:importantForAutofill="no"
-                    android:inputType="" />
+                    android:inputType="textCapWords" />
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -379,9 +319,8 @@
         android:id="@+id/keyboard_toolbar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="bottom"
         android:background="#000000"
         android:visibility="gone"
         tools:visibility="visible" />
 
-</FrameLayout>
+</LinearLayout>

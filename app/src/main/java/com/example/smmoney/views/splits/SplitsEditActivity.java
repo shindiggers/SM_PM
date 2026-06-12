@@ -2,10 +2,13 @@ package com.example.smmoney.views.splits;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.method.KeyListener;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
@@ -43,6 +46,7 @@ import com.example.smmoney.views.lookups.LookupsListActivity;
 import java.util.ArrayList;
 
 public class SplitsEditActivity extends PocketMoneyActivity {
+    private static final int MENU_SAVE = 1;
     @SuppressWarnings("FieldCanBeLocal")
     private final int EDITSPLIT_AMOUNT = 2;
     @SuppressWarnings("FieldCanBeLocal")
@@ -139,8 +143,48 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         setContentView(R.layout.split_edit);
         setupButtons();
         loadCells();
-        setTitle(Locales.kLOC_EDIT_SPLIT_TITLE);
-        getSupportActionBar().hide();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLIT_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        item.setIcon(R.drawable.ic_save_white_24dp);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_SAVE) {
+            handleSave();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void handleSave() {
+        save();
+        editTextDidFinishChanging(2);
+        Intent i = new Intent();
+        if (this.splitIndex != -1) {
+            i.putExtra("SplitIndex", this.splitIndex);
+        }
+        i.putExtra("Split", this.split);
+        i.putExtra("transaction", this.transaction);
+        setResult(1, i);
+        finish();
     }
 
     public void onResume() {

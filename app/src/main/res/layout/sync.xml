@@ -1,34 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/outter"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
     <com.example.makeramen.segmented.SegmentedRadioGroup
         android:id="@+id/radiogroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/the_tool_bar"
-        android:layout_centerHorizontal="true"
         android:orientation="horizontal">
 
         <RadioButton
@@ -38,7 +18,7 @@
             android:layout_weight="1.0"
             android:button="@null"
             android:checked="true"
-            android:gravity="center_vertical|center_horizontal"
+            android:gravity="center"
             android:minWidth="40dp"
             android:minHeight="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_CLIENT"
@@ -50,7 +30,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1.0"
             android:button="@null"
-            android:gravity="center_vertical|center_horizontal"
+            android:gravity="center"
             android:minWidth="40dp"
             android:minHeight="40dp"
             android:text="@string/kLOC_DESKTOPSYNC_SERVER"
@@ -60,23 +40,19 @@
 
     <RelativeLayout
         android:id="@+id/addressview"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/radiogroup"
-        android:layout_centerHorizontal="true">
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
         <EditText
             android:id="@+id/ipaddress"
             android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
-            android:layout_marginStart="10dp"
             android:layout_marginEnd="15dp"
             android:hint="@string/ip_address_placeholder"
             android:importantForAutofill="no"
             android:inputType="text"
-            android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt" />
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/iplabel"
@@ -84,6 +60,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/ipaddress"
             android:layout_toStartOf="@+id/ipaddress"
+            android:layout_marginEnd="10dp"
             android:text="@string/kLOC_FILETRANSFERS_SERVERIP" />
 
         <TextView
@@ -91,8 +68,8 @@
             android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/ipaddress"
-            android:layout_marginStart="20dp"
-            android:layout_toEndOf="@+id/iplabel"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
             android:singleLine="true"
             android:text="@string/ip_address_placeholder"
             android:visibility="gone" />
@@ -102,12 +79,12 @@
             android:layout_width="165dp"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ipaddress"
-            android:layout_alignStart="@+id/ipaddress"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="15dp"
             android:hint="@string/kLOC_FILETRANSFERS_PORT"
             android:importantForAutofill="no"
-            android:inputType=""
-            android:singleLine="true"
-            android:textColorHint="@color/black_theme_text_alt" />
+            android:inputType="number"
+            android:singleLine="true" />
 
         <TextView
             android:id="@+id/portlabel"
@@ -122,8 +99,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/port"
-            android:layout_centerHorizontal="true"
-            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
             android:text="@string/kLOC_DESKTOPSYNC_DIRECTIONS" />
 
         <Button
@@ -132,6 +109,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/instructions"
             android:layout_centerHorizontal="true"
+            android:layout_marginTop="10dp"
             android:text="@string/kLOC_DESKTOPSYNC_SYNC" />
 
         <TextView
@@ -139,7 +117,8 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/syncbutton"
-            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_marginTop="10dp"
+            android:padding="10dp"
             android:text="@string/kLOC_DESKTOPSYNC_WAITINGSERVERID" />
 
         <ProgressBar
@@ -148,6 +127,7 @@
             android:layout_width="match_parent"
             android:layout_height="20dp"
             android:layout_below="@+id/status"
+            android:layout_margin="10dp"
             android:max="100" />
 
         <ProgressBar
@@ -174,4 +154,4 @@
 
     </RelativeLayout>
 
-</RelativeLayout>
+</LinearLayout>

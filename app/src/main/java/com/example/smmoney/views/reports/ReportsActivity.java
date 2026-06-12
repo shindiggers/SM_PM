@@ -2,6 +2,7 @@ package com.example.smmoney.views.reports;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -35,6 +36,7 @@ import com.example.smmoney.views.charts.items.ReportChartItem;
 import com.example.smmoney.views.charts.views.ChartBarView;
 import com.example.smmoney.views.charts.views.ChartPieView;
 import com.example.smmoney.views.charts.views.ChartView;
+
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
@@ -90,7 +92,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     @SuppressWarnings("unused")
     private PocketMoneyProgressDialog progressSpinnerDialog;
     private ListView theList;
-    private TextView titleTextView;
+
     private WakeLock wakeLock;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -100,7 +102,18 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.datasource.currentPeriod = 0;
         setContentView(R.layout.reports);
         setupView();
-        setTitle(this.datasource.title());
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(this.datasource.title());
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
     }
 
     public void onPause() {
@@ -113,10 +126,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
         this.datasource.data = null;
         reloadData();
-    }
-
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
     }
 
     private void setupView() {
@@ -147,14 +156,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.pieChartView.delegate = this;
         ((View) this.nextPeriodView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                ReportsActivity.this.openOptionsMenu();
-            }
-        });
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
     private OnClickListener getClickListener() {

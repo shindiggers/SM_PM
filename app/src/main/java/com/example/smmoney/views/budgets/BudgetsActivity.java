@@ -20,7 +20,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
-import android.widget.FrameLayout;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -80,11 +79,14 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "BudgetsActivity:DoNotDimScreen");
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.budgets, new FrameLayout(this)/*null*/, false);
+        View layout = LayoutInflater.from(this).inflate(R.layout.budgets, null, false);
         setupView(layout);
         setContentView(layout);
-        setTitle("SMMoney");
-        Objects.requireNonNull(getSupportActionBar()).setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(R.string.app_name);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+        }
     }
 
     public void onPause() {
@@ -98,14 +100,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         reloadData();
     }
 
-    private void setupView(FrameLayout layout) {
-        TextView titleTextView = layout.findViewById(R.id.title_text_view);
-        titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                BudgetsActivity.this.openOptionsMenu();
-            }
-        });
-        titleTextView.setText(R.string.app_name);
+    private void setupView(View layout) {
         ImageView leftArrow = layout.findViewById(R.id.lefttarrow);
         ImageView rightArrow = layout.findViewById(R.id.rightarrow);
         this.periodButton = layout.findViewById(R.id.periodbutton);
@@ -186,9 +181,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
     }
 
     private boolean showCents() {

@@ -1,7 +1,10 @@
 package com.example.smmoney.views.filters;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
@@ -26,6 +29,7 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class FilterEditActivity extends PocketMoneyActivity {
+    private static final int MENU_SAVE = 1;
     private final ActivityResultLauncher<Intent> customDateLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
             Intent data = result.getData();
@@ -94,7 +98,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
     private EditText idEditText;
     private FrameLayout keyboardToolbar;
     private EditText payeeEditText;
-    private TextView titleTextView;
     private TextView transactionTypeTextView;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -104,11 +107,36 @@ public class FilterEditActivity extends PocketMoneyActivity {
         setContentView(R.layout.filter_edit);
         loadInfo();
         setupButtons();
-        setTitle();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_TOOLS_FILTER_EDIT);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_TOOLS_FILTER_EDIT);
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        item.setIcon(R.drawable.ic_save_white_24dp);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_SAVE) {
+            save();
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void setupButtons() {
@@ -136,23 +164,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
         v = (FrameLayout) this.classesTextView.getParent();
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(15);
-        TextView button = findViewById(R.id.save_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                FilterEditActivity.this.save();
-                FilterEditActivity.this.finish();
-            }
-        });
-        button = findViewById(R.id.cancel_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                FilterEditActivity.this.finish();
-            }
-        });
+
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -199,9 +211,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
     private void loadInfo() {

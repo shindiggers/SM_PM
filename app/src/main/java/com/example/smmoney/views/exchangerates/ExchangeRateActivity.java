@@ -3,6 +3,7 @@ package com.example.smmoney.views.exchangerates;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -48,7 +49,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     private String foreignCurrency;
     private TextView foreignCurrencyTextView;
     @SuppressWarnings("unused")
-    private OnFocusChangeListener mFocusChangedListener = new OnFocusChangeListener() {
+    private final OnFocusChangeListener mFocusChangedListener = new OnFocusChangeListener() {
         public void onFocusChange(View v, boolean hasFocus) {
             if (hasFocus) {
                 ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
@@ -209,7 +210,23 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         setContentView(R.layout.exchangerate);
         setupButtons();
         loadCells();
-        setTitle();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_GENERAL_EXCHANGERATE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        Intent i = new Intent();
+        i.putExtra("xrate", this.exchangeRate);
+        i.putExtra("amount", this.accountAmount);
+        i.putExtra("currency", this.foreignCurrency);
+        setResult(1, i);
+        finish();
+        return true;
     }
 
     private void setTitle() {
@@ -384,11 +401,8 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             if (this.currencyKeyboard.hide()) {
                 return false;
             }
-            Intent i = new Intent();
-            i.putExtra("xrate", this.exchangeRate);
-            i.putExtra("amount", this.accountAmount);
-            i.putExtra("currency", this.foreignCurrency);
-            setResult(1, i);
+            onSupportNavigateUp();
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

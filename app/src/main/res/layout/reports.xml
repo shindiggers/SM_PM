@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
@@ -9,42 +8,21 @@
     android:focusable="true"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
     <com.example.smmoney.views.charts.views.ChartPieView
         android:id="@+id/piechartview"
         android:layout_width="match_parent"
         android:layout_height="200dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:visibility="gone"
         tools:visibility="gone" />
 
     <com.example.smmoney.views.charts.views.ChartBarView
         android:id="@+id/barchartview"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+        android:layout_height="200dp" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:fadingEdge="vertical">
+        android:layout_height="50dp">
 
         <ImageView
             android:id="@+id/lefttarrow"
@@ -75,14 +53,11 @@
         android:id="@+id/thelist"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:layout_weight="1.0" />
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:orientation="horizontal">
+        android:layout_height="40dp">
 
         <LinearLayout
             android:layout_width="wrap_content"

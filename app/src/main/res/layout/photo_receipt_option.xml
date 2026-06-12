@@ -6,23 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="center_vertical|center_horizontal">
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center_vertical|center_horizontal"
-            android:text="@string/app_name"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-    </FrameLayout>
-
     <ImageView
         android:id="@+id/image"
         android:layout_width="match_parent"

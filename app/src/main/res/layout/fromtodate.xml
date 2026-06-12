@@ -1,37 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:gravity="center_horizontal"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
-
-    </FrameLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-        android:layout_marginTop="50dp">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:layout_width="130dp"
             android:layout_height="match_parent"
-            android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+            android:layout_gravity="start"
             android:layout_marginStart="10dp"
             android:orientation="vertical">
 
@@ -113,7 +94,7 @@
                     android:id="@+id/fromtodatetodate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:layout_gravity="center"
                     android:gravity="center"
                     android:text="@string/asterisk" />
 
@@ -136,4 +117,4 @@
 
     </FrameLayout>
 
-</FrameLayout>
+</LinearLayout>

@@ -326,6 +326,7 @@ public class Locales {
     public static final String kLOC_GENERAL_RELAUNCH_APP_THEME = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_RELAUNCH_APP_THEME);
     public static final String kLOC_GENERAL_REPEATINGEVENT = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_REPEATINGEVENT);
     public static final String kLOC_GENERAL_REPORTS = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_REPORTS);
+    public static final String kLOC_GENERAL_SAVE = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_SAVE);
     public static final String kLOC_GENERAL_SPLIT = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_SPLIT);
     public static final String kLOC_GENERAL_SPLITS = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_SPLITS);
     public static final String kLOC_GENERAL_SUBMIT = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_SUBMIT);
@@ -529,6 +530,7 @@ public class Locales {
     public static final String kLOC_THEME_RED_WITHDRAWALS = SMMoney.getAppContext().getString(R.string.kLOC_THEME_RED_WITHDRAWALS);
     public static final String kLOC_THEME_SHORT_ROWS = SMMoney.getAppContext().getString(R.string.kLOC_THEME_SHORT_ROWS);
     public static final String kLOC_THEME_USERFONT = SMMoney.getAppContext().getString(R.string.kLOC_THEME_USERFONT);
+    public static final String kLOC_PHOTO_RECEIPT_TITLE = SMMoney.getAppContext().getString(R.string.kLOC_PHOTO_RECEIPT_TITLE);
     public static final String kLOC_TIP_ACCOUNT_INFO = SMMoney.getAppContext().getString(R.string.kLOC_TIP_ACCOUNT_INFO);
     public static final String kLOC_TIP_ACCOUNT_VIEW_OPTIONS = SMMoney.getAppContext().getString(R.string.kLOC_TIP_ACCOUNT_VIEW_OPTIONS);
     public static final String kLOC_TIP_ACCOUNT_VIEW_OPTIONS_TITLE = SMMoney.getAppContext().getString(R.string.kLOC_TIP_ACCOUNT_VIEW_OPTIONS_TITLE);

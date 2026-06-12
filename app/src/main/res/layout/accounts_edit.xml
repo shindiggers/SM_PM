@@ -1,68 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp">
-
-        <TextView
-            android:id="@+id/cancel_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:nextFocusRight="@+id/save_button"
-            android:nextFocusDown="@+id/accountname"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/accounts_edi_cancel"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-        <TextView
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:text="@string/accounts_edit_title"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            tools:text="Account Info" />
-
-        <TextView
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:nextFocusLeft="@+id/cancel_button"
-            android:nextFocusDown="@+id/accountname"
-            android:paddingLeft="10dp"
-            android:paddingTop="3dp"
-            android:paddingRight="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/accounts_edit_save"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold" />
-
-    </FrameLayout>
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <ScrollView
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="40dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:fillViewport="true"
         android:orientation="vertical"
         android:scrollbarStyle="insideOverlay">
@@ -76,7 +22,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -98,16 +44,17 @@
                     android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_account_name"
                     android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:nextFocusDown="@+id/totalworthcb"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="textCapWords" />
 
             </LinearLayout>
 
-            <RelativeLayout
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:baselineAligned="false"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="0dp">
 
                 <TextView
                     android:id="@+id/total_worth_label"
@@ -115,29 +62,24 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_TOTALWORTH" />
 
                 <CheckBox
                     android:id="@+id/totalworthcb"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="16dp"
-                    android:nextFocusDown="@+id/typebutton" />
+                    android:layout_gravity="center_vertical"
+                    android:checked="true" />
 
-            </RelativeLayout>
+            </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/typebutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue_theme_background_color"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/iconbutton"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -153,33 +95,26 @@
                 <TextView
                     android:id="@+id/type"
                     android:layout_width="0dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1.0"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/accounts_edit_the_type" />
+                    android:hint="@string/kLOC_ACCOUNT_TYPE_LABEL" />
 
-                <ImageButton
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/content_description_menu_accounts_edit" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/iconbutton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="start|center_vertical"
-                android:nextFocusDown="@+id/expires"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -194,23 +129,23 @@
 
                 <ImageView
                     android:id="@+id/icon"
-                    android:layout_width="0dp"
-                    android:layout_height="30dp"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:contentDescription="@string/accounts_edit_open_icon_chooser"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                    android:text="@string/accounts_edit_the_icon" />
+                    android:contentDescription="@string/kLOC_ACCOUNT_ICON_LABEL"
+                    android:scaleType="centerInside" />
 
-                <ImageButton
+                <View
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0" />
+
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/accounts_edit_open_icon_chooser" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </LinearLayout>
 
@@ -218,7 +153,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -228,37 +163,27 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_EXPIRES_LABEL" />
 
                 <EditText
                     android:id="@+id/expires"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:digits="1234567890+-. /"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_expiration_date_hint"
                     android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:nextFocusDown="@+id/accountnumber"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="textShortMessage" />
 
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -268,23 +193,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_NUMBER_LABEL" />
 
                 <EditText
                     android:id="@+id/accountnumber"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                    android:hint="@string/accounts_edit_account_number_hint"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/kLOC_ACCOUNT_NUMBER_LABEL"
                     android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:nextFocusDown="@+id/bankid"
-                    android:singleLine="true"
-                    android:textColorHint="@color/black_theme_text_alt" />
+                    android:inputType="textNoSuggestions" />
 
             </LinearLayout>
 
@@ -292,7 +213,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -302,23 +223,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ROUTING_NUMBER_LABEL" />
 
                 <EditText
                     android:id="@+id/bankid"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
-                    android:hint="@string/accounts_edit_bank_id_hint"
+                    android:hint="@string/kLOC_ROUTING_NUMBER_LABEL"
                     android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:nextFocusDown="@+id/institution"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="textNoSuggestions" />
 
             </LinearLayout>
 
@@ -326,7 +243,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -336,23 +253,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_INSTITUTION_LABEL" />
 
                 <EditText
                     android:id="@+id/institution"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_institution_hint"
                     android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:nextFocusDown="@+id/phone"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="textCapWords" />
 
             </LinearLayout>
 
@@ -360,7 +273,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -370,24 +283,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_PHONE_LABEL" />
 
                 <EditText
                     android:id="@+id/phone"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:digits="1234567890+-. /"
                     android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_phone_number_hint"
                     android:importantForAutofill="no"
-                    android:inputType="phone"
-                    android:nextFocusDown="@+id/website"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="phone" />
 
             </LinearLayout>
 
@@ -395,10 +303,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
-
 
                 <TextView
                     android:id="@+id/account_website_label"
@@ -406,36 +313,27 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_WEBSITE_LABEL" />
 
                 <EditText
                     android:id="@+id/website"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:gravity="center_vertical|start"
+                    android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_website_hint"
                     android:importantForAutofill="no"
-                    android:inputType="textWebEditText"
-                    android:nextFocusDown="@+id/fee"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="textUri" />
 
             </LinearLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -445,23 +343,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_FEE_LABEL" />
 
                 <EditText
                     android:id="@+id/fee"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:gravity="center_vertical|start"
+                    android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_fee_hint"
                     android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:nextFocusDown="@+id/limit"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="numberDecimal" />
 
             </LinearLayout>
 
@@ -469,7 +363,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -479,23 +373,19 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_LIMIT_LABEL" />
 
                 <EditText
                     android:id="@+id/limit"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                    android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_limit_hint"
                     android:importantForAutofill="no"
-                    android:inputType="numberSigned|numberDecimal"
-                    android:nextFocusDown="@+id/checknumber"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="numberDecimal" />
 
             </LinearLayout>
 
@@ -503,7 +393,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:baselineAligned="false"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -513,40 +403,28 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_CHECKNUMBER_LABEL" />
 
                 <EditText
                     android:id="@+id/checknumber"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
                     android:hint="@string/accounts_edit_check_number_hint"
                     android:importantForAutofill="no"
-                    android:inputType="number"
-                    android:nextFocusDown="@+id/currency_button"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+                    android:inputType="number" />
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
             <LinearLayout
-                android:id="@+id/currency_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue_theme_background_color"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="start|center_vertical"
-                android:nextFocusDown="@+id/xratetextview"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -564,32 +442,23 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/accounts_edit_the_type_hint" />
+                    android:hint="@string/kLOC_ACCOUNT_CURRENCY_LABEL" />
 
-                <ImageButton
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/accounts_edit_open_currency_dialogue" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/xrate_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_black"
                 android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="start|center_vertical"
-                android:nextFocusRight="@+id/xratetextview"
-                android:nextFocusDown="@+id/keepthechange_button"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -599,46 +468,35 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE" />
 
                 <EditText
                     android:id="@+id/xratetextview"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
+                    android:layout_height="58dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
-                    android:hint="@string/accounts_edit_the_type"
+                    android:hint="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:importantForAutofill="no"
-                    android:inputType=""
-                    android:nextFocusDown="@+id/keepthechange_button"
-                    android:singleLine="true" />
+                    android:inputType="numberDecimal" />
 
                 <TextView
                     android:id="@+id/amount_xrate_text_view"
-                    android:layout_width="50dp"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:singleLine="true"
-                    android:text="@string/accounts_edit_x_xrate" />
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
+                    android:text="=" />
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
             <LinearLayout
-                android:id="@+id/keepthechange_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/blue_theme_background_color"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                android:nextFocusDown="@+id/account_keep_the_change_round_to_text"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -648,36 +506,31 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-                    android:text="@string/kLOC_GENERAL_KEEP_CHANGE" />
+                    android:gravity="start|center_vertical"
+                    android:text="@string/kLOC_ACCOUNT_OVERDRAFTACCOUNT" />
 
                 <TextView
                     android:id="@+id/keep_the_change_account_text"
                     android:layout_width="0dp"
-                    android:layout_height="58dp"
-                    android:layout_marginEnd="4dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-                    android:text="@string/accounts_edit_the_type" />
+                    android:hint="@string/kLOC_ACCOUNT_OVERDRAFTACCOUNT" />
 
-                <ImageButton
+                <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/accounts_edit_open_keep_the_change_dialogue" />
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_black"
                 android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -685,41 +538,30 @@
                     android:id="@+id/account_keep_the_change_round_to_label"
                     android:layout_width="70dp"
                     android:layout_height="58dp"
-                    android:layout_gravity="center_vertical"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_GENERAL_ROUND_TO" />
 
                 <EditText
                     android:id="@+id/account_keep_the_change_round_to_text"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
+                    android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="start|center_vertical"
-                    android:hint="@string/accounts_edit_open_keep_the_change_dialogue"
+                    android:hint="@string/kLOC_GENERAL_ROUND_TO"
                     android:importantForAutofill="no"
-                    android:inputType=""
-                    android:nextFocusDown="@+id/notes_button"
-                    android:singleLine="true" />
+                    android:inputType="numberDecimal" />
 
             </LinearLayout>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
             <LinearLayout
-                android:id="@+id/notes_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_black"
                 android:baselineAligned="false"
                 android:focusable="true"
-                android:gravity="top|bottom|center_vertical|fill_vertical|center|fill"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
                 android:padding="0dp">
 
@@ -729,16 +571,23 @@
                     android:layout_height="58dp"
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
-                    android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+                    android:gravity="start|center_vertical"
                     android:text="@string/kLOC_ACCOUNT_NOTES_LABEL" />
 
                 <TextView
                     android:id="@+id/notestextview"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
+                    android:layout_gravity="center_vertical"
                     android:layout_weight="1.0"
-                    android:gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+                    android:hint="@string/kLOC_ACCOUNT_NOTES_LABEL" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginEnd="4dp"
+                    android:src="@drawable/ic_arrow_drop_down_circle" />
 
             </LinearLayout>
 
@@ -750,7 +599,7 @@
         android:id="@+id/keyboard_toolbar"
         android:layout_width="match_parent"
         android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
         android:background="#000000"
         android:visibility="gone" />
-</FrameLayout>
+
+</LinearLayout>

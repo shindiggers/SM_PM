@@ -2,16 +2,14 @@ package com.example.smmoney.views.splits;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.FrameLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -72,7 +70,6 @@ public class SplitsActivity extends PocketMoneyActivity {
     private TextView remainderTitleTextView;
     private TextView splitsTotalTextView;
     private TextView splitsTotalTitleTextView;
-    private TextView titleTextView;
     private TextView totalTextView;
     private TextView totalTitleTextView;
     private TransactionClass transaction;
@@ -93,42 +90,38 @@ public class SplitsActivity extends PocketMoneyActivity {
             return;
         }
         this.originalSubtotal = this.transaction.getSubTotal();
-        FrameLayout layout = (FrameLayout) LayoutInflater.from(this).inflate(R.layout.splits, null);
-        this.splitsTotalTextView = layout.findViewById(R.id.splitssplitstotal);
-        this.remainderTextView = layout.findViewById(R.id.splitsremainder);
-        this.totalTextView = layout.findViewById(R.id.splitstotal);
-        this.splitsTotalTitleTextView = layout.findViewById(R.id.splitssplitstotaltitle);
+        setContentView(R.layout.splits);
+        this.splitsTotalTextView = findViewById(R.id.splitssplitstotal);
+        this.remainderTextView = findViewById(R.id.splitsremainder);
+        this.totalTextView = findViewById(R.id.splitstotal);
+        this.splitsTotalTitleTextView = findViewById(R.id.splitssplitstotaltitle);
         this.splitsTotalTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.remainderTitleTextView = layout.findViewById(R.id.splitsremaindertitle);
+        this.remainderTitleTextView = findViewById(R.id.splitsremaindertitle);
         this.remainderTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.totalTitleTextView = layout.findViewById(R.id.splitstotaltitle);
+        this.totalTitleTextView = findViewById(R.id.splitstotaltitle);
         this.totalTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        ListView listView = layout.findViewById(R.id.the_list);
+        ListView listView = findViewById(R.id.the_list);
         this.adapter = new SplitsRowAdapter(this, this.transaction);
         listView.setAdapter(this.adapter);
         listView.setFocusable(false);
         listView.setItemsCanFocus(true);
         listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) listView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.titleTextView = layout.findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                SplitsActivity.this.openOptionsMenu();
-            }
-        });
-        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
+
         setResult(RESULT_NO_CHANGE);
-        setContentView(layout);
-        setTitle();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
-    private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_EDIT_SPLITS_TITLE);
-        if (getSupportActionBar() != null)
-            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
+    @Override
+    public boolean onSupportNavigateUp() {
+        setTransactionAsResult();
+        finish();
+        return true;
     }
 
     protected void onResume() {
@@ -320,6 +313,8 @@ public class SplitsActivity extends PocketMoneyActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             setTransactionAsResult();
+            finish();
+            return true;
         }
         return super.onKeyDown(keyCode, event);
     }

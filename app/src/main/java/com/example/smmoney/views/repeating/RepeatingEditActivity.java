@@ -175,7 +175,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        onBackPressed();
+        save();
+        finish();
         return true;
     }
 
@@ -577,13 +578,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId(); // Get the ID of the menu item that was selected
-
-        if (id == android.R.id.home) { // Check if the selected menu item is the back button arrow in the action bar
-            save(); // Call the 'save()' method
-            finish(); // Call the 'finish()' method to close the current activity
-            return true; // Return 'true' to indicate that the menu item selection has been handled
-        }
         return super.onOptionsItemSelected(item); // Call the default implementation if the selected menu item is not the back button arrow
     }
 
