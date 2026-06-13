@@ -11,6 +11,7 @@
 /.idea/deviceManager.xml
 /.idea/studiobot.xml
 /.idea/AndroidProjectSystem.xml
+/.idea/appInsightsSettings.xml
 /.idea/caches
 .DS_Store
 /build
