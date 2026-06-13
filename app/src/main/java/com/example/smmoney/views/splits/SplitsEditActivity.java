@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -77,7 +78,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                 loadAmountXrateValues();
                 getCells();
             } catch (NullPointerException e) {
-                e.printStackTrace();
+                Log.e(com.example.smmoney.SMMoney.TAG, "NullPointerException in currencyLauncher", e);
             }
         }
     });
@@ -499,7 +500,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                         } else {
                             SplitsEditActivity.this.splitTransactionType = 3;
                         }
-                        if (SplitsEditActivity.this.transToTextView.getText().toString().length() == 0) {
+                        if (SplitsEditActivity.this.transToTextView.getText().toString().isEmpty()) {
                             SplitsEditActivity.this.getCells();
                             Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
                             i.putExtra("type", 3);

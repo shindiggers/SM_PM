@@ -44,7 +44,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
         try {
             this.listeningSocket = new ServerSocket(this.port);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in startServer (ServerSocket)", e);
         }
         new Thread() {
             public void run() {
@@ -63,13 +63,13 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                             PocketMoneySyncServerClass.this.delegate.getClass();
                             pocketMoneySyncActivity.showOpenConnectionDialog();
                         } catch (SocketException | InterruptedIOException e) {
-                            e.printStackTrace();
+                            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: SocketException/InterruptedIOException in startServer", e);
                         } catch (IOException e3) {
-                            e3.printStackTrace();
+                            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in startServer (Thread)", e3);
                             Database.sqlite3_rollback();
                         }
                     } catch (InterruptedException e1) {
-                        e1.printStackTrace();
+                        Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: InterruptedException in startServer", e1);
                     }
                 }
             }
@@ -84,7 +84,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
             try {
                 this.asyncSocket.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in stopServer (async)", e);
             }
         }
         this.asyncSocket = null;
@@ -92,7 +92,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
             try {
                 this.listeningSocket.close();
             } catch (IOException e2) {
-                e2.printStackTrace();
+                Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in stopServer (listening)", e2);
             }
         }
         this.listeningSocket = null;
@@ -122,7 +122,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                                 PocketMoneySyncServerClass.this.delegate.stopSyncing();
                             }
                         });
-                        e.printStackTrace();
+                        Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: Exception in processStateLoop (getSyncVersion)", e);
                         return;
                     }
                 case Enums.kDesktopSyncStateSyncVersionHeaderReceived /*12*/:
@@ -244,7 +244,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                 return false;
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in checkForRestoreAndIsFail", e);
         }
         return true;
     }
@@ -261,7 +261,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
             xr.parse(is);
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: Exception in processRecentChanges", e);
         }
         return false;
     }

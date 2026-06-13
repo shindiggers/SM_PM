@@ -289,7 +289,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 return (int) (o2.getDate().getTimeInMillis() - o1.getDate().getTimeInMillis());
             }
         });
-        if (this.categoryBudgetItems.size() > 0) {
+        if (!this.categoryBudgetItems.isEmpty()) {
             this.originalHistoryBudgetTextView.setText(CurrencyExt.amountAsCurrency(this.category.getBudgetLimit()));
             this.originalHistoryDateTextView.setText(CalExt.descriptionWithMediumDate(this.categoryBudgetItems.get(this.categoryBudgetItems.size() - 1).getDate()));
         }
@@ -354,7 +354,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             });
             this.outterView.addView(v, 9, new LayoutParams(-1, -2));
         }
-        if (this.categoryBudgetItems.size() > 0) {
+        if (!this.categoryBudgetItems.isEmpty()) {
             this.budgetCell.setVisibility(View.GONE);
             this.originalHistoryCell.setVisibility(View.VISIBLE);
             this.enableVariableBudgetCell.setVisibility(View.GONE);
@@ -391,7 +391,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private void saveAction() {
         getCells();
         int categoryID = CategoryClass.idForCategory(this.category.getCategory());
-        if (this.oldCategory == null || this.oldCategory.length() == 0) {
+        if (this.oldCategory == null || this.oldCategory.isEmpty()) {
             int catID = CategoryClass.idForCategory(this.category.getCategory());
             if (this.oldCategory == null || this.oldCategory.equalsIgnoreCase(this.category.getCategory())) {
                 this.category = new CategoryClass(catID);

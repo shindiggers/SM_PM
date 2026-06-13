@@ -991,7 +991,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             try {
                                 Thread.sleep(200);
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "InterruptedException in importQIFFromSD", e);
                             }
                             importqif.importIntoDatabase(AccountsActivity.this);
                             //new File(importqif.QIFPath).delete();
@@ -1022,7 +1022,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             try {
                                 Thread.sleep(200);
                             } catch (InterruptedException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "InterruptedException in importQIFFromSD", e);
                             }
                             importofx.importIntoDatabase();
                             File importedFile = new File(importofx.path);
@@ -1133,7 +1133,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 try {
                     pd.dismiss();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "Exception in exportQIFToSD (dismissing progress dialog)", e);
                 }
             }
         }.start();
@@ -1186,7 +1186,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     Prefs.copyFile(src, dst);
                     Toast.makeText(AccountsActivity.this, "Backup complete", Toast.LENGTH_SHORT).show();
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Log.e(TAG, "IOException in backupToSD", e);
                     Toast.makeText(AccountsActivity.this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 }
             }

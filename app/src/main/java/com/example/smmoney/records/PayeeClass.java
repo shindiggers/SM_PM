@@ -107,21 +107,20 @@ public class PayeeClass extends PocketMoneyRecordClass {
         }
     }
 
-    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
-            ContentValues content = new ContentValues();
-            content.put("deleted", this.deleted);
-            String str = "timestamp";
-            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
-            content.put(str, currentTimeMillis);
-            content.put("payee", this.payee);
-            if (this.serverID == null || this.serverID.length() == 0) {
-                this.serverID = Database.newServerID();
-            }
-            content.put("serverID", this.serverID);
-            Database.update(Database.PAYEES_TABLE_NAME, content, "payeeID=" + this.payeeID, null);
-            this.dirty = false;
+    public static int idForPayee(String aClass) {
+        if (aClass == null || aClass.isEmpty()) {
+            return 0;
         }
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.PAYEES_TABLE_NAME);
+        Cursor curs = Database.query(qb, new String[]{"payeeID"}, "deleted=0 AND payee LIKE " + Database.SQLFormat(aClass), null, null, null, null);
+        int categoryID = 0;
+        if (curs.getCount() != 0) {
+            curs.moveToFirst();
+            categoryID = curs.getInt(0);
+        }
+        curs.close();
+        return categoryID;
     }
 
     public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
@@ -199,20 +198,19 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return id;
     }
 
-    public static int idForPayee(String aClass) {
-        if (aClass == null || aClass.length() == 0) {
-            return 0;
+    @SuppressWarnings("unused")
+    public static PayeeClass recordWithServerID(String serverID) {
+        PayeeClass record = null;
+        if (serverID == null || serverID.isEmpty()) {
+            return null;
         }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.PAYEES_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"payeeID"}, "deleted=0 AND payee LIKE " + Database.SQLFormat(aClass), null, null, null, null);
-        int categoryID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            categoryID = curs.getInt(0);
+        Cursor c = Database.rawQuery("SELECT payeeID FROM payees WHERE serverID=" + Database.SQLFormat(serverID), null);
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            record = new PayeeClass(c.getInt(0));
         }
-        curs.close();
-        return categoryID;
+        c.close();
+        return record;
     }
 
     @SuppressWarnings("unused")
@@ -223,19 +221,21 @@ public class PayeeClass extends PocketMoneyRecordClass {
         return new PayeeClass(pk).getPayee();
     }
 
-    @SuppressWarnings("unused")
-    public static PayeeClass recordWithServerID(String serverID) {
-        PayeeClass record = null;
-        if (serverID == null || serverID.length() == 0) {
-            return null;
+    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
+        if (this.dirty) {
+            ContentValues content = new ContentValues();
+            content.put("deleted", this.deleted);
+            String str = "timestamp";
+            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
+            content.put(str, currentTimeMillis);
+            content.put("payee", this.payee);
+            if (this.serverID == null || this.serverID.isEmpty()) {
+                this.serverID = Database.newServerID();
+            }
+            content.put("serverID", this.serverID);
+            Database.update(Database.PAYEES_TABLE_NAME, content, "payeeID=" + this.payeeID, null);
+            this.dirty = false;
         }
-        Cursor c = Database.rawQuery("SELECT payeeID FROM payees WHERE serverID=" + Database.SQLFormat(serverID), null);
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            record = new PayeeClass(c.getInt(0));
-        }
-        c.close();
-        return record;
     }
 
     public static ArrayList<String> allPayeesInDatabase() {

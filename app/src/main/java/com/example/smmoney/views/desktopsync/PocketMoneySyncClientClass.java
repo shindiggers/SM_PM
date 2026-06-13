@@ -50,7 +50,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     pocketMoneySyncActivity.showNoHostDialog();
                 }
             });
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: IOException in connectToServer", e);
             return false;
         }
     }
@@ -75,7 +75,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                                 PocketMoneySyncClientClass.this.delegate.stopSyncing();
                             }
                         });
-                        e.printStackTrace();
+                        Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: Exception in processStateLoop (getSyncVersion)", e);
                         return;
                     }
                 case Enums.kDesktopSyncStateSyncVersionReceived /*14*/:
@@ -217,7 +217,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
             xr.setContentHandler(this);
             xr.parse(is);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: Exception in processRecentChanges", e);
         }
         return true;
     }

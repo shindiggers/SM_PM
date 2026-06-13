@@ -457,7 +457,7 @@ public class Database {
             setMultipleCurrencies(Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES));
             execSqlWithCatch("ALTER TABLE preferences ADD homeCurrency TEXT");
             String currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
-            if (currencyCode != null && currencyCode.length() > 0) {
+            if (currencyCode != null && !currencyCode.isEmpty()) {
                 setHomeCurrency(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
             }
             databaseVersion = DATABASE_VERSION_CURRENT;
@@ -594,7 +594,7 @@ public class Database {
     }
 
     public static void autoAddLookupItemsFromTransaction(TransactionClass transaction) {
-        if (transaction.getPayee() != null && transaction.getPayee().length() > 0 && PayeeClass.idForPayee(transaction.getPayee()) == 0) {
+        if (transaction.getPayee() != null && !transaction.getPayee().isEmpty() && PayeeClass.idForPayee(transaction.getPayee()) == 0) {
             PayeeClass.insertIntoDatabase(transaction.getPayee());
         }
         for (SplitsClass split : transaction.getSplits()) {
@@ -603,16 +603,16 @@ public class Database {
                     ClassNameClass.insertIntoDatabase(split.getClassName());
                 }
                 int categoryID = CategoryClass.idForCategory(split.getCategory());
-                if (categoryID == 0 && split.getCategory() != null && split.getCategory().length() > 0) {
+                if (categoryID == 0 && split.getCategory() != null && !split.getCategory().isEmpty()) {
                     categoryID = CategoryClass.insertIntoDatabase(split.getCategory());
                 }
                 CategoryClass categoryRecord = new CategoryClass(categoryID);
-                if (split.getCategory() != null && split.getCategory().length() > 0 && split.getCategory().contains(":")) {
+                if (split.getCategory() != null && !split.getCategory().isEmpty() && split.getCategory().contains(":")) {
                     String cat = split.getCategory();
                     int index = cat.lastIndexOf(":");
                     while (index != -1) {
                         cat = cat.substring(0, index);
-                        if (CategoryClass.idForCategory(cat) == 0 && cat != null && cat.length() > 0) {
+                        if (CategoryClass.idForCategory(cat) == 0 && cat != null && !cat.isEmpty()) {
                             categoryID = CategoryClass.insertIntoDatabase(cat);
                         }
                         index = cat.lastIndexOf(":");
@@ -740,9 +740,8 @@ public class Database {
             constructor = aClass.getConstructor(clsArr);
         } catch (SecurityException | NoSuchMethodException e) {
             if (e.getLocalizedMessage() != null) {
-                Log.e(SMMoney.TAG, e.getLocalizedMessage());
+                Log.e(SMMoney.TAG, e.getLocalizedMessage(), e);
             }
-            e.printStackTrace();
         }
         while (c.moveToNext()) {
             try {
@@ -751,13 +750,12 @@ public class Database {
                 pm = constructor.newInstance(objArr);
             } catch (Exception e3) {
                 if (e3.getLocalizedMessage() != null) {
-                    Log.e(SMMoney.TAG, e3.getLocalizedMessage());
+                    Log.e(SMMoney.TAG, e3.getLocalizedMessage(), e3);
                 }
-                e3.printStackTrace();
             }
             foundRecords.add(pm);
         }
-        if (foundRecords.size() > 0) {
+        if (!foundRecords.isEmpty()) {
             PocketMoneyRecordClass[] returnRecords = new PocketMoneyRecordClass[foundRecords.size()];
             int i = 0;
             for (PocketMoneyRecordClass foundRecord : foundRecords) {
@@ -785,8 +783,7 @@ public class Database {
             clsArr[0] = Integer.TYPE;
             constructor = aClass.getConstructor(clsArr);
         } catch (SecurityException | NoSuchMethodException e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "SecurityException/NoSuchMethodException in queryAndWriteServerSyncTableWithPKandClassAndTime", e);
         }
         while (c.moveToNext()) {
             try {
@@ -794,8 +791,7 @@ public class Database {
                 objArr[0] = c.getInt(0);
                 out.write(constructor.newInstance(objArr).XMLString() + "\n");
             } catch (Exception e3) {
-                Log.e(SMMoney.TAG, e3.getLocalizedMessage());
-                e3.printStackTrace();
+                Log.e(SMMoney.TAG, e3.getLocalizedMessage() != null ? e3.getLocalizedMessage() : "Exception in queryAndWriteServerSyncTableWithPKandClassAndTime", e3);
             }
         }
         return true;

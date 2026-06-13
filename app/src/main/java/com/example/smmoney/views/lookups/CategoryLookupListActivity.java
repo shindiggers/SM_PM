@@ -147,7 +147,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         payeeRadioButton.setText(this.payee);
         final RadioButton allRadioButton = findViewById(R.id.allbutton);
         RadioGroup rg = findViewById(R.id.radiogroup);
-        if (this.payee.length() == 0) {
+        if (this.payee.isEmpty()) {
             this.currentType = TYPE_ALL/*1*/;
             allRadioButton.setChecked(true);
             payeeRadioButton.setText("<empty>");

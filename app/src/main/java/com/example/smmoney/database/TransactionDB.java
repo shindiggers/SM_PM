@@ -156,10 +156,10 @@ public class TransactionDB {
                 where = where + " AND t.date>=" + fromDate + " AND t.date<=" + toDate;
             }
         }
-        if (filter.getPayee().length() > 0) {
+        if (!filter.getPayee().isEmpty()) {
             where = where.concat(" AND t.payee LIKE " + Database.SQLFormat(filter.getPayee() + "%"));
         }
-        if (filter.getCheckNumber().length() > 0) {
+        if (!filter.getCheckNumber().isEmpty()) {
             where = where.concat(" AND t.checkNumber LIKE " + Database.SQLFormat(filter.getCheckNumber()));
         }
         if (filter.getCleared() == Enums.kClearedCleared /*1*/) {
@@ -167,7 +167,7 @@ public class TransactionDB {
         } else if (filter.getCleared() == Enums.kClearedUncleared /*0*/) {
             where = where.concat(" AND t.cleared = 0");
         }
-        if (filter.getCategory().length() > 0 && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+        if (!filter.getCategory().isEmpty() && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
             if (filter.getCategory().equals(Locales.kLOC_FILTERS_UNFILED)) {
                 where = where.concat(" AND s.categoryID = ''");
             } else {
@@ -184,7 +184,7 @@ public class TransactionDB {
     }
 
     private static String queryWithFilterSpotlightClause(String spotlight) {
-        if (spotlight == null || spotlight.length() == 0) {
+        if (spotlight == null || spotlight.isEmpty()) {
             return "1";
         }
         if (spotlight.startsWith("<")) {
@@ -507,7 +507,7 @@ public class TransactionDB {
 
     private static void disconnectionTransfersForTransaction(TransactionClass transaction) {
         for (SplitsClass split : transaction.getSplits()) {
-            if (split.getTransferToAccount() != null && split.getTransferToAccount().length() > 0) {
+            if (split.getTransferToAccount() != null && !split.getTransferToAccount().isEmpty()) {
                 if (AccountDB.recordFor(split.getTransferToAccount()) == null) {
                     split.setCategory(split.getTransferToAccount());
                     split.setTransferToAccount("");
@@ -534,9 +534,9 @@ public class TransactionDB {
                     int transferSplitItem = ret.transferSplitItem;
                     if (transferRecID != 0) {
                         TransactionClass transferRec = new TransactionClass(transferRecID);
-                        if (transferRec.getPayee() == null || transferRec.getPayee().length() == 0) {
+                        if (transferRec.getPayee() == null || transferRec.getPayee().isEmpty()) {
                             transferRec.setPayee(transferRec.getTransferToAccountAtIndex(transferSplitItem));
-                        } else if (transferRec.getCategoryAtIndex(transferSplitItem) == null || transferRec.getCategoryAtIndex(transferSplitItem).length() == 0) {
+                        } else if (transferRec.getCategoryAtIndex(transferSplitItem) == null || transferRec.getCategoryAtIndex(transferSplitItem).isEmpty()) {
                             transferRec.setCategoryAtIndex(transferRec.getTransferToAccountAtIndex(transferSplitItem), transferSplitItem);
                         }
                         transferRec.setTransferToAccountAtIndex(null, transferSplitItem);
@@ -553,7 +553,7 @@ public class TransactionDB {
         String[] projection = new String[]{"transactionID"};
         ret.transferRecID = 0;
         ret.transferSplitItem = 0;
-        if (transToAccount != null && transToAccount.length() != 0) {
+        if (transToAccount != null && !transToAccount.isEmpty()) {
             int transToAccountID = AccountDB.uniqueID(transToAccount);
             qb.setDistinct(true);
             qb.setTables(Database.TRANSACTIONS_TABLE_NAME);
@@ -596,7 +596,7 @@ public class TransactionDB {
 
     public static int getRepeatingTransactionFor(TransactionClass aTransaction) {                              // the transaction for which we want to get the repeating transaction
         int i = 0;                                                                                                      // the return value. It should be the ID of the repeating transaction that matches the passed on transaction
-        if (aTransaction.getAccount() == null || aTransaction.getAccount().length() == 0) {                             //check if the passed in transaction has a null/empty account ID. If so, it doesn't 'exist'
+        if (aTransaction.getAccount() == null || aTransaction.getAccount().isEmpty()) {                             //check if the passed in transaction has a null/empty account ID. If so, it doesn't 'exist'
             return 0;                                                                                                   // there will be no repeating tranaction is the account ID is null/empty so return 0
         }
         int accountID = AccountDB.uniqueID(aTransaction.getAccount());                                                  //set accountID to the accountID of the passed in transaction
@@ -757,7 +757,7 @@ public class TransactionDB {
         transaction.saveToDatabase();
         for (int i = 0; i < transaction.getNumberOfSplits(); i++) {
             String transferToString = transaction.getTransferToAccountAtIndex(i);
-            if (transferToString != null && transferToString.length() > 0) {
+            if (transferToString != null && !transferToString.isEmpty()) {
                 TransactionClass transferRecord = new TransactionClass();
                 transferRecord.setAccount(transaction.getTransferToAccountAtIndex(i));
                 transferRecord.setPayee(transaction.getPayee());
@@ -789,7 +789,7 @@ public class TransactionDB {
         transaction.saveToDatabase();
         for (int i = 0; i < transaction.getNumberOfSplits(); i++) {
             String transferToString = transaction.getTransferToAccountAtIndex(i);
-            if (transferToString != null && transferToString.length() > 0) {
+            if (transferToString != null && !transferToString.isEmpty()) {
                 TransactionClass transferRecord = new TransactionClass();
                 transferRecord.setAccount(transaction.getTransferToAccountAtIndex(i));
                 transferRecord.setPayee(transaction.getPayee());

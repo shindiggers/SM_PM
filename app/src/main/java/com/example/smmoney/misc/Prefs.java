@@ -331,7 +331,7 @@ public class Prefs {
 
     public static boolean hasPassword() {
         String pass = getStringPref(PASSWORD);
-        return (pass != null && pass.length() > 0) && DEBUGGING;
+        return (pass != null && !pass.isEmpty()) && DEBUGGING;
     }
 
     public static void initialize() {
@@ -343,7 +343,7 @@ public class Prefs {
             try {
                 code = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "Exception in initialize (1) getting currency code", e);
             }
             if (code != null) {
                 setPref(HOMECURRENCYCODE, code);
@@ -398,7 +398,7 @@ public class Prefs {
             try {
                 code = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "Exception in initialize (1) getting currency code", e);
             }
             if (code != null) {
                 setPref(HOMECURRENCYCODE, code);
@@ -450,7 +450,7 @@ public class Prefs {
 
     public static String getUUID() {
         String uuid = getSharedPrefs().getString("UUID", "");
-        if (uuid.length() != 0) {
+        if (!uuid.isEmpty()) {
             return uuid;
         }
         uuid = UUID.randomUUID().toString();
@@ -495,9 +495,9 @@ public class Prefs {
                     diff = 0.0d;
                 }
                 if (diff >= -9.0E-6d && diff <= 1.0E-6d && transFromAccountID == transToAccountID) {
-                    if (otherTransaction.getPayee() == null || otherTransaction.getPayee().length() == 0) {
+                    if (otherTransaction.getPayee() == null || otherTransaction.getPayee().isEmpty()) {
                         otherTransaction.setPayee("*accountID " + transToAccountID + " - missing account name*");
-                    } else if (otherTransaction.getCategoryAtIndex(splitIndex) == null || otherTransaction.getCategoryAtIndex(splitIndex).length() == 0) {
+                    } else if (otherTransaction.getCategoryAtIndex(splitIndex) == null || otherTransaction.getCategoryAtIndex(splitIndex).isEmpty()) {
                         otherTransaction.setCategoryAtIndex(otherTransaction.getTransferToAccountAtIndex(splitIndex), splitIndex);
                     }
                     otherTransaction.setTransferToAccountAtIndex(null, splitIndex);

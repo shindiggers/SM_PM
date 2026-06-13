@@ -63,8 +63,7 @@ public class ImportExportTDF {
             Log.v("FileReader", "File Not Found");
             return;
         } catch (UnsupportedEncodingException e2) {
-            Log.e(SMMoney.TAG, "import encoding " + encodingStr + " not supported");
-            e2.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportTDF: import encoding " + encodingStr + " not supported", e2);
         }
         try {
             String readLine;
@@ -79,7 +78,7 @@ public class ImportExportTDF {
             this.currentLine = 0;
         } catch (IOException e3) {
             displayError("Error reading QIF file: " + e3, false);
-            e3.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportTDF: IOException in constructor", e3);
         }
         this.importFileExists = true;
     }
@@ -194,14 +193,14 @@ public class ImportExportTDF {
         try {
             number = numberFormatter.parse(text);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportTDF: ParseException in amountFromCSV: " + text, e);
         }
         if (number == null && text.startsWith("-")) {
             try {
                 number = numberFormatter.parse(text.substring(1));
                 return number.doubleValue() * -1.0d;
             } catch (ParseException e2) {
-                e2.printStackTrace();
+                Log.e(SMMoney.TAG, "ImportExportTDF: ParseException in amountFromCSV (negative): " + text, e2);
             }
         }
         if (number == null && text.startsWith("(") && text.endsWith(")")) {
@@ -209,7 +208,7 @@ public class ImportExportTDF {
                 number = numberFormatter.parse(text.substring(1, text.length() - 1));
                 return number.doubleValue() * -1.0d;
             } catch (ParseException e22) {
-                e22.printStackTrace();
+                Log.e(SMMoney.TAG, "ImportExportTDF: ParseException in amountFromCSV (parentheses): " + text, e22);
             }
         }
         return number.doubleValue();
@@ -366,7 +365,7 @@ public class ImportExportTDF {
         try {
             Database.currentDB().endTransaction();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportTDF: IllegalStateException in displayError", e);
         }
         ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
     }

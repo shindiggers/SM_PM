@@ -76,8 +76,7 @@ public class ImportExportQIF {
             displayError("Error reading QIF file: " + e, false);
             Log.v("FileReader", "File Not Found - 01: " + filePath);
         } catch (UnsupportedEncodingException e2) {
-            Log.e(SMMoney.TAG, "import encoding " + encodingStr + " not supported");
-            e2.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportQIF: import encoding " + encodingStr + " not supported", e2);
         }
         try {
             String readLine = "";
@@ -100,7 +99,7 @@ public class ImportExportQIF {
             this.importFileExists = true;
         } catch (IOException e3) {
             displayError("Error reading QIF file: " + e3, false);
-            e3.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportQIF: IOException in constructor", e3);
         }
     }
 
@@ -142,7 +141,7 @@ public class ImportExportQIF {
         this.oldNumber = -1;
         try {
             String line = this.lines.get(this.currentLine);
-            while (line.length() == 0) {
+            while (line.isEmpty()) {
                 this.currentLine++;
                 line = this.lines.get(this.currentLine);
             }
@@ -478,14 +477,13 @@ public class ImportExportQIF {
         try {
             number = numberFormatter.parse(text);
         } catch (ParseException e) {
-            e.printStackTrace();
-            Log.e("Error", "Error parsing number");
+            Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF: " + text, e);
         }
         if (number == null && text.startsWith("-")) {
             try {
                 number = numberFormatter.parse(text.substring(1));
             } catch (ParseException e2) {
-                e2.printStackTrace();
+                Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF (negative): " + text, e2);
             }
         }
         if (number != null) {
@@ -517,7 +515,7 @@ public class ImportExportQIF {
         try {
             theDate = dateFormatter.parse(dateString);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in dateFromQIFDate: " + dateString, e);
         }
         if (theDate == null) {
             boolean dayFirst = Prefs.getStringPref(Prefs.QIF_DATEFORMAT).startsWith("dd");
@@ -577,7 +575,7 @@ public class ImportExportQIF {
                         break;
                     }
                 } catch (ParseException e2) {
-                    e2.printStackTrace();
+                    Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in dateFromQIFDate retry: " + dateString + " format: " + possibleFormat, e2);
                 }
             }
         }
@@ -593,7 +591,7 @@ public class ImportExportQIF {
         try {
             Database.currentDB().endTransaction();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportQIF: IllegalStateException in displayError", e);
         }
         ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
     }
@@ -817,36 +815,36 @@ public class ImportExportQIF {
                 buffBuff.setLength(0);
                 if (transaction.getTransferToAccount() == null) {
                     addToStringBuffer(buffBuff, transaction.getCategory());
-                } else if (transaction.getTransferToAccount().length() > 0) {
+                } else if (!transaction.getTransferToAccount().isEmpty()) {
                     addToStringBuffer(buffBuff, "[" + transaction.getTransferToAccount(), "]");
                 }
-                if (transaction.getClassName() != null && transaction.getClassName().length() > 0) {
+                if (transaction.getClassName() != null && !transaction.getClassName().isEmpty()) {
                     addToStringBuffer(buffBuff, "/", transaction.getClassName());
                 }
                 addToStringBuffer(strBuff, "L", buffBuff.toString(), "\n");
-                if (transaction.getPayee() != null && transaction.getPayee().length() > 0) {
+                if (transaction.getPayee() != null && !transaction.getPayee().isEmpty()) {
                     addToStringBuffer(strBuff, "P", transaction.getPayee(), "\n");
                 }
-                if (transaction.getCheckNumber() != null && transaction.getCheckNumber().length() > 0) {
+                if (transaction.getCheckNumber() != null && !transaction.getCheckNumber().isEmpty()) {
                     addToStringBuffer(strBuff, "N", transaction.getCheckNumber(), "\n");
                 }
-                if (transaction.getMemo() != null && transaction.getMemo().length() > 0) {
+                if (transaction.getMemo() != null && !transaction.getMemo().isEmpty()) {
                     addToStringBuffer(strBuff, "M", transaction.getMemo().replace("\n", "<br>"), "\n");
                 }
                 if (transaction.getNumberOfSplits() > 1) {
                     splitBuff.setLength(0);
                     for (SplitsClass split : transaction.getSplits()) {
                         buffBuff.setLength(0);
-                        if (split.getTransferToAccount() != null && split.getTransferToAccount().length() > 0) {
+                        if (split.getTransferToAccount() != null && !split.getTransferToAccount().isEmpty()) {
                             addToStringBuffer(buffBuff, "[", split.getTransferToAccount(), "]");
-                        } else if (split.getCategory() != null && split.getCategory().length() > 0) {
+                        } else if (split.getCategory() != null && !split.getCategory().isEmpty()) {
                             addToStringBuffer(buffBuff, split.getCategory());
                         }
-                        if (split.getClassName() != null && split.getClassName().length() > 0) {
+                        if (split.getClassName() != null && !split.getClassName().isEmpty()) {
                             addToStringBuffer(buffBuff, "/", split.getClassName());
                         }
                         addToStringBuffer(splitBuff, "S", buffBuff.toString(), "\n");
-                        if (transaction.getMemo() != null && transaction.getMemo().length() > 0) {
+                        if (transaction.getMemo() != null && !transaction.getMemo().isEmpty()) {
                             addToStringBuffer(splitBuff, "E", split.getMemo().replace("\n", "<br>"), "\n");
                         }
                         addToStringBuffer(splitBuff, "$", qifFormatAmount(split.getAmount()), "\n");

@@ -33,7 +33,7 @@ class OFXClass {
     }
 
     private static String TAGofEOL(String s, String lineEnding) {
-        return s != null && s.length() > 0 ? s : lineEnding;
+        return s != null && !s.isEmpty() ? s : lineEnding;
     }
 
     static String amountAsOFXAmount(double amt) {
@@ -45,13 +45,13 @@ class OFXClass {
     static double amountFromOFXAmount(String text) {
         if (text != null) {
             try {
-                if (text.length() == 0) {
+                if (text.isEmpty()) {
                     return 0.0D;
                 }
 
                 return Double.parseDouble(text.trim().replace(",", "."));
             } catch (NumberFormatException e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "OFXClass: NumberFormatException in amountFromOFXAmount: " + text, e);
             }
         }
 
@@ -75,7 +75,7 @@ class OFXClass {
                 try {
                     date = format.parse(dateString.substring(0, "yyyyMMddHHmmss".length()));
                 } catch (ParseException e) {
-                    e.printStackTrace();
+                    Log.e(SMMoney.TAG, "OFXClass: ParseException in dateFromString (1): " + dateString, e);
                     date = null;
                 }
             }
@@ -83,9 +83,7 @@ class OFXClass {
                 try {
                     date = dateFormatterForOFXDate().parse(dateString);
                 } catch (ParseException e) {
-                    Log.i("com.catamount.pocketmon", "failed to parse dateString (OFXClass[dateFromString]) : " + dateString);
-                    e.printStackTrace();
-                    //date = new Date();
+                    Log.e(SMMoney.TAG, "OFXClass: failed to parse dateString : " + dateString, e);
                     return null;
                 }
             }
@@ -126,10 +124,10 @@ class OFXClass {
     private String bankMessage() {
         if (this.account != null && this.account.getType() == 0) {
             OFX_Statement ofx_statement = new OFX_Statement(this.transactions, this.tags);
-            return "\t<BANKMSGSRSV1>\n" + ofx_statement.toString() + "\t</BANKMSGSRSV1>\n";
+            return "\t<BANKMSGSRSV1>\n" + ofx_statement + "\t</BANKMSGSRSV1>\n";
         } else {
             OFX_CreditCardStatement ofx_creditCardStatement = new OFX_CreditCardStatement(this.transactions, this.tags);
-            return "\t<CREDITCARDMSGSRSV1>\n" + ofx_creditCardStatement.toString() + "\t</CREDITCARDMSGSRSV1>\n";
+            return "\t<CREDITCARDMSGSRSV1>\n" + ofx_creditCardStatement + "\t</CREDITCARDMSGSRSV1>\n";
         }
     }
 
@@ -163,11 +161,11 @@ class OFXClass {
         String replaceBlock = lineEnding + "<";
         text = text.replace(replaceBlock, "<").replace("<", replaceBlock);
         String statement = stringBetween(text, this.tags.bankStatementTransmissionBegin, this.tags.bankStatementTransmissionEnd, lineEnding);
-        if (statement.length() > 0) {
+        if (!statement.isEmpty()) {
             this.statement = new OFX_Statement(statement, this.tags);
         }
 
-        if (statement.length() == 0 || this.statement == null || this.statement.ofxtransactions.size() == 0) {
+        if (statement.isEmpty() || this.statement == null || this.statement.ofxtransactions.isEmpty()) {
             this.statement = new OFX_CreditCardStatement(stringBetween(text, this.tags.creditCardStatementTransmissionBegin, this.tags.creditCardStatementTransmissionEnd, lineEnding), this.tags);
         }
 

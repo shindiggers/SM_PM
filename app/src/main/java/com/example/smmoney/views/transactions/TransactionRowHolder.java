@@ -42,9 +42,9 @@ class TransactionRowHolder {
             this.payee.setText(this.transaction.getPayee());
         } else if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_TRANSTOANDTO_FIELD)) {
             TextView textView = this.payee;
-            CharSequence payee = this.transaction.getPayee().length() != 0 ? this.transaction.getPayee() : (this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().length() <= 0) ? "" : "<" + this.transaction.getTransferToAccount() + ">";
+            CharSequence payee = !this.transaction.getPayee().isEmpty() ? this.transaction.getPayee() : (this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().length() <= 0) ? "" : "<" + this.transaction.getTransferToAccount() + ">";
             textView.setText(payee);
-        } else if (!(this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().length() == 0)) {
+        } else if (!(this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().isEmpty())) {
             this.payee.setText("<" + this.transaction.getTransferToAccount() + ">");
         }
         if (this.transaction.getDate().after(CalExt.endOfDay(new GregorianCalendar()))) {

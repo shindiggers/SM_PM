@@ -1,6 +1,7 @@
 package com.example.smmoney.misc;
 
 import android.text.format.DateFormat;
+import android.util.Log;
 
 import com.example.smmoney.SMMoney;
 
@@ -388,7 +389,7 @@ public class CalExt {
                 newCal.set(Calendar.MINUTE, timeCal.get(Calendar.MINUTE));
             }
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ParseException in dateFromDescriptionWithTime: " + str, e);
         }
         return newCal;
     }

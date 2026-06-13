@@ -55,7 +55,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     @SuppressWarnings("unused")
     public static CategoryClass recordWithServerID(String serverID) {
         CategoryClass record = null;
-        if (serverID == null || serverID.length() == 0) {
+        if (serverID == null || serverID.isEmpty()) {
             return null;
         }
         Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE serverID=" + Database.SQLFormat(serverID), null);
@@ -252,7 +252,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static int insertIntoDatabase(String cat) {
-        if (cat == null || cat.length() == 0) {
+        if (cat == null || cat.isEmpty()) {
             return 0;
         }
         ContentValues content = new ContentValues();
@@ -277,7 +277,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static int idForCategory(String cat) {
-        if (cat == null || cat.length() == 0) {
+        if (cat == null || cat.isEmpty()) {
             return 0;
         }
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -293,7 +293,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     private static int idForCategoryIncludeDeleted(String cat) {
-        if (cat == null || cat.length() == 0) {
+        if (cat == null || cat.isEmpty()) {
             return 0;
         }
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -898,7 +898,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             content.put("includeSubcategories", this.includeSubcategories);
             content.put("timestamp", System.currentTimeMillis() / 1000);
             content.put("rollover", this.rollover);
-            if (this.serverID == null || this.serverID.length() == 0) {
+            if (this.serverID == null || this.serverID.isEmpty()) {
                 this.serverID = Database.newServerID();
             }
             content.put("serverID", this.serverID);

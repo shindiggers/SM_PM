@@ -105,7 +105,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     @SuppressWarnings("unused")
     public static CategoryBudgetClass recordWithServerID(String serverID) {
         CategoryBudgetClass record = null;
-        if (serverID == null || serverID.length() == 0) {
+        if (serverID == null || serverID.isEmpty()) {
             return null;
         }
         Cursor c = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE serverID=" + Database.SQLFormat(serverID), null);
@@ -157,38 +157,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         }
     }
 
-    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
-            ContentValues content = new ContentValues();
-            content.put("deleted", this.deleted);
-            String str = "timestamp";
-            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
-            content.put(str, currentTimeMillis);
-            content.put("categoryName", this.categoryName);
-            content.put("budgetLimit", this.budgetLimit);
-            content.put("date", this.date == null ? System.currentTimeMillis() / 1000 : this.date.getTimeInMillis() / 1000);
-            content.put("resetRollover", this.resetRollover);
-            if (this.serverID == null || this.serverID.length() == 0) {
-                this.serverID = Database.newServerID();
-            }
-            content.put("serverID", this.serverID);
-            Database.update("categoryBudgets", content, "categoryBudgetID=" + this.categoryBudgetID, null);
-            this.dirty = false;
-        }
-        this.hydrated = false;
-    }
-
-    public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
-            if (this.categoryBudgetID == 0) {
-                this.categoryBudgetID = insertNewBudgetItemWithCategoryNameIntoDatabase(this.categoryName);
-            }
-            dehydrateAndUpdateTimeStamp(updateTimeStamp);
-        }
-    }
-
     private static int insertNewBudgetItemWithCategoryNameIntoDatabase(String cat) {
-        if (cat == null || cat.length() == 0) {
+        if (cat == null || cat.isEmpty()) {
             return 0;
         }
         ContentValues content = new ContentValues();
@@ -200,6 +170,36 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
             return (int) id;
         }
         return 0;
+    }
+
+    public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
+        if (this.dirty) {
+            if (this.categoryBudgetID == 0) {
+                this.categoryBudgetID = insertNewBudgetItemWithCategoryNameIntoDatabase(this.categoryName);
+            }
+            dehydrateAndUpdateTimeStamp(updateTimeStamp);
+        }
+    }
+
+    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
+        if (this.dirty) {
+            ContentValues content = new ContentValues();
+            content.put("deleted", this.deleted);
+            String str = "timestamp";
+            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
+            content.put(str, currentTimeMillis);
+            content.put("categoryName", this.categoryName);
+            content.put("budgetLimit", this.budgetLimit);
+            content.put("date", this.date == null ? System.currentTimeMillis() / 1000 : this.date.getTimeInMillis() / 1000);
+            content.put("resetRollover", this.resetRollover);
+            if (this.serverID == null || this.serverID.isEmpty()) {
+                this.serverID = Database.newServerID();
+            }
+            content.put("serverID", this.serverID);
+            Database.update("categoryBudgets", content, "categoryBudgetID=" + this.categoryBudgetID, null);
+            this.dirty = false;
+        }
+        this.hydrated = false;
     }
 
     static double limitPrior(GregorianCalendar toDate, double originalLimit, String category) {

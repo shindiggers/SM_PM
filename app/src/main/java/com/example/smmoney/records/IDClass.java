@@ -107,21 +107,20 @@ public class IDClass extends PocketMoneyRecordClass {
         }
     }
 
-    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
-            ContentValues content = new ContentValues();
-            content.put("deleted", this.deleted);
-            String str = "timestamp";
-            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
-            content.put(str, currentTimeMillis);
-            content.put("id", this.idName);
-            if (this.serverID == null || this.serverID.length() == 0) {
-                this.serverID = Database.newServerID();
-            }
-            content.put("serverID", this.serverID);
-            Database.update(Database.IDS_TABLE_NAME, content, "idID=" + this.idID, null);
-            this.dirty = false;
+    public static int idForID(String aClass) {
+        if (aClass == null || aClass.isEmpty()) {
+            return 0;
         }
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.IDS_TABLE_NAME);
+        Cursor curs = Database.query(qb, new String[]{"idID"}, "deleted=0 AND id LIKE " + Database.SQLFormat(aClass), null, null, null, null);
+        int categoryID = 0;
+        if (curs.getCount() != 0) {
+            curs.moveToFirst();
+            categoryID = curs.getInt(0);
+        }
+        curs.close();
+        return categoryID;
     }
 
     public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
@@ -189,26 +188,10 @@ public class IDClass extends PocketMoneyRecordClass {
         return (int) id;
     }
 
-    public static int idForID(String aClass) {
-        if (aClass == null || aClass.length() == 0) {
-            return 0;
-        }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.IDS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"idID"}, "deleted=0 AND id LIKE " + Database.SQLFormat(aClass), null, null, null, null);
-        int categoryID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            categoryID = curs.getInt(0);
-        }
-        curs.close();
-        return categoryID;
-    }
-
     @SuppressWarnings("unused")
     public static IDClass recordWithServerID(String serverID) {
         IDClass record = null;
-        if (serverID == null || serverID.length() == 0) {
+        if (serverID == null || serverID.isEmpty()) {
             return null;
         }
         Cursor c = Database.rawQuery("SELECT idID FROM ids WHERE serverID=" + Database.SQLFormat(serverID), null);
@@ -218,6 +201,23 @@ public class IDClass extends PocketMoneyRecordClass {
         }
         c.close();
         return record;
+    }
+
+    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
+        if (this.dirty) {
+            ContentValues content = new ContentValues();
+            content.put("deleted", this.deleted);
+            String str = "timestamp";
+            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
+            content.put(str, currentTimeMillis);
+            content.put("id", this.idName);
+            if (this.serverID == null || this.serverID.isEmpty()) {
+                this.serverID = Database.newServerID();
+            }
+            content.put("serverID", this.serverID);
+            Database.update(Database.IDS_TABLE_NAME, content, "idID=" + this.idID, null);
+            this.dirty = false;
+        }
     }
 
     public static ArrayList<String> allCategoriesInDatabase() {

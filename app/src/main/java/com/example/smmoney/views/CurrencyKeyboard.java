@@ -10,6 +10,7 @@ import android.os.Looper;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -115,7 +116,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         try {
             newValue = processMath(this.editText.getText().toString());
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in processMath", e);
         }
         if (newValue != null) {
             this.editText.setText(newValue);
@@ -170,7 +171,7 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     }
 
     public String processMath(String currentValue) {
-        if (currentValue == null || currentValue.length() == 0 || currentValue.equals("-")) {
+        if (currentValue == null || currentValue.isEmpty() || currentValue.equals("-")) {
             return "";
         }
         double savedDouble;

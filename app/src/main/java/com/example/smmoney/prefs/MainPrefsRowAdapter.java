@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.net.Uri;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -59,12 +60,12 @@ class MainPrefsRowAdapter extends BaseAdapter {
         try {
             pInfo = this.context.getPackageManager().getPackageInfo(this.context.getPackageName(), PackageManager.GET_META_DATA);
         } catch (NameNotFoundException e) {
-            e.printStackTrace();
+            Log.e(com.example.smmoney.SMMoney.TAG, "NameNotFoundException in setupTheLists", e);
         }
 
         if (pInfo != null) {
             final String theText;
-            theText = version + pInfo.versionName + text + (translations.length() > 0 ? "\n\n" + translations : "");
+            theText = version + pInfo.versionName + text + (!translations.isEmpty() ? "\n\n" + translations : "");
 
             this.listenerList.add(new OnClickListener() {
                 public void onClick(View v) {

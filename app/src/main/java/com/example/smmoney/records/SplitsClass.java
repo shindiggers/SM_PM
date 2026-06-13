@@ -174,7 +174,7 @@ public class SplitsClass implements Serializable {
     }
 
     public boolean isTransfer() {
-        return (this.transferToAccount != null && this.transferToAccount.length() > 0) || this.transferTransactionID > 0;
+        return (this.transferToAccount != null && !this.transferToAccount.isEmpty()) || this.transferTransactionID > 0;
     }
 
     public int getTransactionType() {
@@ -306,7 +306,7 @@ public class SplitsClass implements Serializable {
         if (this.dirty) {
             ContentValues content = new ContentValues();
             int transferToAccountID = 0;
-            if (this.transferToAccount != null && this.transferToAccount.length() > 0) {
+            if (this.transferToAccount != null && !this.transferToAccount.isEmpty()) {
                 transferToAccountID = AccountClass.idForAccountElseAddIfMissing(this.transferToAccount, true);
             }
             content.put("transactionID", this.transactionID);

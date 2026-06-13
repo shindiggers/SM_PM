@@ -118,7 +118,7 @@ class AccountRowAdapter extends BaseAdapter {
             int i = 0;
             while (i < this.sectionedAccounts.size()) {
                 if (currentIndex == position) {
-                    if (this.sectionedAccounts.get(i).size() > 0 || i == this.sectionedAccounts.size() - 1) {
+                    if (!this.sectionedAccounts.get(i).isEmpty() || i == this.sectionedAccounts.size() - 1) {
                         return 'H' + this.sectionedAccountStrings[i];
                     }
                 } else if (this.sectionedAccounts.get(i).size() + currentIndex >= position) {
@@ -128,7 +128,7 @@ class AccountRowAdapter extends BaseAdapter {
                     currentIndex++;
                 } else if (getShowSection(i)) {
                     currentIndex += this.sectionedAccounts.get(i).size() + 1;
-                } else if (this.sectionedAccounts.get(i).size() > 0 || i == this.sectionedAccounts.size() - 1) {
+                } else if (!this.sectionedAccounts.get(i).isEmpty() || i == this.sectionedAccounts.size() - 1) {
                     currentIndex++;
                 }
                 i++;
@@ -309,7 +309,7 @@ class AccountRowAdapter extends BaseAdapter {
     }
 
     private boolean getShowSection(int section) {
-        return Prefs.getBooleanPref(this.showSectionedAccountsPrefs[section]) && this.sectionedAccounts != null && this.sectionedAccounts.size() > 0 && (this.sectionedAccounts.get(section).size() > 0 || section == this.sectionedAccounts.size() - 1);
+        return Prefs.getBooleanPref(this.showSectionedAccountsPrefs[section]) && this.sectionedAccounts != null && !this.sectionedAccounts.isEmpty() && (!this.sectionedAccounts.get(section).isEmpty() || section == this.sectionedAccounts.size() - 1);
     }
 
     private OnClickListener getBtnClickListener() {

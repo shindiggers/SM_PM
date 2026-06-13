@@ -5,6 +5,7 @@ import static android.view.KeyEvent.KEYCODE_HOME;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -38,7 +39,7 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
                 dontShowPass = extras.getString("dontShowPass");
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in PocketMoneyActivity onCreate getting extras", e);
         }
         if (dontShowPass == null) {
             this.showPasswordScreen = true;

@@ -47,10 +47,10 @@ public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivit
         this.sortOrderPref.setEntries(someStrings);
         this.sortOrderPref.setEntryValues(someStrings);
         this.sortOrderPref.setOnPreferenceChangeListener(getChangeListener());
-        if (this.sortOnListPref.getValue() == null || this.sortOnListPref.getValue().length() == 0) {
+        if (this.sortOnListPref.getValue() == null || this.sortOnListPref.getValue().isEmpty()) {
             this.sortOnListPref.setDefaultValue(theStrings[0]);
         }
-        if (this.sortOrderPref.getValue() == null || this.sortOrderPref.getValue().length() == 0) {
+        if (this.sortOrderPref.getValue() == null || this.sortOrderPref.getValue().isEmpty()) {
             this.sortOrderPref.setDefaultValue(someStrings[0]);
         }
     }

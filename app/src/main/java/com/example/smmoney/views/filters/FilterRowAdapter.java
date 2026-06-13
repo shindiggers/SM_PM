@@ -37,7 +37,7 @@ class FilterRowAdapter extends BaseAdapter {
         ArrayList<FilterClass> fList = FilterClass.query();
         ArrayList<String> nameList = new ArrayList<>();
         for (FilterClass filter : fList) {
-            if (filter.getFilterName().length() > 0) {
+            if (!filter.getFilterName().isEmpty()) {
                 nameList.add(filter.getFilterName());
                 this.filterList.add(filter);
             }

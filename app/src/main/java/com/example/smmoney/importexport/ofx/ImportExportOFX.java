@@ -158,7 +158,7 @@ public class ImportExportOFX {
             this.accountNameBeingImported = new AccountClass(accountID).getAccount();
         } else {
             String bankID;
-            if (this.ofxData.statement.account.bankID != null && this.ofxData.statement.account.bankID.length() > 0) {
+            if (this.ofxData.statement.account.bankID != null && !this.ofxData.statement.account.bankID.isEmpty()) {
                 bankID = this.ofxData.statement.account.bankID;
             } else {
                 bankID = "";
@@ -211,18 +211,18 @@ public class ImportExportOFX {
             }
             transaction.setOfxID(record.fitID);
             transaction.setCurrencyCode(this.ofxData.statement.defaultCurrency);
-            if (transaction.getPayee() == null || transaction.getPayee().length() == 0) {
+            if (transaction.getPayee() == null || transaction.getPayee().isEmpty()) {
                 transaction.setPayee(record.name);
             }
-            if (transaction.getMemo() == null || transaction.getMemo().length() == 0) {
+            if (transaction.getMemo() == null || transaction.getMemo().isEmpty()) {
                 transaction.setMemo(record.memo);
             }
-            if (transaction.getCheckNumber() == null || transaction.getCheckNumber().length() == 0) {
+            if (transaction.getCheckNumber() == null || transaction.getCheckNumber().isEmpty()) {
                 transaction.setCheckNumber((record.checknum == null || record.checknum.length() <= 0) ? record.transactionTypeAsString() : record.checknum);
             }
             transaction.setCleared(true);
             transaction.initType();
-            if (transaction.transactionID == 0 && transaction.getPayee() != null && transaction.getPayee().length() > 0) {
+            if (transaction.transactionID == 0 && transaction.getPayee() != null && !transaction.getPayee().isEmpty()) {
                 TransactionClass foundMatchingTransaction = TransactionDB.closestTransactionMatchFor(transaction.getPayee(), transaction.getAccount());
                 if (foundMatchingTransaction != null) {
                     transaction.setCategory(foundMatchingTransaction.getCategory());
@@ -271,7 +271,7 @@ public class ImportExportOFX {
     }
 
     private String generateData(List<TransactionClass> transactions) {
-        if (transactions.size() > 0) {
+        if (!transactions.isEmpty()) {
             OFXClass ofxClass = new OFXClass();
             ofxClass.transactions = transactions;
             int accountID = AccountClass.idForAccount((transactions.get(0)).getAccount());
@@ -296,8 +296,7 @@ public class ImportExportOFX {
             Log.v("FileReader", "File Not Found");
             return;
         } catch (UnsupportedEncodingException e2) {
-            Log.e(SMMoney.TAG, "import encoding " + encodingStr + " not supported");
-            e2.printStackTrace();
+            Log.e(SMMoney.TAG, "ImportExportOFX: import encoding " + encodingStr + " not supported", e2);
         }
         StringBuilder strBuff = new StringBuilder(10000);
         while (true) {
@@ -313,7 +312,7 @@ public class ImportExportOFX {
                 strBuff.append("\n");
             } catch (IOException e3) {
                 displayError("Error reading QIF file: " + e3);
-                e3.printStackTrace();
+                Log.e(SMMoney.TAG, "ImportExportOFX: IOException in importIntoDatabase", e3);
             }
         }
         if (strBuff.length() == 0) {

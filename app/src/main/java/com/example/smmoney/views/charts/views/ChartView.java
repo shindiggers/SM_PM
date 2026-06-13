@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.RectF;
 import android.graphics.Region;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -105,7 +106,7 @@ public class ChartView extends View {
                             this.selectedItem = item;
                         }
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(com.example.smmoney.SMMoney.TAG, "Exception in onTouchEvent (computing bounds)", e);
                     }
                 }
             }
@@ -113,7 +114,7 @@ public class ChartView extends View {
         try {
             this.delegate.chartViewSelectedItem(this, this.selectedItem);
         } catch (NullPointerException e2) {
-            e2.printStackTrace();
+            Log.e(com.example.smmoney.SMMoney.TAG, "NullPointerException in onTouchEvent (delegate call)", e2);
         }
         invalidate();
         return true;

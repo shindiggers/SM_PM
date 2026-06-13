@@ -122,7 +122,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             int i = size - 1;
             while (i >= 0) {
                 String element = LookupsListActivity.this.theStrings.get(i);
-                if (element == null || element.length() == 0) {
+                if (element == null || element.isEmpty()) {
                     LookupsListActivity.this.theStrings.remove(i);
                     size--;
                     i--;

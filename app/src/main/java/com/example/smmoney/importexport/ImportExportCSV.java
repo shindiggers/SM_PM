@@ -64,8 +64,7 @@ public class ImportExportCSV {
             Log.v("FileReader", "File Not Found");
             return;
         } catch (UnsupportedEncodingException e2) {
-            Log.e(SMMoney.TAG, "import encoding " + encodingStr + " not supported");
-            e2.printStackTrace();
+            Log.e(SMMoney.TAG, "UnsupportedEncodingException in ImportExportCSV constructor: " + encodingStr, e2);
         }
         try {
             String readLine;
@@ -80,7 +79,7 @@ public class ImportExportCSV {
             this.currentLine = 0;
         } catch (IOException e3) {
             displayError("Error reading CSV file: " + e3, false);
-            e3.printStackTrace();
+            Log.e(SMMoney.TAG, "IOException in ImportExportCSV constructor", e3);
         }
         this.importFileExists = true;
     }
@@ -133,7 +132,7 @@ public class ImportExportCSV {
     }
 
     private void importTransaction(String[] tokens) {
-        if (tokens[0].length() != 0) {
+        if (!tokens[0].isEmpty()) {
             if (AccountClass.idForAccount(tokens[0]) == 0) {
                 AccountClass account = new AccountClass();
                 int accountID = AccountClass.idForAccountElseAddIfMissing(tokens[0], true);
@@ -214,14 +213,14 @@ public class ImportExportCSV {
         try {
             number = numberFormatter.parse(text);
         } catch (ParseException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "ParseException in amountFromCSV: " + text, e);
         }
         if (number == null && text.startsWith("-")) {
             try {
                 number = numberFormatter.parse(text.substring(1));
                 return number.doubleValue() * -1.0d;
             } catch (ParseException e2) {
-                e2.printStackTrace();
+                Log.e(SMMoney.TAG, "ParseException in amountFromCSV (negative): " + text, e2);
             }
         }
         if (number == null && text.startsWith("(") && text.endsWith(")")) {
@@ -229,7 +228,7 @@ public class ImportExportCSV {
                 number = numberFormatter.parse(text.substring(1, text.length() - 1));
                 return number.doubleValue() * -1.0d;
             } catch (ParseException e22) {
-                e22.printStackTrace();
+                Log.e(SMMoney.TAG, "ParseException in amountFromCSV (parentheses): " + text, e22);
             }
         }
         return number == null ? 0.0d : number.doubleValue();
@@ -397,7 +396,7 @@ public class ImportExportCSV {
         try {
             Database.currentDB().endTransaction();
         } catch (IllegalStateException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "IllegalStateException in displayError", e);
         }
         ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
     }

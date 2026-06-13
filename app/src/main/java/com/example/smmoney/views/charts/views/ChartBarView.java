@@ -26,7 +26,7 @@ public class ChartBarView extends ChartView {
 
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if (this.series != null && this.series.size() != 0) {
+        if (this.series != null && !this.series.isEmpty()) {
             double d;
             ChartItem item;
             Path path;
@@ -47,7 +47,7 @@ public class ChartBarView extends ChartView {
             float verticalScale = posNegVector != 0.0f ? chartHeight / posNegVector : 0.0f;
             float centerLine = topEdge + Math.min((float) Math.max(Math.round(chartHeight * ratioPosNeg), 0), bottomEdge - topEdge);
             float currentBar = leftEdge + 2.0f;
-            float barWidth = chartWidth / ((float) (this.series.size() != 0 ? Math.max(this.series.get(0).size(), 1) : 1));
+            float barWidth = chartWidth / ((float) (!this.series.isEmpty() ? Math.max(this.series.get(0).size(), 1) : 1));
             if (this.maxBarWidth != 0.0f) {
                 barWidth = Math.min(barWidth, this.maxBarWidth);
             }

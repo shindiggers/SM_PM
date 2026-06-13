@@ -280,7 +280,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                     sb.append(imgdata);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "Exception in writeImageToXML", e);
             }
         }
         sb.append("<filename>");
@@ -347,7 +347,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             body.endTag(null, "filename");
             body.endTag(null, "image");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "IOException in writeImageToXMLStream", e);
         }
     }
 
@@ -563,18 +563,18 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return Double.toString(this.subTotal);
     }
 
-    public void deleteSplitAtIndex(int index) {
-        this.dirty = true;
-        if (this.splitsDeleted == null) {
-            this.splitsDeleted = new ArrayList<>();
+    public static TransactionClass recordWithServerID(String serverID) {
+        TransactionClass record = null;
+        if (serverID == null || serverID.isEmpty()) {
+            return null;
         }
-        this.splitsDeleted.add(getSplits().get(index));
-        this.splits.remove(index);
-        if (this.splits.size() == 0) {
-            SplitsClass newSplit = new SplitsClass();
-            newSplit.setCurrencyCode(this.splitsDeleted.get(0).getCurrencyCode());
-            this.splits.add(newSplit);
+        Cursor c = Database.rawQuery(serverIDSelectionString, new String[]{serverID});
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            record = new TransactionClass(c.getInt(0));
         }
+        c.close();
+        return record;
     }
 
     public boolean isTransfer() {
@@ -595,18 +595,18 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         }
     }
 
-    public ArrayList<String> imageFileNames() {
-        if (getImageLocation() == null) {
-            return null;
+    public void deleteSplitAtIndex(int index) {
+        this.dirty = true;
+        if (this.splitsDeleted == null) {
+            this.splitsDeleted = new ArrayList<>();
         }
-        String[] strings = getImageLocation().split(";");
-        ArrayList<String> retStrings = new ArrayList<>(strings.length);
-        for (Object add : strings) {
-            if (strings[0].length() > 0) {
-                retStrings.add((String) add);
-            }
+        this.splitsDeleted.add(getSplits().get(index));
+        this.splits.remove(index);
+        if (this.splits.isEmpty()) {
+            SplitsClass newSplit = new SplitsClass();
+            newSplit.setCurrencyCode(this.splitsDeleted.get(0).getCurrencyCode());
+            this.splits.add(newSplit);
         }
-        return retStrings;
     }
 
     public TransactionClass copy() {
@@ -767,18 +767,18 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
         return foundMatch;
     }
 
-    public static TransactionClass recordWithServerID(String serverID) {
-        TransactionClass record = null;
-        if (serverID == null || serverID.length() == 0) {
+    public ArrayList<String> imageFileNames() {
+        if (getImageLocation() == null) {
             return null;
         }
-        Cursor c = Database.rawQuery(serverIDSelectionString, new String[]{serverID});
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            record = new TransactionClass(c.getInt(0));
+        String[] strings = getImageLocation().split(";");
+        ArrayList<String> retStrings = new ArrayList<>(strings.length);
+        for (Object add : strings) {
+            if (!strings[0].isEmpty()) {
+                retStrings.add((String) add);
+            }
         }
-        c.close();
-        return record;
+        return retStrings;
     }
 
     public void deleteSplitsfromDatabasePermentantly() {
@@ -804,7 +804,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     @SuppressWarnings("unused")
     public int getTransferTransactionID() {
         hydrate();
-        if (getSplits().size() > 0) {
+        if (!getSplits().isEmpty()) {
             return this.splits.get(0).getTransferTransactionID();
         }
         return 0;
@@ -836,7 +836,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             content.put("ofxID", this.ofxID);
             content.put("image", this.imageLocation);
             content.put("subTotal", this.subTotal);
-            if (this.serverID == null || this.serverID.length() == 0) {
+            if (this.serverID == null || this.serverID.isEmpty()) {
                 this.serverID = Database.newServerID();
             }
             content.put("serverID", this.serverID);
@@ -934,7 +934,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             xr.setContentHandler(this);
             xr.parse(is);
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "Exception in updateWithXMLFile", e);
         }
     }
 
@@ -1144,7 +1144,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     this.data = Base64.decode(this.currentElementValue);
                 } catch (Base64DecoderException e) {
-                    e.printStackTrace();
+                    Log.e(SMMoney.TAG, "Base64DecoderException in endElement", e);
                 }
                 break;
             case "filename":
@@ -1166,7 +1166,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                         fos.flush();
                         fos.close();
                     } catch (IOException e2) {
-                        e2.printStackTrace();
+                        Log.e(SMMoney.TAG, "IOException in endElement saving image", e2);
                     }
                 }
                 if (this.currentElementValue != null) {
@@ -1202,7 +1202,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                     try {
                         setImageLocation(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(SMMoney.TAG, "Exception in endElement decoding image path", e);
                     }
                 }
                 break;
@@ -1228,7 +1228,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Log.e(SMMoney.TAG, "Exception in endElement decoding class", e);
                 }
                 break;
             case "currencyCode":
@@ -1291,12 +1291,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             body.startTag(null, "account");
             addTextWithEncoding(body, getAccount());
             body.endTag(null, "account");
-            if (getPayee() != null && getPayee().length() > 0) {
+            if (getPayee() != null && !getPayee().isEmpty()) {
                 body.startTag(null, "payee");
                 addTextWithEncoding(body, getPayee());
                 body.endTag(null, "payee");
             }
-            if (getCheckNumber() != null && getCheckNumber().length() > 0) {
+            if (getCheckNumber() != null && !getCheckNumber().isEmpty()) {
                 body.startTag(null, "checkNumber");
                 addTextWithEncoding(body, getCheckNumber());
                 body.endTag(null, "checkNumber");
@@ -1304,7 +1304,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             body.startTag(null, "subTotal");
             addText(body, Double.toString(getSubTotal()));
             body.endTag(null, "subTotal");
-            if (getOfxID() != null && getOfxID().length() > 0) {
+            if (getOfxID() != null && !getOfxID().isEmpty()) {
                 body.startTag(null, "ofxID");
                 addText(body, getOfxID());
                 body.endTag(null, "ofxID");
@@ -1333,22 +1333,22 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 body.startTag(null, "currencyCode");
                 addTextWithEncoding(body, split.getCurrencyCode());
                 body.endTag(null, "currencyCode");
-                if (split.getCategory() != null && split.getCategory().length() > 0) {
+                if (split.getCategory() != null && !split.getCategory().isEmpty()) {
                     body.startTag(null, "category");
                     addTextWithEncoding(body, split.getCategory());
                     body.endTag(null, "category");
                 }
-                if (split.getTransferToAccount() != null && split.getTransferToAccount().length() > 0) {
+                if (split.getTransferToAccount() != null && !split.getTransferToAccount().isEmpty()) {
                     body.startTag(null, "transferToAccount");
                     addTextWithEncoding(body, split.getTransferToAccount());
                     body.endTag(null, "transferToAccount");
                 }
-                if (split.getClassName() != null && split.getClassName().length() > 0) {
+                if (split.getClassName() != null && !split.getClassName().isEmpty()) {
                     body.startTag(null, "class");
                     addTextWithEncoding(body, split.getClassName());
                     body.endTag(null, "class");
                 }
-                if (split.getMemo() != null && split.getMemo().length() > 0) {
+                if (split.getMemo() != null && !split.getMemo().isEmpty()) {
                     body.startTag(null, "memo");
                     addTextWithEncoding(body, split.getMemo());
                     body.endTag(null, "memo");
@@ -1356,7 +1356,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 body.endTag(null, "split");
             }
             body.endTag(null, Database.SPLITS_TABLE_NAME);
-            if (this.imageLocation != null && this.imageLocation.length() > 0) {
+            if (this.imageLocation != null && !this.imageLocation.isEmpty()) {
                 body.startTag(null, "images");
                 for (String file : this.imageLocation.split(";")) {
                     XMLStringWithFileName(body, file, withImages);

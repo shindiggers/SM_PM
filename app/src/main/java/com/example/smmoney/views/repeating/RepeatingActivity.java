@@ -12,6 +12,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -86,7 +87,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     try {
                         RepeatingActivity.this.wakeLock.release();
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity handleMessage (wakeLock.release)", e);
                     }
                     if (RepeatingActivity.this.progressDialog != null) {
                         if (RepeatingActivity.this.progressDialog.isShowing()) {
@@ -104,7 +105,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         try {
                             RepeatingActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                         } catch (Exception e2) {
-                            e2.printStackTrace();
+                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity handleMessage (wakeLock.acquire)", e2);
                         }
                     }
                     if (RepeatingActivity.this.progressDialog != null && RepeatingActivity.this.progressDialog.isShowing()) {
@@ -186,7 +187,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                             Prefs.setPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD, Integer.parseInt(textView.getText().toString()));
                             RepeatingActivity.this.reloadData();
                         } catch (NumberFormatException e) {
-                            e.printStackTrace();
+                            Log.e(com.example.smmoney.SMMoney.TAG, "NumberFormatException in RepeatingActivity upcoming period dialog", e);
                         }
                     }
                 });

@@ -792,7 +792,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public static RepeatingTransactionClass recordWithServerID(String serverID) {
         RepeatingTransactionClass record = null;
-        if (serverID == null || serverID.length() == 0) {
+        if (serverID == null || serverID.isEmpty()) {
             return null;
         }
         Cursor c = Database.rawQuery("SELECT repeatingID FROM repeatingTransactions WHERE serverID=" + Database.SQLFormat(serverID), null);
@@ -926,7 +926,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             values.put("repeatingID", this.repeatingID);
             values.put("sendLocalNotifications", this.sendLocalNotifications);
             values.put("notifyDaysInAdvance", this.notifyDaysInAdvance);
-            if (this.serverID == null || this.serverID.length() == 0) {
+            if (this.serverID == null || this.serverID.isEmpty()) {
                 this.serverID = Database.newServerID();
             }
             values.put("serverID", this.serverID);

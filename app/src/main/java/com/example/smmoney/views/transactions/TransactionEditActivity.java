@@ -225,7 +225,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 loadAmountXrateValues();
                 getCells();
             } catch (NullPointerException e) {
-                e.printStackTrace();
+                Log.e(TAG, "NullPointerException in currencyLauncher", e);
             }
         }
     });
@@ -263,7 +263,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 reloadData();
                 this.photoCell.invalidate();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception in cameraLauncher", e);
             }
         }
     });
@@ -290,7 +290,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 getCells();
                 reloadData();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception in cameraLauncher", e);
             }
         }
     });
@@ -627,7 +627,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 if (TransactionEditActivity.this.amountEditText.hasFocus()) {
                     TransactionEditActivity.this.clearKeepTheChange();
                     AccountClass act = AccountDB.recordFor(TransactionEditActivity.this.transaction.getAccount());
-                    boolean keepTheChangeEnabled = act != null && act.getKeepTheChangeAccount() != null && act.getKeepTheChangeAccount().length() > 0 && (TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/);
+                    boolean keepTheChangeEnabled = act != null && act.getKeepTheChangeAccount() != null && !act.getKeepTheChangeAccount().isEmpty() && (TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || TransactionEditActivity.this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/);
                     TransactionEditActivity.this.currencyKeyboard.setToolbarEnabled(keepTheChangeEnabled);
                     return;
                 }
@@ -650,7 +650,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                     try {
                         i.putExtra("split", TransactionEditActivity.this.transaction.getSplits().get(0));
                     } catch (NullPointerException e) {
-                        e.printStackTrace();
+                        Log.e(TAG, "NullPointerException in amount parent listener", e);
                     }
                     currencyLauncher.launch(i);
                 }
@@ -800,7 +800,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private void saveButtonAction() {
         getCells();
         deleteDeletedImages();
-        if (this.accountTextView.getText() == null || this.accountTextView.getText().toString().length() == 0) {
+        if (this.accountTextView.getText() == null || this.accountTextView.getText().toString().isEmpty()) {
             showNeedAccountDialog();
         } else if (this.transaction.isRepeatingTransaction && (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating())) {
             showNeedRepeatingDialog();
@@ -1429,7 +1429,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         while (i < oldRecP.getNumberOfSplits()) {
             double amountAtIndex;
             double xrate;
-            if (oldRecP.getTransferToAccountAtIndex(i) != null && oldRecP.getTransferToAccountAtIndex(i).length() > 0) {
+            if (oldRecP.getTransferToAccountAtIndex(i) != null && !oldRecP.getTransferToAccountAtIndex(i).isEmpty()) {
                 String str;
                 boolean regularTransfer = oldRecP.getCurrencyCodeAtIndex(i).equals(AccountDB.recordFor(oldRecP.getTransferToAccountAtIndex(i)).getCurrencyCode());
                 TransactionTransferRetVals ret = new TransactionTransferRetVals();
@@ -1490,7 +1490,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                         transactionClass.setDate(modRecP.getDate());
                         transactionClass.initType();
                         transactionClass.saveToDatabase();
-                        if (AccountDB.recordFor(transactionClass.getAccount()) == null && transactionClass.getAccount() != null && transactionClass.getAccount().length() > 0) {
+                        if (AccountDB.recordFor(transactionClass.getAccount()) == null && transactionClass.getAccount() != null && !transactionClass.getAccount().isEmpty()) {
                             AccountClass.insertIntoDatabase(transactionClass.getAccount());
                         }
                     }
@@ -1538,7 +1538,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         }
         i = 0;
         while (i < modRecP.getNumberOfSplits()) {
-            if (modRecP.getTransferToAccountAtIndex(i) != null && modRecP.getTransferToAccountAtIndex(i).length() > 0 && ((i < oldRecP.getNumberOfSplits() && (oldRecP.getTransferToAccountAtIndex(i) == null || oldRecP.getTransferToAccountAtIndex(i).length() == 0)) || i >= oldRecP.getNumberOfSplits())) {
+            if (modRecP.getTransferToAccountAtIndex(i) != null && !modRecP.getTransferToAccountAtIndex(i).isEmpty() && ((i < oldRecP.getNumberOfSplits() && (oldRecP.getTransferToAccountAtIndex(i) == null || oldRecP.getTransferToAccountAtIndex(i).isEmpty())) || i >= oldRecP.getNumberOfSplits())) {
                 transferRecord = new TransactionClass();
                 transferRecord.setAccount(modRecP.getTransferToAccountAtIndex(i));
                 transferRecord.setPayee(modRecP.getPayee());
@@ -1688,7 +1688,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                             Uri photoUri = FileProvider.getUriForFile(TransactionEditActivity.this, "com.example.fileprovider", TransactionEditActivity.this.tempPhotoPath);
                             cameraLauncher.launch(photoUri);
                         } catch (Exception e) {
-                            e.printStackTrace();
+                            Log.e(TAG, "Exception in showCameraDialog (New)", e);
                         }
                     }
                 })

@@ -1,5 +1,8 @@
 package com.example.smmoney.misc;
 
+import android.util.Log;
+
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.records.AccountClass;
 
 import java.io.BufferedReader;
@@ -32,7 +35,7 @@ public class ExchangeRateClass {
                 }
             }
         } catch (NumberFormatException e) {
-            e.printStackTrace();
+            Log.e(SMMoney.TAG, "NumberFormatException in lookupExchangeRate", e);
         }
         if (exchangeRate >= 0.01d) {
             if (!this.inverseLookup) {

@@ -3,6 +3,7 @@ package com.example.smmoney.database;
 import android.database.Cursor;
 import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Log;
 
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateClass;
@@ -60,7 +61,7 @@ public class AccountDB {
             try {
                 curs.moveToNext();
             } catch (CursorIndexOutOfBoundsException e) {
-                e.printStackTrace();
+                Log.e(com.example.smmoney.SMMoney.TAG, "CursorIndexOutOfBoundsException in queryOnViewType", e);
             }
         }
         curs.close();
@@ -80,7 +81,7 @@ public class AccountDB {
     }
 
     public static void setLastExportTimestampForAccount(String account) {
-        if (account.length() == 0 || account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+        if (account.isEmpty() || account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
             Prefs.setPref(Prefs.LASTFULLEXPORT, System.currentTimeMillis());
             return;
         }

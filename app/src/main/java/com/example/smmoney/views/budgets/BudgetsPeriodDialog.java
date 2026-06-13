@@ -81,7 +81,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
         try {
             budgetDialogListner = (BudgetsDialogListner) context;
         } catch (ClassCastException e) {
-            throw new ClassCastException(context.toString() + " must implement ReportDialogListner");
+            throw new ClassCastException(context + " must implement ReportDialogListner");
         }
     }
 

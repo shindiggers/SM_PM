@@ -237,31 +237,26 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         }
     }
 
-    public String getIconFileName() {
-        hydrate();
-        if (this.iconFileName == null || this.iconFileName.length() == 0) {
-            switch (this.type) {
-                case Enums.kAccountTypeChecking /*0*/:
-                    this.iconFileName = "checkbook.png";
-                    break;
-                case Enums.kAccountTypeCreditCard /*2*/:
-                    this.iconFileName = "ic_visa.xml";
-                    break;
-                case Enums.kAccountTypeAsset /*3*/:
-                    this.iconFileName = "asset.png";
-                    break;
-                case Enums.kAccountTypeLiability /*4*/:
-                    this.iconFileName = "liability.png";
-                    break;
-                case Enums.kAccountTypeSavings /*6*/:
-                    this.iconFileName = "savings.png";
-                    break;
-                default:
-                    this.iconFileName = "cash.png";
-                    break;
-            }
+    static int idForAccount(@SuppressWarnings("SameParameterValue") boolean deleted, String account) {
+        int i = 1;
+        if (account == null || account.isEmpty()) {
+            return 0;
         }
-        return this.iconFileName;
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.ACCOUNTS_TABLE_NAME);
+        String[] projection = new String[]{"accountID"};
+        StringBuilder stringBuilder = new StringBuilder("deleted=");
+        if (!deleted) {
+            i = 0;
+        }
+        Cursor curs = Database.query(qb, projection, stringBuilder.append(i).append(" AND account LIKE ").append(Database.SQLFormat(account)).toString(), null, null, null, null);
+        int accountID = 0;
+        if (curs.getCount() != 0) {
+            curs.moveToFirst();
+            accountID = curs.getInt(0);
+        }
+        curs.close();
+        return accountID;
     }
 
     public void setIconFileNameFromResourceWithContext(int res, Context aContext) {
@@ -451,19 +446,32 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         }
     }
 
-    static int idForAccount(@SuppressWarnings("SameParameterValue") boolean deleted, String account) {
-        int i = 1;
-        if (account == null || account.length() == 0) {
+    public static int insertIntoDatabase(String newAccount) {
+        if (newAccount == null || newAccount.isEmpty()) {
+            return 0;
+        }
+        ContentValues content = new ContentValues();
+        content.put("deleted", 0);
+        content.put("account", newAccount);
+        content.put("exchangeRate", 1.0f);
+        content.put("totalWorth", 1);
+        content.put("noLimit", 1);
+        content.put("serverID", Database.newServerID());
+        content.put("timestamp", System.currentTimeMillis() / 1000);
+        long id = Database.insert(Database.ACCOUNTS_TABLE_NAME, null, content);
+        if (id != -1) {
+            return (int) id;
+        }
+        return 0;
+    }
+
+    public static int idForAccount(String account) {
+        if (account == null || account.isEmpty()) {
             return 0;
         }
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.ACCOUNTS_TABLE_NAME);
-        String[] projection = new String[]{"accountID"};
-        StringBuilder stringBuilder = new StringBuilder("deleted=");
-        if (!deleted) {
-            i = 0;
-        }
-        Cursor curs = Database.query(qb, projection, stringBuilder.append(i).append(" AND account LIKE ").append(Database.SQLFormat(account)).toString(), null, null, null, null);
+        Cursor curs = Database.query(qb, new String[]{"accountID"}, "deleted=0 AND account LIKE " + Database.SQLFormat(account), null, null, null, null);
         int accountID = 0;
         if (curs.getCount() != 0) {
             curs.moveToFirst();
@@ -471,20 +479,6 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         }
         curs.close();
         return accountID;
-    }
-
-    public String getCurrencyCode() {
-        hydrate();
-        if (this.currencyCode == null || this.currencyCode.length() == 0) {
-            this.currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
-        }
-        StringBuilder builder = new StringBuilder(this.currencyCode);
-        while (this.currencyCode.length() < 3) {
-            builder.append(" ");
-            //this.currencyCode += " ";
-        }
-        this.currencyCode = builder.toString();
-        return this.currencyCode;
     }
 
     @SuppressWarnings("unused")
@@ -839,45 +833,18 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         }
     }
 
-    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
-            ContentValues content = new ContentValues();
-            content.put("deleted", this.deleted);
-            String str = "timestamp";
-            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
-            content.put(str, currentTimeMillis);
-            content.put("displayOrder", this.displayOrder);
-            content.put("account", this.account);
-            content.put("type", this.type);
-            content.put("accountNumber", this.accountNumber);
-            content.put("routingNumber", this.routingNumber);
-            content.put("institution", this.institution);
-            content.put("phone", this.phone);
-            content.put("expirationDate", this.expirationDate);
-            content.put("checkNumber", this.checkNumber);
-            content.put("notes", this.notes);
-            content.put("iconFileName", this.iconFileName);
-            content.put("url", this.url);
-            content.put("fee", this.fee);
-            content.put("limitAmount", this.limit);
-            content.put("noLimit", this.noLimit);
-            content.put("totalWorth", this.totalWorth);
-            content.put("exchangeRate", this.exchangeRate);
-            content.put("currencyCode", this.currencyCode);
-            if (this.serverID == null || this.serverID.length() == 0) {
-                this.serverID = Database.newServerID();
-            }
-            content.put("serverID", this.serverID);
-            content.put("keepTheChangeAccountID", idForAccount(this.keepTheChangeAccount));
-            content.put("keepChangeRoundTo", this.keepChangeRoundTo);
-            content.put("lastSyncTime", this.lastSyncTime);
-            content.put("overdraftAccountID", idForAccount(this.overdraftAccount));
-            if (Database.update(Database.ACCOUNTS_TABLE_NAME, content, "accountID=" + this.accountID, null) != 1) {
-                Log.e("PockeyMoney", "Problem updating accountID=" + this.accountID);
-            }
-            this.dirty = false;
+    public static AccountClass recordWithServerID(String serverID) {
+        AccountClass record = null;
+        if (serverID == null || serverID.isEmpty()) {
+            return null;
         }
-        this.hydrated = false;
+        Cursor c = Database.rawQuery("SELECT accountID FROM accounts WHERE serverID=" + Database.SQLFormat(serverID), null);
+        if (c.getCount() > 0) {
+            c.moveToFirst();
+            record = new AccountClass(c.getInt(0));
+        }
+        c.close();
+        return record;
     }
 
     public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
@@ -904,23 +871,31 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return accountTypes;
     }
 
-    public static int insertIntoDatabase(String newAccount) {
-        if (newAccount == null || newAccount.length() == 0) {
-            return 0;
+    public String getIconFileName() {
+        hydrate();
+        if (this.iconFileName == null || this.iconFileName.isEmpty()) {
+            switch (this.type) {
+                case Enums.kAccountTypeChecking /*0*/:
+                    this.iconFileName = "checkbook.png";
+                    break;
+                case Enums.kAccountTypeCreditCard /*2*/:
+                    this.iconFileName = "ic_visa.xml";
+                    break;
+                case Enums.kAccountTypeAsset /*3*/:
+                    this.iconFileName = "asset.png";
+                    break;
+                case Enums.kAccountTypeLiability /*4*/:
+                    this.iconFileName = "liability.png";
+                    break;
+                case Enums.kAccountTypeSavings /*6*/:
+                    this.iconFileName = "savings.png";
+                    break;
+                default:
+                    this.iconFileName = "cash.png";
+                    break;
+            }
         }
-        ContentValues content = new ContentValues();
-        content.put("deleted", 0);
-        content.put("account", newAccount);
-        content.put("exchangeRate", 1.0f);
-        content.put("totalWorth", 1);
-        content.put("noLimit", 1);
-        content.put("serverID", Database.newServerID());
-        content.put("timestamp", System.currentTimeMillis() / 1000);
-        long id = Database.insert(Database.ACCOUNTS_TABLE_NAME, null, content);
-        if (id != -1) {
-            return (int) id;
-        }
-        return 0;
+        return this.iconFileName;
     }
 
     public static int idForAccountElseAddIfMissing(String anAccount, boolean addIt) {
@@ -931,20 +906,18 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return id;
     }
 
-    public static int idForAccount(String account) {
-        if (account == null || account.length() == 0) {
-            return 0;
+    public String getCurrencyCode() {
+        hydrate();
+        if (this.currencyCode == null || this.currencyCode.isEmpty()) {
+            this.currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.ACCOUNTS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"accountID"}, "deleted=0 AND account LIKE " + Database.SQLFormat(account), null, null, null, null);
-        int accountID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            accountID = curs.getInt(0);
+        StringBuilder builder = new StringBuilder(this.currencyCode);
+        while (this.currencyCode.length() < 3) {
+            builder.append(" ");
+            //this.currencyCode += " ";
         }
-        curs.close();
-        return accountID;
+        this.currencyCode = builder.toString();
+        return this.currencyCode;
     }
 
     public double balanceOfType(int balanceType) {
@@ -1016,18 +989,45 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return new AccountClass(pk).getAccount();
     }
 
-    public static AccountClass recordWithServerID(String serverID) {
-        AccountClass record = null;
-        if (serverID == null || serverID.length() == 0) {
-            return null;
+    public void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {
+        if (this.dirty) {
+            ContentValues content = new ContentValues();
+            content.put("deleted", this.deleted);
+            String str = "timestamp";
+            long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
+            content.put(str, currentTimeMillis);
+            content.put("displayOrder", this.displayOrder);
+            content.put("account", this.account);
+            content.put("type", this.type);
+            content.put("accountNumber", this.accountNumber);
+            content.put("routingNumber", this.routingNumber);
+            content.put("institution", this.institution);
+            content.put("phone", this.phone);
+            content.put("expirationDate", this.expirationDate);
+            content.put("checkNumber", this.checkNumber);
+            content.put("notes", this.notes);
+            content.put("iconFileName", this.iconFileName);
+            content.put("url", this.url);
+            content.put("fee", this.fee);
+            content.put("limitAmount", this.limit);
+            content.put("noLimit", this.noLimit);
+            content.put("totalWorth", this.totalWorth);
+            content.put("exchangeRate", this.exchangeRate);
+            content.put("currencyCode", this.currencyCode);
+            if (this.serverID == null || this.serverID.isEmpty()) {
+                this.serverID = Database.newServerID();
+            }
+            content.put("serverID", this.serverID);
+            content.put("keepTheChangeAccountID", idForAccount(this.keepTheChangeAccount));
+            content.put("keepChangeRoundTo", this.keepChangeRoundTo);
+            content.put("lastSyncTime", this.lastSyncTime);
+            content.put("overdraftAccountID", idForAccount(this.overdraftAccount));
+            if (Database.update(Database.ACCOUNTS_TABLE_NAME, content, "accountID=" + this.accountID, null) != 1) {
+                Log.e("PockeyMoney", "Problem updating accountID=" + this.accountID);
+            }
+            this.dirty = false;
         }
-        Cursor c = Database.rawQuery("SELECT accountID FROM accounts WHERE serverID=" + Database.SQLFormat(serverID), null);
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            record = new AccountClass(c.getInt(0));
-        }
-        c.close();
-        return record;
+        this.hydrated = false;
     }
 
     public static int idForAccountNumber(String accountNumber, String bankID) {

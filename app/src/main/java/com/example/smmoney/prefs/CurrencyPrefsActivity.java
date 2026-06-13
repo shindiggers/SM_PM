@@ -2,6 +2,8 @@ package com.example.smmoney.prefs;
 
 import android.os.Bundle;
 
+import android.util.Log;
+
 import androidx.preference.CheckBoxPreference;
 import androidx.preference.ListPreference;
 import androidx.preference.Preference;
@@ -46,7 +48,7 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
                 nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
                 codeNameList.add(Currency.getInstance(loc).getCurrencyCode());
             } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                Log.e(com.example.smmoney.SMMoney.TAG, "IllegalArgumentException in setupPrefs for loc: " + loc, e);
             }
         }
         this.listPref.setEntries(nameList.toArray(new String[1]));

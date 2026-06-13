@@ -71,7 +71,7 @@ public class CurrencyExt {
         try {
             currencyFormatter.setCurrency(Currency.getInstance(Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
         } catch (IllegalArgumentException e) {
-            if (amount.length() > 0) {
+            if (!amount.isEmpty()) {
                 while (Character.isLetter(amount.charAt(0))) {
                     amount = amount.substring(1);
                 }
@@ -104,7 +104,7 @@ public class CurrencyExt {
         try {
             currencyFormatter.setCurrency(Currency.getInstance(currency));
         } catch (IllegalArgumentException e) {
-            if (amount.length() > 0) {
+            if (!amount.isEmpty()) {
                 while (Character.isLetter(amount.charAt(0))) {
                     amount = amount.substring(1);
                 }
@@ -145,7 +145,7 @@ public class CurrencyExt {
             try {
                 nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "Exception in getCurrenciesWithSymbols for " + loc, e);
             }
         }
         int length = codes.length;
@@ -155,7 +155,7 @@ public class CurrencyExt {
             try {
                 nameList.add(Currency.getInstance(loc2).getCurrencyCode() + " - " + Currency.getInstance(loc2).getSymbol());
             } catch (Exception e2) {
-                e2.printStackTrace();
+                Log.e(SMMoney.TAG, "Exception in getCurrenciesWithSymbols for " + loc2, e2);
             }
             i++;
         }

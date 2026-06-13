@@ -354,7 +354,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void adjustBalance() {
         // check if there is a valid account for which we are going to adjust the balance. Return without doing anything if not
-        if (this._filter.getAccount() == null || this._filter.getAccount().length() == 0 || AccountDB.recordFor(this._filter.getAccount()) == null) {
+        if (this._filter.getAccount() == null || this._filter.getAccount().isEmpty() || AccountDB.recordFor(this._filter.getAccount()) == null) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("You need to have an account selected that exists to adjust the balance");
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
@@ -374,7 +374,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 String adjustString = input.getText().toString().trim();
-                if (adjustString.length() > 0) {
+                if (!adjustString.isEmpty()) {
                     TransactionsActivity.this.adjustBalanceAlert(Double.parseDouble(adjustString));
                 }
             }
@@ -498,7 +498,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private void rollupAction() {
-        if (this.adapter.getElements().size() != 0) {
+        if (!this.adapter.getElements().isEmpty()) {
             AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
             alt_bld.setMessage(getString(R.string.kLOC_TOOLS_ROLLUP_ALERT, String.valueOf(this.adapter.getElements().size()))).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int id) {
@@ -900,7 +900,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             try {
                                 TransactionsActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                             } catch (Exception e) {
-                                e.printStackTrace();
+                                Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_UPDATE) acquiring wakeLock", e);
                             }
                         }
                         if (TransactionsActivity.this.progressDialog != null && TransactionsActivity.this.progressDialog.isShowing()) {
@@ -916,13 +916,13 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         try {
                             TransactionsActivity.this.wakeLock.release();
                         } catch (Exception e2) {
-                            e2.printStackTrace();
+                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) releasing wakeLock", e2);
                         }
                         try {
                             TransactionsActivity.this.progressDialog.dismiss();
                             TransactionsActivity.this.progressDialog = null;
                         } catch (Exception e3) {
-                            e3.printStackTrace();
+                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) dismissing progressDialog", e3);
                         }
                         if (TransactionsActivity.this.progressDialog != null) {
                             Log.i("*** MSG_PROGRESS_FINISH", "Dismissing");

@@ -42,7 +42,7 @@ public class PhotoReceiptsCell extends View {
             this.bitmaps.clear();
             this.imageNames.clear();
             for (String name : locations.split(";")) {
-                if (name.length() != 0) {
+                if (!name.isEmpty()) {
                     try {
                         File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
                         File f = new File(photoDir, name);
@@ -125,7 +125,7 @@ public class PhotoReceiptsCell extends View {
         if (width <= 0) width = getResources().getDisplayMetrics().widthPixels;
         measureWidth(width);
 
-        if (this.bitmaps.size() == 0) {
+        if (this.bitmaps.isEmpty()) {
             setMeasuredDimension(0, 0);
             return;
         }

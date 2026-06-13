@@ -80,7 +80,7 @@ public class SMMoney extends Application {
                 }
                 is.close();
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(TAG, "Exception in getExternalMounts", e);
             }
             for (String line : s.toString().split("\n")) {
                 if (!line.toLowerCase(Locale.US).contains("asec") && line.matches(reg)) {
@@ -112,7 +112,7 @@ public class SMMoney extends Application {
         try {
             new File(dir + "temp.data").createNewFile();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "IOException in getTempFile", e);
         }
         return dir + "temp.data";
     }

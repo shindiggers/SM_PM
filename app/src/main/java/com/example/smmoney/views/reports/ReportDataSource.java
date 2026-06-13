@@ -262,7 +262,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
             modFilter.setDateFrom(startOfPeriod());
             modFilter.setDateTo(endOfPeriod());
         }
-        if (this.filter.getDate() != null && this.filter.getDate().length() > 0 && !this.filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL)) {
+        if (this.filter.getDate() != null && !this.filter.getDate().isEmpty() && !this.filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL)) {
             GregorianCalendar fromDate;
             GregorianCalendar toDate;
             if (this.filter.isCustomDate()) {

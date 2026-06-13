@@ -28,7 +28,7 @@ class OFX_Statement {
     OFX_Statement(List<TransactionClass> transactions, OFX_Tags tags) {
         this.tags = tags;
         this.transactions = new ArrayList<>(transactions);
-        if (transactions.size() > 0) {
+        if (!transactions.isEmpty()) {
             int accountID = AccountClass.idForAccount((transactions.get(0)).getAccount());
             if (accountID != 0) {
                 AccountClass accountClassRecord = new AccountClass(accountID);
@@ -59,13 +59,13 @@ class OFX_Statement {
         StringBuilder str = new StringBuilder(10000);
 
         for (TransactionClass transaction : this.transactions) {
-            str.append((new OFX_TransactionClass(transaction, this.tags)).toString());
+            str.append((new OFX_TransactionClass(transaction, this.tags)));
         }
 
         return "\t\t\t\t" + this.tags.bankTransListBegin + "\n"
                 + "\t\t\t\t\t" + this.tags.dateStartBegin + dateAsOf + this.tags.dateStartEnd + "\n"
                 + "\t\t\t\t\t" + this.tags.dateEndBegin + dateAsOf + this.tags.dateEndEnd + "\n"
-                + str.toString()
+                + str
                 + "\t\t\t\t" + this.tags.bankTransListEnd + "\n";
     }
 

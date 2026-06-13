@@ -34,7 +34,7 @@ public class CategoryReportDataSource extends ReportDataSource {
 
     private String stripSubcategories(String category) {
         int index;
-        if (Prefs.getBooleanPref(Prefs.REPORTS_GROUPSUBCATEGORIES) && this.filter.getCategory() != null && this.filter.getCategory().length() > 0) {
+        if (Prefs.getBooleanPref(Prefs.REPORTS_GROUPSUBCATEGORIES) && this.filter.getCategory() != null && !this.filter.getCategory().isEmpty()) {
             if (this.filter.getCategory().endsWith("%")) {
                 index = category.indexOf(this.filter.getCategory().replace("%", ":"));
             } else {

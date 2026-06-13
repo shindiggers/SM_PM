@@ -226,11 +226,11 @@ class OFX_TransactionClass {
     public String toString() {
         String memoLine = "";
         String checkLine = "";
-        if (this.memo != null && this.memo.length() > 0) {
+        if (this.memo != null && !this.memo.isEmpty()) {
             memoLine = "\t\t\t\t\t\t" + this.tags.transactionMemoBegin + this.memo + this.tags.transactionMemoEnd + "\n";
         }
 
-        if (this.checknum != null && this.checknum.length() > 0) {
+        if (this.checknum != null && !this.checknum.isEmpty()) {
             checkLine = "\t\t\t\t\t\t" + this.tags.transactionCheckNumBegin + this.checknum + this.tags.transactionCheckNumEnd + "\n";
         }
 
@@ -249,7 +249,7 @@ class OFX_TransactionClass {
                 .append("\n").append("\t\t\t\t\t\t")
                 .append(this.tags.transactionFitIDBegin);
         String dateAsString;
-        if (this.fitID != null && this.fitID.length() != 0) {
+        if (this.fitID != null && !this.fitID.isEmpty()) {
             dateAsString = this.fitID;
         } else {
             dateAsString = OFXClass.dateAsString(this.dtuser);

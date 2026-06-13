@@ -193,8 +193,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                     PocketMoneySyncActivity.this.reloadData();
                 } catch (Exception e) {
                     PocketMoneySyncActivity.this.stopSyncing();
-                    Log.e(SMMoney.TAG, e.getLocalizedMessage());
-                    e.printStackTrace();
+                    Log.e(SMMoney.TAG, "Exception in switchSyncing", e);
                 }
             }
         });
@@ -214,7 +213,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                 try {
                     Prefs.setPref(Prefs.PMSYNC_PORT, Integer.parseInt(PocketMoneySyncActivity.this.portEditText.getText().toString()));
                 } catch (NumberFormatException e) {
-                    e.printStackTrace();
+                    Log.e(SMMoney.TAG, "NumberFormatException in portEditText watcher", e);
                 }
             }
 
@@ -281,7 +280,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     private void displayInfoUpdate(ArrayList<String> ips) {
-        if (ips == null || ips.size() == 0) {
+        if (ips == null || ips.isEmpty()) {
             showWifiDialog();
         } else {
             this.myIPs = new String[ips.size()];
@@ -347,7 +346,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             try {
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                Log.e(SMMoney.TAG, "InterruptedException in showFirstUdidServerDialogWait", e);
             }
         }
         return this.udidFirstActionBlock == 0;

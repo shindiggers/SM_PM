@@ -6,6 +6,7 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -345,14 +346,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     }
 
     private void save() {
-        if (this.accountName.getText().toString().length() > 0) {
+        if (!this.accountName.getText().toString().isEmpty()) {
             this.account.setAccount(this.accountName.getText().toString());
             this.account.setTotalWorth(this.totalworth.isChecked());
             this.account.setTypeFromString(this.type.getText().toString());
             try {
                 this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this);
             } catch (Exception e) {
-                e.printStackTrace();
+                Log.e(com.example.smmoney.SMMoney.TAG, "Exception in save (setting icon)", e);
             }
             this.account.setExpirationDate(this.expires.getText().toString());
             this.account.setAccountNumber(this.accountNumber.getText().toString());
@@ -378,7 +379,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
 
     private void setNotesText(String note) {
         int i = 25;
-        if (note.length() > 0) {
+        if (!note.isEmpty()) {
             TextView textView = this.notes;
             if (25 > note.length()) {
                 i = note.length();
