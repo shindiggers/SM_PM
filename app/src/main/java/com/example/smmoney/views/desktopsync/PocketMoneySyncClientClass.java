@@ -43,12 +43,10 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
             processStateLoop();
             return true;
         } catch (IOException e) {
-            this.delegate.runOnUiThread(new Runnable() {
-                public void run() {
-                    PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClientClass.this.delegate;
-                    PocketMoneySyncClientClass.this.delegate.getClass();
-                    pocketMoneySyncActivity.showNoHostDialog();
-                }
+            this.delegate.runOnUiThread(() -> {
+                PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClientClass.this.delegate;
+                PocketMoneySyncClientClass.this.delegate.getClass();
+                pocketMoneySyncActivity.showNoHostDialog();
             });
             Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: IOException in connectToServer", e);
             return false;
@@ -70,11 +68,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                         getSyncVersion();
                         break;
                     } catch (Exception e) {
-                        this.delegate.runOnUiThread(new Runnable() {
-                            public void run() {
-                                PocketMoneySyncClientClass.this.delegate.stopSyncing();
-                            }
-                        });
+                        this.delegate.runOnUiThread(() -> PocketMoneySyncClientClass.this.delegate.stopSyncing());
                         Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: Exception in processStateLoop (getSyncVersion)", e);
                         return;
                     }

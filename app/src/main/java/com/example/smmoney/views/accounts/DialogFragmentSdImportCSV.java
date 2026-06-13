@@ -24,24 +24,20 @@ public class DialogFragmentSdImportCSV extends DialogFragment {
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
         builder.setMessage("The file 'SMMoney.csv' should be placed in the folder '/Download/PocketMoneyBackup'");
-        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
-                if (activity != null) {
-                    activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_OK);
-                }
-                dialog.dismiss();
-                //AccountsActivity.this.importCSVFromSD();
+        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
+            if (activity != null) {
+                activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_OK);
             }
+            dialog.dismiss();
+            //AccountsActivity.this.importCSVFromSD();
         });
-        builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
-                if (activity != null) {
-                    activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_CANCEL);
-                }
-                dialog.dismiss();
+        builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> {
+            DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
+            if (activity != null) {
+                activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_CANCEL);
             }
+            dialog.dismiss();
         });
         return builder.create();
     }

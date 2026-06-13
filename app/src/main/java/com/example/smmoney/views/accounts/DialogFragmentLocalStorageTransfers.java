@@ -24,25 +24,23 @@ public class DialogFragmentLocalStorageTransfers extends DialogFragment {
         CharSequence[] items5 = new CharSequence[]{Locales.kLOC_TOOLS_BACKUP_SD, Locales.kLOC_TOOLS_RESTORE_SD, Locales.kLOC_TOOLS_IMPORT_SD, Locales.kLOC_TOOLS_EXPORT_SD};
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD);
-        builder.setItems(items5, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                DialogLocalStorageTransferListener activity = (DialogLocalStorageTransferListener) getActivity();
-                if (activity != null) {
-                    switch (item) {
-                        case 0 /*Backup...*/:
-                            activity.onFinishLocalStorageTransferDialog(0);
-                            break;
-                        case 1 /*Restore...*/:
-                            activity.onFinishLocalStorageTransferDialog(1);
-                            break;
-                        case 2 /*Import...*/:
-                            activity.onFinishLocalStorageTransferDialog(2);
-                            break;
-                        case 3 /*Export*/:
-                            activity.onFinishLocalStorageTransferDialog(3);
-                            break;
-                        default:
-                    }
+        builder.setItems(items5, (dialog, item) -> {
+            DialogLocalStorageTransferListener activity = (DialogLocalStorageTransferListener) getActivity();
+            if (activity != null) {
+                switch (item) {
+                    case 0 /*Backup...*/:
+                        activity.onFinishLocalStorageTransferDialog(0);
+                        break;
+                    case 1 /*Restore...*/:
+                        activity.onFinishLocalStorageTransferDialog(1);
+                        break;
+                    case 2 /*Import...*/:
+                        activity.onFinishLocalStorageTransferDialog(2);
+                        break;
+                    case 3 /*Export*/:
+                        activity.onFinishLocalStorageTransferDialog(3);
+                        break;
+                    default:
                 }
             }
         });

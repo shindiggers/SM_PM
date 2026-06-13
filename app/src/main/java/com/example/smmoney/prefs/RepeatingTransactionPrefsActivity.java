@@ -42,11 +42,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
     }
 
     private void setupViews() {
-        this.postCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                RepeatingTransactionPrefsActivity.this.postView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-            }
-        });
+        this.postCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> RepeatingTransactionPrefsActivity.this.postView.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE));
         this.postEditText.setText(String.valueOf(Prefs.getIntPref(Prefs.RECURRDAYSINADVANCE)));
         this.postView.setVisibility(Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED) ? View.VISIBLE : View.INVISIBLE);
         this.postCheckBox.setChecked(Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED));

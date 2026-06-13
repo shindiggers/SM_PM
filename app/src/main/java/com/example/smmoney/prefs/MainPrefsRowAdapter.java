@@ -67,91 +67,35 @@ class MainPrefsRowAdapter extends BaseAdapter {
             final String theText;
             theText = version + pInfo.versionName + text + (!translations.isEmpty() ? "\n\n" + translations : "");
 
-            this.listenerList.add(new OnClickListener() {
-                public void onClick(View v) {
-                    Toast.makeText(MainPrefsRowAdapter.this.context, theText, Toast.LENGTH_LONG).show();
-                }
-            });
+            this.listenerList.add(v -> Toast.makeText(MainPrefsRowAdapter.this.context, theText, Toast.LENGTH_LONG).show());
         }
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent("android.intent.action.VIEW");
-                i.setData(Uri.parse("http://www.catamount.com/AndroidApps/PocketMoneyHelp/"));
-                try {
-                    MainPrefsRowAdapter.this.context.startActivity(i);
-                } catch (ActivityNotFoundException e) {
-                    Toast.makeText(MainPrefsRowAdapter.this.context, "Browser not found.", Toast.LENGTH_SHORT).show();
-                }
+        this.listenerList.add(v -> {
+            Intent i = new Intent("android.intent.action.VIEW");
+            i.setData(Uri.parse("http://www.catamount.com/AndroidApps/PocketMoneyHelp/"));
+            try {
+                MainPrefsRowAdapter.this.context.startActivity(i);
+            } catch (ActivityNotFoundException e) {
+                Toast.makeText(MainPrefsRowAdapter.this.context, "Browser not found.", Toast.LENGTH_SHORT).show();
             }
         });
         if (AccountsActivity.IS_GOOGLE_MARKET) {
-            this.listenerList.add(new OnClickListener() {
-                public void onClick(View v) {
-                    if (SMMoney.isLiteVersion()) {
-                        new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases are not available in the Lite version").setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-                    } else {
-                        new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases now included!").setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                dialog.dismiss();
-                            }
-                        }).show();
-                    }
+            this.listenerList.add(v -> {
+                if (SMMoney.isLiteVersion()) {
+                    new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases are not available in the Lite version").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+                } else {
+                    new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases now included!").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
                 }
             });
         }
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, SecurityPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, CurrencyPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, DataTransfersPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, DisplayOptionsPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, ManagedListsPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, RepeatingTransactionPrefsActivity.class));
-            }
-        });
-        this.listenerList.add(new OnClickListener() {
-            public void onClick(View v) {
-                Prefs.resetHints();
-            }
-        });
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, SecurityPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, CurrencyPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, DataTransfersPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, DisplayOptionsPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, ManagedListsPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, RepeatingTransactionPrefsActivity.class)));
+        this.listenerList.add(v -> Prefs.resetHints());
         if (AccountsActivity.IS_GOOGLE_MARKET) {
-            this.listenerList.add(new OnClickListener() {
-                public void onClick(View v) {
-                    new Builder(MainPrefsRowAdapter.this.context).setTitle("Restore Purchases").setMessage("This will restore your in-app-purchases. Please ensure that you are connected to the internet.").setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    }).show();
-                }
-            });
+            this.listenerList.add(v -> new Builder(MainPrefsRowAdapter.this.context).setTitle("Restore Purchases").setMessage("This will restore your in-app-purchases. Please ensure that you are connected to the internet.").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show());
         }
         if (AccountsActivity.IS_GOOGLE_MARKET) {
             this.nameList = new String[]{Locales.kLOC_PREFERENCES_ABOUT_TITLE, Locales.kLOC_PREFERENCES_HELP_TITLE, "In App Purchases", Locales.kLOC_PREFS_SECURITY, Locales.kLOC_ACCOUNT_CURRENCY_LABEL, Locales.kLOC_PREFS_DATATRANFER, Locales.kLOC_PREFS_VIEWOPTIONS, Locales.kLOC_PREFS_MANAGEDLISTS, Locales.kLOC_REPEATING_TRANSACTIONS, Locales.kLOC_PREFERENCES_TIPS_TITLE};

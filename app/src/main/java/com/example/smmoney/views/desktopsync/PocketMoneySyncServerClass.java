@@ -117,11 +117,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                         getSyncVersionHeader();
                         break;
                     } catch (Exception e) {
-                        this.delegate.runOnUiThread(new Runnable() {
-                            public void run() {
-                                PocketMoneySyncServerClass.this.delegate.stopSyncing();
-                            }
-                        });
+                        this.delegate.runOnUiThread(() -> PocketMoneySyncServerClass.this.delegate.stopSyncing());
                         Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: Exception in processStateLoop (getSyncVersion)", e);
                         return;
                     }

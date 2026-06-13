@@ -92,22 +92,18 @@ class ReportsRowAdapter extends BaseAdapter {
     }
 
     private OnCheckedChangeListener getCheckListener() {
-        return new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ((ReportsRowHolder) ((View) buttonView.getParent()).getTag()).report.checked = isChecked;
-                ((ReportsActivity) ReportsRowAdapter.this.mContext).reloadData();
-            }
+        return (buttonView, isChecked) -> {
+            ((ReportsRowHolder) ((View) buttonView.getParent()).getTag()).report.checked = isChecked;
+            ((ReportsActivity) ReportsRowAdapter.this.mContext).reloadData();
         };
     }
 
     private OnClickListener getBtnClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                ReportsRowHolder holder = (ReportsRowHolder) view.getTag();
-                Intent i = new Intent(ReportsRowAdapter.this.mContext, TransactionsActivity.class);
-                i.putExtra("Filter", ((ReportsActivity) ReportsRowAdapter.this.mContext).getFilterForReport(holder.report));
-                ReportsRowAdapter.this.mContext.startActivity(i);
-            }
+        return view -> {
+            ReportsRowHolder holder = (ReportsRowHolder) view.getTag();
+            Intent i = new Intent(ReportsRowAdapter.this.mContext, TransactionsActivity.class);
+            i.putExtra("Filter", ((ReportsActivity) ReportsRowAdapter.this.mContext).getFilterForReport(holder.report));
+            ReportsRowAdapter.this.mContext.startActivity(i);
         };
     }
 }

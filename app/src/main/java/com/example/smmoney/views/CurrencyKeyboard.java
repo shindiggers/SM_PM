@@ -63,37 +63,30 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     public void setEditText(EditText editText, final Runnable r) {
         this.editText = editText;
         final EditText theEdit = editText;
-        theEdit.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                CurrencyKeyboard.this.editText = theEdit;
-                CurrencyKeyboard.this.show();
-            }
+        theEdit.setOnClickListener(v -> {
+            CurrencyKeyboard.this.editText = theEdit;
+            CurrencyKeyboard.this.show();
         });
-        theEdit.setOnFocusChangeListener(new OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                CurrencyKeyboard.this.editText = theEdit;
-                if (hasFocus) {
-                    CurrencyKeyboard.this.show();
-                    if (r != null) {
-                        r.run();
-                        return;
-                    }
+        theEdit.setOnFocusChangeListener((v, hasFocus) -> {
+            CurrencyKeyboard.this.editText = theEdit;
+            if (hasFocus) {
+                CurrencyKeyboard.this.show();
+                if (r != null) {
+                    r.run();
                     return;
                 }
-                CurrencyKeyboard.this.processMath();
-                CurrencyKeyboard.this.hide();
+                return;
             }
+            CurrencyKeyboard.this.processMath();
+            CurrencyKeyboard.this.hide();
         });
-        theEdit.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                EditText editText1 = (EditText) v;
-                int inType = editText1.getInputType();
-                editText1.setInputType(InputType.TYPE_NULL);
-                editText1.onTouchEvent(event);
-                editText1.setInputType(inType);
-                return true;
-            }
+        theEdit.setOnTouchListener((v, event) -> {
+            EditText editText1 = (EditText) v;
+            int inType = editText1.getInputType();
+            editText1.setInputType(InputType.TYPE_NULL);
+            editText1.onTouchEvent(event);
+            editText1.setInputType(inType);
+            return true;
         });
     }
 
@@ -128,14 +121,12 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
 
     private void show() {
         ((InputMethodManager) Objects.requireNonNull(this.context.getSystemService(Context.INPUT_METHOD_SERVICE))).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
-        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
-            public void run() {
-                if (CurrencyKeyboard.this.editText.hasFocus()) {
-                    int i = CurrencyKeyboard.this.getVisibility();
-                    if (i == View.INVISIBLE || i == View.GONE) {
-                        CurrencyKeyboard.this.setVisibility(VISIBLE);
-                        CurrencyKeyboard.this.setToolbarVisibility(VISIBLE);
-                    }
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (CurrencyKeyboard.this.editText.hasFocus()) {
+                int i = CurrencyKeyboard.this.getVisibility();
+                if (i == View.INVISIBLE || i == View.GONE) {
+                    CurrencyKeyboard.this.setVisibility(VISIBLE);
+                    CurrencyKeyboard.this.setToolbarVisibility(VISIBLE);
                 }
             }
         }, 150);

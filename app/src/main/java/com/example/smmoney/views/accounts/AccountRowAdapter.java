@@ -46,14 +46,12 @@ class AccountRowAdapter extends BaseAdapter {
     private final LinearLayout previousRowLayout = null;
     private View repeatingView;
     private ArrayList<ArrayList<AccountClass>> sectionedAccounts;
-    private final OnClickListener headerClickListener = new OnClickListener() {
-        public void onClick(View view) {
-            String cat = ((BudgetsHeaderHolder) view).label;
-            for (int i = 0; i < AccountRowAdapter.this.sectionedAccountStrings.length; i++) {
-                if (cat.equals(AccountRowAdapter.this.sectionedAccountStrings[i])) {
-                    AccountRowAdapter.this.setShowSection(i, !AccountRowAdapter.this.getShowSection(i));
-                    AccountRowAdapter.this.notifyDataSetChanged();
-                }
+    private final OnClickListener headerClickListener = view -> {
+        String cat = ((BudgetsHeaderHolder) view).label;
+        for (int i = 0; i < AccountRowAdapter.this.sectionedAccountStrings.length; i++) {
+            if (cat.equals(AccountRowAdapter.this.sectionedAccountStrings[i])) {
+                AccountRowAdapter.this.setShowSection(i, !AccountRowAdapter.this.getShowSection(i));
+                AccountRowAdapter.this.notifyDataSetChanged();
             }
         }
     };
@@ -216,22 +214,20 @@ class AccountRowAdapter extends BaseAdapter {
             holder.selected.setOnCheckedChangeListener(getCheckListener());
             holder.newtransbutton = convertView.findViewById(R.id.accountsnewtransbutton);
             holder.newtransbutton.setColorFilter(PocketMoneyThemes.currentTintColor());
-            holder.newtransbutton.setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    AccountRowHolder holder = (AccountRowHolder) ((View) v.getParent().getParent()).getTag();
-                    Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionEditActivity.class);
-                    TransactionClass trans = new TransactionClass();
-                    AccountClass a1 = AccountDB.recordFor((String) holder.accountname.getText());
-                    trans.setAccount(a1.getAccount());
-                    trans.setCurrencyCode(a1.getCurrencyCode());
-                    trans.getSplits().get(0).dirty = false;
-                    trans.dirty = false;
-                    i.putExtra("Transaction", trans);
-                    if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
-                        ((AccountsActivity) AccountRowAdapter.this.mContext).editLauncher.launch(i);
-                    } else {
-                        AccountRowAdapter.this.mContext.startActivity(i);
-                    }
+            holder.newtransbutton.setOnClickListener(v -> {
+                AccountRowHolder holder1 = (AccountRowHolder) ((View) v.getParent().getParent()).getTag();
+                Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionEditActivity.class);
+                TransactionClass trans = new TransactionClass();
+                AccountClass a1 = AccountDB.recordFor((String) holder1.accountname.getText());
+                trans.setAccount(a1.getAccount());
+                trans.setCurrencyCode(a1.getCurrencyCode());
+                trans.getSplits().get(0).dirty = false;
+                trans.dirty = false;
+                i.putExtra("Transaction", trans);
+                if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
+                    ((AccountsActivity) AccountRowAdapter.this.mContext).editLauncher.launch(i);
+                } else {
+                    AccountRowAdapter.this.mContext.startActivity(i);
                 }
             });
             convertView.setTag(holder);
@@ -313,15 +309,13 @@ class AccountRowAdapter extends BaseAdapter {
     }
 
     private OnClickListener getBtnClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionsActivity.class);
-                AccountRowHolder holder = (AccountRowHolder) view.getTag();
-                FilterClass aFilter = new FilterClass((String) holder.accountname.getText());
-                aFilter.setFilterName(holder.account.getAccount());
-                i.putExtra("Filter", aFilter);
-                AccountRowAdapter.this.mContext.startActivity(i);
-            }
+        return view -> {
+            Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionsActivity.class);
+            AccountRowHolder holder = (AccountRowHolder) view.getTag();
+            FilterClass aFilter = new FilterClass((String) holder.accountname.getText());
+            aFilter.setFilterName(holder.account.getAccount());
+            i.putExtra("Filter", aFilter);
+            AccountRowAdapter.this.mContext.startActivity(i);
         };
     }
 
@@ -332,11 +326,7 @@ class AccountRowAdapter extends BaseAdapter {
         tv.setGravity(17);
         tv.setText(Locales.kLOC_REPEATING_TRANSACTIONS);
         tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        v.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                AccountRowAdapter.this.mContext.startActivity(new Intent(AccountRowAdapter.this.mContext, RepeatingActivity.class));
-            }
-        });
+        v.setOnClickListener(v1 -> AccountRowAdapter.this.mContext.startActivity(new Intent(AccountRowAdapter.this.mContext, RepeatingActivity.class)));
         v.setTag(null);
         return v;
     }
@@ -348,15 +338,13 @@ class AccountRowAdapter extends BaseAdapter {
         tv.setGravity(17);
         tv.setText(Locales.kLOC_ALL_TRANSACTIONS);
         tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        v.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionsActivity.class);
-                FilterClass f = new FilterClass();
-                f.setFilterName(Locales.kLOC_ALL_TRANSACTIONS);
-                f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-                i.putExtra("Filter", new FilterClass());
-                AccountRowAdapter.this.mContext.startActivity(i);
-            }
+        v.setOnClickListener(v1 -> {
+            Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionsActivity.class);
+            FilterClass f = new FilterClass();
+            f.setFilterName(Locales.kLOC_ALL_TRANSACTIONS);
+            f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+            i.putExtra("Filter", new FilterClass());
+            AccountRowAdapter.this.mContext.startActivity(i);
         });
         v.setTag(null);
         return v;
@@ -369,16 +357,14 @@ class AccountRowAdapter extends BaseAdapter {
         tv.setGravity(17);
         tv.setText(Locales.kLOC_TOOLS_FILTERS);
         tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        v.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(AccountRowAdapter.this.mContext, FiltersMainActivity.class);
-                FilterClass f = new FilterClass();
-                f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-                i.putExtra("Filter", f);
-                i.putExtra("ONLY SAVED", 1);
-                if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
-                    ((AccountsActivity) AccountRowAdapter.this.mContext).filterLauncher.launch(i);
-                }
+        v.setOnClickListener(v1 -> {
+            Intent i = new Intent(AccountRowAdapter.this.mContext, FiltersMainActivity.class);
+            FilterClass f = new FilterClass();
+            f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+            i.putExtra("Filter", f);
+            i.putExtra("ONLY SAVED", 1);
+            if (AccountRowAdapter.this.mContext instanceof AccountsActivity) {
+                ((AccountsActivity) AccountRowAdapter.this.mContext).filterLauncher.launch(i);
             }
         });
         v.setTag(null);

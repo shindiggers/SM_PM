@@ -177,11 +177,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setTitle(Locales.kLOC_ACCOUNTTYPES_URL_TITLE);
             alert.setMessage(Locales.kLOC_ACCOUNTTYPES_URL_BODY);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Prefs.setPref(Prefs.HINT_ACCOUNT_TYPE_OPTIONS, true);
-                    dialog.dismiss();
-                }
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                Prefs.setPref(Prefs.HINT_ACCOUNT_TYPE_OPTIONS, true);
+                dialog.dismiss();
             });
             alert.show();
         }
@@ -190,11 +188,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private void setupView() {
         this.theList = findViewById(R.id.the_list);
         this.theList.setFastScrollEnabled(true);
-        this.theList.setOnItemClickListener(new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapterView, View arg1, int arg2, long arg3) {
-                LookupsListActivity.this.onListItemClick(arg2);
-            }
-        });
+        this.theList.setOnItemClickListener((adapterView, arg1, arg2, arg3) -> LookupsListActivity.this.onListItemClick(arg2));
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
@@ -378,31 +372,25 @@ public class LookupsListActivity extends PocketMoneyActivity {
         final EditText input = new EditText(this);
         alert.setTitle("");
         alert.setView(input);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String value = input.getText().toString().trim();
-                switch (theItem) {
-                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                        PayeeClass.insertIntoDatabase(value);
-                        break;
-                    case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                        CategoryClass.insertIntoDatabase(value);
-                        break;
-                    case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                        ClassNameClass.insertIntoDatabase(value);
-                        break;
-                    case LookupsListActivity.ID_LOOKUP /*7*/:
-                        IDClass.insertIntoDatabase(value);
-                        break;
-                }
-                LookupsListActivity.this.reloadData();
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            String value = input.getText().toString().trim();
+            switch (theItem) {
+                case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                    PayeeClass.insertIntoDatabase(value);
+                    break;
+                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                    CategoryClass.insertIntoDatabase(value);
+                    break;
+                case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                    ClassNameClass.insertIntoDatabase(value);
+                    break;
+                case LookupsListActivity.ID_LOOKUP /*7*/:
+                    IDClass.insertIntoDatabase(value);
+                    break;
             }
+            LookupsListActivity.this.reloadData();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
         return true;
     }
@@ -432,64 +420,54 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 input.setText(originalString);
                 alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                 alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        AlertDialog.Builder b = new AlertDialog.Builder(LookupsListActivity.this);
-                        b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                        b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
-                        CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
-                        b.setPositiveButton(charSequence, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String value = input.getText().toString().trim();
-                                switch (theItem) {
-                                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                        PayeeClass.renameFromToInDatabase(originalString, value, false);
-                                        break;
-                                    case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                        CategoryClass.renameFromToInDatabase(originalString, value, false);
-                                        break;
-                                    case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                        ClassNameClass.renameFromToInDatabase(originalString, value, false);
-                                        break;
-                                    case LookupsListActivity.ID_LOOKUP /*7*/:
-                                        IDClass.renameFromToInDatabase(originalString, value, false);
-                                        break;
-                                }
-                                LookupsListActivity.this.reloadData();
-                            }
-                        });
-                        charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
-                        //editText = input;
-                        //i = theItem;
-                        //str = originalString;
-                        b.setNegativeButton(charSequence, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                String value = input.getText().toString().trim();
-                                switch (theItem) {
-                                    case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                        PayeeClass.renameFromToInDatabase(originalString, value, true);
-                                        break;
-                                    case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                        CategoryClass.renameFromToInDatabase(originalString, value, true);
-                                        break;
-                                    case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                        ClassNameClass.renameFromToInDatabase(originalString, value, true);
-                                        break;
-                                    case LookupsListActivity.ID_LOOKUP /*7*/:
-                                        IDClass.renameFromToInDatabase(originalString, value, true);
-                                        break;
-                                }
-                                LookupsListActivity.this.reloadData();
-                            }
-                        });
-                        b.create().show();
-                    }
+                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                    AlertDialog.Builder b = new AlertDialog.Builder(LookupsListActivity.this);
+                    b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
+                    b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
+                    CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
+                    b.setPositiveButton(charSequence, (dialog2, which) -> {
+                        String value = input.getText().toString().trim();
+                        switch (theItem) {
+                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                                PayeeClass.renameFromToInDatabase(originalString, value, false);
+                                break;
+                            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                                CategoryClass.renameFromToInDatabase(originalString, value, false);
+                                break;
+                            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                                ClassNameClass.renameFromToInDatabase(originalString, value, false);
+                                break;
+                            case LookupsListActivity.ID_LOOKUP /*7*/:
+                                IDClass.renameFromToInDatabase(originalString, value, false);
+                                break;
+                        }
+                        LookupsListActivity.this.reloadData();
+                    });
+                    charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
+                    //editText = input;
+                    //i = theItem;
+                    //str = originalString;
+                    b.setNegativeButton(charSequence, (dialog1, which) -> {
+                        String value = input.getText().toString().trim();
+                        switch (theItem) {
+                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                                PayeeClass.renameFromToInDatabase(originalString, value, true);
+                                break;
+                            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                                CategoryClass.renameFromToInDatabase(originalString, value, true);
+                                break;
+                            case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                                ClassNameClass.renameFromToInDatabase(originalString, value, true);
+                                break;
+                            case LookupsListActivity.ID_LOOKUP /*7*/:
+                                IDClass.renameFromToInDatabase(originalString, value, true);
+                                break;
+                        }
+                        LookupsListActivity.this.reloadData();
+                    });
+                    b.create().show();
                 });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
+                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
                 ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
                 return true;
@@ -517,17 +495,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 input = new EditText(this);
                 alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
                 alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
-                        LookupsListActivity.this.reloadData();
-                    }
+                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                    CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
+                    LookupsListActivity.this.reloadData();
                 });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
+                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
                 ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
                 return true;

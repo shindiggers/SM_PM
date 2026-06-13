@@ -137,20 +137,16 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         CheckBoxTint.colorCheckBox(this.restoreCheckBox);
         this.ipaddressEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.ipaddressTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        this.ipaddressTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (PocketMoneySyncActivity.this.myIPs != null && PocketMoneySyncActivity.this.myIPs.length > 0) {
-                    AlertDialog.Builder b = new AlertDialog.Builder(PocketMoneySyncActivity.this);
-                    b.setItems(PocketMoneySyncActivity.this.myIPs, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            if (which < PocketMoneySyncActivity.this.myIPs.length) {
-                                PocketMoneySyncActivity.this.myIP = PocketMoneySyncActivity.this.myIPs[which].toString();
-                                PocketMoneySyncActivity.this.reloadData();
-                            }
-                        }
-                    });
-                    b.create().show();
-                }
+        this.ipaddressTextView.setOnClickListener(v -> {
+            if (PocketMoneySyncActivity.this.myIPs != null && PocketMoneySyncActivity.this.myIPs.length > 0) {
+                AlertDialog.Builder b = new AlertDialog.Builder(PocketMoneySyncActivity.this);
+                b.setItems(PocketMoneySyncActivity.this.myIPs, (dialog, which) -> {
+                    if (which < PocketMoneySyncActivity.this.myIPs.length) {
+                        PocketMoneySyncActivity.this.myIP = PocketMoneySyncActivity.this.myIPs[which].toString();
+                        PocketMoneySyncActivity.this.reloadData();
+                    }
+                });
+                b.create().show();
             }
         });
         ((TextView) aView.findViewById(R.id.portlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -165,36 +161,32 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.spinningWheel.setVisibility(View.INVISIBLE);
         this.progressBar.setVisibility(View.INVISIBLE);
         this.statusTextView.setText("");
-        ((RadioGroup) this.clientRadioButton.getParent()).setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (!PocketMoneySyncActivity.this.programmaticUpdate) {
-                    Prefs.setPref(Prefs.PMSYNC_CLIENTSERVER, PocketMoneySyncActivity.this.clientRadioButton.isChecked());
-                    if (PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
-                        PocketMoneySyncActivity.this.stopSyncing();
-                    } else {
-                        PocketMoneySyncActivity.this.startSyncing();
-                    }
-                    PocketMoneySyncActivity.this.reloadData();
+        ((RadioGroup) this.clientRadioButton.getParent()).setOnCheckedChangeListener((group, checkedId) -> {
+            if (!PocketMoneySyncActivity.this.programmaticUpdate) {
+                Prefs.setPref(Prefs.PMSYNC_CLIENTSERVER, PocketMoneySyncActivity.this.clientRadioButton.isChecked());
+                if (PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
+                    PocketMoneySyncActivity.this.stopSyncing();
+                } else {
+                    PocketMoneySyncActivity.this.startSyncing();
                 }
+                PocketMoneySyncActivity.this.reloadData();
             }
         });
-        this.syncButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                try {
-                    if (PocketMoneySyncActivity.this.pocketmoneySync != null) {
-                        PocketMoneySyncActivity.this.stopSyncing();
-                    } else if (!PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
-                        PocketMoneySyncActivity.this.startSyncing();
-                    } else if (PocketMoneySyncActivity.this.restoreCheckBox.isChecked()) {
-                        PocketMoneySyncActivity.this.showRestoreDialog();
-                    } else {
-                        PocketMoneySyncActivity.this.startSyncing();
-                    }
-                    PocketMoneySyncActivity.this.reloadData();
-                } catch (Exception e) {
+        this.syncButton.setOnClickListener(v -> {
+            try {
+                if (PocketMoneySyncActivity.this.pocketmoneySync != null) {
                     PocketMoneySyncActivity.this.stopSyncing();
-                    Log.e(SMMoney.TAG, "Exception in switchSyncing", e);
+                } else if (!PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
+                    PocketMoneySyncActivity.this.startSyncing();
+                } else if (PocketMoneySyncActivity.this.restoreCheckBox.isChecked()) {
+                    PocketMoneySyncActivity.this.showRestoreDialog();
+                } else {
+                    PocketMoneySyncActivity.this.startSyncing();
                 }
+                PocketMoneySyncActivity.this.reloadData();
+            } catch (Exception e) {
+                PocketMoneySyncActivity.this.stopSyncing();
+                Log.e(SMMoney.TAG, "Exception in switchSyncing", e);
             }
         });
         this.ipaddressEditText.addTextChangedListener(new TextWatcher() {
@@ -329,17 +321,9 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.firstSyncToUDIDAction = 0;
         this.syncUdid = udid;
         if (this.clientRadioButton.isChecked()) {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    PocketMoneySyncActivity.this.showFirstUdidClientDialog();
-                }
-            });
+            runOnUiThread(() -> PocketMoneySyncActivity.this.showFirstUdidClientDialog());
         } else {
-            runOnUiThread(new Runnable() {
-                public void run() {
-                    PocketMoneySyncActivity.this.showFirstUdidServerDialog();
-                }
-            });
+            runOnUiThread(() -> PocketMoneySyncActivity.this.showFirstUdidServerDialog());
         }
         this.udidFirstActionBlock = 1;
         while (this.udidFirstActionBlock == 1) {
@@ -353,11 +337,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     public void desktopSyncWithState(final Object object, final int state) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                PocketMoneySyncActivity.this.desktopSyncWithStateMain(object, state);
-            }
-        });
+        runOnUiThread(() -> PocketMoneySyncActivity.this.desktopSyncWithStateMain(object, state));
     }
 
     private void desktopSyncWithStateMain(Object object, int state) {
@@ -509,11 +489,9 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     public void showNoHostDialog() {
-        new AlertDialog.Builder(this).setTitle("Hostname Error").setMessage("Could Not Find Server").setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                PocketMoneySyncActivity.this.stopSyncing();
-                dialog.dismiss();
-            }
+        new AlertDialog.Builder(this).setTitle("Hostname Error").setMessage("Could Not Find Server").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+            PocketMoneySyncActivity.this.stopSyncing();
+            dialog.dismiss();
         }).show();
     }
 
@@ -521,40 +499,34 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_RESTOREFROMSERVER, Locales.kLOC_DESKTOPSYNC_SYNC, Locales.kLOC_GENERAL_CANCEL};
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
-                .setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0 /*0*/:
-                                AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this);
-                                ab.setTitle("Are you sure?");
-                                ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
-                                ab.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionRestoreFromServer/*2*/;
-                                        dialog.dismiss();
-                                        PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
-                                    }
-                                });
-                                ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        PocketMoneySyncActivity.this.stopSyncing();
-                                        PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
-                                    }
-                                });
-                                ab.create().show();
-                                return;
-                            case 1 /*1*/:
-                                PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionSync/*3*/;
-                                break;
-                            case 2 /*2*/:
-                                PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
+                .setItems(items, (dialog, item) -> {
+                    switch (item) {
+                        case 0 /*0*/:
+                            AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this);
+                            ab.setTitle("Are you sure?");
+                            ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
+                            ab.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog2, which) -> {
+                                PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionRestoreFromServer/*2*/;
+                                dialog2.dismiss();
+                                PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
+                            });
+                            ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, which) -> {
                                 PocketMoneySyncActivity.this.stopSyncing();
                                 PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
-                                return;
-                        }
-                        dialog.dismiss();
-                        PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
+                            });
+                            ab.create().show();
+                            return;
+                        case 1 /*1*/:
+                            PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionSync/*3*/;
+                            break;
+                        case 2 /*2*/:
+                            PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
+                            PocketMoneySyncActivity.this.stopSyncing();
+                            PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
+                            return;
                     }
+                    dialog.dismiss();
+                    PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
                 }).show();
     }
 
@@ -562,102 +534,64 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         CharSequence[] items2 = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_SENDDATA, Locales.kLOC_GENERAL_CANCEL};
         new AlertDialog.Builder(this)
                 .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
-                .setItems(items2, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0 /*0*/:
-                                PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionSync/*3*/;
-                                break;
-                            case 1 /*1*/:
-                                PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
-                                PocketMoneySyncActivity.this.pocketmoneySync.reset();
-                                PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
-                                return;
-                        }
-                        dialog.dismiss();
-                        PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
+                .setItems(items2, (dialog, item) -> {
+                    switch (item) {
+                        case 0 /*0*/:
+                            PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionSync/*3*/;
+                            break;
+                        case 1 /*1*/:
+                            PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
+                            PocketMoneySyncActivity.this.pocketmoneySync.reset();
+                            PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
+                            return;
                     }
+                    dialog.dismiss();
+                    PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
                 }).show();
     }
 
     public void showOpenConnectionDialog() {
-        new AlertDialog.Builder(this).setTitle(Locales.kLOC_DESKTOPSYNC_TITLE).setMessage(Locales.kLOC_DESKTOPSYNC_CONNECTIONOPEN).setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        new AlertDialog.Builder(this).setTitle(Locales.kLOC_DESKTOPSYNC_TITLE).setMessage(Locales.kLOC_DESKTOPSYNC_CONNECTIONOPEN).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showRestoreDialog() {
-        new AlertDialog.Builder(this).setMessage(Locales.KLOC_TOOLS_DELETERESTORE_BODY).setPositiveButton(Locales.KLOC_TOOLS_DELETERESTORE, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this);
-                ab.setTitle("Are you sure?");
-                ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
-                ab.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        PocketMoneySyncActivity.this.startSyncing();
-                        PocketMoneySyncActivity.this.reloadData();
-                    }
-                });
-                ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
-                    }
-                });
-                ab.create().show();
-            }
-        }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        new AlertDialog.Builder(this).setMessage(Locales.KLOC_TOOLS_DELETERESTORE_BODY).setPositiveButton(Locales.KLOC_TOOLS_DELETERESTORE, (dialog, which) -> {
+            AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this);
+            ab.setTitle("Are you sure?");
+            ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
+            ab.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog2, which2) -> {
+                PocketMoneySyncActivity.this.startSyncing();
+                PocketMoneySyncActivity.this.reloadData();
+            });
+            ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, which1) -> dialog1.dismiss());
+            ab.create().show();
+        }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showPurchaseDialog() {
         if (SMMoney.isLiteVersion()) {
-            new AlertDialog.Builder(this).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server is not available in the Lite version").setNegativeButton("OK", new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int which) {
-                    PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
-                    dialog.dismiss();
-                }
+            new AlertDialog.Builder(this).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server is not available in the Lite version").setNegativeButton("OK", (dialog, which) -> {
+                PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
+                dialog.dismiss();
             }).show();
             return;
         }
-        new AlertDialog.Builder(this).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server allows you to easily sync to other mobile devices.\nWould you like to buy it?").setPositiveButton(Locales.kLOC_GENERAL_YES, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).setNegativeButton(Locales.kLOC_GENERAL_NO, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
-                dialog.dismiss();
-            }
+        new AlertDialog.Builder(this).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server allows you to easily sync to other mobile devices.\nWould you like to buy it?").setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> dialog.dismiss()).setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, which) -> {
+            PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
+            dialog.dismiss();
         }).show();
     }
 
     public void showRepeatingWarningDialog() {
-        new AlertDialog.Builder(this).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS).setMessage(Locales.kLOC_REPEATING_TRANSACTIONS_DISABLED).setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        new AlertDialog.Builder(this).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS).setMessage(Locales.kLOC_REPEATING_TRANSACTIONS_DISABLED).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showUpgradeDialog() {
-        new AlertDialog.Builder(this).setMessage(Locales.kLOC_DESKTOPSYNC_SYNVVERSIONINCOMPATIBLE).setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        new AlertDialog.Builder(this).setMessage(Locales.kLOC_DESKTOPSYNC_SYNVVERSIONINCOMPATIBLE).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showWifiDialog() {
-        new AlertDialog.Builder(this).setTitle(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_TITLE).setMessage(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_MSG).setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.dismiss();
-            }
-        }).show();
+        new AlertDialog.Builder(this).setTitle(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_TITLE).setMessage(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_MSG).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     private static ArrayList<String> getLocalIpAddresses() throws SocketException {

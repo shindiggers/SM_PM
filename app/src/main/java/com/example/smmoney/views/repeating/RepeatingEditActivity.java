@@ -131,11 +131,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             Builder alert = new Builder(this);
             alert.setTitle(Locales.kLOC_TIP_REEPEATING_TITLE);
             alert.setMessage(Locales.kLOC_TIP_REEPEATING);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Prefs.setPref(Prefs.HINT_REPEATING, true);
-                    dialog.dismiss();
-                }
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                Prefs.setPref(Prefs.HINT_REPEATING, true);
+                dialog.dismiss();
             });
             alert.show();
         }
@@ -187,34 +185,24 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
 
 
     private void setupButtons() {
-        ((View) this.frequencyTextView.getParent()).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(RepeatingEditActivity.this.context, LookupsListActivity.class);
-                i.putExtra("type", 16);
-                frequencyLauncher.launch(i);
+        ((View) this.frequencyTextView.getParent()).setOnClickListener(v -> {
+            Intent i = new Intent(RepeatingEditActivity.this.context, LookupsListActivity.class);
+            i.putExtra("type", 16);
+            frequencyLauncher.launch(i);
+        });
+        ((View) this.endOnTextView.getParent()).setOnClickListener(v -> {
+            Intent i = new Intent(RepeatingEditActivity.this.context, EndOnDateActivity.class);
+            i.putExtra("Date", RepeatingEditActivity.this.endOnTextView.getText().toString());
+            endOnLauncher.launch(i);
+        });
+        this.everyTextView.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString().replace(RepeatingEditActivity.this.suffix, ""));
+            } else {
+                RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString() + RepeatingEditActivity.this.suffix);
             }
         });
-        ((View) this.endOnTextView.getParent()).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(RepeatingEditActivity.this.context, EndOnDateActivity.class);
-                i.putExtra("Date", RepeatingEditActivity.this.endOnTextView.getText().toString());
-                endOnLauncher.launch(i);
-            }
-        });
-        this.everyTextView.setOnFocusChangeListener(new OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (hasFocus) {
-                    RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString().replace(RepeatingEditActivity.this.suffix, ""));
-                } else {
-                    RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString() + RepeatingEditActivity.this.suffix);
-                }
-            }
-        });
-        this.notifyCheckBox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                ((View) RepeatingEditActivity.this.notifyDaysInAdvanceTextView.getParent()).setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            }
-        });
+        this.notifyCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> ((View) RepeatingEditActivity.this.notifyDaysInAdvanceTextView.getParent()).setVisibility(isChecked ? View.VISIBLE : View.GONE));
         ((View) this.sundayTextView.getParent()).setOnClickListener(getDayClickListener(this.sundayCheck));
         ((View) this.mondayTextView.getParent()).setOnClickListener(getDayClickListener(this.mondayCheck));
         ((View) this.tuesdayTextView.getParent()).setOnClickListener(getDayClickListener(this.tuesdayCheck));
@@ -516,54 +504,52 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     }
 
     private View.OnClickListener getDayClickListener(final ImageView check) {
-        return new View.OnClickListener() {
-            public void onClick(View v) {
-                int i = View.GONE /*8*/;
-                int i2 = View.VISIBLE /*0*/;
-                ImageView imageView;
-                if (RepeatingEditActivity.this.repeatingTransaction.getType() == Enums.repeatWeekly /*2*/) {
-                    imageView = check;
-                    if (check.getVisibility() != View.VISIBLE) {
-                        i = View.VISIBLE /*0*/;
-                    }
-                    imageView.setVisibility(i);
-                    return;
+        return v -> {
+            int i = View.GONE /*8*/;
+            int i2 = View.VISIBLE /*0*/;
+            ImageView imageView;
+            if (RepeatingEditActivity.this.repeatingTransaction.getType() == Enums.repeatWeekly /*2*/) {
+                imageView = check;
+                if (check.getVisibility() != View.VISIBLE) {
+                    i = View.VISIBLE /*0*/;
                 }
-                int i3;
-                ImageView dayCheck = RepeatingEditActivity.this.sundayCheck;
-                if (check == RepeatingEditActivity.this.sundayCheck) {
-                    i3 = View.VISIBLE /*0*/;
-                } else {
-                    i3 = View.GONE /*8*/;
-                }
-                dayCheck.setVisibility(i3);
-                dayCheck = RepeatingEditActivity.this.mondayCheck;
-                if (check == RepeatingEditActivity.this.mondayCheck) {
-                    i3 = View.VISIBLE /*0*/;
-                } else {
-                    i3 = View.GONE /*8*/;
-                }
-                dayCheck.setVisibility(i3);
-                dayCheck = RepeatingEditActivity.this.tuesdayCheck;
-                if (check == RepeatingEditActivity.this.tuesdayCheck) {
-                    i3 = View.VISIBLE /*0*/;
-                } else {
-                    i3 = View.GONE /*8*/;
-                }
-                dayCheck.setVisibility(i3);
-                dayCheck = RepeatingEditActivity.this.wednesdayCheck;
-                if (check == RepeatingEditActivity.this.wednesdayCheck) {
-                    i3 = View.VISIBLE /*0*/;
-                } else {
-                    i3 = View.GONE /*8*/;
-                }
-                dayCheck.setVisibility(i3);
-                imageView = RepeatingEditActivity.this.thursdayCheck;
-                if (check != RepeatingEditActivity.this.thursdayCheck) {
-                    i2 = View.GONE /*8*/;
-                }
-                imageView.setVisibility(i2);
+                imageView.setVisibility(i);
+                return;
             }
+            int i3;
+            ImageView dayCheck = RepeatingEditActivity.this.sundayCheck;
+            if (check == RepeatingEditActivity.this.sundayCheck) {
+                i3 = View.VISIBLE /*0*/;
+            } else {
+                i3 = View.GONE /*8*/;
+            }
+            dayCheck.setVisibility(i3);
+            dayCheck = RepeatingEditActivity.this.mondayCheck;
+            if (check == RepeatingEditActivity.this.mondayCheck) {
+                i3 = View.VISIBLE /*0*/;
+            } else {
+                i3 = View.GONE /*8*/;
+            }
+            dayCheck.setVisibility(i3);
+            dayCheck = RepeatingEditActivity.this.tuesdayCheck;
+            if (check == RepeatingEditActivity.this.tuesdayCheck) {
+                i3 = View.VISIBLE /*0*/;
+            } else {
+                i3 = View.GONE /*8*/;
+            }
+            dayCheck.setVisibility(i3);
+            dayCheck = RepeatingEditActivity.this.wednesdayCheck;
+            if (check == RepeatingEditActivity.this.wednesdayCheck) {
+                i3 = View.VISIBLE /*0*/;
+            } else {
+                i3 = View.GONE /*8*/;
+            }
+            dayCheck.setVisibility(i3);
+            imageView = RepeatingEditActivity.this.thursdayCheck;
+            if (check != RepeatingEditActivity.this.thursdayCheck) {
+                i2 = View.GONE /*8*/;
+            }
+            imageView.setVisibility(i2);
         };
     }
 

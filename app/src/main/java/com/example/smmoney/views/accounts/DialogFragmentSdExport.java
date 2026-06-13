@@ -24,25 +24,23 @@ public class DialogFragmentSdExport extends DialogFragment {
         CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_EXPORT_SD);
-        builder.setItems(items6, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                DialogSdExportListener activity = (DialogSdExportListener) getActivity();
-                if (activity != null) {
-                    switch (item) {
-                        case 0 /*QIF*/:
-                            activity.onFinishSdExportDialog(0);
-                            break;
-                        case 1 /*TDF*/:
-                            activity.onFinishSdExportDialog(1);
-                            break;
-                        case 2 /*CSV*/:
-                            activity.onFinishSdExportDialog(2);
-                            break;
-                        case 3 /*OFX/QFX*/:
-                            activity.onFinishSdExportDialog(3);
-                            break;
-                        default:
-                    }
+        builder.setItems(items6, (dialog, item) -> {
+            DialogSdExportListener activity = (DialogSdExportListener) getActivity();
+            if (activity != null) {
+                switch (item) {
+                    case 0 /*QIF*/:
+                        activity.onFinishSdExportDialog(0);
+                        break;
+                    case 1 /*TDF*/:
+                        activity.onFinishSdExportDialog(1);
+                        break;
+                    case 2 /*CSV*/:
+                        activity.onFinishSdExportDialog(2);
+                        break;
+                    case 3 /*OFX/QFX*/:
+                        activity.onFinishSdExportDialog(3);
+                        break;
+                    default:
                 }
             }
         });

@@ -85,26 +85,22 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         String[] theStrings = new String[]{Locales.kLOC_PREFERENCES_SHOW_ALL, Locales.kLOC_PREFERENCES_NON_ZERO, Locales.kLOC_GENERAL_TOTALWORTH};
         this.showAccountsListPref.setEntries(theStrings);
         this.showAccountsListPref.setEntryValues(theStrings);
-        this.showAccountsListPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals(Locales.kLOC_PREFERENCES_SHOW_ALL)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsAll /*0*/);
-                } else if (newValue.equals(Locales.kLOC_PREFERENCES_NON_ZERO)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsNonZero /*1*/);
-                } else if (newValue.equals(Locales.kLOC_GENERAL_TOTALWORTH)) {
-                    Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsTotalWorth/*2*/);
-                }
-                preference.setSummary((String) newValue);
-                return true;
+        this.showAccountsListPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue.equals(Locales.kLOC_PREFERENCES_SHOW_ALL)) {
+                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsAll /*0*/);
+            } else if (newValue.equals(Locales.kLOC_PREFERENCES_NON_ZERO)) {
+                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsNonZero /*1*/);
+            } else if (newValue.equals(Locales.kLOC_GENERAL_TOTALWORTH)) {
+                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsTotalWorth/*2*/);
             }
+            preference.setSummary((String) newValue);
+            return true;
         });
-        this.asOfDatePref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent anIntent = new Intent(AccountsViewOptionsActivity.this, EndOnDateActivity.class);
-                anIntent.putExtra("Date", AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
-                datePickerLauncher.launch(anIntent);
-                return true;
-            }
+        this.asOfDatePref.setOnPreferenceClickListener(preference -> {
+            Intent anIntent = new Intent(AccountsViewOptionsActivity.this, EndOnDateActivity.class);
+            anIntent.putExtra("Date", AccountsViewOptionsActivity.this.asOfDatePref.getSummary());
+            datePickerLauncher.launch(anIntent);
+            return true;
         });
     }
 

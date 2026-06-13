@@ -86,19 +86,13 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
     }
 
     private void attachListeners() {
-        this.theCheckbox.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                EndOnDateActivity.this.theDateRow.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
-                if (isChecked) {
-                    showDatePicker();
-                }
-            }
-        });
-        this.theDateRow.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
+        this.theCheckbox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            EndOnDateActivity.this.theDateRow.setVisibility(isChecked ? View.VISIBLE : View.INVISIBLE);
+            if (isChecked) {
                 showDatePicker();
             }
         });
+        this.theDateRow.setOnClickListener(v -> showDatePicker());
     }
 
     private void showDatePicker() {

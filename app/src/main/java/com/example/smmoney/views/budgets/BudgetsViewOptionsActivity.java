@@ -79,22 +79,18 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         this.startOnDate = fragment.findPreference("budgetStartDatePref");
         this.sortOnPref.setEntries(new String[]{Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_BUDGETS_ACTUAL, Locales.kLOC_BUDGETS_BUDGETED, Locales.kLOC_BUDGETS_PERCENTAGE});
         this.sortOnPref.setEntryValues(new String[]{"0", "1", "2", "3"});
-        this.sortOnPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                int sortOn = Integer.parseInt((String) newValue);
-                Prefs.setPref(Prefs.BUDGETS_SORTON, sortOn);
-                preference.setSummary(BudgetsViewOptionsActivity.this.nameOfSortOnListPref(sortOn));
-                return true;
-            }
+        this.sortOnPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            int sortOn = Integer.parseInt((String) newValue);
+            Prefs.setPref(Prefs.BUDGETS_SORTON, sortOn);
+            preference.setSummary(BudgetsViewOptionsActivity.this.nameOfSortOnListPref(sortOn));
+            return true;
         });
-        this.startOnDate.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent anIntent = new Intent(BudgetsViewOptionsActivity.this, EndOnDateActivity.class);
-                anIntent.putExtra("Date", BudgetsViewOptionsActivity.this.startOnDate.getSummary().toString());
-                anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
-                datePickerLauncher.launch(anIntent);
-                return true;
-            }
+        this.startOnDate.setOnPreferenceClickListener(preference -> {
+            Intent anIntent = new Intent(BudgetsViewOptionsActivity.this, EndOnDateActivity.class);
+            anIntent.putExtra("Date", BudgetsViewOptionsActivity.this.startOnDate.getSummary().toString());
+            anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
+            datePickerLauncher.launch(anIntent);
+            return true;
         });
     }
 }

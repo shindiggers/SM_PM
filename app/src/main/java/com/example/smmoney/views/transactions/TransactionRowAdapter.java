@@ -93,31 +93,27 @@ class TransactionRowAdapter extends BaseAdapter {
     }
 
     private OnCheckedChangeListener getCheckListener() {
-        return new OnCheckedChangeListener() {
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (!PMGlobal.programaticUpdate) {
-                    TransactionRowHolder holder = (TransactionRowHolder) ((View) buttonView.getParent()).getTag();
-                    holder.transaction.hydrate();
-                    holder.transaction.setCleared(isChecked);
-                    holder.transaction.saveToDatabase();
-                    ((TransactionsActivity) TransactionRowAdapter.this.mContext).reloadData();
-                    ((TransactionsActivity) TransactionRowAdapter.this.mContext).reloadBalanceBar();
-                }
+        return (buttonView, isChecked) -> {
+            if (!PMGlobal.programaticUpdate) {
+                TransactionRowHolder holder = (TransactionRowHolder) ((View) buttonView.getParent()).getTag();
+                holder.transaction.hydrate();
+                holder.transaction.setCleared(isChecked);
+                holder.transaction.saveToDatabase();
+                ((TransactionsActivity) TransactionRowAdapter.this.mContext).reloadData();
+                ((TransactionsActivity) TransactionRowAdapter.this.mContext).reloadBalanceBar();
             }
         };
     }
 
     private OnClickListener getBtnClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                TransactionRowHolder holder = (TransactionRowHolder) view.getTag();
-                Intent i = new Intent(TransactionRowAdapter.this.mContext, TransactionEditActivity.class);
-                i.putExtra("Transaction", holder.transaction);
-                if (TransactionRowAdapter.this.mContext instanceof TransactionsActivity) {
-                    ((TransactionsActivity) TransactionRowAdapter.this.mContext).editLauncher.launch(i);
-                } else {
-                    TransactionRowAdapter.this.mContext.startActivity(i);
-                }
+        return view -> {
+            TransactionRowHolder holder = (TransactionRowHolder) view.getTag();
+            Intent i = new Intent(TransactionRowAdapter.this.mContext, TransactionEditActivity.class);
+            i.putExtra("Transaction", holder.transaction);
+            if (TransactionRowAdapter.this.mContext instanceof TransactionsActivity) {
+                ((TransactionsActivity) TransactionRowAdapter.this.mContext).editLauncher.launch(i);
+            } else {
+                TransactionRowAdapter.this.mContext.startActivity(i);
             }
         };
     }

@@ -28,22 +28,20 @@ public class DialogFragmentFileTransfer extends DialogFragment {
         items[2] = Locales.kLOC_DESKTOPSYNC_TITLE;
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                DialogFileTransferListener activity = (DialogFileTransferListener) getActivity();
-                if (activity != null) {
-                    switch (item) {
-                        case 0 /*Email Transferss...*/:
-                            activity.onFinishFileTransferDialog(0);
-                            break;
-                        case 1 /*Local Storage Trasnfers...*/:
-                            activity.onFinishFileTransferDialog(1);
-                            break;
-                        case 2 /*SMMoney Sync...*/:
-                            activity.onFinishFileTransferDialog(2);
-                            break;
-                        default:
-                    }
+        builder.setItems(items, (dialog, item) -> {
+            DialogFileTransferListener activity = (DialogFileTransferListener) getActivity();
+            if (activity != null) {
+                switch (item) {
+                    case 0 /*Email Transferss...*/:
+                        activity.onFinishFileTransferDialog(0);
+                        break;
+                    case 1 /*Local Storage Trasnfers...*/:
+                        activity.onFinishFileTransferDialog(1);
+                        break;
+                    case 2 /*SMMoney Sync...*/:
+                        activity.onFinishFileTransferDialog(2);
+                        break;
+                    default:
                 }
             }
         });

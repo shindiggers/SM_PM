@@ -46,11 +46,9 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         this.passwordPref.setText(this.storedPassword);
         this.confirmPref.setText(this.storedPassword);
         Builder alt_bld = new Builder(this);
-        alt_bld.setMessage(Locales.kLOC_PREFERENCES_PASSWORD_NOTMATCH).setCancelable(false).setNegativeButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                SecurityPrefsActivity.this.clearToPrefs();
-                dialog.cancel();
-            }
+        alt_bld.setMessage(Locales.kLOC_PREFERENCES_PASSWORD_NOTMATCH).setCancelable(false).setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, id) -> {
+            SecurityPrefsActivity.this.clearToPrefs();
+            dialog.cancel();
         });
         AlertDialog alert = alt_bld.create();
         alert.setTitle(Locales.kLOC_PREFERENCES_PASSWORD_TITLE);
@@ -90,11 +88,9 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private Preference.OnPreferenceChangeListener getOnChangeListener() {
-        return new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary((String) newValue);
-                return true;
-            }
+        return (preference, newValue) -> {
+            preference.setSummary((String) newValue);
+            return true;
         };
     }
 }

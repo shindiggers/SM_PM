@@ -24,25 +24,23 @@ public class DialogFragmentSdImport extends DialogFragment {
         CharSequence[] items7 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_IMPORT_SD);
-        builder.setItems(items7, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                DialogSdImportListener activity = (DialogSdImportListener) getActivity();
-                if (activity != null) {
-                    switch (item) {
-                        case 0 /*QIF*/:
-                            activity.onFinishSdImportDialog(0);
-                            break;
-                        case 1 /*TDF*/:
-                            activity.onFinishSdImportDialog(1);
-                            break;
-                        case 2 /*CSV*/:
-                            activity.onFinishSdImportDialog(2);
-                            break;
-                        case 3 /*OFX/QFX*/:
-                            activity.onFinishSdImportDialog(3);
-                            break;
-                        default:
-                    }
+        builder.setItems(items7, (dialog, item) -> {
+            DialogSdImportListener activity = (DialogSdImportListener) getActivity();
+            if (activity != null) {
+                switch (item) {
+                    case 0 /*QIF*/:
+                        activity.onFinishSdImportDialog(0);
+                        break;
+                    case 1 /*TDF*/:
+                        activity.onFinishSdImportDialog(1);
+                        break;
+                    case 2 /*CSV*/:
+                        activity.onFinishSdImportDialog(2);
+                        break;
+                    case 3 /*OFX/QFX*/:
+                        activity.onFinishSdImportDialog(3);
+                        break;
+                    default:
                 }
             }
         });

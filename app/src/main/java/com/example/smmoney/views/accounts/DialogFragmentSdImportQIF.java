@@ -24,22 +24,18 @@ public class DialogFragmentSdImportQIF extends DialogFragment {
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
         builder.setMessage("Place the *.qif file(s) in the folder '/Download/PocketMoneyBackup'\n\nMake sure to select the correct file format in the preferences");
-        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                DialogSdImportQIFListener activity = (DialogSdImportQIFListener) getActivity();
-                if (activity != null) {
-                    activity.onFinishSdImportQIFDialog(Locales.kLOC_GENERAL_OK);
-                }
-                dialog.dismiss();
+        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            DialogSdImportQIFListener activity = (DialogSdImportQIFListener) getActivity();
+            if (activity != null) {
+                activity.onFinishSdImportQIFDialog(Locales.kLOC_GENERAL_OK);
             }
+            dialog.dismiss();
         });
-        builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                DialogSdImportQIFListener activity = (DialogSdImportQIFListener) getActivity();
-                dialog.dismiss();
-                if (activity != null) {
-                    activity.onFinishSdImportQIFDialog(Locales.kLOC_GENERAL_CANCEL);
-                }
+        builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> {
+            DialogSdImportQIFListener activity = (DialogSdImportQIFListener) getActivity();
+            dialog.dismiss();
+            if (activity != null) {
+                activity.onFinishSdImportQIFDialog(Locales.kLOC_GENERAL_CANCEL);
             }
         });
         return builder.create();

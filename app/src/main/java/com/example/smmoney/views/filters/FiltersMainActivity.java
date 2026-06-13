@@ -92,33 +92,27 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         ListView theList = findViewById(R.id.filterlist);
         this.theAdapter = new FilterRowAdapter(this, this.filter);
         theList.setAdapter(this.theAdapter);
-        findViewById(R.id.filterreset).setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                FilterClass newFilter = new FilterClass();
-                newFilter.setFilterName(FiltersMainActivity.this.filter.getAccount());
-                newFilter.setAccount(FiltersMainActivity.this.filter.getAccount());
-                FiltersMainActivity.this.filterSelected(newFilter);
-            }
+        findViewById(R.id.filterreset).setOnClickListener(v -> {
+            FilterClass newFilter = new FilterClass();
+            newFilter.setFilterName(FiltersMainActivity.this.filter.getAccount());
+            newFilter.setAccount(FiltersMainActivity.this.filter.getAccount());
+            FiltersMainActivity.this.filterSelected(newFilter);
         });
         this.currenctFilterView = findViewById(R.id.filtercurrent);
-        this.currenctFilterView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (Objects.equals(FiltersMainActivity.this.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
-                    FiltersMainActivity.this.filter.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-                }
-                FiltersMainActivity.this.filter.setCustomFilter(true);
-                FiltersMainActivity.this.filterSelected(FiltersMainActivity.this.filter);
+        this.currenctFilterView.setOnClickListener(v -> {
+            if (Objects.equals(FiltersMainActivity.this.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+                FiltersMainActivity.this.filter.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
             }
+            FiltersMainActivity.this.filter.setCustomFilter(true);
+            FiltersMainActivity.this.filterSelected(FiltersMainActivity.this.filter);
         });
         FilterRowHolder holder = new FilterRowHolder();
         holder.filter = this.filter;
         this.currenctFilterView.setTag(holder);
-        findViewById(R.id.filtercurrentedit).setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent(FiltersMainActivity.this.context, FilterEditActivity.class);
-                i.putExtra("Filter", FiltersMainActivity.this.filter);
-                filterEditLauncher.launch(i);
-            }
+        findViewById(R.id.filtercurrentedit).setOnClickListener(v -> {
+            Intent i = new Intent(FiltersMainActivity.this.context, FilterEditActivity.class);
+            i.putExtra("Filter", FiltersMainActivity.this.filter);
+            filterEditLauncher.launch(i);
         });
         theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ArrayList<View> theViews = new ArrayList<>();
@@ -140,11 +134,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             i += 1;
         }
         this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                FiltersMainActivity.this.openOptionsMenu();
-            }
-        });
+        this.titleTextView.setOnClickListener(v -> FiltersMainActivity.this.openOptionsMenu());
         this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
         //findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.actionBarColor());
     }

@@ -143,19 +143,17 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int MENU_WIFI_EXPORT = 4;
     private FilterClass _filter;
     private TransactionRowAdapter adapter;
-    private final OnDateSetListener mDateSetListener = new OnDateSetListener() {
-        public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-            GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-            boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
-            int i = 0;
-            for (TransactionClass transaction : TransactionsActivity.this.adapter.getElements()) {
-                if ((descending && transaction.getDate().before(newCal)) || (!descending && transaction.getDate().after(newCal))) {
-                    break;
-                }
-                i++;
+    private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+        GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
+        int i = 0;
+        for (TransactionClass transaction : TransactionsActivity.this.adapter.getElements()) {
+            if ((descending && transaction.getDate().before(newCal)) || (!descending && transaction.getDate().after(newCal))) {
+                break;
             }
-            ((ListView) TransactionsActivity.this.findViewById(R.id.the_list)).setSelection(i);
+            i++;
         }
+        ((ListView) TransactionsActivity.this.findViewById(R.id.the_list)).setSelection(i);
     };
     private BalanceBar balanceBar;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
@@ -309,21 +307,15 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private void markAsClear() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setMessage("Are you sure you want to mark all the transactions clear?");
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                for (TransactionClass trans : TransactionsActivity.this.adapter.getElements()) {
-                    trans.hydrate();
-                    trans.setCleared(true);
-                    trans.saveToDatabase();
-                }
-                TransactionsActivity.this.reloadData();
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            for (TransactionClass trans : TransactionsActivity.this.adapter.getElements()) {
+                trans.hydrate();
+                trans.setCleared(true);
+                trans.saveToDatabase();
             }
+            TransactionsActivity.this.reloadData();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
     }
 
@@ -357,11 +349,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         if (this._filter.getAccount() == null || this._filter.getAccount().isEmpty() || AccountDB.recordFor(this._filter.getAccount()) == null) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage("You need to have an account selected that exists to adjust the balance");
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    dialog.dismiss();
-                }
-            });
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> dialog.dismiss());
             alert.show();
             return;
         }
@@ -371,19 +359,13 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         input.setInputType(InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL + InputType.TYPE_NUMBER_FLAG_SIGNED /*12290*/); // 12290 = InputType.TYPE_NUMBER_FLAG_DECIMAL (8192) + IT.TYPE_NUMBER_FLAG_SIGNED (4096) + IT.TYPE_CLASS_NUMBER (2)
         alert.setMessage(Locales.kLOC_TOOLS_RECONCILE_BODY);
         alert.setView(input);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String adjustString = input.getText().toString().trim();
-                if (!adjustString.isEmpty()) {
-                    TransactionsActivity.this.adjustBalanceAlert(Double.parseDouble(adjustString));
-                }
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            String adjustString = input.getText().toString().trim();
+            if (!adjustString.isEmpty()) {
+                TransactionsActivity.this.adjustBalanceAlert(Double.parseDouble(adjustString));
             }
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
     }
 
@@ -398,16 +380,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
             final double d = newBalance;
             final double d2 = newBalance;
-            alt_bld.setCancelable(false).setMessage(Locales.kLOC_TOOLS_RECONCILE_ALLCLEARED).setPositiveButton(Locales.kLOC_GENERAL_CLEARED, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    TransactionsActivity.this.adjustBalanceConfirm(true, d - clearedAdjust);
-                }
-            }).setNegativeButton(Locales.kLOC_TOOLS_RECONCILE_ALL, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    TransactionsActivity.this.adjustBalanceConfirm(false, d2 - futureAdjust);
-
-                }
-            });
+            alt_bld.setCancelable(false).setMessage(Locales.kLOC_TOOLS_RECONCILE_ALLCLEARED).setPositiveButton(Locales.kLOC_GENERAL_CLEARED, (dialog, id) -> TransactionsActivity.this.adjustBalanceConfirm(true, d - clearedAdjust)).setNegativeButton(Locales.kLOC_TOOLS_RECONCILE_ALL, (dialog, id) -> TransactionsActivity.this.adjustBalanceConfirm(false, d2 - futureAdjust));
 
             alt_bld.create().show();
         }
@@ -420,15 +393,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             titleString = getString(R.string.kLOC_TOOLS_RECONCILE_CONFIRM, act.formatAmountAsCurrency(newBalance));
         }
         AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-        alt_bld.setCancelable(false).setMessage(titleString).setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                TransactionsActivity.this.adjustBalanceToAmount(onlyCleared, newBalance);
-            }
-        }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.cancel();
-            }
-        });
+        alt_bld.setCancelable(false).setMessage(titleString).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, id) -> TransactionsActivity.this.adjustBalanceToAmount(onlyCleared, newBalance)).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, id) -> dialog.cancel());
         alt_bld.create().show();
     }
 
@@ -450,18 +415,16 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private OnClickListener getBalanceBarClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                int i = Prefs.getIntPref(Prefs.BALANCETYPE);
-                if (v.equals(TransactionsActivity.this.balanceBar.nextButton)) {
-                    i = TransactionsActivity.this.balanceBar.nextBalanceTypeAfter(i);
-                } else {
-                    i = TransactionsActivity.this.balanceBar.nextBalanceTypeBefore(i);
-                }
-                Prefs.setPref(Prefs.BALANCETYPE, i);
-                TransactionsActivity.this.reloadBalanceBar();
-                TransactionsActivity.this.reloadData();
+        return v -> {
+            int i = Prefs.getIntPref(Prefs.BALANCETYPE);
+            if (v.equals(TransactionsActivity.this.balanceBar.nextButton)) {
+                i = TransactionsActivity.this.balanceBar.nextBalanceTypeAfter(i);
+            } else {
+                i = TransactionsActivity.this.balanceBar.nextBalanceTypeBefore(i);
             }
+            Prefs.setPref(Prefs.BALANCETYPE, i);
+            TransactionsActivity.this.reloadBalanceBar();
+            TransactionsActivity.this.reloadData();
         };
     }
 
@@ -500,26 +463,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private void rollupAction() {
         if (!this.adapter.getElements().isEmpty()) {
             AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
-            alt_bld.setMessage(getString(R.string.kLOC_TOOLS_ROLLUP_ALERT, String.valueOf(this.adapter.getElements().size()))).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    AlertDialog.Builder alt_bld = new AlertDialog.Builder(TransactionsActivity.this.context);
-                    alt_bld.setMessage(Locales.kLOC_TOOLS_ROLLUP_CONFIRM).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            TransactionDB.rollupTransactionsInFilter(TransactionsActivity.this.adapter.getElements(), TransactionsActivity.this._filter);
-                            TransactionsActivity.this.reloadData();
-                        }
-                    }).setNegativeButton(Locales.kLOC_GENERAL_NO, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int id) {
-                            dialog.cancel();
-                        }
-                    });
-                    alt_bld.create().show();
-                }
-            }).setNegativeButton(Locales.kLOC_GENERAL_NO, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int id) {
-                    dialog.cancel();
-                }
-            });
+            alt_bld.setMessage(getString(R.string.kLOC_TOOLS_ROLLUP_ALERT, String.valueOf(this.adapter.getElements().size()))).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, id) -> {
+                AlertDialog.Builder alt_bld1 = new AlertDialog.Builder(TransactionsActivity.this.context);
+                alt_bld1.setMessage(Locales.kLOC_TOOLS_ROLLUP_CONFIRM).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, id2) -> {
+                    TransactionDB.rollupTransactionsInFilter(TransactionsActivity.this.adapter.getElements(), TransactionsActivity.this._filter);
+                    TransactionsActivity.this.reloadData();
+                }).setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog1, id1) -> dialog1.cancel());
+                alt_bld1.create().show();
+            }).setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, id) -> dialog.cancel());
             alt_bld.create().show();
         }
     }
@@ -577,11 +528,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 }
                 exportofx.exportRecords(query);
                 pd.dismiss();
-                TransactionsActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        TransactionsActivity.this.generateEmailForOFX(fileNames);
-                    }
-                });
+                TransactionsActivity.this.runOnUiThread(() -> TransactionsActivity.this.generateEmailForOFX(fileNames));
             }
         }.start();
     }
@@ -677,17 +624,15 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         CharSequence[] items = new CharSequence[]{Locales.kLOC_TOOLS_EMAILREGISTER, Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD};
         new AlertDialog.Builder(this)
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
-                .setItems(items, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case 0 /*Email register...*/:
-                                TransactionsActivity.this.showEmailTransfersDialog();
-                                return;
-                            case 1 /*Local storage transfers...*/:
-                                TransactionsActivity.this.showSdExportDialog();
-                                return;
-                            default:
-                        }
+                .setItems(items, (dialog, item) -> {
+                    switch (item) {
+                        case 0 /*Email register...*/:
+                            TransactionsActivity.this.showEmailTransfersDialog();
+                            return;
+                        case 1 /*Local storage transfers...*/:
+                            TransactionsActivity.this.showSdExportDialog();
+                            return;
+                        default:
                     }
                 }).show();
     }
@@ -696,58 +641,56 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         new AlertDialog.Builder(this)
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL)
-                .setItems(items3, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-                        switch (item) {
-                            case EMAIL_QIF /*0*/:
-                                TransactionsActivity.this.msgEmail = 0;
-                                TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.qif";
-                                Log.i("****** EMAIL", "EXPORTING QIF");
-                                final String fl = TransactionsActivity.this.emailFileLocation;
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
-                                        exportqif.setFilter(TransactionsActivity.this._filter);
-                                        exportqif.QIFPath = fl;
-                                        exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case EMAIL_TDF /*1*/:
-                                TransactionsActivity.this.msgEmail = 1;
-                                TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.txt";
-                                final String fl2 = TransactionsActivity.this.emailFileLocation;
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
-                                        exporttdf.CSVPath = fl2;
-                                        exporttdf.setFilter(TransactionsActivity.this._filter);
-                                        exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case EMAIL_CSV /*2*/:
-                                TransactionsActivity.this.msgEmail = 2;
-                                TransactionsActivity.this.shouldEmail = true;
-                                TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.csv";
-                                final String fl3 = TransactionsActivity.this.emailFileLocation;
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
-                                        exportcsv.CSVPath = fl3;
-                                        exportcsv.setFilter(TransactionsActivity.this._filter);
-                                        exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case SplitsActivity.REQUEST_EDIT /*3*/:
-                                TransactionsActivity.this.generateOFXForEmail();
-                                return;
-                            default:
-                        }
+                .setItems(items3, (dialog, item) -> {
+                    String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+                    switch (item) {
+                        case EMAIL_QIF /*0*/:
+                            TransactionsActivity.this.msgEmail = 0;
+                            TransactionsActivity.this.shouldEmail = true;
+                            TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.qif";
+                            Log.i("****** EMAIL", "EXPORTING QIF");
+                            final String fl = TransactionsActivity.this.emailFileLocation;
+                            new Thread() {
+                                public void run() {
+                                    ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
+                                    exportqif.setFilter(TransactionsActivity.this._filter);
+                                    exportqif.QIFPath = fl;
+                                    exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case EMAIL_TDF /*1*/:
+                            TransactionsActivity.this.msgEmail = 1;
+                            TransactionsActivity.this.shouldEmail = true;
+                            TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.txt";
+                            final String fl2 = TransactionsActivity.this.emailFileLocation;
+                            new Thread() {
+                                public void run() {
+                                    ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
+                                    exporttdf.CSVPath = fl2;
+                                    exporttdf.setFilter(TransactionsActivity.this._filter);
+                                    exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case EMAIL_CSV /*2*/:
+                            TransactionsActivity.this.msgEmail = 2;
+                            TransactionsActivity.this.shouldEmail = true;
+                            TransactionsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.csv";
+                            final String fl3 = TransactionsActivity.this.emailFileLocation;
+                            new Thread() {
+                                public void run() {
+                                    ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
+                                    exportcsv.CSVPath = fl3;
+                                    exportcsv.setFilter(TransactionsActivity.this._filter);
+                                    exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case SplitsActivity.REQUEST_EDIT /*3*/:
+                            TransactionsActivity.this.generateOFXForEmail();
+                            return;
+                        default:
                     }
                 }).show();
     }
@@ -756,26 +699,24 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         CharSequence[] items4 = new CharSequence[]{"QIF", "TDF", "CSV"};
         new AlertDialog.Builder(this)
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
-                .setItems(items4, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case EMAIL_QIF /*0*/:
-                                ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
-                                exportqif.setFilter(TransactionsActivity.this._filter);
-                                exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                return;
-                            case SplitsActivity.RESULT_CHANGED /*1*/:
-                                ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
-                                exporttdf.setFilter(TransactionsActivity.this._filter);
-                                exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                return;
-                            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                                ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
-                                exportcsv.setFilter(TransactionsActivity.this._filter);
-                                exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                return;
-                            default:
-                        }
+                .setItems(items4, (dialog, item) -> {
+                    switch (item) {
+                        case EMAIL_QIF /*0*/:
+                            ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
+                            exportqif.setFilter(TransactionsActivity.this._filter);
+                            exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                            return;
+                        case SplitsActivity.RESULT_CHANGED /*1*/:
+                            ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
+                            exporttdf.setFilter(TransactionsActivity.this._filter);
+                            exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                            return;
+                        case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                            ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
+                            exportcsv.setFilter(TransactionsActivity.this._filter);
+                            exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                            return;
+                        default:
                     }
                 }).show();
     }
@@ -784,41 +725,39 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         new AlertDialog.Builder(this)
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
-                .setItems(items6, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int item) {
-                        switch (item) {
-                            case EMAIL_QIF /*0*/:
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
-                                        exportqif.setFilter(TransactionsActivity.this._filter);
-                                        exportqif.exportRecords(TransactionDB.queryWithFilterOrderByAccount(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case EMAIL_TDF /*1*/:
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
-                                        exporttdf.setFilter(TransactionsActivity.this._filter);
-                                        exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case EMAIL_CSV /*2*/:
-                                new Thread() {
-                                    public void run() {
-                                        ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
-                                        exportcsv.setFilter(TransactionsActivity.this._filter);
-                                        exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                                    }
-                                }.start();
-                                return;
-                            case SplitsActivity.REQUEST_EDIT /*3*/:
-                                TransactionsActivity.this.exportOFXToSD();
-                                return;
-                            default:
-                        }
+                .setItems(items6, (dialog, item) -> {
+                    switch (item) {
+                        case EMAIL_QIF /*0*/:
+                            new Thread() {
+                                public void run() {
+                                    ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
+                                    exportqif.setFilter(TransactionsActivity.this._filter);
+                                    exportqif.exportRecords(TransactionDB.queryWithFilterOrderByAccount(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case EMAIL_TDF /*1*/:
+                            new Thread() {
+                                public void run() {
+                                    ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
+                                    exporttdf.setFilter(TransactionsActivity.this._filter);
+                                    exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case EMAIL_CSV /*2*/:
+                            new Thread() {
+                                public void run() {
+                                    ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
+                                    exportcsv.setFilter(TransactionsActivity.this._filter);
+                                    exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
+                                }
+                            }.start();
+                            return;
+                        case SplitsActivity.REQUEST_EDIT /*3*/:
+                            TransactionsActivity.this.exportOFXToSD();
+                            return;
+                        default:
                     }
                 }).show();
     }
@@ -840,11 +779,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         alert.setTitle("Error");
         alert.setMessage(msg);
         alert.setCancelable(false);
-        alert.setButton(-1, "OK", new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int id) {
-                dialog.dismiss();
-            }
-        });
+        alert.setButton(-1, "OK", (dialog, id) -> dialog.dismiss());
         alert.show();
     }
 
@@ -974,11 +909,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         alert.setTitle("Error");
                         alert.setMessage((String) msg.obj);
                         alert.setCancelable(false);
-                        alert.setButton(-1, "OK", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
+                        alert.setButton(-1, "OK", (dialog, id) -> dialog.dismiss());
                         alert.show();
                         return;
                     default:
@@ -997,17 +928,15 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private OnCheckedChangeListener getRadioChangedListener() {
-        return new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.pendingbutton) {
-                    TransactionsActivity.this._filter.setCleared(0);
-                } else if (checkedId == R.id.clearedbutton) {
-                    TransactionsActivity.this._filter.setCleared(1);
-                } else if (checkedId == R.id.allbutton) {
-                    TransactionsActivity.this._filter.setCleared(2);
-                }
-                TransactionsActivity.this.reloadData();
+        return (group, checkedId) -> {
+            if (checkedId == R.id.pendingbutton) {
+                TransactionsActivity.this._filter.setCleared(0);
+            } else if (checkedId == R.id.clearedbutton) {
+                TransactionsActivity.this._filter.setCleared(1);
+            } else if (checkedId == R.id.allbutton) {
+                TransactionsActivity.this._filter.setCleared(2);
             }
+            TransactionsActivity.this.reloadData();
         };
     }
 }

@@ -196,11 +196,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         this.listeningSocket = null;
         this.asyncSocket = null;
         final PocketMoneySyncActivity del = this.delegate;
-        this.delegate.runOnUiThread(new Runnable() {
-            public void run() {
-                del.desktopSyncComplete(PocketMoneySyncClass.this);
-            }
-        });
+        this.delegate.runOnUiThread(() -> del.desktopSyncComplete(PocketMoneySyncClass.this));
     }
 
     void reset() {
@@ -729,13 +725,11 @@ public class PocketMoneySyncClass extends DefaultHandler {
         if (this.syncVersion > 2) {
             this.syncVersion = 2;
         } else if (this.syncVersion < 2) {
-            this.delegate.runOnUiThread(new Runnable() {
-                public void run() {
-                    PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClass.this.delegate;
-                    PocketMoneySyncClass.this.delegate.getClass();
-                    pocketMoneySyncActivity.showUpgradeDialog();
-                    PocketMoneySyncClass.this.delegate.stopSyncing();
-                }
+            this.delegate.runOnUiThread(() -> {
+                PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClass.this.delegate;
+                PocketMoneySyncClass.this.delegate.getClass();
+                pocketMoneySyncActivity.showUpgradeDialog();
+                PocketMoneySyncClass.this.delegate.stopSyncing();
             });
         }
         setCurrentState(Enums.kDesktopSyncStateSyncVersionProcessed/*16*/);

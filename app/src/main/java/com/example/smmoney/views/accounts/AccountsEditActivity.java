@@ -152,11 +152,9 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         if (!Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO)) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setMessage(Locales.kLOC_TIP_ACCOUNT_INFO);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Prefs.setPref(Prefs.HINT_ACCOUNT_INFO, true);
-                    dialog.dismiss();
-                }
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                Prefs.setPref(Prefs.HINT_ACCOUNT_INFO, true);
+                dialog.dismiss();
             });
             alert.show();
         }
@@ -172,21 +170,13 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         v = (LinearLayout) this.notes.getParent();
         v.setTag(3);
         v.setOnClickListener(getBtnClickListener());
-        ((View) this.currency.getParent()).setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-                new AlertDialog.Builder(AccountsEditActivity.this).setItems(currencyCodes, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, final int item) {
-                        AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
-                        dialog.dismiss();
-                        new Runnable() {
-                            public void run() {
-                                new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null);
-                            }
-                        }.run();
-                    }
-                }).show();
-            }
+        ((View) this.currency.getParent()).setOnClickListener(v1 -> {
+            final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
+            new AlertDialog.Builder(AccountsEditActivity.this).setItems(currencyCodes, (dialog, item) -> {
+                AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
+                dialog.dismiss();
+                ((Runnable) () -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).run();
+            }).show();
         });
 
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
@@ -391,45 +381,41 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     }
 
     public void lookupExchangeRateCallback(ExchangeRateClass exchangeRateInstance, final double rate, AccountClass account) {
-        runOnUiThread(new Runnable() {
-            public void run() {
-                if (rate == 0.0d) {
-                    AccountsEditActivity.this.exchangeRate.setText("1");
-                    return;
-                }
-                Locale current = ConfigurationCompat.getLocales(getResources().getConfiguration()).get(0);
-
-                AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
-                AccountsEditActivity.this.exchangeRate.invalidate();
+        runOnUiThread(() -> {
+            if (rate == 0.0d) {
+                AccountsEditActivity.this.exchangeRate.setText("1");
+                return;
             }
+            Locale current = ConfigurationCompat.getLocales(getResources().getConfiguration()).get(0);
+
+            AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
+            AccountsEditActivity.this.exchangeRate.invalidate();
         });
     }
 
     private View.OnClickListener getBtnClickListener() {
-        return new View.OnClickListener() {
-            public void onClick(View view) {
-                Intent i;
-                switch ((Integer) view.getTag()) {
-                    case SplitsActivity.RESULT_CHANGED /*1*/:
-                        i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
-                        i.putExtra("type", 1);
-                        typeLauncher.launch(i);
-                        return;
-                    case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
-                        i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
-                        i.putExtra("type", 18);
-                        ktcLauncher.launch(i);
-                        return;
-                    case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                        iconLauncher.launch(new Intent(AccountsEditActivity.this, AccountTypeIconGridActivity.class));
-                        return;
-                    case NOTE_EDIT_BUTTON /*3*/:
-                        i = new Intent(AccountsEditActivity.this, NoteEditor.class);
-                        i.putExtra("note", AccountsEditActivity.this.account.getNotes());
-                        noteLauncher.launch(i);
-                        return;
-                    default:
-                }
+        return view -> {
+            Intent i;
+            switch ((Integer) view.getTag()) {
+                case SplitsActivity.RESULT_CHANGED /*1*/:
+                    i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
+                    i.putExtra("type", 1);
+                    typeLauncher.launch(i);
+                    return;
+                case LookupsListActivity.ACCOUNT_LOOKUP_WITH_NONE /*18*/:
+                    i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
+                    i.putExtra("type", 18);
+                    ktcLauncher.launch(i);
+                    return;
+                case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
+                    iconLauncher.launch(new Intent(AccountsEditActivity.this, AccountTypeIconGridActivity.class));
+                    return;
+                case NOTE_EDIT_BUTTON /*3*/:
+                    i = new Intent(AccountsEditActivity.this, NoteEditor.class);
+                    i.putExtra("note", AccountsEditActivity.this.account.getNotes());
+                    noteLauncher.launch(i);
+                    return;
+                default:
             }
         };
     }

@@ -53,29 +53,23 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         this.fileEncodingPref.setSummary(this.fileEncodingPref.getEntry());
         this.storageDevicePref.setSummary(this.storageDevicePref.getEntry());
 
-        qifOptionsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, QIFDataTransferPrefsActivity.class));
-                return true;
-            }
+        qifOptionsPref.setOnPreferenceClickListener(preference -> {
+            DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, QIFDataTransferPrefsActivity.class));
+            return true;
         });
-        emailPartnerOptionsPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, DataTransfersEmailPrefActivity.class));
-                return true;
-            }
+        emailPartnerOptionsPref.setOnPreferenceClickListener(preference -> {
+            DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, DataTransfersEmailPrefActivity.class));
+            return true;
         });
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
-        return new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (preference instanceof ListPreference listPreference) {
-                    int index = listPreference.findIndexOfValue((String) newValue);
-                    preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
-                }
-                return true;
+        return (preference, newValue) -> {
+            if (preference instanceof ListPreference listPreference) {
+                int index = listPreference.findIndexOfValue((String) newValue);
+                preference.setSummary(index >= 0 ? listPreference.getEntries()[index] : null);
             }
+            return true;
         };
     }
 }

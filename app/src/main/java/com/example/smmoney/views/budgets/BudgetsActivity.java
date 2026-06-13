@@ -104,61 +104,47 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         ImageView leftArrow = layout.findViewById(R.id.lefttarrow);
         ImageView rightArrow = layout.findViewById(R.id.rightarrow);
         this.periodButton = layout.findViewById(R.id.periodbutton);
-        this.periodButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                openBudgetPeriodDialog();
-            }
+        this.periodButton.setOnClickListener(v -> openBudgetPeriodDialog());
+        leftArrow.setOnClickListener(v -> {
+            BudgetsActivity.this.adapter.previousPeriod();
+            BudgetsActivity.this.reloadData();
         });
-        leftArrow.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                BudgetsActivity.this.adapter.previousPeriod();
-                BudgetsActivity.this.reloadData();
-            }
-        });
-        rightArrow.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                BudgetsActivity.this.adapter.nextPeriod();
-                BudgetsActivity.this.reloadData();
-            }
+        rightArrow.setOnClickListener(v -> {
+            BudgetsActivity.this.adapter.nextPeriod();
+            BudgetsActivity.this.reloadData();
         });
         this.balanceBar = layout.findViewById(R.id.balancebar);
-        this.balanceBar.nextButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
-                } else {
-                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
-                }
-                BudgetsActivity.this.reloadData();
+        this.balanceBar.nextButton.setOnClickListener(v -> {
+            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
+                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
+            } else {
+                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
             }
+            BudgetsActivity.this.reloadData();
         });
-        this.balanceBar.previousButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
-                } else {
-                    Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
-                }
-                BudgetsActivity.this.reloadData();
+        this.balanceBar.previousButton.setOnClickListener(v -> {
+            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
+                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
+            } else {
+                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
             }
+            BudgetsActivity.this.reloadData();
         });
 
         this.budgetDisplay = layout.findViewById(R.id.budgetdisplaytextview);
         this.budgetDisplay.setVisibility(View.INVISIBLE);
         this.budgetDisplay.setTextColor(-1);
-        this.budgetDisplay.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                if (Enums.kBudgetDisplayExpenseBudgeted == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseAvailable);
-                } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable) {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseOver);
-                } else {
-                    Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseBudgeted);
-                }
-                BudgetsActivity.this.budgetProgressBar.setVisibility(View.VISIBLE);
-                BudgetsActivity.this.budgetDisplay.setVisibility(View.INVISIBLE);
-                BudgetsActivity.this.reloadData();
+        this.budgetDisplay.setOnClickListener(v -> {
+            if (Enums.kBudgetDisplayExpenseBudgeted == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
+                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseAvailable);
+            } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable) {
+                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseOver);
+            } else {
+                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseBudgeted);
             }
+            BudgetsActivity.this.budgetProgressBar.setVisibility(View.VISIBLE);
+            BudgetsActivity.this.budgetDisplay.setVisibility(View.INVISIBLE);
+            BudgetsActivity.this.reloadData();
         });
         this.budgetProgressBar = layout.findViewById(R.id.budgetprogressbar);
         this.budgetProgressBar.setVisibility(View.INVISIBLE);
@@ -171,11 +157,9 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.theList.setFocusable(false);
         this.theList.setVisibility(View.INVISIBLE);
         RadioGroup rg = layout.findViewById(R.id.radiogroup);
-        rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                BudgetsActivity.this.finish();
-                BudgetsActivity.this.overridePendingTransition(0, 0);
-            }
+        rg.setOnCheckedChangeListener((group, checkedId) -> {
+            BudgetsActivity.this.finish();
+            BudgetsActivity.this.overridePendingTransition(0, 0);
         });
         ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
@@ -280,23 +264,19 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         Builder b = new Builder(this);
         b.setTitle(Locales.kLOC_BUDGETCATEGORY_DELETE);
         b.setMessage(Locales.kLOC_BUDGETCATEGORY_DELETE_BODY);
-        b.setPositiveButton(Locales.kLOC_BUDGETCATEGORY_DELETE_BUDGET, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                CategoryClass c = new CategoryClass(cat.categoryID);
-                c.hydrate();
-                c.setBudgetLimit(0.0d);
-                CategoryBudgetClass.deleteCategoryBudgetItemsForCateory(c.getCategory());
-                c.saveToDatabase();
-                BudgetsActivity.this.reloadData();
-            }
+        b.setPositiveButton(Locales.kLOC_BUDGETCATEGORY_DELETE_BUDGET, (dialog, which) -> {
+            CategoryClass c = new CategoryClass(cat.categoryID);
+            c.hydrate();
+            c.setBudgetLimit(0.0d);
+            CategoryBudgetClass.deleteCategoryBudgetItemsForCateory(c.getCategory());
+            c.saveToDatabase();
+            BudgetsActivity.this.reloadData();
         });
-        b.setNegativeButton(Locales.kLOC_BUDGETCATEGORY_DELETE_CATBUD, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                CategoryClass c = new CategoryClass(cat.categoryID);
-                c.hydrate();
-                c.deleteFromDatabase();
-                BudgetsActivity.this.reloadData();
-            }
+        b.setNegativeButton(Locales.kLOC_BUDGETCATEGORY_DELETE_CATBUD, (dialog, which) -> {
+            CategoryClass c = new CategoryClass(cat.categoryID);
+            c.hydrate();
+            c.deleteFromDatabase();
+            BudgetsActivity.this.reloadData();
         });
         b.create().show();
     }

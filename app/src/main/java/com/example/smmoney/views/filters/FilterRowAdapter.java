@@ -84,28 +84,24 @@ class FilterRowAdapter extends BaseAdapter {
     }
 
     private OnClickListener getClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                FilterRowHolder vw = (FilterRowHolder) v.getTag();
-                if (Objects.equals(vw.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
-                    vw.filter.setAccount(FilterRowAdapter.this.filter.getAccount());
-                }
-                FilterRowAdapter.this.delegate.filterSelected(vw.filter);
+        return v -> {
+            FilterRowHolder vw = (FilterRowHolder) v.getTag();
+            if (Objects.equals(vw.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+                vw.filter.setAccount(FilterRowAdapter.this.filter.getAccount());
             }
+            FilterRowAdapter.this.delegate.filterSelected(vw.filter);
         };
     }
 
     private OnClickListener getEditClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                FilterRowHolder vw = (FilterRowHolder) ((View) v.getParent()).getTag();
-                Intent intent = new Intent(FilterRowAdapter.this.delegate, FilterEditActivity.class);
-                intent.putExtra("Filter", vw.filter);
-                if (FilterRowAdapter.this.delegate instanceof FiltersMainActivity) {
-                    FilterRowAdapter.this.delegate.filterEditLauncher.launch(intent);
-                } else {
-                    FilterRowAdapter.this.delegate.startActivity(intent);
-                }
+        return v -> {
+            FilterRowHolder vw = (FilterRowHolder) ((View) v.getParent()).getTag();
+            Intent intent = new Intent(FilterRowAdapter.this.delegate, FilterEditActivity.class);
+            intent.putExtra("Filter", vw.filter);
+            if (FilterRowAdapter.this.delegate instanceof FiltersMainActivity) {
+                FilterRowAdapter.this.delegate.filterEditLauncher.launch(intent);
+            } else {
+                FilterRowAdapter.this.delegate.startActivity(intent);
             }
         };
     }

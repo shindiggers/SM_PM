@@ -218,12 +218,10 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         // TODO Customise as for above category class adapter
         this.classEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ClassNameClass.allClassNamesInDatabase()));
         ((RadioGroup) this.withdrawalButton.getParent()).setOnCheckedChangeListener(getRadioChangedListener());
-        ((LinearLayout) this.memoEditText.getParent()).setOnClickListener(new OnClickListener() {
-            public void onClick(View view) {
-                Intent i = new Intent(SplitsEditActivity.this.currentActivity, NoteEditor.class);
-                i.putExtra("note", SplitsEditActivity.this.split.getMemo());
-                noteLauncher.launch(i);
-            }
+        ((LinearLayout) this.memoEditText.getParent()).setOnClickListener(view -> {
+            Intent i = new Intent(SplitsEditActivity.this.currentActivity, NoteEditor.class);
+            i.putExtra("note", SplitsEditActivity.this.split.getMemo());
+            noteLauncher.launch(i);
         });
         LinearLayout v = (LinearLayout) this.categoryEditText.getParent();
         v.setOnClickListener(getLookupListClickListener());
@@ -232,13 +230,11 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(6);
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            ((LinearLayout) this.amountEditText.getParent()).setOnClickListener(new OnClickListener() {
-                public void onClick(View v) {
-                    Intent i = new Intent(SplitsEditActivity.this.currentActivity, ExchangeRateActivity.class);
-                    i.putExtra("transaction", SplitsEditActivity.this.transaction);
-                    i.putExtra("split", SplitsEditActivity.this.split);
-                    currencyLauncher.launch(i);
-                }
+            ((LinearLayout) this.amountEditText.getParent()).setOnClickListener(v3 -> {
+                Intent i = new Intent(SplitsEditActivity.this.currentActivity, ExchangeRateActivity.class);
+                i.putExtra("transaction", SplitsEditActivity.this.transaction);
+                i.putExtra("split", SplitsEditActivity.this.split);
+                currencyLauncher.launch(i);
             });
         } else {
             findViewById(R.id.amount_currency_button).setVisibility(View.GONE);
@@ -247,28 +243,22 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         TextView button = findViewById(R.id.save_button);
         button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
         button.setTextColor(-1);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                SplitsEditActivity.this.save();
-                SplitsEditActivity.this.editTextDidFinishChanging(2);
-                Intent i = new Intent();
-                if (SplitsEditActivity.this.splitIndex != -1) {
-                    i.putExtra("SplitIndex", SplitsEditActivity.this.splitIndex);
-                }
-                i.putExtra("Split", SplitsEditActivity.this.split);
-                i.putExtra("transaction", SplitsEditActivity.this.transaction);
-                SplitsEditActivity.this.setResult(1, i);
-                SplitsEditActivity.this.finish();
+        button.setOnClickListener(v2 -> {
+            SplitsEditActivity.this.save();
+            SplitsEditActivity.this.editTextDidFinishChanging(2);
+            Intent i = new Intent();
+            if (SplitsEditActivity.this.splitIndex != -1) {
+                i.putExtra("SplitIndex", SplitsEditActivity.this.splitIndex);
             }
+            i.putExtra("Split", SplitsEditActivity.this.split);
+            i.putExtra("transaction", SplitsEditActivity.this.transaction);
+            SplitsEditActivity.this.setResult(1, i);
+            SplitsEditActivity.this.finish();
         });
         button = findViewById(R.id.cancel_button);
         button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
         button.setTextColor(-1);
-        button.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                SplitsEditActivity.this.finish();
-            }
-        });
+        button.setOnClickListener(v1 -> SplitsEditActivity.this.finish());
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.categoryEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITSPLIT_CATEGORY/*1*/));
         this.classEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITSPLIT_CLASS/*3*/));
@@ -458,58 +448,52 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     private OnFocusChangeListener getFocusChangedListenerWithID(int id) {
         final int theID = id;
-        return new OnFocusChangeListener() {
-            public void onFocusChange(View v, boolean hasFocus) {
-                if (!hasFocus) {
-                    SplitsEditActivity.this.editTextDidFinishChanging(theID);
-                }
+        return (v, hasFocus) -> {
+            if (!hasFocus) {
+                SplitsEditActivity.this.editTextDidFinishChanging(theID);
             }
         };
     }
 
     private OnClickListener getLookupListClickListener() {
-        return new View.OnClickListener() {
-            public void onClick(View view) {
-                // Save current UI state into the 'split' object before leaving
-                SplitsEditActivity.this.getCells();
+        return view -> {
+            // Save current UI state into the 'split' object before leaving
+            SplitsEditActivity.this.getCells();
 
-                Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
-                i.putExtra("type", ((Integer) view.getTag()).intValue());
-                lookupLauncher.launch(i);
-            }
+            Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
+            i.putExtra("type", ((Integer) view.getTag()).intValue());
+            lookupLauncher.launch(i);
         };
     }
 
     private OnCheckedChangeListener getRadioChangedListener() {
-        return new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (!SplitsEditActivity.this.programaticUpdate) {
-                    if (checkedId == R.id.withdrawalbutton) {
-                        SplitsEditActivity.this.getCells();
-                        SplitsEditActivity.this.splitTransactionType = 0;
-                        SplitsEditActivity.this.split.setAmount(Math.abs(SplitsEditActivity.this.split.getAmount()) * -1.0d);
-                        SplitsEditActivity.this.split.setTransferToAccount("");
-                    } else if (checkedId == R.id.depositbutton) {
-                        SplitsEditActivity.this.getCells();
-                        SplitsEditActivity.this.splitTransactionType = 1;
-                        SplitsEditActivity.this.split.setAmount(Math.abs(SplitsEditActivity.this.split.getAmount()));
-                        SplitsEditActivity.this.split.setTransferToAccount("");
-                    } else if (checkedId == R.id.transferbutton) {
-                        if (SplitsEditActivity.this.split.getAmount() <= 0.0d) {
-                            SplitsEditActivity.this.splitTransactionType = 2;
-                        } else {
-                            SplitsEditActivity.this.splitTransactionType = 3;
-                        }
-                        if (SplitsEditActivity.this.transToTextView.getText().toString().isEmpty()) {
-                            SplitsEditActivity.this.getCells();
-                            Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
-                            i.putExtra("type", 3);
-                            lookupLauncher.launch(i);
-                        }
+        return (group, checkedId) -> {
+            if (!SplitsEditActivity.this.programaticUpdate) {
+                if (checkedId == R.id.withdrawalbutton) {
+                    SplitsEditActivity.this.getCells();
+                    SplitsEditActivity.this.splitTransactionType = 0;
+                    SplitsEditActivity.this.split.setAmount(Math.abs(SplitsEditActivity.this.split.getAmount()) * -1.0d);
+                    SplitsEditActivity.this.split.setTransferToAccount("");
+                } else if (checkedId == R.id.depositbutton) {
+                    SplitsEditActivity.this.getCells();
+                    SplitsEditActivity.this.splitTransactionType = 1;
+                    SplitsEditActivity.this.split.setAmount(Math.abs(SplitsEditActivity.this.split.getAmount()));
+                    SplitsEditActivity.this.split.setTransferToAccount("");
+                } else if (checkedId == R.id.transferbutton) {
+                    if (SplitsEditActivity.this.split.getAmount() <= 0.0d) {
+                        SplitsEditActivity.this.splitTransactionType = 2;
+                    } else {
+                        SplitsEditActivity.this.splitTransactionType = 3;
                     }
-                    SplitsEditActivity.this.setType();
-                    SplitsEditActivity.this.loadCells();
+                    if (SplitsEditActivity.this.transToTextView.getText().toString().isEmpty()) {
+                        SplitsEditActivity.this.getCells();
+                        Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
+                        i.putExtra("type", 3);
+                        lookupLauncher.launch(i);
+                    }
                 }
+                SplitsEditActivity.this.setType();
+                SplitsEditActivity.this.loadCells();
             }
         };
     }

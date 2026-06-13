@@ -164,36 +164,28 @@ public class RepeatingActivity extends PocketMoneyActivity {
         ((View) theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.titleTextView = findViewById(R.id.title_text_view);
         this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                RepeatingActivity.this.openOptionsMenu();
-            }
-        });
+        this.titleTextView.setOnClickListener(v -> RepeatingActivity.this.openOptionsMenu());
         FrameLayout theView = findViewById(R.id.the_tool_bar);
         theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         theView.setVisibility(View.GONE);
         this.balanceBar = findViewById(R.id.balancebar);
         this.balanceBar.setSecondBalanceEnabled(true);
         this.balanceBar.setBackgroundResource(R.drawable.balancebarforscheduledtransactions);
-        this.balanceBar.nextButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                final EditText textView = new EditText(RepeatingActivity.this);
-                AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this);
-                b.setView(textView);
-                b.setTitle(Locales.kLOC_REPEATING_UPCOMING_MESSAGE);
-                b.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        try {
-                            Prefs.setPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD, Integer.parseInt(textView.getText().toString()));
-                            RepeatingActivity.this.reloadData();
-                        } catch (NumberFormatException e) {
-                            Log.e(com.example.smmoney.SMMoney.TAG, "NumberFormatException in RepeatingActivity upcoming period dialog", e);
-                        }
-                    }
-                });
-                b.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
-                b.create().show();
-            }
+        this.balanceBar.nextButton.setOnClickListener(v -> {
+            final EditText textView = new EditText(RepeatingActivity.this);
+            AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this);
+            b.setView(textView);
+            b.setTitle(Locales.kLOC_REPEATING_UPCOMING_MESSAGE);
+            b.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+                try {
+                    Prefs.setPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD, Integer.parseInt(textView.getText().toString()));
+                    RepeatingActivity.this.reloadData();
+                } catch (NumberFormatException e) {
+                    Log.e(com.example.smmoney.SMMoney.TAG, "NumberFormatException in RepeatingActivity upcoming period dialog", e);
+                }
+            });
+            b.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
+            b.create().show();
         });
     }
 
@@ -310,23 +302,19 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
     private void showDatePickerDialog() {
         GregorianCalendar theDate = new GregorianCalendar();
-        new DatePickerDialog(this, new OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                if (!RepeatingActivity.this.isProcessingToDate) {
-                    RepeatingActivity.this.isProcessingToDate = true;
-                    final GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-                    new Thread() {
-                        public void run() {
-                            TransactionDB.addRepeatingEventsThroughDate(newCal, RepeatingActivity.this);
-                            RepeatingActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    RepeatingActivity.this.reloadData();
-                                    RepeatingActivity.this.finishProgressBar();
-                                }
-                            });
-                        }
-                    }.start();
-                }
+        new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
+            if (!RepeatingActivity.this.isProcessingToDate) {
+                RepeatingActivity.this.isProcessingToDate = true;
+                final GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                new Thread() {
+                    public void run() {
+                        TransactionDB.addRepeatingEventsThroughDate(newCal, RepeatingActivity.this);
+                        RepeatingActivity.this.runOnUiThread(() -> {
+                            RepeatingActivity.this.reloadData();
+                            RepeatingActivity.this.finishProgressBar();
+                        });
+                    }
+                }.start();
             }
         }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }

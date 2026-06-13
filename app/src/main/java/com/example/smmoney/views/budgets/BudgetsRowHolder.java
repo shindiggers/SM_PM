@@ -55,20 +55,18 @@ public class BudgetsRowHolder extends View {
         categoryTextView.setText("CATEGORY");
         budgetedTextView.setText("(USD1,000.12)");
         actualTextView.setText("USD1,500.12");
-        setOnTouchListener(new OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                switch (event.getAction()) {
-                    case MotionEvent.ACTION_DOWN /*0*/:
-                        BudgetsRowHolder.this.touched = true;
-                        break;
-                    case MotionEvent.ACTION_UP /*1*/:
-                    case MotionEvent.ACTION_CANCEL /*3*/:
-                        BudgetsRowHolder.this.touched = false;
-                        break;
-                }
-                BudgetsRowHolder.this.invalidate();
-                return onTouchEvent(event);
+        setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN /*0*/:
+                    BudgetsRowHolder.this.touched = true;
+                    break;
+                case MotionEvent.ACTION_UP /*1*/:
+                case MotionEvent.ACTION_CANCEL /*3*/:
+                    BudgetsRowHolder.this.touched = false;
+                    break;
             }
+            BudgetsRowHolder.this.invalidate();
+            return onTouchEvent(event);
         });
     }
 

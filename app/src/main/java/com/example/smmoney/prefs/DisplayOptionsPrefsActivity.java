@@ -33,35 +33,25 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        fragment.findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, AccountDisplayPrefsActivity.class));
-                return true;
-            }
+        fragment.findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(preference -> {
+            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, AccountDisplayPrefsActivity.class));
+            return true;
         });
-        fragment.findPreference("TransactionRegisterDisplayPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, TransactionRegisterDisplayPrefsActivity.class));
-                return true;
-            }
+        fragment.findPreference("TransactionRegisterDisplayPrefs").setOnPreferenceClickListener(preference -> {
+            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, TransactionRegisterDisplayPrefsActivity.class));
+            return true;
         });
-        fragment.findPreference("BudgetsPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, BudgetsDisplayPrefsActivity.class));
-                return true;
-            }
+        fragment.findPreference("BudgetsPrefs").setOnPreferenceClickListener(preference -> {
+            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, BudgetsDisplayPrefsActivity.class));
+            return true;
         });
-        fragment.findPreference("EditTransactionPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, EditTransactionDisplayPrefsActivity.class));
-                return true;
-            }
+        fragment.findPreference("EditTransactionPrefs").setOnPreferenceClickListener(preference -> {
+            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, EditTransactionDisplayPrefsActivity.class));
+            return true;
         });
-        fragment.findPreference("ReportsPrefs").setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, ReportsDisplayPrefsActivity.class));
-                return true;
-            }
+        fragment.findPreference("ReportsPrefs").setOnPreferenceClickListener(preference -> {
+            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, ReportsDisplayPrefsActivity.class));
+            return true;
         });
         ListPreference themes = fragment.findPreference(Prefs.THEME_COLOR);
         String[] colors = new String[]{"Black", "Blue", Locales.kLOC_THEME_COLOR_GREEN, Locales.kLOC_THEME_COLOR_PURPLE, Locales.kLOC_THEME_COLOR_GRAY, Locales.kLOC_THEME_COLOR_COFFEE};
@@ -72,33 +62,23 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
-        return new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary((String) newValue);
-                PocketMoneyThemes.refreshTheme();
-                DisplayOptionsPrefsActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        Builder alert = new Builder(DisplayOptionsPrefsActivity.this);
-                        alert.setTitle(Locales.kLOC_GENERAL_RELAUNCH_APP);
-                        alert.setMessage(Locales.kLOC_GENERAL_RELAUNCH_APP_THEME);
-                        alert.setPositiveButton(Locales.kLOC_GENERAL_QUIT, new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                Intent i = new Intent(DisplayOptionsPrefsActivity.this, LaunchActivity.class);
-                                i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                DisplayOptionsPrefsActivity.this.startActivity(i);
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int whichButton) {
-                                dialog.dismiss();
-                            }
-                        });
-                        alert.show();
-                    }
+        return (preference, newValue) -> {
+            preference.setSummary((String) newValue);
+            PocketMoneyThemes.refreshTheme();
+            DisplayOptionsPrefsActivity.this.runOnUiThread(() -> {
+                Builder alert = new Builder(DisplayOptionsPrefsActivity.this);
+                alert.setTitle(Locales.kLOC_GENERAL_RELAUNCH_APP);
+                alert.setMessage(Locales.kLOC_GENERAL_RELAUNCH_APP_THEME);
+                alert.setPositiveButton(Locales.kLOC_GENERAL_QUIT, (dialog, whichButton) -> {
+                    Intent i = new Intent(DisplayOptionsPrefsActivity.this, LaunchActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    DisplayOptionsPrefsActivity.this.startActivity(i);
+                    dialog.dismiss();
                 });
-                return true;
-            }
+                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.dismiss());
+                alert.show();
+            });
+            return true;
         };
     }
 }

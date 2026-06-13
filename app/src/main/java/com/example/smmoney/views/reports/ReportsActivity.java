@@ -136,11 +136,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.theList.setItemsCanFocus(true);
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.periodButton = findViewById(R.id.periodbutton);
-        this.periodButton.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                openDialog();
-            }
-        });
+        this.periodButton.setOnClickListener(v -> openDialog());
         this.previousPeriodView = findViewById(R.id.lefttarrow);
         this.nextPeriodView = findViewById(R.id.rightarrow);
         this.previousPeriodView.setOnClickListener(getClickListener());
@@ -159,16 +155,14 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     }
 
     private OnClickListener getClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                if (v == ReportsActivity.this.nextPeriodView) {
-                    ReportsActivity.this.datasource.nextPeriod();
-                } else if (v == ReportsActivity.this.previousPeriodView) {
-                    ReportsActivity.this.datasource.previousPeriod();
-                }
-                ReportsActivity.this.datasource.data = null;
-                ReportsActivity.this.reloadData();
+        return v -> {
+            if (v == ReportsActivity.this.nextPeriodView) {
+                ReportsActivity.this.datasource.nextPeriod();
+            } else if (v == ReportsActivity.this.previousPeriodView) {
+                ReportsActivity.this.datasource.previousPeriod();
             }
+            ReportsActivity.this.datasource.data = null;
+            ReportsActivity.this.reloadData();
         };
     }
 

@@ -38,11 +38,9 @@ public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceAc
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
-        return new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                preference.setSummary((String) newValue);
-                return true;
-            }
+        return (preference, newValue) -> {
+            preference.setSummary((String) newValue);
+            return true;
         };
     }
 }

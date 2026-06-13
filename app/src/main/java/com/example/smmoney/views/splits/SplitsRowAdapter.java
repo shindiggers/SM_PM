@@ -74,18 +74,16 @@ class SplitsRowAdapter extends BaseAdapter {
     }
 
     private OnClickListener getBtnClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                SplitsRowHolder holder = (SplitsRowHolder) view.getTag();
-                Intent i = new Intent(SplitsRowAdapter.this.mContext, SplitsEditActivity.class);
-                i.putExtra("Split", holder.split);
-                i.putExtra("Transaction", SplitsRowAdapter.this.transaction);
-                int index = SplitsRowAdapter.this.elements.indexOf(holder.split);
-                i.putExtra("SplitIndex", index);
+        return view -> {
+            SplitsRowHolder holder = (SplitsRowHolder) view.getTag();
+            Intent i = new Intent(SplitsRowAdapter.this.mContext, SplitsEditActivity.class);
+            i.putExtra("Split", holder.split);
+            i.putExtra("Transaction", SplitsRowAdapter.this.transaction);
+            int index = SplitsRowAdapter.this.elements.indexOf(holder.split);
+            i.putExtra("SplitIndex", index);
 
-                if (SplitsRowAdapter.this.mContext instanceof SplitsActivity) {
-                    ((SplitsActivity) SplitsRowAdapter.this.mContext).editSplitLauncher.launch(i);
-                }
+            if (SplitsRowAdapter.this.mContext instanceof SplitsActivity) {
+                ((SplitsActivity) SplitsRowAdapter.this.mContext).editSplitLauncher.launch(i);
             }
         };
     }

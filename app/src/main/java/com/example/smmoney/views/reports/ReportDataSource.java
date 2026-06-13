@@ -32,27 +32,25 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
     int currentPeriod;
     final FilterClass filter;
     int totalActions = 0;
-    private final Comparator<ReportItem> comparator = new Comparator<ReportItem>() {
-        public int compare(ReportItem o1, ReportItem o2) {
-            int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
-            double retVal = 0.0d;
-            double flipIt = Prefs.getIntPref(Prefs.PREFS_REPORTS_SORTDIRECTION) == 0 ? 1.0d : -1.0d;
-            switch (sortType) {
-                case Enums.kReportsSortOnItem /*0*/:
-                    retVal = ((double) o1.expense.compareToIgnoreCase(o2.expense)) * flipIt;
-                    break;
-                case Enums.kReportsSortOnAmount /*1*/:
-                    retVal = (o1.amount - o2.amount) * flipIt;
-                    break;
-                case Enums.kReportsSortOnCount /*2*/:
-                    retVal = ((double) (o1.count - o2.count)) * flipIt;
-                    break;
-            }
-            if (retVal < 0.0d) {
-                return -1;
-            }
-            return retVal > 0.0d ? 1 : 0;
+    private final Comparator<ReportItem> comparator = (o1, o2) -> {
+        int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
+        double retVal = 0.0d;
+        double flipIt = Prefs.getIntPref(Prefs.PREFS_REPORTS_SORTDIRECTION) == 0 ? 1.0d : -1.0d;
+        switch (sortType) {
+            case Enums.kReportsSortOnItem /*0*/:
+                retVal = ((double) o1.expense.compareToIgnoreCase(o2.expense)) * flipIt;
+                break;
+            case Enums.kReportsSortOnAmount /*1*/:
+                retVal = (o1.amount - o2.amount) * flipIt;
+                break;
+            case Enums.kReportsSortOnCount /*2*/:
+                retVal = ((double) (o1.count - o2.count)) * flipIt;
+                break;
         }
+        if (retVal < 0.0d) {
+            return -1;
+        }
+        return retVal > 0.0d ? 1 : 0;
     };
     private GregorianCalendar currentDate;
     private ReportsActivity delegate;

@@ -37,14 +37,12 @@ public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
 
     private Preference.OnPreferenceClickListener getListenerForID(int id) {
         final int theID = id;
-        return new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent i = new Intent(ManagedListsPrefsActivity.this, LookupsListActivity.class);
-                i.putExtra("type", theID);
-                i.putExtra("dontShowPass", "");
-                ManagedListsPrefsActivity.this.startActivity(i);
-                return true;
-            }
+        return preference -> {
+            Intent i = new Intent(ManagedListsPrefsActivity.this, LookupsListActivity.class);
+            i.putExtra("type", theID);
+            i.putExtra("dontShowPass", "");
+            ManagedListsPrefsActivity.this.startActivity(i);
+            return true;
         };
     }
 }

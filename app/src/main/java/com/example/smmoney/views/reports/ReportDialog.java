@@ -26,44 +26,38 @@ public class ReportDialog extends AppCompatDialogFragment {
         int theme = PocketMoneyThemes.dialogTheme();
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), theme);
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
-                .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        int periodType;
-                        switch (which) {
-                            case Enums.kReportPeriodOneMonth /*0*/:
-                                periodType = Enums.kReportPeriodOneMonth;
-                                break;
-                            case Enums.kReportPeriodTwoMonths /*1*/:
-                                periodType = Enums.kReportPeriodTwoMonths;
-                                break;
-                            case Enums.kReportPeriodThreeMonths /*2*/:
-                                periodType = Enums.kReportPeriodThreeMonths;
-                                break;
-                            case Enums.kReportPeriodSixMonths /*3*/:
-                                periodType = Enums.kReportPeriodSixMonths;
-                                break;
-                            case Enums.kReportPeriodOneYear /*4*/:
-                                periodType = Enums.kReportPeriodOneYear;
-                                break;
-                            default:
-                                periodType = Enums.kReportPeriodAll /*5*/;
-                                break;
-                        }
-
-                        Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
-                        reportDialogListner.applyPeriodType(periodType);
-
-                        dialog.dismiss();
-
-
+                .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), (dialog, which) -> {
+                    int periodType;
+                    switch (which) {
+                        case Enums.kReportPeriodOneMonth /*0*/:
+                            periodType = Enums.kReportPeriodOneMonth;
+                            break;
+                        case Enums.kReportPeriodTwoMonths /*1*/:
+                            periodType = Enums.kReportPeriodTwoMonths;
+                            break;
+                        case Enums.kReportPeriodThreeMonths /*2*/:
+                            periodType = Enums.kReportPeriodThreeMonths;
+                            break;
+                        case Enums.kReportPeriodSixMonths /*3*/:
+                            periodType = Enums.kReportPeriodSixMonths;
+                            break;
+                        case Enums.kReportPeriodOneYear /*4*/:
+                            periodType = Enums.kReportPeriodOneYear;
+                            break;
+                        default:
+                            periodType = Enums.kReportPeriodAll /*5*/;
+                            break;
                     }
+
+                    Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
+                    reportDialogListner.applyPeriodType(periodType);
+
+                    dialog.dismiss();
+
+
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                .setNegativeButton("Cancel", (dialog, which) -> {
 
-                    }
                 });
         return builder.create();
     }

@@ -82,42 +82,32 @@ public class FromToDateActivity extends PocketMoneyActivity {
     }
 
     private OnClickListener getOnTodayClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                (v == FromToDateActivity.this.leftTodayButton ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText(CalExt.descriptionWithMediumDate(new GregorianCalendar()));
-            }
-        };
+        return v -> (v == FromToDateActivity.this.leftTodayButton ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText(CalExt.descriptionWithMediumDate(new GregorianCalendar()));
     }
 
     private OnClickListener getOnNoneClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                (v == FromToDateActivity.this.leftNoneButton ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText("*");
-            }
-        };
+        return v -> (v == FromToDateActivity.this.leftNoneButton ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText("*");
     }
 
     private OnClickListener getOnDateClickListener() {
-        return new OnClickListener() {
-            public void onClick(View v) {
-                boolean isFromDate = v == FromToDateActivity.this.fromDate;
+        return v -> {
+            boolean isFromDate = v == FromToDateActivity.this.fromDate;
 
-                // Toggle visibility of helpers based on which date is being picked
-                int visibilityLeft = isFromDate ? View.GONE : View.VISIBLE;
-                int visibilityRight = isFromDate ? View.VISIBLE : View.GONE;
+            // Toggle visibility of helpers based on which date is being picked
+            int visibilityLeft = isFromDate ? View.GONE : View.VISIBLE;
+            int visibilityRight = isFromDate ? View.VISIBLE : View.GONE;
 
-                FromToDateActivity.this.leftNoneButton.setVisibility(visibilityLeft);
-                FromToDateActivity.this.leftNoneButton.invalidate();
-                FromToDateActivity.this.leftTodayButton.setVisibility(visibilityLeft);
-                FromToDateActivity.this.leftTodayButton.invalidate();
+            FromToDateActivity.this.leftNoneButton.setVisibility(visibilityLeft);
+            FromToDateActivity.this.leftNoneButton.invalidate();
+            FromToDateActivity.this.leftTodayButton.setVisibility(visibilityLeft);
+            FromToDateActivity.this.leftTodayButton.invalidate();
 
-                FromToDateActivity.this.rightNoneButton.setVisibility(visibilityRight);
-                FromToDateActivity.this.rightNoneButton.invalidate();
-                FromToDateActivity.this.rightTodayButton.setVisibility(visibilityRight);
-                FromToDateActivity.this.rightTodayButton.invalidate();
+            FromToDateActivity.this.rightNoneButton.setVisibility(visibilityRight);
+            FromToDateActivity.this.rightNoneButton.invalidate();
+            FromToDateActivity.this.rightTodayButton.setVisibility(visibilityRight);
+            FromToDateActivity.this.rightTodayButton.invalidate();
 
-                FromToDateActivity.this.showDatePickerDialog(isFromDate);
-            }
+            FromToDateActivity.this.showDatePickerDialog(isFromDate);
         };
     }
 
@@ -133,11 +123,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
 
     private OnDateSetListener getDateListener(boolean isAFromDate) {
         final boolean isFromDate = isAFromDate;
-        return new OnDateSetListener() {
-            public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                (isFromDate ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText(CalExt.descriptionWithMediumDate(new GregorianCalendar(year, monthOfYear, dayOfMonth)));
-            }
-        };
+        return (view, year, monthOfYear, dayOfMonth) -> (isFromDate ? FromToDateActivity.this.fromDate : FromToDateActivity.this.toDate).setText(CalExt.descriptionWithMediumDate(new GregorianCalendar(year, monthOfYear, dayOfMonth)));
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

@@ -79,48 +79,42 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         String[] theStrings = new String[]{Locales.kLOC_GENERAL_NONE, "Pie Chart", "Bar Chart"};
         this.chartTypePref.setEntries(theStrings);
         this.chartTypePref.setEntryValues(theStrings);
-        this.chartTypePref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals(Locales.kLOC_GENERAL_NONE)) {
-                    Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeNone /*0*/);
-                } else if (newValue.equals("Pie Chart")) {
-                    Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypePie /*1*/);
-                } else if (newValue.equals("Bar Chart")) {
-                    Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeBar /*2*/);
-                }
-                preference.setSummary((String) newValue);
-                return true;
+        this.chartTypePref.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue.equals(Locales.kLOC_GENERAL_NONE)) {
+                Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeNone /*0*/);
+            } else if (newValue.equals("Pie Chart")) {
+                Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypePie /*1*/);
+            } else if (newValue.equals("Bar Chart")) {
+                Prefs.setPref(Prefs.PREFS_REPORTS_CHARTTYPE, Enums.kReportsChartTypeBar /*2*/);
             }
+            preference.setSummary((String) newValue);
+            return true;
         });
         String[] theStrings2 = new String[]{Locales.kLOC_REPORTDISPLAY_ITEM, Locales.kLOC_GENERAL_AMOUNT, Locales.kLOC_REPORTDISPLAY_COUNT};
         this.sortOnPref.setEntries(theStrings2);
         this.sortOnPref.setEntryValues(theStrings2);
-        this.sortOnPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals(Locales.kLOC_REPORTDISPLAY_ITEM)) {
-                    Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnItem /*0*/);
-                } else if (newValue.equals(Locales.kLOC_GENERAL_AMOUNT)) {
-                    Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnAmount /*1*/);
-                } else if (newValue.equals(Locales.kLOC_REPORTDISPLAY_COUNT)) {
-                    Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnCount /*2*/);
-                }
-                preference.setSummary((String) newValue);
-                return true;
+        this.sortOnPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue.equals(Locales.kLOC_REPORTDISPLAY_ITEM)) {
+                Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnItem /*0*/);
+            } else if (newValue.equals(Locales.kLOC_GENERAL_AMOUNT)) {
+                Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnAmount /*1*/);
+            } else if (newValue.equals(Locales.kLOC_REPORTDISPLAY_COUNT)) {
+                Prefs.setPref(Prefs.REPORTS_SORTON, Enums.kReportsSortOnCount /*2*/);
             }
+            preference.setSummary((String) newValue);
+            return true;
         });
         String[] theStrings3 = new String[]{Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING, Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING};
         this.sortDirectionPref.setEntries(theStrings3);
         this.sortDirectionPref.setEntryValues(theStrings3);
-        this.sortDirectionPref.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (newValue.equals(Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING)) {
-                    Prefs.setPref(Prefs.PREFS_REPORTS_SORTDIRECTION, Enums.ReportsSortDirectionAscending /*0*/);
-                } else if (newValue.equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING)) {
-                    Prefs.setPref(Prefs.PREFS_REPORTS_SORTDIRECTION, Enums.ReportsSortDirectionDescending /*1*/);
-                }
-                preference.setSummary((String) newValue);
-                return true;
+        this.sortDirectionPref.setOnPreferenceChangeListener((preference, newValue) -> {
+            if (newValue.equals(Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING)) {
+                Prefs.setPref(Prefs.PREFS_REPORTS_SORTDIRECTION, Enums.ReportsSortDirectionAscending /*0*/);
+            } else if (newValue.equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING)) {
+                Prefs.setPref(Prefs.PREFS_REPORTS_SORTDIRECTION, Enums.ReportsSortDirectionDescending /*1*/);
             }
+            preference.setSummary((String) newValue);
+            return true;
         });
     }
 }

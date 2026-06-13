@@ -85,21 +85,17 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
 
         TextView deleteTextView = findViewById(R.id.delete);
         deleteTextView.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        deleteTextView.setOnClickListener(new OnClickListener() {
-            public void onClick(View v) {
-                Builder b = new Builder(PhotoReceiptOptionsActivity.this);
-                b.setMessage("Are you sure you want to delete this picture?");
-                b.setPositiveButton(Locales.kLOC_GENERAL_YES, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        Intent i = new Intent();
-                        i.putExtra("imageName", PhotoReceiptOptionsActivity.this.imageName);
-                        PhotoReceiptOptionsActivity.this.setResult(DELETED, i);
-                        PhotoReceiptOptionsActivity.this.finish();
-                    }
-                });
-                b.setNegativeButton(Locales.kLOC_GENERAL_NO, null);
-                b.create().show();
-            }
+        deleteTextView.setOnClickListener(v -> {
+            Builder b = new Builder(PhotoReceiptOptionsActivity.this);
+            b.setMessage("Are you sure you want to delete this picture?");
+            b.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> {
+                Intent i = new Intent();
+                i.putExtra("imageName", PhotoReceiptOptionsActivity.this.imageName);
+                PhotoReceiptOptionsActivity.this.setResult(DELETED, i);
+                PhotoReceiptOptionsActivity.this.finish();
+            });
+            b.setNegativeButton(Locales.kLOC_GENERAL_NO, null);
+            b.create().show();
         });
     }
 }

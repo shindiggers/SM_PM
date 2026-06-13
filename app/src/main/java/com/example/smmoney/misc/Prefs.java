@@ -161,32 +161,18 @@ public class Prefs {
         Builder alt_bld = new Builder(context);
         alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing")
                 .setCancelable(false)
-                .setPositiveButton("Import", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Builder sub_bld = new Builder(context);
-                        sub_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?")
-                                .setCancelable(false)
-                                .setPositiveButton(Locales.kLOC_GENERAL_YES, new OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        Prefs.importDB(context);
-                                    }
-                                })
-                                .setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                })
-                                .create()
-                                .show();
-                    }
+                .setPositiveButton("Import", (dialog, which) -> {
+                    Builder sub_bld = new Builder(context);
+                    sub_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?")
+                            .setCancelable(false)
+                            .setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, id) -> Prefs.importDB(context))
+                            .setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog1, id) -> dialog1.cancel())
+                            .create()
+                            .show();
                 })
-                .setNegativeButton("Export", new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        Prefs.exportDB(context);
-                        dialog.cancel();
-                    }
+                .setNegativeButton("Export", (dialog, which) -> {
+                    Prefs.exportDB(context);
+                    dialog.cancel();
                 });
         alt_bld.create().show();
     }

@@ -61,11 +61,7 @@ class RepeatingRowAdapter extends BaseAdapter {
     public void setElements(ArrayList<TransactionClass> aList) {
         this.elements.clear();
         this.elements = aList;
-        Collections.sort(this.elements, new Comparator<TransactionClass>() {
-            public int compare(TransactionClass object1, TransactionClass object2) {
-                return object1.getDate().before(object2.getDate()) ? -1 : 1;
-            }
-        });
+        Collections.sort(this.elements, (object1, object2) -> object1.getDate().before(object2.getDate()) ? -1 : 1);
         notifyDataSetChanged();
     }
 
@@ -112,16 +108,14 @@ class RepeatingRowAdapter extends BaseAdapter {
     }
 
     private OnClickListener getBtnClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                RepeatingRowHolder holder = (RepeatingRowHolder) view.getTag();
-                Intent i = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
-                i.putExtra("Transaction", holder.transaction);
-                if (RepeatingRowAdapter.this.mContext instanceof RepeatingActivity) {
-                    ((RepeatingActivity) RepeatingRowAdapter.this.mContext).editLauncher.launch(i);
-                } else {
-                    RepeatingRowAdapter.this.mContext.startActivity(i);
-                }
+        return view -> {
+            RepeatingRowHolder holder = (RepeatingRowHolder) view.getTag();
+            Intent i = new Intent(RepeatingRowAdapter.this.mContext, TransactionEditActivity.class);
+            i.putExtra("Transaction", holder.transaction);
+            if (RepeatingRowAdapter.this.mContext instanceof RepeatingActivity) {
+                ((RepeatingActivity) RepeatingRowAdapter.this.mContext).editLauncher.launch(i);
+            } else {
+                RepeatingRowAdapter.this.mContext.startActivity(i);
             }
         };
     }

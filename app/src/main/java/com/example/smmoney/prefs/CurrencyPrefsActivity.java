@@ -58,16 +58,14 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
-        return new Preference.OnPreferenceChangeListener() {
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                if (preference.equals(CurrencyPrefsActivity.this.listPref)) {
-                    Database.setHomeCurrency((String) newValue);
-                    preference.setSummary((String) newValue);
-                } else if (preference.equals(CurrencyPrefsActivity.this.multipleCurrencyPref)) {
-                    Database.setMultipleCurrencies((Boolean) newValue);
-                }
-                return true;
+        return (preference, newValue) -> {
+            if (preference.equals(CurrencyPrefsActivity.this.listPref)) {
+                Database.setHomeCurrency((String) newValue);
+                preference.setSummary((String) newValue);
+            } else if (preference.equals(CurrencyPrefsActivity.this.multipleCurrencyPref)) {
+                Database.setMultipleCurrencies((Boolean) newValue);
             }
+            return true;
         };
     }
 }

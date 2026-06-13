@@ -48,15 +48,156 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
     private String payee;
     private boolean progUpdate = false;
 
+    private void setupView() {
+        this.adapter = new CatPayeeRowAdapter();
+        this.listView = findViewById(R.id.listView);
+        this.listView.setAdapter(this.adapter);
+        registerForContextMenu(this.listView);
+        final RadioButton payeeRadioButton = findViewById(R.id.payeebutton);
+        payeeRadioButton.setText(this.payee);
+        final RadioButton allRadioButton = findViewById(R.id.allbutton);
+        RadioGroup rg = findViewById(R.id.radiogroup);
+        if (this.payee.isEmpty()) {
+            this.currentType = TYPE_ALL/*1*/;
+            allRadioButton.setChecked(true);
+            payeeRadioButton.setText("<empty>");
+        }
+        rg.setOnCheckedChangeListener((group, checkedId) -> {
+            if (!CategoryLookupListActivity.this.progUpdate) {
+                CategoryLookupListActivity.this.progUpdate = true;
+                if (checkedId == R.id.payeebutton) {
+                    payeeRadioButton.setChecked(true);
+                    CategoryLookupListActivity.this.currentType = 2;
+                } else if (checkedId == R.id.allbutton) {
+                    allRadioButton.setChecked(true);
+                    CategoryLookupListActivity.this.currentType = 1;
+                }
+                CategoryLookupListActivity.this.progUpdate = false;
+                CategoryLookupListActivity.this.reloadData();
+            }
+        });
+        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        this.listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+    }
+
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        this.payee = Objects.requireNonNull(getIntent().getExtras()).getString("payee");
+        if (this.payee == null) {
+            this.payee = getIntent().getExtras().getString("category");
+            this.isCategoryLookup = false;
+        }
+        setContentView(R.layout.lookups_category);
+        this.mInflater = LayoutInflater.from(this);
+        setResult(0);
+        setupView();
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(this.isCategoryLookup ? Locales.kLOC_GENERAL_CATEGORY_TITLE : Locales.kLOC_GENERAL_PAYEE);
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onSupportNavigateUp() {
+        getOnBackPressedDispatcher().onBackPressed();
+        return true;
+    }
+
+    public boolean onContextItemSelected(MenuItem item) {
+        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        final String originalString;
+        AlertDialog.Builder alert;
+        final EditText input;
+        switch (item.getItemId()) {
+            case CMENU_EDIT /*1*/:
+                // int theItem = this.currentType; ** Coded out as inspection showed theItem was never used
+                originalString = this.adapter.getItem(info.position);
+                alert = new AlertDialog.Builder(this);
+                input = new EditText(this);
+                input.setText(originalString);
+                alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
+                alert.setView(input);
+                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                    final String value = input.getText().toString().trim();
+                    AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this);
+                    b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
+                    b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
+                    CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
+                    b.setPositiveButton(charSequence, (dialog2, which) -> {
+                        if (CategoryLookupListActivity.this.isCategoryLookup) {
+                            CategoryClass.renameFromToInDatabase(originalString, value, false);
+                        } else {
+                            PayeeClass.renameFromToInDatabase(originalString, value, false);
+                        }
+                        CategoryLookupListActivity.this.reloadData();
+                    });
+                    charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
+                    //str = originalString; str already created above as final
+                    b.setNegativeButton(charSequence, (dialog1, which) -> {
+                        if (CategoryLookupListActivity.this.isCategoryLookup) {
+                            CategoryClass.renameFromToInDatabase(originalString, value, true);
+                        } else {
+                            PayeeClass.renameFromToInDatabase(originalString, value, true);
+                        }
+                        CategoryLookupListActivity.this.reloadData();
+                    });
+                    b.create().show();
+                });
+                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+                alert.show();
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
+                return true;
+            case CMENU_DELETE /*3*/:
+                originalString = this.adapter.getItem(info.position);
+                if (this.isCategoryLookup) {
+                    new CategoryClass(CategoryClass.idForCategory(originalString)).deleteFromDatabase();
+                } else {
+                    new PayeeClass(PayeeClass.idForPayee(originalString)).deleteFromDatabase();
+                }
+                reloadData();
+                return true;
+            case CMENU_SUBCATEGORY /*4*/:
+                originalString = this.adapter.getItem(info.position);
+                alert = new AlertDialog.Builder(this);
+                input = new EditText(this);
+                alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
+                alert.setView(input);
+                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                    CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
+                    CategoryLookupListActivity.this.reloadData();
+                });
+                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+                alert.show();
+                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
+                return true;
+            default:
+                return super.onContextItemSelected(item);
+        }
+    }
+
+    private void reloadData() {
+        this.adapter.reloadData();
+        this.adapter.notifyDataSetChanged();
+    }
+
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
+        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
+        if (this.isCategoryLookup) {
+            menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
+        }
+    }
+
     private class CatPayeeRowAdapter extends BaseAdapter {
         List<String> allCategories;
-        private final OnClickListener itemClickListener = new OnClickListener() {
-            public void onClick(View v) {
-                Intent i = new Intent();
-                i.putExtra("selection", (String) v.getTag());
-                CategoryLookupListActivity.this.setResult(CategoryLookupListActivity.this.currentType, i);
-                CategoryLookupListActivity.this.finish();
-            }
+        private final OnClickListener itemClickListener = v -> {
+            Intent i = new Intent();
+            i.putExtra("selection", (String) v.getTag());
+            CategoryLookupListActivity.this.setResult(CategoryLookupListActivity.this.currentType, i);
+            CategoryLookupListActivity.this.finish();
         };
         List<String> payeeCategories;
 
@@ -110,167 +251,6 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
             ((TextView) convertView).setText(category);
             convertView.setTag(category);
             return convertView;
-        }
-    }
-
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        this.payee = Objects.requireNonNull(getIntent().getExtras()).getString("payee");
-        if (this.payee == null) {
-            this.payee = getIntent().getExtras().getString("category");
-            this.isCategoryLookup = false;
-        }
-        setContentView(R.layout.lookups_category);
-        this.mInflater = LayoutInflater.from(this);
-        setResult(0);
-        setupView();
-
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(this.isCategoryLookup ? Locales.kLOC_GENERAL_CATEGORY_TITLE : Locales.kLOC_GENERAL_PAYEE);
-            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
-        return true;
-    }
-
-    private void setupView() {
-        this.adapter = new CatPayeeRowAdapter();
-        this.listView = findViewById(R.id.listView);
-        this.listView.setAdapter(this.adapter);
-        registerForContextMenu(this.listView);
-        final RadioButton payeeRadioButton = findViewById(R.id.payeebutton);
-        payeeRadioButton.setText(this.payee);
-        final RadioButton allRadioButton = findViewById(R.id.allbutton);
-        RadioGroup rg = findViewById(R.id.radiogroup);
-        if (this.payee.isEmpty()) {
-            this.currentType = TYPE_ALL/*1*/;
-            allRadioButton.setChecked(true);
-            payeeRadioButton.setText("<empty>");
-        }
-        rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (!CategoryLookupListActivity.this.progUpdate) {
-                    CategoryLookupListActivity.this.progUpdate = true;
-                    if (checkedId == R.id.payeebutton) {
-                        payeeRadioButton.setChecked(true);
-                        CategoryLookupListActivity.this.currentType = 2;
-                    } else if (checkedId == R.id.allbutton) {
-                        allRadioButton.setChecked(true);
-                        CategoryLookupListActivity.this.currentType = 1;
-                    }
-                    CategoryLookupListActivity.this.progUpdate = false;
-                    CategoryLookupListActivity.this.reloadData();
-                }
-            }
-        });
-        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        this.listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-    }
-
-    private void reloadData() {
-        this.adapter.reloadData();
-        this.adapter.notifyDataSetChanged();
-    }
-
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
-        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
-        if (this.isCategoryLookup) {
-            menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
-        }
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final String originalString;
-        AlertDialog.Builder alert;
-        final EditText input;
-        switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
-                // int theItem = this.currentType; ** Coded out as inspection showed theItem was never used
-                originalString = this.adapter.getItem(info.position);
-                alert = new AlertDialog.Builder(this);
-                input = new EditText(this);
-                input.setText(originalString);
-                alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        final String value = input.getText().toString().trim();
-                        AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this);
-                        b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                        b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
-                        CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
-                        b.setPositiveButton(charSequence, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (CategoryLookupListActivity.this.isCategoryLookup) {
-                                    CategoryClass.renameFromToInDatabase(originalString, value, false);
-                                } else {
-                                    PayeeClass.renameFromToInDatabase(originalString, value, false);
-                                }
-                                CategoryLookupListActivity.this.reloadData();
-                            }
-                        });
-                        charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
-                        //str = originalString; str already created above as final
-                        b.setNegativeButton(charSequence, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                if (CategoryLookupListActivity.this.isCategoryLookup) {
-                                    CategoryClass.renameFromToInDatabase(originalString, value, true);
-                                } else {
-                                    PayeeClass.renameFromToInDatabase(originalString, value, true);
-                                }
-                                CategoryLookupListActivity.this.reloadData();
-                            }
-                        });
-                        b.create().show();
-                    }
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
-                return true;
-            case CMENU_DELETE /*3*/:
-                originalString = this.adapter.getItem(info.position);
-                if (this.isCategoryLookup) {
-                    new CategoryClass(CategoryClass.idForCategory(originalString)).deleteFromDatabase();
-                } else {
-                    new PayeeClass(PayeeClass.idForPayee(originalString)).deleteFromDatabase();
-                }
-                reloadData();
-                return true;
-            case CMENU_SUBCATEGORY /*4*/:
-                originalString = this.adapter.getItem(info.position);
-                alert = new AlertDialog.Builder(this);
-                input = new EditText(this);
-                alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
-                        CategoryLookupListActivity.this.reloadData();
-                    }
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
         }
     }
 }

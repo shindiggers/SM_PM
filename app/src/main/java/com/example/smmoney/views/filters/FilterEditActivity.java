@@ -267,14 +267,12 @@ public class FilterEditActivity extends PocketMoneyActivity {
     }
 
     private OnClickListener getLookupListClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                Intent i = new Intent(FilterEditActivity.this.currentActivity, LookupsListActivity.class);
-                i.putExtra("type", ((Integer) view.getTag()).intValue());
-                i.putExtra("FromDate", FilterEditActivity.this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateFrom()) : "*");
-                i.putExtra("ToDate", FilterEditActivity.this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateTo()) : "*");
-                lookupLauncher.launch(i);
-            }
+        return view -> {
+            Intent i = new Intent(FilterEditActivity.this.currentActivity, LookupsListActivity.class);
+            i.putExtra("type", ((Integer) view.getTag()).intValue());
+            i.putExtra("FromDate", FilterEditActivity.this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateFrom()) : "*");
+            i.putExtra("ToDate", FilterEditActivity.this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateTo()) : "*");
+            lookupLauncher.launch(i);
         };
     }
 }

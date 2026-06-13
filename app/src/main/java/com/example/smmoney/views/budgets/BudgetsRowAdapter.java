@@ -28,31 +28,29 @@ import java.util.GregorianCalendar;
 import java.util.List;
 
 public class BudgetsRowAdapter extends BaseAdapter {
-    private static final Comparator<CategoryClass> categoryComparator = new Comparator<CategoryClass>() {
-        public int compare(CategoryClass category1, CategoryClass category2) {
-            double diff;
-            switch (Prefs.getIntPref(Prefs.BUDGETS_SORTON)) {
-                case Enums.kBudgetsSortTypeActual /*1*/:
-                    diff = category2.spent - category1.spent;
-                    if (diff < 0.0d) {
-                        return -1;
-                    }
-                    return diff > 0.0d ? 1 : 0;
-                case Enums.kBudgetsSortTypeBudgeted /*2*/:
-                    diff = category2.budget - category1.budget;
-                    if (diff < 0.0d) {
-                        return -1;
-                    }
-                    return diff > 0.0d ? 1 : 0;
-                case Enums.kBudgetsSortTypePercentage /*3*/:
-                    diff = (category1.spent / category1.budget) - (category2.spent / category2.budget);
-                    if (diff < 0.0d) {
-                        return -1;
-                    }
-                    return diff > 0.0d ? 1 : 0;
-                default:
-                    return category1.getCategory().toUpperCase().compareTo(category2.getCategory().toUpperCase());
-            }
+    private static final Comparator<CategoryClass> categoryComparator = (category1, category2) -> {
+        double diff;
+        switch (Prefs.getIntPref(Prefs.BUDGETS_SORTON)) {
+            case Enums.kBudgetsSortTypeActual /*1*/:
+                diff = category2.spent - category1.spent;
+                if (diff < 0.0d) {
+                    return -1;
+                }
+                return diff > 0.0d ? 1 : 0;
+            case Enums.kBudgetsSortTypeBudgeted /*2*/:
+                diff = category2.budget - category1.budget;
+                if (diff < 0.0d) {
+                    return -1;
+                }
+                return diff > 0.0d ? 1 : 0;
+            case Enums.kBudgetsSortTypePercentage /*3*/:
+                diff = (category1.spent / category1.budget) - (category2.spent / category2.budget);
+                if (diff < 0.0d) {
+                    return -1;
+                }
+                return diff > 0.0d ? 1 : 0;
+            default:
+                return category1.getCategory().toUpperCase().compareTo(category2.getCategory().toUpperCase());
         }
     };
     GregorianCalendar currentDate;
@@ -314,52 +312,48 @@ public class BudgetsRowAdapter extends BaseAdapter {
     }
 
     private OnClickListener getRowClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
-                BudgetsRowHolder holder = (BudgetsRowHolder) view;
-                FilterClass aFilter = new FilterClass();
-                aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
-                aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
-                aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
-                aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
-                i.putExtra("Filter", aFilter);
-                BudgetsRowAdapter.this.context.startActivity(i);
-            }
+        return view -> {
+            Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
+            BudgetsRowHolder holder = (BudgetsRowHolder) view;
+            FilterClass aFilter = new FilterClass();
+            aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
+            aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
+            aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
+            aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
+            i.putExtra("Filter", aFilter);
+            BudgetsRowAdapter.this.context.startActivity(i);
         };
     }
 
     private OnClickListener getHeaderClickListener() {
-        return new OnClickListener() {
-            public void onClick(View view) {
-                boolean z = false;
-                String cat = ((BudgetsHeaderHolder) view).label;
-                BudgetsRowAdapter budgetsRowAdapter;
-                String str;
-                if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) {
-                    budgetsRowAdapter = BudgetsRowAdapter.this;
-                    str = BudgetsRowAdapter.this.showIncome;
-                    if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showIncome)) {
-                        z = true;
-                    }
-                    budgetsRowAdapter.setShowSection(str, z);
-                } else if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
-                    budgetsRowAdapter = BudgetsRowAdapter.this;
-                    str = BudgetsRowAdapter.this.showExpense;
-                    if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showExpense)) {
-                        z = true;
-                    }
-                    budgetsRowAdapter.setShowSection(str, z);
-                } else if (cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
-                    budgetsRowAdapter = BudgetsRowAdapter.this;
-                    str = BudgetsRowAdapter.this.showNonBudgeted;
-                    if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showNonBudgeted)) {
-                        z = true;
-                    }
-                    budgetsRowAdapter.setShowSection(str, z);
+        return view -> {
+            boolean z = false;
+            String cat = ((BudgetsHeaderHolder) view).label;
+            BudgetsRowAdapter budgetsRowAdapter;
+            String str;
+            if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) {
+                budgetsRowAdapter = BudgetsRowAdapter.this;
+                str = BudgetsRowAdapter.this.showIncome;
+                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showIncome)) {
+                    z = true;
                 }
-                BudgetsRowAdapter.this.notifyDataSetChanged();
+                budgetsRowAdapter.setShowSection(str, z);
+            } else if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
+                budgetsRowAdapter = BudgetsRowAdapter.this;
+                str = BudgetsRowAdapter.this.showExpense;
+                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showExpense)) {
+                    z = true;
+                }
+                budgetsRowAdapter.setShowSection(str, z);
+            } else if (cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
+                budgetsRowAdapter = BudgetsRowAdapter.this;
+                str = BudgetsRowAdapter.this.showNonBudgeted;
+                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showNonBudgeted)) {
+                    z = true;
+                }
+                budgetsRowAdapter.setShowSection(str, z);
             }
+            BudgetsRowAdapter.this.notifyDataSetChanged();
         };
     }
 
@@ -407,13 +401,11 @@ public class BudgetsRowAdapter extends BaseAdapter {
         final List<CategoryClass> list = nonBudgetedCategoriesHolder;
         final List<CategoryClass> list2 = afterZeroExpenses;
         final List<CategoryClass> list3 = afterZeroIncomes;
-        ((Activity) this.context).runOnUiThread(new Runnable() {
-            public void run() {
-                BudgetsRowAdapter.this.nonBudgetedCategories = list;
-                BudgetsRowAdapter.this.expenseCategories = list2;
-                BudgetsRowAdapter.this.incomeCategories = list3;
-                BudgetsRowAdapter.this.notifyDataSetChanged();
-            }
+        ((Activity) this.context).runOnUiThread(() -> {
+            BudgetsRowAdapter.this.nonBudgetedCategories = list;
+            BudgetsRowAdapter.this.expenseCategories = list2;
+            BudgetsRowAdapter.this.incomeCategories = list3;
+            BudgetsRowAdapter.this.notifyDataSetChanged();
         });
     }
 

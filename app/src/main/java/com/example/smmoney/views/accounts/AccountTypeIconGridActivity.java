@@ -293,13 +293,11 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
     }
 
     private OnItemClickListener getClickListener() {
-        return new OnItemClickListener() {
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-                Intent i = new Intent();
-                i.putExtra("selection", view.getTag().toString());
-                AccountTypeIconGridActivity.this.setResult(1, i);
-                AccountTypeIconGridActivity.this.finish();
-            }
+        return (adapterView, view, position, id) -> {
+            Intent i = new Intent();
+            i.putExtra("selection", view.getTag().toString());
+            AccountTypeIconGridActivity.this.setResult(1, i);
+            AccountTypeIconGridActivity.this.finish();
         };
     }
 

@@ -28,28 +28,26 @@ public class DialogFragmentEmailTransfers extends DialogFragment {
         CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX", Locales.kLOC_TOOLS_BACKUPFILES};
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL);
-        builder.setItems(items3, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int item) {
-                DialogEmailTransferListener activity = (DialogEmailTransferListener) getActivity();
-                if (activity != null) {
-                    switch (item) {
-                        case EMAIL_QIF /*0*/:
-                            activity.onFinishEmailDialog(EMAIL_QIF);
-                            break;
-                        case EMAIL_TDF /*1*/:
-                            activity.onFinishEmailDialog(EMAIL_TDF);
-                            break;
-                        case EMAIL_CSV /*2*/:
-                            activity.onFinishEmailDialog(EMAIL_CSV);
-                            break;
-                        case EMAIL_OFX /*3*/:
-                            activity.onFinishEmailDialog(EMAIL_OFX);
-                            break;
-                        case EMAIL_BACKUP /*4*/ /*Email database backup file*/:
-                            activity.onFinishEmailDialog(EMAIL_BACKUP);
-                            break;
-                        default:
-                    }
+        builder.setItems(items3, (dialog, item) -> {
+            DialogEmailTransferListener activity = (DialogEmailTransferListener) getActivity();
+            if (activity != null) {
+                switch (item) {
+                    case EMAIL_QIF /*0*/:
+                        activity.onFinishEmailDialog(EMAIL_QIF);
+                        break;
+                    case EMAIL_TDF /*1*/:
+                        activity.onFinishEmailDialog(EMAIL_TDF);
+                        break;
+                    case EMAIL_CSV /*2*/:
+                        activity.onFinishEmailDialog(EMAIL_CSV);
+                        break;
+                    case EMAIL_OFX /*3*/:
+                        activity.onFinishEmailDialog(EMAIL_OFX);
+                        break;
+                    case EMAIL_BACKUP /*4*/ /*Email database backup file*/:
+                        activity.onFinishEmailDialog(EMAIL_BACKUP);
+                        break;
+                    default:
                 }
             }
         });

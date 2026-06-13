@@ -363,6 +363,52 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
+    public static void displayLiteDialog(final Activity c) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        builder.setTitle(Locales.kLOC_LITE_UPGRADE)
+                .setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID)
+                .setCancelable(false)
+                .setPositiveButton(Locales.kLOC_LITE_BUYIT, (dialog, which) -> {
+                    String str;
+                    if (AccountsActivity.IS_GOOGLE_MARKET) {
+                        str = "http://market.android.com/details?id=com.catamount.pocketmoney";
+                    } else {
+                        str = "http://www.amazon.com/gp/product/B004JVI48G";
+                    }
+                    c.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(str)));
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, id) -> dialog.cancel());
+        builder.create().show();
+    }
+
+    private void showMenuDialog() {
+        if (this.tipDialog != null) {
+            Log.d("ACCOUNTSACTIVITY", "showMenuDialog() called and this.tipDialog != null");
+            this.tipDialog.isShowing();
+        }
+    }
+
+//    TODO: Think this method can be deleted as now replaced titleTextView with SupportActionBar
+//    private void setTitle(String title) {
+//        this.titleTextView.setText(title);
+//    }
+
+    private void checkLastUpgradeDialog() {
+        long createdOn = Prefs.getLongPref(Prefs.CREATED_ON);
+        long lastDisplayed = Prefs.getLongPref(Prefs.LAST_UPGRADE_DIALOG);
+        if (createdOn == 0) {
+            Prefs.setPref(Prefs.CREATED_ON, System.currentTimeMillis());
+        } else if (lastDisplayed == 0) {
+            if (System.currentTimeMillis() - createdOn > -1702967296) {
+                displayLiteDialog(this);
+                Prefs.setPref(Prefs.LAST_UPGRADE_DIALOG, System.currentTimeMillis());
+            }
+        } else if (System.currentTimeMillis() - lastDisplayed > 864000000) {
+            displayLiteDialog(this);
+            Prefs.setPref(Prefs.LAST_UPGRADE_DIALOG, System.currentTimeMillis());
+        }
+    }
+
     protected void onResume() {
         super.onResume();
         Log.d("ACCOUNTSACTIVITY", "onResume just called");
@@ -376,12 +422,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
             alert.setTitle(Locales.kLOC_TIP_WELCOME_TITLE);
             alert.setCancelable(false);
             alert.setMessage(Locales.kLOC_TIP_WELCOME);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Prefs.setPref(Prefs.HINT_WELCOME, true);
-                    AccountsActivity.this.showMenuDialog();
-                    dialog.dismiss();
-                }
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                Prefs.setPref(Prefs.HINT_WELCOME, true);
+                AccountsActivity.this.showMenuDialog();
+                dialog.dismiss();
             });
             this.tipDialog = alert.show();
         }
@@ -392,11 +436,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
             Object[] objArr = new Object[ACCOUNT_REQUEST_FILTER];
             objArr[0] = this.adapter.getCount() > 0 ? this.adapter.getElements().get(0).getAccount() : "";
             alert.setMessage(getString(i, objArr));
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new OnClickListener() {
-                public void onClick(DialogInterface dialog, int whichButton) {
-                    Prefs.setPref(Prefs.HINT_FIRSTNEWACCOUNT, true);
-                    dialog.dismiss();
-                }
+            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                Prefs.setPref(Prefs.HINT_FIRSTNEWACCOUNT, true);
+                dialog.dismiss();
             });
             alert.show();
         }
@@ -431,32 +473,60 @@ public class AccountsActivity extends PocketMoneyActivity implements
         testTest();
     }
 
-    private void showMenuDialog() {
-        if (this.tipDialog != null) {
-            Log.d("ACCOUNTSACTIVITY", "showMenuDialog() called and this.tipDialog != null");
-            this.tipDialog.isShowing();
+    public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
+        int row = this.theChartView.dataSource.rowOfChartItem(chartItem);
+        if (row != -1) {
+            this.theChartView.dataSource.selectAllDataPointsForRow(row);
+            reloadChartHeader(row);
+        }
+        this.theChartView.invalidate();
+    }
+
+    private void reloadChartHeader(int row) {
+        if (row == -1) {
+            this.graphNetworthTextView.setText("");
+            this.graphTitleTextView.setText("");
+            return;
+        }
+        GregorianCalendar selectedDate = this.theChartView.dataSource.dateForRow(row);
+        this.graphTitleTextView.setText(this.theChartView.dataSource.title() + ": " + CalExt.descriptionWithYear(selectedDate) + " " + CalExt.descriptionWithMonth(selectedDate));
+        this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
+    }
+
+    private void graphReloadCallback() {
+        if (this.theChartView != null) {
+            reloadChartHeader(this.theChartView.dataSource.numberOfDataPointsInSeries(this.theChartView, 0) - 1);
+        } else {
+            reloadChartHeader(-1);
+        }
+        if (this.theChartView != null) {
+            this.theChartView.invalidate();
+        }
+        showCorrectChart();
+        this.graphButtonEnabled = true;
+    }
+
+    private void showCorrectChart() {
+        ((View) this.graphSpinner.getParent()).setVisibility(View.GONE);
+        this.graphSpinner.setVisibility(View.GONE);
+        switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
+            case Enums.kSumamryChartTypeNetWorth /*0*/:
+                this.netWorthChartView.setVisibility(View.VISIBLE);
+                return;
+            case Enums.kSumamryChartTypeCashFlow /*1*/:
+                this.cashFlowChartView.setVisibility(View.VISIBLE);
+                return;
+            case Enums.kSumamryChartMoreCharts /*2*/:
+                ((View) this.moreChartsButton.getParent()).setVisibility(View.VISIBLE);
+                this.moreChartsButton.setVisibility(View.VISIBLE);
+                return;
+            default:
         }
     }
 
-//    TODO: Think this method can be deleted as now replaced titleTextView with SupportActionBar
-//    private void setTitle(String title) {
-//        this.titleTextView.setText(title);
-//    }
-
-    private void checkLastUpgradeDialog() {
-        long createdOn = Prefs.getLongPref(Prefs.CREATED_ON);
-        long lastDisplayed = Prefs.getLongPref(Prefs.LAST_UPGRADE_DIALOG);
-        if (createdOn == 0) {
-            Prefs.setPref(Prefs.CREATED_ON, System.currentTimeMillis());
-        } else if (lastDisplayed == 0) {
-            if (System.currentTimeMillis() - createdOn > -1702967296) {
-                displayLiteDialog(this);
-                Prefs.setPref(Prefs.LAST_UPGRADE_DIALOG, System.currentTimeMillis());
-            }
-        } else if (System.currentTimeMillis() - lastDisplayed > 864000000) {
-            displayLiteDialog(this);
-            Prefs.setPref(Prefs.LAST_UPGRADE_DIALOG, System.currentTimeMillis());
-        }
+    private void reloadData() {
+        this.adapter.setElements(AccountDB.queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
+        this.adapter.notifyDataSetChanged();
     }
 
     @SuppressLint("HandlerLeak")
@@ -594,11 +664,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         alert.setTitle("Error");
                         alert.setMessage((String) msg.obj);
                         alert.setCancelable(false);
-                        alert.setButton(-1, "OK", new OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.dismiss();
-                            }
-                        });
+                        alert.setButton(-1, "OK", (dialog, id) -> dialog.dismiss());
                         alert.show();
                         return;
                     default:
@@ -618,88 +684,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 if (AccountsActivity.this.progressDialog != null && AccountsActivity.this.progressDialog.isShowing()) {
                     AccountsActivity.this.progressDialog.setProgress(msg.arg1);
                 }
-            }
-        };
-    }
-
-    public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
-        int row = this.theChartView.dataSource.rowOfChartItem(chartItem);
-        if (row != -1) {
-            this.theChartView.dataSource.selectAllDataPointsForRow(row);
-            reloadChartHeader(row);
-        }
-        this.theChartView.invalidate();
-    }
-
-    private void reloadChartHeader(int row) {
-        if (row == -1) {
-            this.graphNetworthTextView.setText("");
-            this.graphTitleTextView.setText("");
-            return;
-        }
-        GregorianCalendar selectedDate = this.theChartView.dataSource.dateForRow(row);
-        this.graphTitleTextView.setText(this.theChartView.dataSource.title() + ": " + CalExt.descriptionWithYear(selectedDate) + " " + CalExt.descriptionWithMonth(selectedDate));
-        this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
-    }
-
-    private void graphReloadCallback() {
-        if (this.theChartView != null) {
-            reloadChartHeader(this.theChartView.dataSource.numberOfDataPointsInSeries(this.theChartView, 0) - 1);
-        } else {
-            reloadChartHeader(-1);
-        }
-        if (this.theChartView != null) {
-            this.theChartView.invalidate();
-        }
-        showCorrectChart();
-        this.graphButtonEnabled = true;
-    }
-
-    private void showCorrectChart() {
-        ((View) this.graphSpinner.getParent()).setVisibility(View.GONE);
-        this.graphSpinner.setVisibility(View.GONE);
-        switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-            case Enums.kSumamryChartTypeNetWorth /*0*/:
-                this.netWorthChartView.setVisibility(View.VISIBLE);
-                return;
-            case Enums.kSumamryChartTypeCashFlow /*1*/:
-                this.cashFlowChartView.setVisibility(View.VISIBLE);
-                return;
-            case Enums.kSumamryChartMoreCharts /*2*/:
-                ((View) this.moreChartsButton.getParent()).setVisibility(View.VISIBLE);
-                this.moreChartsButton.setVisibility(View.VISIBLE);
-                return;
-            default:
-        }
-    }
-
-    private void reloadData() {
-        this.adapter.setElements(AccountDB.queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
-        this.adapter.notifyDataSetChanged();
-    }
-
-    private View.OnClickListener getBalanceBarClickListener() {
-        return new View.OnClickListener() {
-            public void onClick(View v) {
-                String str;
-                int i = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-                if (v.equals(AccountsActivity.this.balanceBar.nextButton)) {
-                    i = AccountsActivity.this.balanceBar.nextBalanceTypeAfter(i);
-                    Log.d("ACCOUNTSACTIVITY", "'Next' balance bar button clicked");
-                } else {
-                    i = AccountsActivity.this.balanceBar.nextBalanceTypeBefore(i);
-                    Log.d("ACCOUNTSACTIVITY", "'Previous' balance bar button clicked");
-                }
-                if (Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED)) {
-                    str = Prefs.BALANCETYPE;
-                    Log.d("ACCOUNTSACTIVITY", "Balance bar type = 'unified'");
-                } else {
-                    str = Prefs.BALANCEBARREGISTER;
-                    Log.d("ACCOUNTSACTIVITY", "Balance bar type != 'unified'");
-                }
-                Prefs.setPref(str, i);
-                AccountsActivity.this.reloadBalanceBar();
-                Log.d("ACCOUNTSACTIVITY", "reloadBalanceBar() just called");
             }
         };
     }
@@ -805,147 +789,53 @@ public class AccountsActivity extends PocketMoneyActivity implements
 //    private void reloadBalanceBarCallBack(double totalWorth, int pref) {
 //    }
 
+    private View.OnClickListener getBalanceBarClickListener() {
+        return v -> {
+            String str;
+            int i = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
+            if (v.equals(AccountsActivity.this.balanceBar.nextButton)) {
+                i = AccountsActivity.this.balanceBar.nextBalanceTypeAfter(i);
+                Log.d("ACCOUNTSACTIVITY", "'Next' balance bar button clicked");
+            } else {
+                i = AccountsActivity.this.balanceBar.nextBalanceTypeBefore(i);
+                Log.d("ACCOUNTSACTIVITY", "'Previous' balance bar button clicked");
+            }
+            if (Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED)) {
+                str = Prefs.BALANCETYPE;
+                Log.d("ACCOUNTSACTIVITY", "Balance bar type = 'unified'");
+            } else {
+                str = Prefs.BALANCEBARREGISTER;
+                Log.d("ACCOUNTSACTIVITY", "Balance bar type != 'unified'");
+            }
+            Prefs.setPref(str, i);
+            AccountsActivity.this.reloadBalanceBar();
+            Log.d("ACCOUNTSACTIVITY", "reloadBalanceBar() just called");
+        };
+    }
+
     private void deleteAccount(final AccountClass account) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this);
         alert.setTitle(Locales.kLOC_ACCOUNT_DELETE);
         alert.setMessage(Locales.kLOC_ACCOUNT_DELETE_BODY);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_DELETE, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context);
-                alert.setTitle(Locales.kLOC_ACCOUNT_DELETE);
-                alert.setMessage(Locales.kLOC_ACCOUNT_DELETE_CONFIRM);
-                CharSequence charSequence = Locales.kLOC_GENERAL_DELETE;
-                alert.setPositiveButton(charSequence, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        TransactionDB.deleteRecordsFromAccount(account.getAccount());
-                        TransactionDB.deleteRepeatingRecordsFromAccount(account.getAccount());
-                        TransactionDB.deleteRepetaingRecordsFromTransactionForAccount(account.getAccount());
-                        account.setDeleted(true);
-                        account.saveToDatabase();
-                        AccountsActivity.this.reloadData();
-                        AccountsActivity.this.reloadBalanceBar();
-                    }
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.cancel();
-                    }
-                });
-                alert.show();
-            }
+        alert.setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, whichButton) -> {
+            AlertDialog.Builder alert1 = new AlertDialog.Builder(AccountsActivity.this.context);
+            alert1.setTitle(Locales.kLOC_ACCOUNT_DELETE);
+            alert1.setMessage(Locales.kLOC_ACCOUNT_DELETE_CONFIRM);
+            CharSequence charSequence = Locales.kLOC_GENERAL_DELETE;
+            alert1.setPositiveButton(charSequence, (dialog2, whichButton2) -> {
+                TransactionDB.deleteRecordsFromAccount(account.getAccount());
+                TransactionDB.deleteRepeatingRecordsFromAccount(account.getAccount());
+                TransactionDB.deleteRepetaingRecordsFromTransactionForAccount(account.getAccount());
+                account.setDeleted(true);
+                account.saveToDatabase();
+                AccountsActivity.this.reloadData();
+                AccountsActivity.this.reloadBalanceBar();
+            });
+            alert1.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, whichButton1) -> dialog1.cancel());
+            alert1.show();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.cancel();
-            }
-        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
-    }
-
-    private void setupView(LinearLayout layout) {
-        Log.d("ACCOUNTSACTIVITY", "setupView() called and started");
-        createHandler();
-        this.balanceBar = layout.findViewById(R.id.balancebar);
-        this.balanceBar.nextButton.setOnClickListener(getBalanceBarClickListener());
-        this.balanceBar.previousButton.setOnClickListener(getBalanceBarClickListener());
-        ListView listView = layout.findViewById(R.id.the_list);
-        listView.setItemsCanFocus(true);
-        listView.setVerticalScrollBarEnabled(false);
-        this.adapter = new AccountRowAdapter(this);
-        listView.setAdapter(this.adapter);
-        listView.setFocusable(false);
-        this.accountRadioButton = layout.findViewById(R.id.accountsbutton);
-        RadioGroup rg = layout.findViewById(R.id.radiogroup);
-        rg.setOnCheckedChangeListener(new OnCheckedChangeListener() {
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (!AccountsActivity.this.progUpdate) {
-                    Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
-                    budgetLauncher.launch(intent);
-                    AccountsActivity.this.overridePendingTransition(0, 0);
-                    AccountsActivity.this.progUpdate = true;
-                    AccountsActivity.this.accountRadioButton.setChecked(true);
-                    AccountsActivity.this.progUpdate = false;
-                }
-            }
-        });
-        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        //listView.setBackgroundColor(PocketMoneyThemes.currentTintColor());
-        this.titleTextView = layout.findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        //this.titleTextView.setTextSize(COMPLEX_UNIT_SP, 50);
-        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        this.titleTextView.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AccountsActivity.this.openOptionsMenu();
-            }
-        });
-        theView.setVisibility(View.GONE);
-        this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
-        this.graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
-        this.graphLeftArrow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (AccountsActivity.this.graphButtonEnabled) {
-                    switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                        case Enums.kSumamryChartTypeNetWorth /*0*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow/*1*/);
-                            break;
-                        case Enums.kSumamryChartTypeCashFlow /*1*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts/*2*/);
-                            break;
-                        case Enums.kSumamryChartMoreCharts /*2*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth/*0*/);
-                            break;
-                    }
-                    AccountsActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            AccountsActivity.this.reloadCharts();
-                        }
-                    });
-                }
-            }
-        });
-        this.graphRightArrow = layout.findViewById(R.id.graphrightarrow);
-        this.graphRightArrow.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                if (AccountsActivity.this.graphButtonEnabled) {
-                    switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                        case Enums.kSumamryChartTypeNetWorth /*0*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts /*2*/);
-                            break;
-                        case Enums.kSumamryChartTypeCashFlow /*1*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth /*0*/);
-                            break;
-                        case Enums.kSumamryChartMoreCharts /*2*/:
-                            Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow /*1*/);
-                            break;
-                    }
-                    AccountsActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            AccountsActivity.this.reloadCharts();
-                        }
-                    });
-                }
-            }
-        });
-        this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
-        this.netWorthChartView.delegate = this;
-        this.netWorthChartView.dataSource = new NetWorthDataSource(this.adapter);
-        this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
-        this.cashFlowChartView.delegate = this;
-        this.cashFlowChartView.dataSource = new CashFlowDataSource(this.adapter);
-        this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
-        this.moreChartsButton.setTextColor(-7829368);
-        this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
-        this.moreChartsButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                AccountsActivity.this.showReportsDialog();
-            }
-        });
-        this.graphSpinner = layout.findViewById(R.id.graphspinner);
-        this.graphTitleTextView = layout.findViewById(R.id.graphtitletextview);
-        this.graphNetworthTextView = layout.findViewById(R.id.networthtextview);
     }
 
     private void importCSVFromSD() {
@@ -974,28 +864,105 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    private void importQIFFromSD() {
-        File[] qifList = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup").listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (name.endsWith(".qif") || name.endsWith(".QIF")) && !name.startsWith(".");
+    private void setupView(LinearLayout layout) {
+        Log.d("ACCOUNTSACTIVITY", "setupView() called and started");
+        createHandler();
+        this.balanceBar = layout.findViewById(R.id.balancebar);
+        this.balanceBar.nextButton.setOnClickListener(getBalanceBarClickListener());
+        this.balanceBar.previousButton.setOnClickListener(getBalanceBarClickListener());
+        ListView listView = layout.findViewById(R.id.the_list);
+        listView.setItemsCanFocus(true);
+        listView.setVerticalScrollBarEnabled(false);
+        this.adapter = new AccountRowAdapter(this);
+        listView.setAdapter(this.adapter);
+        listView.setFocusable(false);
+        this.accountRadioButton = layout.findViewById(R.id.accountsbutton);
+        RadioGroup rg = layout.findViewById(R.id.radiogroup);
+        rg.setOnCheckedChangeListener((group, checkedId) -> {
+            if (!AccountsActivity.this.progUpdate) {
+                Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
+                budgetLauncher.launch(intent);
+                AccountsActivity.this.overridePendingTransition(0, 0);
+                AccountsActivity.this.progUpdate = true;
+                AccountsActivity.this.accountRadioButton.setChecked(true);
+                AccountsActivity.this.progUpdate = false;
             }
         });
+        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        //listView.setBackgroundColor(PocketMoneyThemes.currentTintColor());
+        this.titleTextView = layout.findViewById(R.id.title_text_view);
+        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
+        //this.titleTextView.setTextSize(COMPLEX_UNIT_SP, 50);
+        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
+        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        this.titleTextView.setOnClickListener(v -> AccountsActivity.this.openOptionsMenu());
+        theView.setVisibility(View.GONE);
+        this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
+        this.graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
+        this.graphLeftArrow.setOnClickListener(v -> {
+            if (AccountsActivity.this.graphButtonEnabled) {
+                switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
+                    case Enums.kSumamryChartTypeNetWorth /*0*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow/*1*/);
+                        break;
+                    case Enums.kSumamryChartTypeCashFlow /*1*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts/*2*/);
+                        break;
+                    case Enums.kSumamryChartMoreCharts /*2*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth/*0*/);
+                        break;
+                }
+                AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadCharts());
+            }
+        });
+        this.graphRightArrow = layout.findViewById(R.id.graphrightarrow);
+        this.graphRightArrow.setOnClickListener(v -> {
+            if (AccountsActivity.this.graphButtonEnabled) {
+                switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
+                    case Enums.kSumamryChartTypeNetWorth /*0*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartMoreCharts /*2*/);
+                        break;
+                    case Enums.kSumamryChartTypeCashFlow /*1*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth /*0*/);
+                        break;
+                    case Enums.kSumamryChartMoreCharts /*2*/:
+                        Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow /*1*/);
+                        break;
+                }
+                AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadCharts());
+            }
+        });
+        this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
+        this.netWorthChartView.delegate = this;
+        this.netWorthChartView.dataSource = new NetWorthDataSource(this.adapter);
+        this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
+        this.cashFlowChartView.delegate = this;
+        this.cashFlowChartView.dataSource = new CashFlowDataSource(this.adapter);
+        this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
+        this.moreChartsButton.setTextColor(-7829368);
+        this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
+        this.moreChartsButton.setOnClickListener(v -> AccountsActivity.this.showReportsDialog());
+        this.graphSpinner = layout.findViewById(R.id.graphspinner);
+        this.graphTitleTextView = layout.findViewById(R.id.graphtitletextview);
+        this.graphNetworthTextView = layout.findViewById(R.id.networthtextview);
+    }
+
+    private void importQIFFromSD() {
+        File[] qifList = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup").listFiles((dir, name) -> (name.endsWith(".qif") || name.endsWith(".QIF")) && !name.startsWith("."));
         if (qifList != null) {
             for (File file : qifList) {
                 Log.i("Q File Path = ", file.getAbsolutePath());
                 final ImportExportQIF importqif = new ImportExportQIF(file.getAbsolutePath(), this);
                 if (importqif.hasFile()) {
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(200);
-                            } catch (InterruptedException e) {
-                                Log.e(TAG, "InterruptedException in importQIFFromSD", e);
-                            }
-                            importqif.importIntoDatabase(AccountsActivity.this);
-                            //new File(importqif.QIFPath).delete();
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, "InterruptedException in importQIFFromSD", e);
                         }
+                        importqif.importIntoDatabase(AccountsActivity.this);
+                        //new File(importqif.QIFPath).delete();
                     }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
@@ -1007,31 +974,20 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void importOFXFromSD() {
-        File[] qifList = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup").listFiles(new FilenameFilter() {
-            public boolean accept(File dir, String name) {
-                return (name.endsWith(".ofx") || name.endsWith(".qfx") || name.endsWith(".OFX") || name.endsWith(".QFX")) && !name.startsWith(".");
-            }
-        });
+        File[] qifList = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup").listFiles((dir, name) -> (name.endsWith(".ofx") || name.endsWith(".qfx") || name.endsWith(".OFX") || name.endsWith(".QFX")) && !name.startsWith("."));
         if (qifList != null) {
             for (File file : qifList) {
                 if (file.exists()) {
                     final ImportExportOFX importofx = new ImportExportOFX(this, file.getAbsolutePath());
-                    new Thread(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(200);
-                            } catch (InterruptedException e) {
-                                Log.e(TAG, "InterruptedException in importQIFFromSD", e);
-                            }
-                            importofx.importIntoDatabase();
-                            File importedFile = new File(importofx.path);
-                            AccountsActivity.this.runOnUiThread(new Runnable() {
-                                public void run() {
-                                    AccountsActivity.this.reloadData();
-                                }
-                            });
+                    new Thread(() -> {
+                        try {
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            Log.e(TAG, "InterruptedException in importQIFFromSD", e);
                         }
+                        importofx.importIntoDatabase();
+                        File importedFile = new File(importofx.path);
+                        AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadData());
                     }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
@@ -1040,41 +996,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             return;
         }
         Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
-    }
-
-    private void restoreFromSD() {
-        AlertDialog.Builder alert2 = new AlertDialog.Builder(this.context);
-        alert2.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
-        alert2.setMessage(Locales.kLOC_TRANSFERS_RESTORE);
-        alert2.setPositiveButton(Locales.kLOC_GENERAL_YES, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context);
-                alert.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
-                alert.setMessage(Locales.kLOC_TRANSFERS_RESTORE_CONFIRM);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_YES, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        Database.closeDBAndNullify();
-                        Prefs.importDB(AccountsActivity.this);
-                        Database.loadDatabasePreferences();
-                        Prefs.initialize();
-                        AccountsActivity.this.reloadData();
-                        AccountsActivity.this.reloadBalanceBar();
-                    }
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        dialog.dismiss();
-                    }
-                });
-                alert.show();
-            }
-        });
-        alert2.setNegativeButton(Locales.kLOC_GENERAL_NO, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                dialog.dismiss();
-            }
-        });
-        alert2.show();
     }
 
     private void exportCSVToSD() {
@@ -1173,26 +1094,27 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }.start();
     }
 
-    private void backupToSD() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
-        alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
-        alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int whichButton) {
-                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-                File src = new File(Environment.getDataDirectory() + "/data/" + getPackageName() + "/databases/SMMoneyDB.sql");
-                File dst = new File(pmExternalPath, "SMMoneyDB.sql");
-                try {
-                    Prefs.copyFile(src, dst);
-                    Toast.makeText(AccountsActivity.this, "Backup complete", Toast.LENGTH_SHORT).show();
-                } catch (IOException e) {
-                    Log.e(TAG, "IOException in backupToSD", e);
-                    Toast.makeText(AccountsActivity.this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                }
-            }
+    private void restoreFromSD() {
+        AlertDialog.Builder alert2 = new AlertDialog.Builder(this.context);
+        alert2.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
+        alert2.setMessage(Locales.kLOC_TRANSFERS_RESTORE);
+        alert2.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, whichButton) -> {
+            AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context);
+            alert.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
+            alert.setMessage(Locales.kLOC_TRANSFERS_RESTORE_CONFIRM);
+            alert.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, whichButton2) -> {
+                Database.closeDBAndNullify();
+                Prefs.importDB(AccountsActivity.this);
+                Database.loadDatabasePreferences();
+                Prefs.initialize();
+                AccountsActivity.this.reloadData();
+                AccountsActivity.this.reloadBalanceBar();
+            });
+            alert.setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog1, whichButton1) -> dialog1.dismiss());
+            alert.show();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
-        alert.show();
+        alert2.setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, whichButton) -> dialog.dismiss());
+        alert2.show();
     }
 
     public void generateCSVForEmail() {
@@ -1254,6 +1176,48 @@ public class AccountsActivity extends PocketMoneyActivity implements
         emailLauncher.launch(emailIntent);
     }
 
+    private void backupToSD() {
+        AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
+        alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
+        alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
+        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+            File src = new File(Environment.getDataDirectory() + "/data/" + getPackageName() + "/databases/SMMoneyDB.sql");
+            File dst = new File(pmExternalPath, "SMMoneyDB.sql");
+            try {
+                Prefs.copyFile(src, dst);
+                Toast.makeText(AccountsActivity.this, "Backup complete", Toast.LENGTH_SHORT).show();
+            } catch (IOException e) {
+                Log.e(TAG, "IOException in backupToSD", e);
+                Toast.makeText(AccountsActivity.this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        });
+        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
+        alert.show();
+    }
+
+    private void generateEmailForOFX(ArrayList<Uri> fileNames) {
+        Intent emailIntent = new Intent("android.intent.action.SEND_MULTIPLE");
+        emailIntent.setType("text/ofx");
+        Prefs.exportDB(this);
+        final ArrayList<Uri> ofxUris = new ArrayList<>();
+        for (Uri file : fileNames) {
+            File fileToAdd = new File(file.getPath());
+            Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
+            ofxUris.add(contentUriOfx);
+        }
+        emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", ofxUris);
+        emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney OFX/QFX File");
+        int i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+        Object[] objArr = new Object[2];
+        objArr[0] = "OFX/QFX";
+        objArr[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr));
+        this.fileNames = fileNames;
+        emailLauncher.launch(emailIntent);
+    }
+
     protected void generateQIFForEmail() {
         final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
         pd.setMessage("Exporting...");
@@ -1291,11 +1255,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     }
                     AccountsActivity.this.progressDialog.dismiss();
                     AccountsActivity.this.progressDialog.setProgress(0);
-                    AccountsActivity.this.runOnUiThread(new Runnable() {
-                        public void run() {
-                            AccountsActivity.this.generateEmailForQIF(fileNames);
-                        }
-                    });
+                    AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.generateEmailForQIF(fileNames));
                 } else {
                     AccountsActivity.this.emailFileLocation = pmExternalPath + "SMMoney.qif";
                     String fl = AccountsActivity.this.emailFileLocation;
@@ -1304,70 +1264,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     exportqif.exportRecords();
                 }
                 pd.dismiss();
-            }
-        }.start();
-    }
-
-    private void generateEmailForOFX(ArrayList<Uri> fileNames) {
-        Intent emailIntent = new Intent("android.intent.action.SEND_MULTIPLE");
-        emailIntent.setType("text/ofx");
-        Prefs.exportDB(this);
-        final ArrayList<Uri> ofxUris = new ArrayList<>();
-        for (Uri file : fileNames) {
-            File fileToAdd = new File(file.getPath());
-            Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
-            ofxUris.add(contentUriOfx);
-        }
-        emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", ofxUris);
-        emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney OFX/QFX File");
-        int i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-        Object[] objArr = new Object[2];
-        objArr[0] = "OFX/QFX";
-        objArr[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr));
-        this.fileNames = fileNames;
-        emailLauncher.launch(emailIntent);
-    }
-
-    private void generateOFXForEmail() {
-        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
-        pd.setMessage("Exporting...");
-        pd.show();
-        new Thread() {
-            public void run() {
-                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-                AccountsActivity.this.msgEmail = EMAIL_OFX;
-                AccountsActivity.this.shouldEmail = true;
-                FilterClass filter = new FilterClass();
-                final ArrayList<Uri> fileNames = new ArrayList<>();
-                ArrayList<String> accNames = new ArrayList<>();
-                ArrayList<AccountClass> accounts = AccountsActivity.this.adapter.getElements();
-                for (AccountClass account : accounts) {
-                    try {
-                        accNames.add(account.getAccount());
-                    } catch (Exception exAcc) {
-                        Log.i("***** Doing this ERROR:", exAcc.toString());
-                    }
-                }
-                String[] array = accNames.toArray(new String[0]);
-                for (String item : array) {
-                    filter.setAccount(item);
-                    ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
-                    String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
-                    fileNames.add(Uri.parse("file://" + filePath));
-                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
-                    exportofx.accountNameBeingImported = item;
-                    exportofx.filter = filter;
-                    exportofx.exportRecords(query);
-                }
-
-                pd.dismiss();
-                AccountsActivity.this.runOnUiThread(new Runnable() {
-                    public void run() {
-                        AccountsActivity.this.generateEmailForOFX(fileNames);
-                    }
-                });
             }
         }.start();
     }
@@ -1435,57 +1331,77 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return false;
     }
 
-    private void showReportsDialog() {
-        new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, new OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                FilterClass f = new FilterClass();
-                ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
-                Intent i;
-                switch (which) {
-                    case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
-                        AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
-                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                        PMGlobal.datasource = ds;
-                        AccountsActivity.this.startActivity(i);
-                        return;
-                    case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
-                        CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
-                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                        PMGlobal.datasource = ds2;
-                        AccountsActivity.this.startActivity(i);
-                        return;
-                    case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
-                        ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
-                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                        PMGlobal.datasource = ds3;
-                        AccountsActivity.this.startActivity(i);
-                        return;
-                    case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
-                        PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
-                        i = new Intent(AccountsActivity.this, ReportsActivity.class);
-                        PMGlobal.datasource = ds4;
-                        AccountsActivity.this.startActivity(i);
-                        return;
-                    default:
+    private void generateOFXForEmail() {
+        final PocketMoneyProgressDialog pd = new PocketMoneyProgressDialog(this.context);
+        pd.setMessage("Exporting...");
+        pd.show();
+        new Thread() {
+            public void run() {
+                String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
+                AccountsActivity.this.msgEmail = EMAIL_OFX;
+                AccountsActivity.this.shouldEmail = true;
+                FilterClass filter = new FilterClass();
+                final ArrayList<Uri> fileNames = new ArrayList<>();
+                ArrayList<String> accNames = new ArrayList<>();
+                ArrayList<AccountClass> accounts = AccountsActivity.this.adapter.getElements();
+                for (AccountClass account : accounts) {
+                    try {
+                        accNames.add(account.getAccount());
+                    } catch (Exception exAcc) {
+                        Log.i("***** Doing this ERROR:", exAcc.toString());
+                    }
                 }
+                String[] array = accNames.toArray(new String[0]);
+                for (String item : array) {
+                    filter.setAccount(item);
+                    ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
+                    String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
+                    fileNames.add(Uri.parse("file://" + filePath));
+                    ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
+                    exportofx.accountNameBeingImported = item;
+                    exportofx.filter = filter;
+                    exportofx.exportRecords(query);
+                }
+
+                pd.dismiss();
+                AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.generateEmailForOFX(fileNames));
             }
-        }).show();
+        }.start();
     }
 
-    private void showLicensingDialog() {
-        new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", new OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
-                AccountsActivity.this.finish();
+    private void showReportsDialog() {
+        new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, (dialog, which) -> {
+            FilterClass f = new FilterClass();
+            ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
+            Intent i;
+            switch (which) {
+                case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
+                    AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
+                    i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                    PMGlobal.datasource = ds;
+                    AccountsActivity.this.startActivity(i);
+                    return;
+                case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
+                    CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
+                    i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                    PMGlobal.datasource = ds2;
+                    AccountsActivity.this.startActivity(i);
+                    return;
+                case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
+                    ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
+                    i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                    PMGlobal.datasource = ds3;
+                    AccountsActivity.this.startActivity(i);
+                    return;
+                case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
+                    PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
+                    i = new Intent(AccountsActivity.this, ReportsActivity.class);
+                    PMGlobal.datasource = ds4;
+                    AccountsActivity.this.startActivity(i);
+                    return;
+                default:
             }
-        }).setNegativeButton("Quit", new OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                Intent i = new Intent();
-                i.setAction("android.intent.action.MAIN");
-                i.addCategory("android.intent.category.HOME");
-                AccountsActivity.this.context.startActivity(i);
-            }
-        }).setCancelable(false).show();
+        }).show();
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
@@ -1552,29 +1468,16 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return true;
     }
 
-    public static void displayLiteDialog(final Activity c) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
-        builder.setTitle(Locales.kLOC_LITE_UPGRADE)
-                .setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID)
-                .setCancelable(false)
-                .setPositiveButton(Locales.kLOC_LITE_BUYIT, new OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        String str;
-                        if (AccountsActivity.IS_GOOGLE_MARKET) {
-                            str = "http://market.android.com/details?id=com.catamount.pocketmoney";
-                        } else {
-                            str = "http://www.amazon.com/gp/product/B004JVI48G";
-                        }
-                        c.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(str)));
-                    }
-                })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, new OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        dialog.cancel();
-                    }
-                });
-        builder.create().show();
+    private void showLicensingDialog() {
+        new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", (dialog, which) -> {
+            AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
+            AccountsActivity.this.finish();
+        }).setNegativeButton("Quit", (dialog, which) -> {
+            Intent i = new Intent();
+            i.setAction("android.intent.action.MAIN");
+            i.addCategory("android.intent.category.HOME");
+            AccountsActivity.this.context.startActivity(i);
+        }).setCancelable(false).show();
     }
 
     public static boolean isLite(Context c) {
@@ -1647,11 +1550,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         AlertDialog.Builder builder = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         builder.setTitle(title)
                 .setMessage(message)
-                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        requestPermission(permissionRequestCode);
-                    }
-                });
+                .setPositiveButton(android.R.string.ok, (dialog, id) -> requestPermission(permissionRequestCode));
         builder.create().show();
     }
 
@@ -1660,19 +1559,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
         builder.setTitle(title)
                 .setMessage(message)
 
-                .setNegativeButton("Open app settings", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                        Uri uri = Uri.fromParts("package", getPackageName(), null);
-                        intent.setData(uri);
-                        startActivity(intent);
-                    }
+                .setNegativeButton("Open app settings", (dialog, id) -> {
+                    Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    Uri uri = Uri.fromParts("package", getPackageName(), null);
+                    intent.setData(uri);
+                    startActivity(intent);
                 })
-                .setPositiveButton("I'm sure", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                    }
+                .setPositiveButton("I'm sure", (dialog, which) -> {
                 });
         builder.create().show();
     }
