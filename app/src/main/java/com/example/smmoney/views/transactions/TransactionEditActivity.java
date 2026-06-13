@@ -1085,6 +1085,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
                 this.repeatingTransaction.setLastProcessedDate(CalExt.subtractDay(this.repeatingTransaction.getTransaction().getDate()));
             }
             this.repeatingTransaction.saveToDatabase();
+            this.repeatingTransaction.setupNotification(getApplicationContext());
             if (processRepeatingEvents) {
                 TransactionDB.addRepeatingTransactions();
             }

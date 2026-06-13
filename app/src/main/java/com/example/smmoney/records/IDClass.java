@@ -286,7 +286,11 @@ public class IDClass extends PocketMoneyRecordClass {
                 setDeleted(z);
                 break;
             case "id":
-                setIDName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                try {
+                    setIDName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                } catch (UnsupportedEncodingException e) {
+                    Log.e(SMMoney.TAG, "Error decoding XML", e);
+                }
                 break;
             case "serverID":
                 setServerID(this.currentElementValue);

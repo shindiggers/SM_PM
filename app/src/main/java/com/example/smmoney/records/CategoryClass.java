@@ -754,7 +754,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             case "category":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }

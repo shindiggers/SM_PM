@@ -9,6 +9,7 @@ import com.example.smmoney.records.TransactionClass;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class iReceiptClass {
     public final TransactionClass transaction;
@@ -25,22 +26,30 @@ public class iReceiptClass {
 
     public iReceiptClass(Uri data) {
         this.data = data;
+        //noinspection unused
         String s = Uri.decode(data.toString());
         this.showUI = data.getQueryParameter("showUI");
         this.callbackURL = data.getQueryParameter("callbackURL");
         this.transaction = new TransactionClass();
-        this.transaction.updateWithXML(URLDecoder.decode(data.getQueryParameter("transaction")));
+        String transactionXml = data.getQueryParameter("transaction");
+        if (transactionXml != null) {
+            try {
+                this.transaction.updateWithXML(URLDecoder.decode(transactionXml, StandardCharsets.UTF_8.name()));
+            } catch (UnsupportedEncodingException e) {
+                Log.e(SMMoney.TAG, "Error decoding transaction XML", e);
+            }
+        }
         this.transaction.transactionID = 0;
     }
 
     public String postString() {
         try {
             return "http://www.catamount.com/ireceiptredirect.php?ireceipt://hostlocation/post=?transaction=" +
-                    URLEncoder.encode(this.transaction.XMLStringWithImages(true), java.nio.charset.StandardCharsets.UTF_8.toString()) +
+                    URLEncoder.encode(this.transaction.XMLStringWithImages(true), StandardCharsets.UTF_8.name()) +
                     "&showUI=ALWAYS";
         } catch (UnsupportedEncodingException e) {
-            Log.i(SMMoney.TAG, "Invalid tag parsing " + this.transaction.XMLStringWithImages(true) + " xml[");
+            Log.e(SMMoney.TAG, "Error encoding transaction XML", e);
+            return "";
         }
-        return "";
     }
 }

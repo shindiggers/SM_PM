@@ -104,9 +104,14 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LayoutInflater.from(this).inflate(R.layout.repeating_edit, null));
-        this.repeatingTransaction = (RepeatingTransactionClass) getIntent().getExtras().get("RepeatingTransaction");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this.repeatingTransaction = getIntent().getSerializableExtra("RepeatingTransaction", RepeatingTransactionClass.class);
+            this.transaction = getIntent().getSerializableExtra("Transaction", TransactionClass.class);
+        } else {
+            this.repeatingTransaction = (RepeatingTransactionClass) getIntent().getSerializableExtra("RepeatingTransaction");
+            this.transaction = (TransactionClass) getIntent().getSerializableExtra("Transaction");
+        }
         this.repeatingTransaction.hydrate();
-        this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
         this.repeatingTransaction.hydrated = true;
         this.repeatingTransaction.getTransaction().hydrated = true;
         this.context = this;

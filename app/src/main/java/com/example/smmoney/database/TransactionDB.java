@@ -654,6 +654,7 @@ public class TransactionDB {
     }
 
     public static boolean addRepeatingTransactions() {
+        Log.d("NOTIFY", "addRepeatingTransactions() called. RECURPOSTINGENABLED=" + Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED));
         if (!Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED)) {
             return false;
         }

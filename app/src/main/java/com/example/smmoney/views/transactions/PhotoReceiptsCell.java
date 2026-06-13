@@ -57,7 +57,6 @@ public class PhotoReceiptsCell extends View {
                             if (scaleFactor <= 0) scaleFactor = 1;
                             bmOptions.inJustDecodeBounds = false;
                             bmOptions.inSampleSize = scaleFactor;
-                            bmOptions.inPurgeable = true;
                             Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
                             if (bitmap != null) {
                                 this.bitmaps.add(bitmap);

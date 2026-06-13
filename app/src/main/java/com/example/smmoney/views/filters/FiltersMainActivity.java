@@ -31,7 +31,11 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     final ActivityResultLauncher<Intent> filterEditLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
-            this.filter = (FilterClass) result.getData().getExtras().get("Filter");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
+            } else {
+                this.filter = (FilterClass) result.getData().getSerializableExtra("Filter");
+            }
         }
     });
 
@@ -50,11 +54,15 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this.filter = getIntent().getSerializableExtra("Filter", FilterClass.class);
+        } else {
+            this.filter = (FilterClass) getIntent().getSerializableExtra("Filter");
+        }
         setContentView(R.layout.filter_main);
         this.context = this;
         setResult(FILTER_RESULT_NOCHANGE);
-        if (getIntent().getExtras().get("ONLY SAVED") != null) {
+        if (getIntent().hasExtra("ONLY SAVED")) {
             findViewById(R.id.filterreset).setVisibility(View.GONE);
             findViewById(R.id.filtercurrent).setVisibility(View.GONE);
         }

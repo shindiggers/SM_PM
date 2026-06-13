@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
-import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -847,9 +846,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
         });
         alert.show();
-    }
-
-    protected void onPrepareDialog(int id, Dialog dialog, Bundle args) {
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

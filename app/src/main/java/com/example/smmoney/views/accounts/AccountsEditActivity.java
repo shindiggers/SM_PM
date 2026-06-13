@@ -3,7 +3,6 @@ package com.example.smmoney.views.accounts;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -108,7 +107,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts_edit);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.account = getIntent().getSerializableExtra("Account", AccountClass.class);
         } else {
             this.account = (AccountClass) getIntent().getSerializableExtra("Account");

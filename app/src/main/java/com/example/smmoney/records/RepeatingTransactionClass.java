@@ -535,20 +535,38 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     public void setupNotification(Context context) {
         if (getTransaction() != null) {
             Intent intent = new Intent(context, LocalNotificationRepeatingReciever.class);
-            if (getSendLocalNotifications()) {
+            boolean sendNotify = getSendLocalNotifications();
+            Log.d("NOTIFY", "setupNotification called. sendLocalNotifications=" + sendNotify + " ID=" + this.repeatingID);
+            if (sendNotify) {
                 GregorianCalendar newDate = (GregorianCalendar) getTransaction().getDate().clone();
                 if (getNotifyDaysInAdance() > 0) {
                     newDate = CalExt.subtractDays(newDate, getNotifyDaysInAdance());
                 }
                 String newBody = CalExt.descriptionWithMediumDate(getTransaction().getDate()) + " " + getTransaction().getAccount() + "->" + (getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee());
-                intent.putExtra("repeatingTransaction", this);
+                intent.putExtra("repeatingID", this.repeatingID);
                 intent.putExtra("localNotification", true);
                 intent.putExtra("Posting", true);
                 intent.putExtra("body", newBody);
-                if (PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE) == null) {
-                    ((AlarmManager) context.getSystemService(Context.ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), PendingIntent.getBroadcast(context, this.repeatingID, intent, PendingIntent.FLAG_CANCEL_CURRENT | PendingIntent.FLAG_IMMUTABLE));
+
+                Log.d("NOTIFY", "Scheduling notification for ID: " + this.repeatingID + " at " + CalExt.descriptionWithTimestamp(newDate));
+
+                int flags = PendingIntent.FLAG_UPDATE_CURRENT;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                    flags |= PendingIntent.FLAG_IMMUTABLE;
+                }
+
+                PendingIntent pIntent = PendingIntent.getBroadcast(context, this.repeatingID, intent, flags);
+                AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+                if (am != null) {
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
+                    } else {
+                        am.set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
+                    }
                 }
             }
+        } else {
+            Log.d("NOTIFY", "setupNotification: getTransaction() is NULL");
         }
     }
 

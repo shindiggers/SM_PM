@@ -1200,7 +1200,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             case "image":
                 if (!(this.currentElementValue.length() <= 0 || this.currentElementValue.contains("\n"))) {
                     try {
-                        setImageLocation(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                        setImageLocation(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -1218,7 +1218,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                 } catch (Exception e3) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -1226,7 +1226,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             }
             case "class":
                 try {
-                    this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                    this.parserSplit.setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -1239,7 +1239,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 try {
                     Field f = c.getDeclaredField(localName);
                     f.setAccessible(true);
-                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8));
+                    f.set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
                 } catch (Exception e4) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }

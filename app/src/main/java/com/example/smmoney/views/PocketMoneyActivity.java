@@ -16,7 +16,6 @@ import com.example.smmoney.misc.Prefs;
 public abstract class PocketMoneyActivity extends AppCompatActivity {
     private boolean isStartingActivity = false;
     private boolean showPasswordScreen = false;
-    protected boolean skipPasswordScreen = false;
 
     private final ActivityResultLauncher<Intent> passwordLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -102,13 +101,6 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
     @SuppressWarnings("EmptyMethod")
     public void finish() {
         super.finish();
-    }
-
-    public void startActivityForResult(Intent i, int req) {
-        this.showPasswordScreen = false;
-        this.isStartingActivity = true;
-        i.putExtra("dontShowPass", "");
-        super.startActivityForResult(i, req);
     }
 
     public void startActivity(Intent i) {

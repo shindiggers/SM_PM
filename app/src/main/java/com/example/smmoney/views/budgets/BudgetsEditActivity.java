@@ -109,7 +109,11 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.category = (CategoryClass) getIntent().getExtras().get("Category");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this.category = getIntent().getSerializableExtra("Category", CategoryClass.class);
+        } else {
+            this.category = (CategoryClass) getIntent().getSerializableExtra("Category");
+        }
         this.oldCategory = this.category.getCategory();
         setContentView(R.layout.budget_edit);
         this.categoryBudgetItems = CategoryBudgetClass.budgetItemsForCategory(this.category.getCategory());
