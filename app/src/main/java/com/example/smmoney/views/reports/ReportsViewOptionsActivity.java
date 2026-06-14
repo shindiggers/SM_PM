@@ -40,25 +40,19 @@ public class ReportsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private String chartTypeString() {
-        switch (Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE)) {
-            case Enums.kReportsChartTypeNone /*0*/:
-                return Locales.kLOC_GENERAL_NONE;
-            case Enums.kReportsChartTypeBar /*2*/:
-                return "Bar Chart";
-            default:
-                return "Pie Chart";
-        }
+        return switch (Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE)) {
+            case Enums.kReportsChartTypeNone /*0*/ -> Locales.kLOC_GENERAL_NONE;
+            case Enums.kReportsChartTypeBar /*2*/ -> "Bar Chart";
+            default -> "Pie Chart";
+        };
     }
 
     private String sortOnString() {
-        switch (Prefs.getIntPref(Prefs.REPORTS_SORTON)) {
-            case Enums.kReportsSortOnItem /*0*/:
-                return Locales.kLOC_REPORTDISPLAY_ITEM;
-            case Enums.kReportsSortOnAmount /*1*/:
-                return Locales.kLOC_GENERAL_AMOUNT;
-            default:
-                return Locales.kLOC_REPORTDISPLAY_COUNT;
-        }
+        return switch (Prefs.getIntPref(Prefs.REPORTS_SORTON)) {
+            case Enums.kReportsSortOnItem /*0*/ -> Locales.kLOC_REPORTDISPLAY_ITEM;
+            case Enums.kReportsSortOnAmount /*1*/ -> Locales.kLOC_GENERAL_AMOUNT;
+            default -> Locales.kLOC_REPORTDISPLAY_COUNT;
+        };
     }
 
     private String sortDirectionString() {

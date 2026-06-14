@@ -117,36 +117,26 @@ public class BalanceBar extends FrameLayout {
     }
 
     public int nextBalanceTypeAfter(int type) {
-        switch (type) {
-            case Enums.kBalanceTypeFuture /*0*/:
-                return Enums.kBalanceTypeAvailableFunds/*3*/;
-            case Enums.kBalanceTypeCleared /*1*/:
-                return (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeCurrent/*2*/ : Enums.kBalanceTypeFiltered/*5*/;
-            case Enums.kBalanceTypeCurrent /*2*/:
-                return Enums.kBalanceTypeFuture /*0*/;
-            case Enums.kBalanceTypeAvailableFunds /*3*/:
-                return Enums.kBalanceTypeAvailableCredit /*4*/;
-            case Enums.kBalanceTypeAvailableCredit /*4*/:
-                return Enums.kBalanceTypeCleared/*1*/;
-            default:
-                return Enums.kBalanceTypeCurrent/*2*/;
-        }
+        return switch (type) {
+            case Enums.kBalanceTypeFuture /*0*/ -> Enums.kBalanceTypeAvailableFunds;/*3*/
+            case Enums.kBalanceTypeCleared /*1*/ ->
+                    (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeCurrent/*2*/ : Enums.kBalanceTypeFiltered;/*5*/
+            case Enums.kBalanceTypeCurrent /*2*/ -> Enums.kBalanceTypeFuture; /*0*/
+            case Enums.kBalanceTypeAvailableFunds /*3*/ -> Enums.kBalanceTypeAvailableCredit; /*4*/
+            case Enums.kBalanceTypeAvailableCredit /*4*/ -> Enums.kBalanceTypeCleared;/*1*/
+            default -> Enums.kBalanceTypeCurrent;/*2*/
+        };
     }
 
     public int nextBalanceTypeBefore(int type) {
-        switch (type) {
-            case Enums.kBalanceTypeFuture /*0*/:
-                return Enums.kBalanceTypeCurrent/*2*/;
-            case Enums.kBalanceTypeCleared /*1*/:
-                return (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeAvailableCredit/*4*/ : Enums.kBalanceTypeFiltered/*5*/;
-            case Enums.kBalanceTypeCurrent /*2*/:
-                return Enums.kBalanceTypeCleared/*1*/;
-            case Enums.kBalanceTypeAvailableFunds /*3*/:
-                return Enums.kBalanceTypeFuture/*0*/;
-            case Enums.kBalanceTypeAvailableCredit /*4*/:
-                return Enums.kBalanceTypeAvailableFunds/*3*/;
-            default:
-                return Enums.kBalanceTypeAvailableCredit/*4*/;
-        }
+        return switch (type) {
+            case Enums.kBalanceTypeFuture /*0*/ -> Enums.kBalanceTypeCurrent;/*2*/
+            case Enums.kBalanceTypeCleared /*1*/ ->
+                    (this.filter == null || !this.filter.customFilter()) ? Enums.kBalanceTypeAvailableCredit/*4*/ : Enums.kBalanceTypeFiltered;/*5*/
+            case Enums.kBalanceTypeCurrent /*2*/ -> Enums.kBalanceTypeCleared;/*1*/
+            case Enums.kBalanceTypeAvailableFunds /*3*/ -> Enums.kBalanceTypeFuture;/*0*/
+            case Enums.kBalanceTypeAvailableCredit /*4*/ -> Enums.kBalanceTypeAvailableFunds;/*3*/
+            default -> Enums.kBalanceTypeAvailableCredit;/*4*/
+        };
     }
 }

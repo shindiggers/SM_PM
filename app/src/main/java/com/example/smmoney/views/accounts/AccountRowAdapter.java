@@ -247,22 +247,15 @@ class AccountRowAdapter extends BaseAdapter {
     }
 
     private int indexForType(int type) {
-        switch (type) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return 1;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/:
-                return 2;
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-            case LookupsListActivity.FILTER_ACCOUNTS /*9*/:
-                return 3;
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                return 4;
-            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                return 5;
-            default:
-                return 0;
-        }
+        return switch (type) {
+            case SplitsActivity.RESULT_CHANGED /*1*/ -> 1; /*2*/
+            case LookupsListActivity.ACCOUNT_ICON_LOOKUP,
+                 LookupsListActivity.FILTER_TRANSACTION_TYPE /*8*/ -> 2; /*3*/
+            case SplitsActivity.REQUEST_EDIT, LookupsListActivity.FILTER_ACCOUNTS /*9*/ -> 3;
+            case LookupsListActivity.PAYEE_LOOKUP /*4*/ -> 4;
+            case LookupsListActivity.CATEGORY_LOOKUP /*5*/ -> 5;
+            default -> 0;
+        };
     }
 
     private void setupSections() {

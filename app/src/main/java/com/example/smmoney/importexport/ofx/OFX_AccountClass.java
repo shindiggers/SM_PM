@@ -95,24 +95,16 @@ class OFX_AccountClass {
     }
 
     String accountTypeAsString() {
-        switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
-            case 1:
-                return "CHECKING";
-            case 2:
-                return "SAVINGS";
-            case 3:
-                return "MONEYMRKT";
-            case 4:
-                return "CREDITLINE";
-            case 5:
-                return "CMA";
-            case 6:
-                return "CREDITCARD";
-            case 7:
-                return "INVESTMENT";
-            default:
-                return null;
-        }
+        return switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
+            case 1 -> "CHECKING";
+            case 2 -> "SAVINGS";
+            case 3 -> "MONEYMRKT";
+            case 4 -> "CREDITLINE";
+            case 5 -> "CMA";
+            case 6 -> "CREDITCARD";
+            case 7 -> "INVESTMENT";
+            default -> null;
+        };
     }
 
     @SuppressWarnings("unused")
@@ -121,24 +113,16 @@ class OFX_AccountClass {
     }
 
     int ofxAccountTypeAsSMMoneyAccountType() {
-        switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
-            case 1:
-                return 0;
-            case 2:
-                return 6;
-            case 3:
-                return 7;
-            case 4:
-                return 8;
-            case 5:
-                return 3;
-            case 6:
-                return 2;
-            case 7:
-                return 9;
-            default:
-                return -1;
-        }
+        return switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_AccountType()[this.accountType.ordinal()]) {
+            case 1 -> 0;
+            case 2 -> 6;
+            case 3 -> 7;
+            case 4 -> 8;
+            case 5 -> 3;
+            case 6 -> 2;
+            case 7 -> 9;
+            default -> -1;
+        };
     }
 
     private void parse(String text) {
@@ -148,27 +132,16 @@ class OFX_AccountClass {
     }
 
     private OFX_AccountType smMoneyAccountTypeToOFXType(int type) {
-        switch (type) {
-            case 0:
-                return OFX_AccountType.OFX_CHECKING;
-            case 1:
-            case 4:
-            case 5:
-            default:
-                return OFX_AccountType.OFX_UNKOWN;
-            case 2:
-                return OFX_AccountType.OFX_CREDITCARD;
-            case 3:
-                return OFX_AccountType.OFX_CMA;
-            case 6:
-                return OFX_AccountType.OFX_SAVINGS;
-            case 7:
-                return OFX_AccountType.OFX_MONEYMRKT;
-            case 8:
-                return OFX_AccountType.OFX_CREDITLINE;
-            case 9:
-                return OFX_AccountType.OFX_INVESTMENT;
-        }
+        return switch (type) {
+            case 0 -> OFX_AccountType.OFX_CHECKING;
+            default -> OFX_AccountType.OFX_UNKOWN;
+            case 2 -> OFX_AccountType.OFX_CREDITCARD;
+            case 3 -> OFX_AccountType.OFX_CMA;
+            case 6 -> OFX_AccountType.OFX_SAVINGS;
+            case 7 -> OFX_AccountType.OFX_MONEYMRKT;
+            case 8 -> OFX_AccountType.OFX_CREDITLINE;
+            case 9 -> OFX_AccountType.OFX_INVESTMENT;
+        };
     }
 
     private void setAccountTypeFromString(String text) {

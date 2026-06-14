@@ -407,14 +407,14 @@ public class TransactionDB {
             TransactionClass transaction = it.next();
             Hashtable<String, Hashtable<String, Double>> accountRollup = accountListings.get(transaction.getAccount());
             if (accountRollup == null) {
-                accountListings.put(transaction.getAccount(), new Hashtable<String, Hashtable<String, Double>>());
+                accountListings.put(transaction.getAccount(), new Hashtable<>());
                 accountRollup = accountListings.get(transaction.getAccount());
             }
             for (SplitsClass splitsClass : transaction.getSplits()) {
                 Double amount;
                 Hashtable<String, Double> categoryRollup = accountRollup.get(splitsClass.getCategory());
                 if (categoryRollup == null) {
-                    accountRollup.put(splitsClass.getCategory(), new Hashtable<String, Double>());
+                    accountRollup.put(splitsClass.getCategory(), new Hashtable<>());
                     categoryRollup = accountRollup.get(splitsClass.getCategory());
                 }
                 if (transaction.getCleared()) {

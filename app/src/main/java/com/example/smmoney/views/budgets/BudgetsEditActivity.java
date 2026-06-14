@@ -58,15 +58,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             String selection = result.getData().getStringExtra("selection");
             int type = result.getResultCode();
             switch (type) {
-                case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                    this.categoryEditText.setText(selection);
-                    break;
-                case LookupsListActivity.BUDGET_TYPE /*19*/:
-                    this.budgetTypeTextView.setText(selection);
-                    break;
-                case LookupsListActivity.BUDGET_PERIOD /*20*/:
-                    this.periodTextView.setText(selection);
-                    break;
+                case LookupsListActivity.CATEGORY_LOOKUP /*5*/ -> this.categoryEditText.setText(selection);
+                case LookupsListActivity.BUDGET_TYPE /*19*/ -> this.budgetTypeTextView.setText(selection);
+                case LookupsListActivity.BUDGET_PERIOD /*20*/ -> this.periodTextView.setText(selection);
             }
             getCells();
         }
@@ -141,14 +135,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         CheckBoxTint.colorCheckBox(this.includeSubcategoriesCheckBox);
         this.includeSubcategoriesCell = (View) this.includeSubcategoriesCheckBox.getParent();
         ((TextView) this.outterView.findViewById(R.id.includesubcategorieslabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
-        TextView button = findViewById(R.id.save_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v -> BudgetsEditActivity.this.saveAction());
-        button = findViewById(R.id.cancel_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v -> BudgetsEditActivity.this.finish());
         ((TextView) findViewById(R.id.addnewbudgettextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.originalHistoryCell = findViewById(R.id.originalhistorycell);
         this.originalHistoryDateTextView = findViewById(R.id.originalhistorydate);
@@ -181,7 +167,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             BudgetsEditActivity.this.categoryBudgetItems.add(budgetItem);
             BudgetsEditActivity.this.reloadData();
         });
-    }    private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
+    }
+
+    private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
         GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
         if (BudgetsEditActivity.this.selectedBudgetItem == null) {
             BudgetsEditActivity.this.categoryBudgetItems.get(0).setDate(newCal);
@@ -351,13 +339,11 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
                 }
                 BudgetsEditActivity.this.save();
                 switch (item) {
-                    case PocketMoneyThemes.kThemeBlack /*0*/:
-                        BudgetsEditActivity.this.finish();
-                        break;
-                    case SplitsActivity.RESULT_CHANGED /*1*/:
+                    case PocketMoneyThemes.kThemeBlack /*0*/ -> BudgetsEditActivity.this.finish();
+                    case SplitsActivity.RESULT_CHANGED /*1*/ -> {
                         TransactionClass.renameCategoryFromTo(BudgetsEditActivity.this.oldCategory, BudgetsEditActivity.this.category.getCategory());
                         BudgetsEditActivity.this.finish();
-                        break;
+                    }
                 }
                 BudgetsEditActivity.this.reloadData();
             });

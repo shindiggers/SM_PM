@@ -216,25 +216,19 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         }
 
         public int getCount() {
-            switch (CategoryLookupListActivity.this.currentType) {
-                case TYPE_ALL /*1*/:
-                    return this.allCategories.size();
-                case TYPE_PAYEE /*2*/:
-                    return this.payeeCategories.size();
-                default:
-                    return 0;
-            }
+            return switch (CategoryLookupListActivity.this.currentType) {
+                case TYPE_ALL /*1*/ -> this.allCategories.size();
+                case TYPE_PAYEE /*2*/ -> this.payeeCategories.size();
+                default -> 0;
+            };
         }
 
         public String getItem(int arg0) {
-            switch (CategoryLookupListActivity.this.currentType) {
-                case TYPE_ALL /*1*/:
-                    return this.allCategories.get(arg0);
-                case TYPE_PAYEE /*2*/:
-                    return this.payeeCategories.get(arg0);
-                default:
-                    return "";
-            }
+            return switch (CategoryLookupListActivity.this.currentType) {
+                case TYPE_ALL /*1*/ -> this.allCategories.get(arg0);
+                case TYPE_PAYEE /*2*/ -> this.payeeCategories.get(arg0);
+                default -> "";
+            };
         }
 
         public long getItemId(int arg0) {

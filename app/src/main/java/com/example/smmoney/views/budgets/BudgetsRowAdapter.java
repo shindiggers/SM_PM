@@ -504,41 +504,44 @@ public class BudgetsRowAdapter extends BaseAdapter {
     }
 
     String rangeOfPeriodAsString() {
-        switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return CalExt.descriptionWithMediumDate(this.currentDate);
-            case Enums.kBudgetPeriodWeek /*1*/:
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodMonth /*2*/:
+        return switch (this.currentPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/ ->
+                    CalExt.descriptionWithMediumDate(this.currentDate); /*1*//*5*/
+            case Enums.kBudgetPeriodWeek, Enums.kBudgetPeriodBiweekly,
+                 Enums.kBudgetPeriod4Weeks /*8*/ ->
+                    CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            case Enums.kBudgetPeriodMonth /*2*/ -> {
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return CalExt.descriptionWithMonth(this.currentDate) + " " + CalExt.descriptionWithYear(this.currentDate);
+                    yield CalExt.descriptionWithMonth(this.currentDate) + " " + CalExt.descriptionWithYear(this.currentDate);
                 }
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodQuarter /*3*/:
+                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            }
+            case Enums.kBudgetPeriodQuarter /*3*/ -> {
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
+                    yield CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
                 }
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodYear /*4*/:
+                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            }
+            case Enums.kBudgetPeriodYear /*4*/ -> {
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return CalExt.descriptionWithYear(this.currentDate);
+                    yield CalExt.descriptionWithYear(this.currentDate);
                 }
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodBimonthly /*6*/:
+                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            }
+            case Enums.kBudgetPeriodBimonthly /*6*/ -> {
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+                    yield CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodHalfYear /*7*/:
+                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            }
+            case Enums.kBudgetPeriodHalfYear /*7*/ -> {
                 if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+                    yield CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
                 }
-                return CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            default:
-                return "All";
-        }
+                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            }
+            default -> "All";
+        };
     }
 
     private GregorianCalendar startOfPeriod() {
@@ -556,12 +559,11 @@ public class BudgetsRowAdapter extends BaseAdapter {
             endOfMonth = budgetStartDate.get(Calendar.DAY_OF_MONTH) == CalExt.endOfMonth(budgetStartDate).get(Calendar.DAY_OF_MONTH);
         firstOfMonth = budgetStartDate == null || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
         GregorianCalendar budgetEndDate;
-        switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return CalExt.endOfDay(this.currentDate);
-            case Enums.kBudgetPeriodWeek /*1*/:
-                return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 1));
-            case Enums.kBudgetPeriodMonth /*2*/:
+        return switch (this.currentPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/ -> CalExt.endOfDay(this.currentDate);
+            case Enums.kBudgetPeriodWeek /*1*/ ->
+                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 1));
+            case Enums.kBudgetPeriodMonth /*2*/ -> {
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(this.currentDate);
                 } else {
@@ -570,8 +572,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
                         budgetEndDate = CalExt.endOfMonth(CalExt.endOfMonth(budgetEndDate));
                     }
                 }
-                return budgetEndDate;
-            case Enums.kBudgetPeriodQuarter /*3*/:
+                yield budgetEndDate;
+            }
+            case Enums.kBudgetPeriodQuarter /*3*/ -> {
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 2));
                 } else {
@@ -580,12 +583,13 @@ public class BudgetsRowAdapter extends BaseAdapter {
                         budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
                     }
                 }
-                return budgetEndDate;
-            case Enums.kBudgetPeriodYear /*4*/:
-                return CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 2));
-            case Enums.kBudgetPeriodBimonthly /*6*/:
+                yield budgetEndDate;
+            }
+            case Enums.kBudgetPeriodYear /*4*/ ->
+                    CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
+            case Enums.kBudgetPeriodBiweekly /*5*/ ->
+                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 2));
+            case Enums.kBudgetPeriodBimonthly /*6*/ -> {
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonth(startOfPeriod()));
                 } else {
@@ -594,8 +598,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
                         budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
                     }
                 }
-                return budgetEndDate;
-            case Enums.kBudgetPeriodHalfYear /*7*/:
+                yield budgetEndDate;
+            }
+            case Enums.kBudgetPeriodHalfYear /*7*/ -> {
                 if (firstOfMonth) {
                     budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 5));
                 } else {
@@ -604,12 +609,12 @@ public class BudgetsRowAdapter extends BaseAdapter {
                         budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
                     }
                 }
-                return budgetEndDate;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 4));
-            default:
-                return null;
-        }
+                yield budgetEndDate;
+            }
+            case Enums.kBudgetPeriod4Weeks /*8*/ ->
+                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 4));
+            default -> null;
+        };
     }
 
     void nextPeriod() {

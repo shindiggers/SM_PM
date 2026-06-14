@@ -543,44 +543,28 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         if (!hasLimit()) {
             return false;
         }
-        switch (getType()) {
-            case Enums.kAccountTypeChecking /*0*/:
-            case Enums.kAccountTypeCash /*1*/:
-            case Enums.kAccountTypeAsset /*3*/:
-            case Enums.kAccountTypeOnline /*5*/:
-            case Enums.kAccountTypeSavings /*6*/:
-            case Enums.kAccountTypeMoneyMarket /*7*/:
-            case Enums.kAccountTypeInvestment /*9*/:
-                return getLimit() >= balanceCurrent();
-            case Enums.kAccountTypeCreditCard /*2*/:
-            case Enums.kAccountTypeLiability /*4*/:
-            case Enums.kAccountTypeCreditLine /*8*/:
-                return -1.0d * getLimit() > balanceCurrent();
-            default:
-                return false;
-        }
+        return switch (getType()) {
+            case Enums.kAccountTypeChecking/*0*/, Enums.kAccountTypeCash/*1*/, Enums.kAccountTypeAsset/*3*/,
+                 Enums.kAccountTypeOnline/*5*/, Enums.kAccountTypeSavings/*6*/, Enums.kAccountTypeMoneyMarket/*7*/,
+                 Enums.kAccountTypeInvestment /*9*/ -> getLimit() >= balanceCurrent();
+            case Enums.kAccountTypeCreditCard/*2*/, Enums.kAccountTypeLiability/*4*/,
+                 Enums.kAccountTypeCreditLine /*8*/ -> -1.0d * getLimit() > balanceCurrent();
+            default -> false;
+        };
     }
 
     public boolean balanceExceedsLimitWithRunningBalance(double amount) {
         if (!hasLimit()) {
             return false;
         }
-        switch (getType()) {
-            case Enums.kAccountTypeChecking /*0*/:
-            case Enums.kAccountTypeCash /*1*/:
-            case Enums.kAccountTypeAsset /*3*/:
-            case Enums.kAccountTypeOnline /*5*/:
-            case Enums.kAccountTypeSavings /*6*/:
-            case Enums.kAccountTypeMoneyMarket /*7*/:
-            case Enums.kAccountTypeInvestment /*9*/:
-                return getLimit() >= amount;
-            case Enums.kAccountTypeCreditCard /*2*/:
-            case Enums.kAccountTypeLiability /*4*/:
-            case Enums.kAccountTypeCreditLine /*8*/:
-                return -1.0d * getLimit() > amount;
-            default:
-                return false;
-        }
+        return switch (getType()) {
+            case Enums.kAccountTypeChecking/*0*/, Enums.kAccountTypeCash/*1*/, Enums.kAccountTypeAsset/*3*/,
+                 Enums.kAccountTypeOnline/*5*/, Enums.kAccountTypeSavings/*6*/, Enums.kAccountTypeMoneyMarket/*7*/,
+                 Enums.kAccountTypeInvestment /*9*/ -> getLimit() >= amount;
+            case Enums.kAccountTypeCreditCard/*2*/, Enums.kAccountTypeLiability/*4*/,
+                 Enums.kAccountTypeCreditLine /*8*/ -> -1.0d * getLimit() > amount;
+            default -> false;
+        };
     }
 
     private boolean hasLimit() {
@@ -589,14 +573,11 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isLiability() {
-        switch (getType()) {
-            case Enums.kAccountTypeCreditCard /*2*/:
-            case Enums.kAccountTypeLiability /*4*/:
-            case Enums.kAccountTypeCreditLine /*8*/:
-                return true;
-            default:
-                return false;
-        }
+        return switch (getType()) {
+            case Enums.kAccountTypeCreditCard/*2*/, Enums.kAccountTypeLiability/*4*/,
+                 Enums.kAccountTypeCreditLine /*8*/ -> true;
+            default -> false;
+        };
     }
 
     public boolean isAsset() {
@@ -631,26 +612,17 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     }
 
     public String typeAsString() {
-        switch (getType()) {
-            case Enums.kAccountTypeChecking /*0*/:
-                return Locales.kLOC_ACCOUNTTYPE_CHECKING;
-            case Enums.kAccountTypeCreditCard /*2*/:
-                return Locales.kLOC_ACCOUNTTYPE_CREDITCARD;
-            case Enums.kAccountTypeAsset /*3*/:
-                return Locales.kLOC_ACCOUNTTYPE_ASSET;
-            case Enums.kAccountTypeLiability /*4*/:
-                return Locales.kLOC_ACCOUNTTYPE_LIABILITY;
-            case Enums.kAccountTypeOnline /*5*/:
-                return Locales.kLOC_ACCOUNTTYPE_ONLINE;
-            case Enums.kAccountTypeSavings /*6*/:
-                return Locales.kLOC_ACCOUNTTYPE_SAVINGS;
-            case Enums.kAccountTypeMoneyMarket /*7*/:
-                return Locales.kLOC_ACCOUNTTYPE_MONEYMARKET;
-            case Enums.kAccountTypeCreditLine /*8*/:
-                return Locales.kLOC_ACCOUNTTYPE_CREDITLINE;
-            default:
-                return Locales.kLOC_ACCOUNTTYPE_CASH;
-        }
+        return switch (getType()) {
+            case Enums.kAccountTypeChecking /*0*/ -> Locales.kLOC_ACCOUNTTYPE_CHECKING;
+            case Enums.kAccountTypeCreditCard /*2*/ -> Locales.kLOC_ACCOUNTTYPE_CREDITCARD;
+            case Enums.kAccountTypeAsset /*3*/ -> Locales.kLOC_ACCOUNTTYPE_ASSET;
+            case Enums.kAccountTypeLiability /*4*/ -> Locales.kLOC_ACCOUNTTYPE_LIABILITY;
+            case Enums.kAccountTypeOnline /*5*/ -> Locales.kLOC_ACCOUNTTYPE_ONLINE;
+            case Enums.kAccountTypeSavings /*6*/ -> Locales.kLOC_ACCOUNTTYPE_SAVINGS;
+            case Enums.kAccountTypeMoneyMarket /*7*/ -> Locales.kLOC_ACCOUNTTYPE_MONEYMARKET;
+            case Enums.kAccountTypeCreditLine /*8*/ -> Locales.kLOC_ACCOUNTTYPE_CREDITLINE;
+            default -> Locales.kLOC_ACCOUNTTYPE_CASH;
+        };
     }
 
     public AccountClass(int pk) {

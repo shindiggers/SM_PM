@@ -240,25 +240,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
             findViewById(R.id.amount_currency_button).setVisibility(View.GONE);
             this.amountXrateTextView.setVisibility(View.GONE);
         }
-        TextView button = findViewById(R.id.save_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v2 -> {
-            SplitsEditActivity.this.save();
-            SplitsEditActivity.this.editTextDidFinishChanging(2);
-            Intent i = new Intent();
-            if (SplitsEditActivity.this.splitIndex != -1) {
-                i.putExtra("SplitIndex", SplitsEditActivity.this.splitIndex);
-            }
-            i.putExtra("Split", SplitsEditActivity.this.split);
-            i.putExtra("transaction", SplitsEditActivity.this.transaction);
-            SplitsEditActivity.this.setResult(1, i);
-            SplitsEditActivity.this.finish();
-        });
-        button = findViewById(R.id.cancel_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v1 -> SplitsEditActivity.this.finish());
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.categoryEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITSPLIT_CATEGORY/*1*/));
         this.classEditText.setOnFocusChangeListener(getFocusChangedListenerWithID(EDITSPLIT_CLASS/*3*/));
@@ -392,13 +373,10 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     private void configureTransferControl() {
         switch (this.splitTransactionType) {
-            case Enums.kTransactionTypeTransferTo /*2*/:
-                this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
-                return;
-            case Enums.kTransactionTypeTransferFrom /*3*/:
-                this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
-                return;
-            default:
+            case Enums.kTransactionTypeTransferTo /*2*/ -> this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
+            case Enums.kTransactionTypeTransferFrom /*3*/ -> this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+            default -> {
+            }
         }
     }
 

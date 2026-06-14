@@ -71,14 +71,11 @@ public class NetWorthDataSource implements ChartViewDataSource {
     }
 
     public ChartItem itemForDataAtIndex(ChartView chartView, int row, int section) {
-        switch (section) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                return this.chartAssets.get(row);
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return this.chartLiabilities.get(row);
-            default:
-                return this.chartNetworth.get(row);
-        }
+        return switch (section) {
+            case PocketMoneyThemes.kThemeBlack /*0*/ -> this.chartAssets.get(row);
+            case SplitsActivity.RESULT_CHANGED /*1*/ -> this.chartLiabilities.get(row);
+            default -> this.chartNetworth.get(row);
+        };
     }
 
     public void selectAllDataPointsForRow(int row) {

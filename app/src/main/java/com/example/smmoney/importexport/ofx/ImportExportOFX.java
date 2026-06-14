@@ -121,19 +121,13 @@ public class ImportExportOFX {
 
     @SuppressWarnings("unused")
     private int OFXTypeToAccountType(String type) {
-        switch (type) {
-            case "Bank":
-                return 0;
-            case "CCard":
-                return 2;
-            case "Oth A":
-                return 3;
-            case "Oth L":
-                return 4;
-            case "Cash":
-            default:
-                return 1;
-        }
+        return switch (type) {
+            case "Bank" -> 0;
+            case "CCard" -> 2;
+            case "Oth A" -> 3;
+            case "Oth L" -> 4;
+            default -> 1;
+        };
     }
 
     private void displayError(String error) {

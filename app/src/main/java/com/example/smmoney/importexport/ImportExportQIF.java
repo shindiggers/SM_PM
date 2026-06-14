@@ -913,24 +913,15 @@ public class ImportExportQIF {
     }
 
     private String accountTypeToQIFType(int type) {
-        switch (type) {
-            case Enums.kAccountTypeChecking /*0*/:
-            case Enums.kAccountTypeSavings /*6*/:
-            case Enums.kAccountTypeMoneyMarket /*7*/:
-                return "Bank";
-            case Enums.kAccountTypeCash /*1*/:
-                return "Cash";
-            case Enums.kAccountTypeCreditCard /*2*/:
-                return "CCard";
-            case Enums.kAccountTypeAsset /*3*/:
-                return "Oth A";
-            case Enums.kAccountTypeLiability /*4*/:
-            case Enums.kAccountTypeCreditLine /*8*/:
-                return "Oth L";
-            case Enums.kAccountTypeInvestment /*9*/:
-                return "Invst";
-            default:
-                return "Bank";
-        }
+        return switch (type) { /*0*//*6*/
+            case Enums.kAccountTypeChecking, Enums.kAccountTypeSavings,
+                 Enums.kAccountTypeMoneyMarket /*7*/ -> "Bank";
+            case Enums.kAccountTypeCash /*1*/ -> "Cash";
+            case Enums.kAccountTypeCreditCard /*2*/ -> "CCard";
+            case Enums.kAccountTypeAsset /*3*/ -> "Oth A"; /*4*/
+            case Enums.kAccountTypeLiability, Enums.kAccountTypeCreditLine /*8*/ -> "Oth L";
+            case Enums.kAccountTypeInvestment /*9*/ -> "Invst";
+            default -> "Bank";
+        };
     }
 }

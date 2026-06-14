@@ -315,38 +315,21 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     public String getTypeAsString() {
-        switch (this.currentType) {
-            case ACCOUNT_TYPE_LOOKUP /*1*/:
-            case FILTER_TRANSACTION_TYPE /*8*/:
-            case REPEAT_TYPE /*16*/:
-            case BUDGET_TYPE /*19*/:
-                return Locales.kLOC_ACCOUNT_TYPE_LABEL;
-            case ACCOUNT_LOOKUP /*3*/:
-            case ACCOUNT_LOOKUP_TRANS /*17*/:
-            case FILTER_ACCOUNTS /*9*/:
-            case ACCOUNT_LOOKUP_WITH_NONE /*18*/:
-                return Locales.kLOC_GENERAL_ACCOUNTS;
-            case PAYEE_LOOKUP /*4*/:
-            case FILTER_PAYEES /*11*/:
-                return Locales.kLOC_GENERAL_PAYEE_TITLE;
-            case CATEGORY_LOOKUP /*5*/:
-            case FILTER_CATEGORIES /*14*/:
-                return Locales.kLOC_GENERAL_CATEGORY_TITLE;
-            case CLASS_LOOKUP /*6*/:
-            case FILTER_CLASSES /*15*/:
-                return Locales.kLOC_GENERAL_CLASSES;
-            case ID_LOOKUP /*7*/:
-            case FILTER_IDS /*12*/:
-                return Locales.kLOC_GENERAL_ID_TITLE;
-            case FILTER_DATES /*10*/:
-                return Locales.kLOC_FILTER_DATES;
-            case FILTER_CLEARED /*13*/:
-                return Locales.kLOC_GENERAL_CLEARED;
-            case BUDGET_PERIOD /*20*/:
-                return Locales.kLOC_BUDGETS_PERIOD;
-            default:
-                return "Select item";
-        }
+        return switch (this.currentType) { /*1*//*8*//*16*/
+            case ACCOUNT_TYPE_LOOKUP, FILTER_TRANSACTION_TYPE, REPEAT_TYPE, BUDGET_TYPE /*19*/ ->
+                    Locales.kLOC_ACCOUNT_TYPE_LABEL; /*3*//*17*//*9*/
+            case ACCOUNT_LOOKUP, ACCOUNT_LOOKUP_TRANS, FILTER_ACCOUNTS,
+                 ACCOUNT_LOOKUP_WITH_NONE /*18*/ -> Locales.kLOC_GENERAL_ACCOUNTS; /*4*/
+            case PAYEE_LOOKUP, FILTER_PAYEES /*11*/ -> Locales.kLOC_GENERAL_PAYEE_TITLE; /*5*/
+            case CATEGORY_LOOKUP, FILTER_CATEGORIES /*14*/ ->
+                    Locales.kLOC_GENERAL_CATEGORY_TITLE; /*6*/
+            case CLASS_LOOKUP, FILTER_CLASSES /*15*/ -> Locales.kLOC_GENERAL_CLASSES; /*7*/
+            case ID_LOOKUP, FILTER_IDS /*12*/ -> Locales.kLOC_GENERAL_ID_TITLE;
+            case FILTER_DATES /*10*/ -> Locales.kLOC_FILTER_DATES;
+            case FILTER_CLEARED /*13*/ -> Locales.kLOC_GENERAL_CLEARED;
+            case BUDGET_PERIOD /*20*/ -> Locales.kLOC_BUDGETS_PERIOD;
+            default -> "Select item";
+        };
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

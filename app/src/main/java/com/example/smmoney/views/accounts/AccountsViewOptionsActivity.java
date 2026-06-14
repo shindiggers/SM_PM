@@ -69,14 +69,11 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private String nameOfAccountListPref() {
-        switch (Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return Locales.kLOC_PREFERENCES_NON_ZERO;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                return Locales.kLOC_GENERAL_TOTALWORTH;
-            default:
-                return Locales.kLOC_PREFERENCES_SHOW_ALL;
-        }
+        return switch (Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
+            case SplitsActivity.RESULT_CHANGED /*1*/ -> Locales.kLOC_PREFERENCES_NON_ZERO;
+            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/ -> Locales.kLOC_GENERAL_TOTALWORTH;
+            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+        };
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {

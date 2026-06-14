@@ -292,24 +292,29 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_NEW /*1*/:
+            case MENU_NEW /*1*/ -> {
                 newBudget();
                 return true;
-            case MENU_PREFS /*2*/:
+            }
+            case MENU_PREFS /*2*/ -> {
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
-            case MENU_GOTODATE /*3*/:
+            }
+            case MENU_GOTODATE /*3*/ -> {
                 DialogFragment datePicker = new BudgetsDatePickerDialog();
                 datePicker.show(getSupportFragmentManager(), "date picker");
                 return true;
-            case MENU_VIEW /*4*/:
+            }
+            case MENU_VIEW /*4*/ -> {
                 startActivity(new Intent(this, BudgetsViewOptionsActivity.class));
                 return true;
-            case MENU_QUIT /*5*/:
+            }
+            case MENU_QUIT /*5*/ -> {
                 Prefs.setPref(Prefs.SHUTTINGDOWN, true);
                 setResult(1);
                 finish();
-                break;
+                return true;
+            }
         }
         return false;
     }
@@ -326,21 +331,24 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
+            case CMENU_EDIT /*1*/ -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 if (b != null) {
                     anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
                 }
                 editLauncher.launch(anIntent);
                 return true;
-            case CMENU_DELETE /*3*/:
+            }
+            case CMENU_DELETE /*3*/ -> {
                 if (b != null) {
                     deleteBudget((CategoryClass) b.get("Category"));
                 }
                 reloadData();
                 return true;
-            default:
+            }
+            default -> {
                 return super.onContextItemSelected(item);
+            }
         }
     }
 

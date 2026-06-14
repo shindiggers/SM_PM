@@ -119,28 +119,18 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public String periodAsString() {
-        switch (getBudgetPeriod()) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return Locales.kLOC_REPEATING_FREQUENCY_DAILY;
-            case Enums.kBudgetPeriodWeek /*1*/:
-                return Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
-            case Enums.kBudgetPeriodMonth /*2*/:
-                return Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
-            case Enums.kBudgetPeriodQuarter /*3*/:
-                return Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY;
-            case Enums.kBudgetPeriodYear /*4*/:
-                return Locales.kLOC_REPEATING_FREQUENCY_YEARLY;
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                return Locales.kLOC_BUDGETS_BIWEEKLY;
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-                return Locales.kLOC_BUDGETS_BIMONTHLY;
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                return Locales.kLOC_BUDGETS_HALFYEAR;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return Locales.kLOC_BUDGETS_4WEEKS;
-            default:
-                return "";
-        }
+        return switch (getBudgetPeriod()) {
+            case Enums.kBudgetPeriodDay /*0*/ -> Locales.kLOC_REPEATING_FREQUENCY_DAILY;
+            case Enums.kBudgetPeriodWeek /*1*/ -> Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
+            case Enums.kBudgetPeriodMonth /*2*/ -> Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
+            case Enums.kBudgetPeriodQuarter /*3*/ -> Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY;
+            case Enums.kBudgetPeriodYear /*4*/ -> Locales.kLOC_REPEATING_FREQUENCY_YEARLY;
+            case Enums.kBudgetPeriodBiweekly /*5*/ -> Locales.kLOC_BUDGETS_BIWEEKLY;
+            case Enums.kBudgetPeriodBimonthly /*6*/ -> Locales.kLOC_BUDGETS_BIMONTHLY;
+            case Enums.kBudgetPeriodHalfYear /*7*/ -> Locales.kLOC_BUDGETS_HALFYEAR;
+            case Enums.kBudgetPeriod4Weeks /*8*/ -> Locales.kLOC_BUDGETS_4WEEKS;
+            default -> "";
+        };
     }
 
     public void setPeriodFromString(String period) {
@@ -232,14 +222,11 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public String typeAsString() {
-        switch (getType()) {
-            case Enums.kCategoryExpense /*0*/:
-                return Locales.kLOC_BUDGETS_EXPENSES;
-            case Enums.kCategoryIncome /*1*/:
-                return Locales.kLOC_BUDGETS_INCOME;
-            default:
-                return "";
-        }
+        return switch (getType()) {
+            case Enums.kCategoryExpense /*0*/ -> Locales.kLOC_BUDGETS_EXPENSES;
+            case Enums.kCategoryIncome /*1*/ -> Locales.kLOC_BUDGETS_INCOME;
+            default -> "";
+        };
     }
 
     public void setTypeFromString(String aType) {
@@ -441,17 +428,14 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             if (Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS)) {
                 currentViewType = Enums.kViewAccountsAll /*0*/;
             }
-            switch (currentViewType) {
-                case Enums.kViewAccountsNonZero /*1*/:
-                    transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
-                    break;
-                case Enums.kViewAccountsTotalWorth /*2*/:
-                    transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
-                    break;
-                default:
-                    transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5)";
-                    break;
-            }
+            transactionsLookup = switch (currentViewType) {
+                case Enums.kViewAccountsNonZero /*1*/ ->
+                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
+                case Enums.kViewAccountsTotalWorth /*2*/ ->
+                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
+                default ->
+                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5)";
+            };
             String expenseTypeLookup = "(0 = (SELECT type FROM categories WHERE category LIKE ? ESCAPE '\\'))";
             String transfersString = "(1)";
             if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDETRANSFERS)) {
@@ -499,53 +483,42 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     private double budgetLimitDailyForDate(GregorianCalendar aDate) {
-        switch (this.budgetPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return this.budgetLimit;
-            case Enums.kBudgetPeriodWeek /*1*/:
-                return this.budgetLimit / 7.0d;
-            case Enums.kBudgetPeriodMonth /*2*/:
-                return this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case Enums.kBudgetPeriodQuarter /*3*/:
-                return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 4));
-            case Enums.kBudgetPeriodYear /*4*/:
-                return this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_YEAR));
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                return this.budgetLimit / 14.0d;
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-                return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_MONTH) * 2));
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                return this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 2));
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return this.budgetLimit / 28.0d;
-            default:
-                return 0.0d;
-        }
+        return switch (this.budgetPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/ -> this.budgetLimit;
+            case Enums.kBudgetPeriodWeek /*1*/ -> this.budgetLimit / 7.0d;
+            case Enums.kBudgetPeriodMonth /*2*/ ->
+                    this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+            case Enums.kBudgetPeriodQuarter /*3*/ ->
+                    this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 4));
+            case Enums.kBudgetPeriodYear /*4*/ ->
+                    this.budgetLimit / ((double) aDate.getActualMaximum(Calendar.DAY_OF_YEAR));
+            case Enums.kBudgetPeriodBiweekly /*5*/ -> this.budgetLimit / 14.0d;
+            case Enums.kBudgetPeriodBimonthly /*6*/ ->
+                    this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_MONTH) * 2));
+            case Enums.kBudgetPeriodHalfYear /*7*/ ->
+                    this.budgetLimit / ((double) (aDate.getActualMaximum(Calendar.DAY_OF_YEAR) / 2));
+            case Enums.kBudgetPeriod4Weeks /*8*/ -> this.budgetLimit / 28.0d;
+            default -> 0.0d;
+        };
     }
 
     private double budgetLimitMonthlyForDate(GregorianCalendar aDate) {
-        switch (this.budgetPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return this.budgetLimit * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case Enums.kBudgetPeriodWeek /*1*/:
-                return (this.budgetLimit / 7.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case Enums.kBudgetPeriodMonth /*2*/:
-                return this.budgetLimit;
-            case Enums.kBudgetPeriodQuarter /*3*/:
-                return this.budgetLimit / 3.0d;
-            case Enums.kBudgetPeriodYear /*4*/:
-                return this.budgetLimit / 12.0d;
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                return (this.budgetLimit / 14.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-                return this.budgetLimit / 2.0d;
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                return this.budgetLimit / 6.0d;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return (this.budgetLimit / 28.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-            default:
-                return 0.0d;
-        }
+        return switch (this.budgetPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/ ->
+                    this.budgetLimit * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+            case Enums.kBudgetPeriodWeek /*1*/ ->
+                    (this.budgetLimit / 7.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+            case Enums.kBudgetPeriodMonth /*2*/ -> this.budgetLimit;
+            case Enums.kBudgetPeriodQuarter /*3*/ -> this.budgetLimit / 3.0d;
+            case Enums.kBudgetPeriodYear /*4*/ -> this.budgetLimit / 12.0d;
+            case Enums.kBudgetPeriodBiweekly /*5*/ ->
+                    (this.budgetLimit / 14.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+            case Enums.kBudgetPeriodBimonthly /*6*/ -> this.budgetLimit / 2.0d;
+            case Enums.kBudgetPeriodHalfYear /*7*/ -> this.budgetLimit / 6.0d;
+            case Enums.kBudgetPeriod4Weeks /*8*/ ->
+                    (this.budgetLimit / 28.0d) * ((double) aDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+            default -> 0.0d;
+        };
     }
 
     public double budgetLimitForPeriod(int aPeriod, GregorianCalendar aDate) {
@@ -768,18 +741,13 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     private int daysInNonvariableBudgetPeriod(int aPeriod) {
-        switch (aPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                return 1;
-            case Enums.kBudgetPeriodWeek /*1*/:
-                return 7;
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                return 14;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                return 28;
-            default:
-                return 0;
-        }
+        return switch (aPeriod) {
+            case Enums.kBudgetPeriodDay /*0*/ -> 1;
+            case Enums.kBudgetPeriodWeek /*1*/ -> 7;
+            case Enums.kBudgetPeriodBiweekly /*5*/ -> 14;
+            case Enums.kBudgetPeriod4Weeks /*8*/ -> 28;
+            default -> 0;
+        };
     }
 
     public static List<CategoryClass> queryIncomeCategoriesWithBudgets() {
@@ -822,16 +790,11 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     private boolean isMonthlyBasedBudget(int aPeriod) {
-        switch (aPeriod) {
-            case Enums.kBudgetPeriodMonth /*2*/:
-            case Enums.kBudgetPeriodQuarter /*3*/:
-            case Enums.kBudgetPeriodYear /*4*/:
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                return true;
-            default:
-                return false;
-        }
+        return switch (aPeriod) { /*2*//*3*//*4*//*6*/
+            case Enums.kBudgetPeriodMonth, Enums.kBudgetPeriodQuarter, Enums.kBudgetPeriodYear,
+                 Enums.kBudgetPeriodBimonthly, Enums.kBudgetPeriodHalfYear /*7*/ -> true;
+            default -> false;
+        };
     }
 
     public void deleteFromDatabase() {

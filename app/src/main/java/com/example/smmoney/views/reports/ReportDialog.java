@@ -27,27 +27,14 @@ public class ReportDialog extends AppCompatDialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), theme);
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), (dialog, which) -> {
-                    int periodType;
-                    switch (which) {
-                        case Enums.kReportPeriodOneMonth /*0*/:
-                            periodType = Enums.kReportPeriodOneMonth;
-                            break;
-                        case Enums.kReportPeriodTwoMonths /*1*/:
-                            periodType = Enums.kReportPeriodTwoMonths;
-                            break;
-                        case Enums.kReportPeriodThreeMonths /*2*/:
-                            periodType = Enums.kReportPeriodThreeMonths;
-                            break;
-                        case Enums.kReportPeriodSixMonths /*3*/:
-                            periodType = Enums.kReportPeriodSixMonths;
-                            break;
-                        case Enums.kReportPeriodOneYear /*4*/:
-                            periodType = Enums.kReportPeriodOneYear;
-                            break;
-                        default:
-                            periodType = Enums.kReportPeriodAll /*5*/;
-                            break;
-                    }
+                    int periodType = switch (which) {
+                        case Enums.kReportPeriodOneMonth /*0*/ -> Enums.kReportPeriodOneMonth;
+                        case Enums.kReportPeriodTwoMonths /*1*/ -> Enums.kReportPeriodTwoMonths;
+                        case Enums.kReportPeriodThreeMonths /*2*/ -> Enums.kReportPeriodThreeMonths;
+                        case Enums.kReportPeriodSixMonths /*3*/ -> Enums.kReportPeriodSixMonths;
+                        case Enums.kReportPeriodOneYear /*4*/ -> Enums.kReportPeriodOneYear;
+                        default -> Enums.kReportPeriodAll; /*5*/
+                    };
 
                     Prefs.setPref(Prefs.REPORTS_PERIOD, periodType);
                     reportDialogListner.applyPeriodType(periodType);

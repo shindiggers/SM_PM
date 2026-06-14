@@ -142,14 +142,11 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public String clearedAsString() {
-        switch (getCleared()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                return Locales.kLOC_FILTER_UNCLEARED;
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-                return Locales.kLOC_GENERAL_CLEARED;
-            default:
-                return Locales.kLOC_FILTER_DOESNTMATTER;
-        }
+        return switch (getCleared()) {
+            case PocketMoneyThemes.kThemeBlack /*0*/ -> Locales.kLOC_FILTER_UNCLEARED;
+            case SplitsActivity.RESULT_CHANGED /*1*/ -> Locales.kLOC_GENERAL_CLEARED;
+            default -> Locales.kLOC_FILTER_DOESNTMATTER;
+        };
     }
 
     public void setTypeFromString(String aString) {
@@ -165,17 +162,13 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public String typeAsString() {
-        switch (getType()) {
-            case Enums.kTransactionTypeWithdrawal /*0*/:
-                return Locales.kLOC_GENERAL_WITHDRAWAL;
-            case Enums.kTransactionTypeDeposit /*1*/:
-                return Locales.kLOC_GENERAL_DEPOSIT;
-            case Enums.kTransactionTypeTransferTo /*2*/:
-            case Enums.kTransactionTypeTransferFrom /*3*/:
-                return Locales.kLOC_GENERAL_TRANSFER;
-            default:
-                return Locales.kLOC_PREFERENCES_SHOW_ALL;
-        }
+        return switch (getType()) {
+            case Enums.kTransactionTypeWithdrawal /*0*/ -> Locales.kLOC_GENERAL_WITHDRAWAL;
+            case Enums.kTransactionTypeDeposit /*1*/ -> Locales.kLOC_GENERAL_DEPOSIT; /*2*/
+            case Enums.kTransactionTypeTransferTo, Enums.kTransactionTypeTransferFrom /*3*/ ->
+                    Locales.kLOC_GENERAL_TRANSFER;
+            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+        };
     }
 
     public void setCustomFilter(boolean aBool) {
@@ -297,42 +290,25 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     private String dateStringFromDBDate(double internalDate) {
-        switch ((int) internalDate) {
-            case Enums.kDateRangeNone /*0*/:
-                return Locales.kLOC_FILTER_DATES_ALL;
-            case Enums.kDateRangeToday /*1*/:
-                return Locales.kLOC_FILTER_DATES_TODAY;
-            case Enums.kDateRangeYesterday /*2*/:
-                return Locales.kLOC_FILTER_DATES_YESTERDAY;
-            case Enums.kDateRangeCurrentWeek /*3*/:
-                return Locales.kLOC_FILTER_DATES_THISWEEK;
-            case Enums.kDateRangeLastWeek /*4*/:
-                return Locales.kLOC_FILTER_DATES_LASTWEEK;
-            case Enums.kDateRangeCurrentMonth /*5*/:
-                return Locales.kLOC_FILTER_DATES_THISMONTH;
-            case Enums.kDateRangeLastMonth /*6*/:
-                return Locales.kLOC_FILTER_DATES_LASTMONTH;
-            case Enums.kDateRangeCurrentQuarter /*7*/:
-                return Locales.kLOC_FILTER_DATES_THISQUARTER;
-            case Enums.kDateRangeLastQuarter /*8*/:
-                return Locales.kLOC_FILTER_DATES_LASTQUARTER;
-            case Enums.kDateRangeCurrentYear /*9*/:
-                return Locales.kLOC_FILTER_DATES_THISYEAR;
-            case Enums.kDateRangeLastYear /*10*/:
-                return Locales.kLOC_FILTER_DATES_LASTYEAR;
-            case Enums.kDateRangeRecentChanges /*11*/:
-                return Locales.kLOC_FILTER_DATES_RECENTLYCHANGED;
-            case Enums.kDateRangeModifiedToday /*14*/:
-                return Locales.kLOC_FILTER_DATES_MODIFIEDTODAY;
-            case Enums.kDateRangeLast30Days /*15*/:
-                return Locales.kLOC_FILTER_DATES_LAST30DAYS;
-            case Enums.kDateRangeLast60Days /*16*/:
-                return Locales.kLOC_FILTER_DATES_LAST60DAYS;
-            case Enums.kDateRangeLast90Days /*17*/:
-                return Locales.kLOC_FILTER_DATES_LAST90DAYS;
-            default:
-                return Locales.kLOC_FILTER_DATES_CUSTOM;
-        }
+        return switch ((int) internalDate) {
+            case Enums.kDateRangeNone /*0*/ -> Locales.kLOC_FILTER_DATES_ALL;
+            case Enums.kDateRangeToday /*1*/ -> Locales.kLOC_FILTER_DATES_TODAY;
+            case Enums.kDateRangeYesterday /*2*/ -> Locales.kLOC_FILTER_DATES_YESTERDAY;
+            case Enums.kDateRangeCurrentWeek /*3*/ -> Locales.kLOC_FILTER_DATES_THISWEEK;
+            case Enums.kDateRangeLastWeek /*4*/ -> Locales.kLOC_FILTER_DATES_LASTWEEK;
+            case Enums.kDateRangeCurrentMonth /*5*/ -> Locales.kLOC_FILTER_DATES_THISMONTH;
+            case Enums.kDateRangeLastMonth /*6*/ -> Locales.kLOC_FILTER_DATES_LASTMONTH;
+            case Enums.kDateRangeCurrentQuarter /*7*/ -> Locales.kLOC_FILTER_DATES_THISQUARTER;
+            case Enums.kDateRangeLastQuarter /*8*/ -> Locales.kLOC_FILTER_DATES_LASTQUARTER;
+            case Enums.kDateRangeCurrentYear /*9*/ -> Locales.kLOC_FILTER_DATES_THISYEAR;
+            case Enums.kDateRangeLastYear /*10*/ -> Locales.kLOC_FILTER_DATES_LASTYEAR;
+            case Enums.kDateRangeRecentChanges /*11*/ -> Locales.kLOC_FILTER_DATES_RECENTLYCHANGED;
+            case Enums.kDateRangeModifiedToday /*14*/ -> Locales.kLOC_FILTER_DATES_MODIFIEDTODAY;
+            case Enums.kDateRangeLast30Days /*15*/ -> Locales.kLOC_FILTER_DATES_LAST30DAYS;
+            case Enums.kDateRangeLast60Days /*16*/ -> Locales.kLOC_FILTER_DATES_LAST60DAYS;
+            case Enums.kDateRangeLast90Days /*17*/ -> Locales.kLOC_FILTER_DATES_LAST90DAYS;
+            default -> Locales.kLOC_FILTER_DATES_CUSTOM;
+        };
     }
 
     public boolean isCustomDate() {

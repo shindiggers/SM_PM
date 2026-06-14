@@ -36,17 +36,13 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         int sortType = Prefs.getIntPref(Prefs.REPORTS_SORTON);
         double retVal = 0.0d;
         double flipIt = Prefs.getIntPref(Prefs.PREFS_REPORTS_SORTDIRECTION) == 0 ? 1.0d : -1.0d;
-        switch (sortType) {
-            case Enums.kReportsSortOnItem /*0*/:
-                retVal = ((double) o1.expense.compareToIgnoreCase(o2.expense)) * flipIt;
-                break;
-            case Enums.kReportsSortOnAmount /*1*/:
-                retVal = (o1.amount - o2.amount) * flipIt;
-                break;
-            case Enums.kReportsSortOnCount /*2*/:
-                retVal = ((double) (o1.count - o2.count)) * flipIt;
-                break;
-        }
+        retVal = switch (sortType) {
+            case Enums.kReportsSortOnItem /*0*/ ->
+                    ((double) o1.expense.compareToIgnoreCase(o2.expense)) * flipIt;
+            case Enums.kReportsSortOnAmount /*1*/ -> (o1.amount - o2.amount) * flipIt;
+            case Enums.kReportsSortOnCount /*2*/ -> ((double) (o1.count - o2.count)) * flipIt;
+            default -> retVal;
+        };
         if (retVal < 0.0d) {
             return -1;
         }
@@ -154,49 +150,42 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
     }
 
     String rangeOfPeriodAsString() {
-        switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/:
-                return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
-            case SplitsActivity.RESULT_CHANGED /*1*/:
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-            case SplitsActivity.REQUEST_EDIT /*3*/:
-                return CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                return CalExt.descriptionWithYear(this.currentDate);
-            default:
-                return Locales.kLOC_PREFERENCES_SHOW_ALL;
-        }
+        return switch (this.currentPeriod) {
+            case PocketMoneyThemes.kThemeBlack /*0*/ ->
+                    CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod()); /*1*//*2*/
+            case SplitsActivity.RESULT_CHANGED, LookupsListActivity.ACCOUNT_ICON_LOOKUP,
+                 SplitsActivity.REQUEST_EDIT /*3*/ ->
+                    CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+            case LookupsListActivity.PAYEE_LOOKUP /*4*/ ->
+                    CalExt.descriptionWithYear(this.currentDate);
+            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+        };
     }
 
     GregorianCalendar startOfPeriod() {
-        switch (this.currentPeriod) {
-            case Enums.kReportPeriodOneMonth /*0*/:
-            case Enums.kReportPeriodTwoMonths /*1*/:
-            case Enums.kReportPeriodThreeMonths /*2*/:
-            case Enums.kReportPeriodSixMonths /*3*/:
-                return CalExt.beginningOfMonth(this.currentDate);
-            case Enums.kReportPeriodOneYear /*4*/:
-                return CalExt.beginningOfYear(this.currentDate);
-            default:
-                return CalExt.distantPast();
-        }
+        return switch (this.currentPeriod) { /*0*//*1*//*2*/
+            case Enums.kReportPeriodOneMonth, Enums.kReportPeriodTwoMonths,
+                 Enums.kReportPeriodThreeMonths, Enums.kReportPeriodSixMonths /*3*/ ->
+                    CalExt.beginningOfMonth(this.currentDate);
+            case Enums.kReportPeriodOneYear /*4*/ -> CalExt.beginningOfYear(this.currentDate);
+            default -> CalExt.distantPast();
+        };
     }
 
     GregorianCalendar endOfPeriod() {
-        switch (this.currentPeriod) {
-            case Enums.kReportPeriodOneMonth /*0*/:
-                return CalExt.endOfMonth(CalExt.addMonth(CalExt.subtractDay(startOfPeriod())));
-            case Enums.kReportPeriodTwoMonths /*1*/:
-                return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 2));
-            case Enums.kReportPeriodThreeMonths /*2*/:
-                return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 3));
-            case Enums.kReportPeriodSixMonths /*3*/:
-                return CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 6));
-            case Enums.kReportPeriodOneYear /*4*/:
-                return CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
-            default:
-                return CalExt.distantFuture();
-        }
+        return switch (this.currentPeriod) {
+            case Enums.kReportPeriodOneMonth /*0*/ ->
+                    CalExt.endOfMonth(CalExt.addMonth(CalExt.subtractDay(startOfPeriod())));
+            case Enums.kReportPeriodTwoMonths /*1*/ ->
+                    CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 2));
+            case Enums.kReportPeriodThreeMonths /*2*/ ->
+                    CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 3));
+            case Enums.kReportPeriodSixMonths /*3*/ ->
+                    CalExt.endOfMonth(CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 6));
+            case Enums.kReportPeriodOneYear /*4*/ ->
+                    CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
+            default -> CalExt.distantFuture();
+        };
     }
 
     void nextPeriod() {

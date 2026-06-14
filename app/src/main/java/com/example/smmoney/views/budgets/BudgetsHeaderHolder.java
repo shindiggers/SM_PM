@@ -88,19 +88,11 @@ public class BudgetsHeaderHolder extends View {
     private double getDPFromPixels(double pixels) {
         DisplayMetrics metrics = new DisplayMetrics();
         ((WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
-        switch (metrics.densityDpi) {
-            case 120:
-                return pixels * 0.75d;
-            case 160:
-            case 320:
-            case 480:
-            case 560:
-            case 640:
-                return pixels * 2.0d;
-            case 240:
-                return pixels * 3.0d;
-            default:
-                return pixels;
-        }
+        return switch (metrics.densityDpi) {
+            case 120 -> pixels * 0.75d;
+            case 160, 320, 480, 560, 640 -> pixels * 2.0d;
+            case 240 -> pixels * 3.0d;
+            default -> pixels;
+        };
     }
 }

@@ -252,22 +252,25 @@ public class SplitsActivity extends PocketMoneyActivity {
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case REQUEST_NEW /*1*/:
+        return switch (item.getItemId()) {
+            case REQUEST_NEW /*1*/ -> {
                 newSplitAction();
-                return true;
-            case REQUEST_REMAINDER /*2*/:
+                yield true;
+            }
+            case REQUEST_REMAINDER /*2*/ -> {
                 remainderAction();
-                return true;
-            case REQUEST_EDIT /*3*/:
+                yield true;
+            }
+            case REQUEST_EDIT /*3*/ -> {
                 adjustSplitsAction();
-                return true;
-            case MENU_CLEAR /*4*/:
+                yield true;
+            }
+            case MENU_CLEAR /*4*/ -> {
                 clearAction();
-                return true;
-            default:
-                return false;
-        }
+                yield true;
+            }
+            default -> false;
+        };
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

@@ -119,22 +119,17 @@ public class AccountDB {
     }
 
     public static String totalWorthLabel(int type) {
-        switch (type) {
-            case Enums.kBalanceTypeFuture /*0*/:
-                return Locales.kLOC_SHOW_BALANCES_OVERALL;
-            case Enums.kBalanceTypeCleared /*1*/:
-                return Locales.kLOC_SHOW_BALANCES_CLEARED;
-            case Enums.kBalanceTypeCurrent /*2*/:
-                return Locales.kLOC_SHOW_BALANCES_CURRENT;
-            case Enums.kBalanceTypeAvailableFunds /*3*/:
-                return Locales.kLOC_SHOW_BALANCES_AVAILABLEFUNDS;
-            case Enums.kBalanceTypeAvailableCredit /*4*/:
-                return Locales.kLOC_SHOW_BALANCES_AVAILABLECREDIT;
-            case Enums.kBalanceTypeFiltered /*5*/:
-                return Locales.kLOC_TOOLS_FILTERED_BALANCE;
-            default:
-                return "";
-        }
+        return switch (type) {
+            case Enums.kBalanceTypeFuture /*0*/ -> Locales.kLOC_SHOW_BALANCES_OVERALL;
+            case Enums.kBalanceTypeCleared /*1*/ -> Locales.kLOC_SHOW_BALANCES_CLEARED;
+            case Enums.kBalanceTypeCurrent /*2*/ -> Locales.kLOC_SHOW_BALANCES_CURRENT;
+            case Enums.kBalanceTypeAvailableFunds /*3*/ ->
+                    Locales.kLOC_SHOW_BALANCES_AVAILABLEFUNDS;
+            case Enums.kBalanceTypeAvailableCredit /*4*/ ->
+                    Locales.kLOC_SHOW_BALANCES_AVAILABLECREDIT;
+            case Enums.kBalanceTypeFiltered /*5*/ -> Locales.kLOC_TOOLS_FILTERED_BALANCE;
+            default -> "";
+        };
     }
 
     public static void updateExchangeRates() {

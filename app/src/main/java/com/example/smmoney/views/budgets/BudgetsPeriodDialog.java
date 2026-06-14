@@ -28,35 +28,18 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD), (dialog, which) -> {
                     int periodType = -1;
-                    switch (which) {
-                        case 0 /*0*/:
-                            periodType = Enums.kBudgetPeriodDay;
-                            break;
-                        case 1 /*1*/:
-                            periodType = Enums.kBudgetPeriodWeek;
-                            break;
-                        case 2 /*2*/:
-                            periodType = Enums.kBudgetPeriodBiweekly;
-                            break;
-                        case 3 /*3*/:
-                            periodType = Enums.kBudgetPeriod4Weeks;
-                            break;
-                        case 4 /*4*/:
-                            periodType = Enums.kBudgetPeriodMonth;
-                            break;
-                        case 5 /*5*/:
-                            periodType = Enums.kBudgetPeriodBimonthly;
-                            break;
-                        case 6 /*6*/:
-                            periodType = Enums.kBudgetPeriodQuarter;
-                            break;
-                        case 7 /*7*/:
-                            periodType = Enums.kBudgetPeriodHalfYear;
-                            break;
-                        case 8 /*8*/:
-                            periodType = Enums.kBudgetPeriodYear;
-                            break;
-                    }
+                    periodType = switch (which) {
+                        case 0 /*0*/ -> Enums.kBudgetPeriodDay;
+                        case 1 /*1*/ -> Enums.kBudgetPeriodWeek;
+                        case 2 /*2*/ -> Enums.kBudgetPeriodBiweekly;
+                        case 3 /*3*/ -> Enums.kBudgetPeriod4Weeks;
+                        case 4 /*4*/ -> Enums.kBudgetPeriodMonth;
+                        case 5 /*5*/ -> Enums.kBudgetPeriodBimonthly;
+                        case 6 /*6*/ -> Enums.kBudgetPeriodQuarter;
+                        case 7 /*7*/ -> Enums.kBudgetPeriodHalfYear;
+                        case 8 /*8*/ -> Enums.kBudgetPeriodYear;
+                        default -> periodType;
+                    };
                     Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
                     budgetDialogListner.applyPeriodType2(periodType);
 

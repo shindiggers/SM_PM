@@ -62,16 +62,12 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private String nameOfSortOnListPref(int sortOn) {
-        switch (sortOn) {
-            case Enums.kBudgetsSortTypeActual /*1*/:
-                return Locales.kLOC_BUDGETS_ACTUAL;
-            case Enums.kBudgetsSortTypeBudgeted /*2*/:
-                return Locales.kLOC_BUDGETS_BUDGETED;
-            case Enums.kBudgetsSortTypePercentage /*3*/:
-                return Locales.kLOC_BUDGETS_PERCENTAGE;
-            default:
-                return Locales.kLOC_GENERAL_CATEGORY;
-        }
+        return switch (sortOn) {
+            case Enums.kBudgetsSortTypeActual /*1*/ -> Locales.kLOC_BUDGETS_ACTUAL;
+            case Enums.kBudgetsSortTypeBudgeted /*2*/ -> Locales.kLOC_BUDGETS_BUDGETED;
+            case Enums.kBudgetsSortTypePercentage /*3*/ -> Locales.kLOC_BUDGETS_PERCENTAGE;
+            default -> Locales.kLOC_GENERAL_CATEGORY;
+        };
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {

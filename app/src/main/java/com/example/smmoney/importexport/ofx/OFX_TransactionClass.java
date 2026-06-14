@@ -265,41 +265,24 @@ class OFX_TransactionClass {
     }
 
     String transactionTypeAsString() {
-        switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType()[this.transactionType.ordinal()]) {
-            case 1:
-                return "CREDIT";
-            case 2:
-                return "DEBIT";
-            case 3:
-                return "INT";
-            case 4:
-                return "DIV";
-            case 5:
-                return "FEE";
-            case 6:
-                return "SRVCHG";
-            case 7:
-                return "DEP";
-            case 8:
-                return "ATM";
-            case 9:
-                return "POS";
-            case 10:
-                return "XFER";
-            case 11:
-                return "CHECK";
-            case 12:
-                return "PAYMENT";
-            case 13:
-                return "CASH";
-            case 14:
-                return "DIRECTDEP";
-            case 15:
-                return "DIRECTDEBIT";
-            case 16:
-                return "REPEATPMT";
-            default:
-                return "OTHER";
-        }
+        return switch ($SWITCH_TABLE$com$catamount$pocketmoney$importexport$ofx$OFX_TransactionType()[this.transactionType.ordinal()]) {
+            case 1 -> "CREDIT";
+            case 2 -> "DEBIT";
+            case 3 -> "INT";
+            case 4 -> "DIV";
+            case 5 -> "FEE";
+            case 6 -> "SRVCHG";
+            case 7 -> "DEP";
+            case 8 -> "ATM";
+            case 9 -> "POS";
+            case 10 -> "XFER";
+            case 11 -> "CHECK";
+            case 12 -> "PAYMENT";
+            case 13 -> "CASH";
+            case 14 -> "DIRECTDEP";
+            case 15 -> "DIRECTDEBIT";
+            case 16 -> "REPEATPMT";
+            default -> "OTHER";
+        };
     }
 }

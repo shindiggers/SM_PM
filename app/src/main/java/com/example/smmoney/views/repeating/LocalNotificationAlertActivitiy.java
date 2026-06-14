@@ -35,27 +35,15 @@ public class LocalNotificationAlertActivitiy extends Activity {
     private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
     private final OnClickListener snoozeMenuListener = (dialog, which) -> {
         String transferToAccount;
-        int hours = 0;
-        switch (which) {
-            case 0 /*0*/:
-                hours = 1;
-                break;
-            case 1 /*1*/:
-                hours = 2;
-                break;
-            case 2 /*2*/:
-                hours = 4;
-                break;
-            case 3 /*3*/:
-                hours = 8;
-                break;
-            case 4 /*4*/:
-                hours = 24;
-                break;
-            case 5 /*5*/:
-                hours = 48;
-                break;
-        }
+        int hours = switch (which) {
+            case 0 /*0*/ -> 1;
+            case 1 /*1*/ -> 2;
+            case 2 /*2*/ -> 4;
+            case 3 /*3*/ -> 8;
+            case 4 /*4*/ -> 24;
+            case 5 /*5*/ -> 48;
+            default -> 0;
+        };
         GregorianCalendar newDate = CalExt.addHours(LocalNotificationAlertActivitiy.this.date, hours);
         Intent intent = new Intent(LocalNotificationAlertActivitiy.this.context, LocalNotificationRepeatingReciever.class);
         String body = Locales.kLOC_REPEATING_NOTIFY_DUE;

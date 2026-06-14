@@ -725,17 +725,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         }
         this.photoCell = findViewById(R.id.photocell);
         this.photoCell.setBackgroundColor(PocketMoneyThemes.alternatingRowColor());
-        TextView button = findViewById(R.id.save_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v -> TransactionEditActivity.this.saveButtonAction());
-        button = findViewById(R.id.cancel_button);
-        button.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
-        button.setTextColor(-1);
-        button.setOnClickListener(v -> {
-            TransactionEditActivity.this.deleteNewlyAddedImages();
-            TransactionEditActivity.this.finish();
-        });
         this.keyboardToolBar = findViewById(R.id.keyboard_toolbar);
         this.keyboardToolBar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.currencyKeyboard.setToolbarView(this.keyboardToolBar);
@@ -1636,31 +1625,26 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             return true;
         }
         switch (item.getItemId()) {
-            case MENU_SPLIT /*1*/:
-                splitsAction();
-                break;
-            case MENU_DUPE /*2*/:
-                showDuplicateDialog();
-                break;
-            case MENU_FEE /*3*/:
-                includeFeeAction();
-                break;
-            case MENU_CAMERA /*4*/:
+            case MENU_SPLIT /*1*/ -> splitsAction();
+            case MENU_DUPE /*2*/ -> showDuplicateDialog();
+            case MENU_FEE /*3*/ -> includeFeeAction();
+            case MENU_CAMERA /*4*/ -> {
                 if (androidx.core.content.ContextCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) == android.content.pm.PackageManager.PERMISSION_GRANTED) {
                     showCameraDialog();
                 } else {
                     cameraPermissionLauncher.launch(android.Manifest.permission.CAMERA);
                 }
-                break;
-            case MENU_DELETE /*5*/:
-                showDeleteConfirmDialog();
-                break;
-            case MENU_SAVE /*6*/:
+            }
+            case MENU_DELETE /*5*/ -> showDeleteConfirmDialog();
+            case MENU_SAVE /*6*/ -> {
                 Log.d(TAG, "onOptionsItemSelected() called with: item = [" + item + "] - i.e. MENU_SAVE");
                 saveButtonAction();
-                break;
+            }
+            default -> {
+                return super.onOptionsItemSelected(item);
+            }
         }
-        return super.onOptionsItemSelected(item);
+        return true;
     }
 
     private View.OnClickListener getBtnClickListener() {
