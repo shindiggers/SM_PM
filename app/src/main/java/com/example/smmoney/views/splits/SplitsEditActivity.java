@@ -25,6 +25,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
@@ -124,7 +125,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private SplitsClass split;
     private int splitIndex = -1;
     private int splitTransactionType;
-    private TextView titleTextView;
     private LinearLayout transToLayout;
     private TextView transToTextView;
     private TextView transToTitleTextView;
@@ -132,7 +132,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private RadioButton transferButton;
     private RadioButton withdrawalButton;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.transaction = (TransactionClass) getIntent().getExtras().get("Transaction");
         this.split = (SplitsClass) getIntent().getExtras().get("Split");
@@ -194,7 +195,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     }
 
     private void setTitle(String title) {
-        this.titleTextView.setText(title);
     }
 
     private void setupButtons() {
@@ -275,9 +275,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
     private void loadCells() {

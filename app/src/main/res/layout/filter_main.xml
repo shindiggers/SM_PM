@@ -1,110 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <FrameLayout
-        android:id="@+id/the_tool_bar"
+        android:id="@+id/filterreset"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+        android:layout_height="58dp"
+        android:background="@drawable/list_selector_bg_blue_alt">
 
         <TextView
-            android:id="@+id/title_text_view"
+            android:id="@+id/reset_filter_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical|center_horizontal"
-            android:text="@string/title"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="10dp"
+            android:gravity="start|center_vertical"
+            android:minHeight="58dp"
+            android:text="@string/kLOC_FILTERS_RESET" />
 
     </FrameLayout>
 
-    <LinearLayout
+    <FrameLayout
+        android:id="@+id/filtercurrent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:orientation="vertical">
+        android:layout_height="58dp"
+        android:background="@drawable/list_selector_bg_blue_alt">
 
-        <FrameLayout
-            android:id="@+id/filterreset"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:background="@drawable/list_selector_bg_blue_alt">
+        <TextView
+            android:id="@+id/current_filter_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="10dp"
+            android:gravity="start|center_vertical"
+            android:minHeight="40dp"
+            android:text="@string/kLOC_FILTERS_CURRENT" />
 
-            <TextView
-                android:id="@+id/reset_filter_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="10dp"
-                android:gravity="start|center_vertical"
-                android:minHeight="58dp"
-                android:text="@string/kLOC_FILTERS_RESET" />
+        <ImageView
+            android:id="@+id/filtercurrentedit"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center_vertical"
+            android:layout_marginEnd="10dp"
+            android:clickable="true"
+            android:contentDescription="@string/content_desctiption_select_filter"
+            android:focusable="true"
+            android:src="@drawable/ic_arrow_drop_down_circle" />
 
-        </FrameLayout>
+    </FrameLayout>
 
-        <FrameLayout
-            android:id="@+id/filtercurrent"
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:background="@drawable/list_selector_bg_blue_alt">
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/blue_theme_background_color">
 
-            <TextView
-                android:id="@+id/current_filter_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="10dp"
-                android:gravity="start|center_vertical"
-                android:minHeight="40dp"
-                android:text="@string/kLOC_FILTERS_CURRENT" />
+        <TextView
+            android:id="@+id/user_defined_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="start|center_vertical"
+            android:layout_marginStart="10dp"
+            android:gravity="start|center_vertical"
+            android:text="@string/kLOC_FILTERS_USERDEFINED" />
 
-            <ImageView
-                android:id="@+id/filtercurrentedit"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="10dp"
-                android:clickable="true"
-                android:contentDescription="@string/content_desctiption_select_filter"
-                android:focusable="true"
-                android:src="@drawable/ic_arrow_drop_down_circle" />
+    </FrameLayout>
 
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="58dp"
-            android:background="@color/blue_theme_background_color">
-
-            <TextView
-                android:id="@+id/user_defined_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="start|center_vertical"
-                android:layout_marginStart="10dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/kLOC_FILTERS_USERDEFINED" />
-
-        </FrameLayout>
-
-        <View
-            android:id="@+id/filter_separator"
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@color/black_theme_background_color" />
-
-    </LinearLayout>
+    <View
+        android:id="@+id/filter_separator"
+        android:layout_width="match_parent"
+        android:layout_height="2dp"
+        android:background="@color/black_theme_background_color" />
 
     <ListView
         android:id="@+id/filterlist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_marginTop="176dp"
         tools:listitem="@layout/filter_row" />
 
-</FrameLayout>
+</LinearLayout>

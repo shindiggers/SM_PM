@@ -10,6 +10,7 @@ import android.view.KeyEvent;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smmoney.misc.Prefs;
@@ -29,7 +30,8 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
             }
     );
 
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setResult(0);
         String dontShowPass = null;

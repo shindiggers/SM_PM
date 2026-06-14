@@ -49,6 +49,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.FragmentManager;
@@ -210,9 +211,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private ChartView theChartView;
     private FrameLayout theGraphLayout;
     private AlertDialog tipDialog;
-    //private TextView titleTextMenu;
-    @SuppressWarnings("FieldCanBeLocal")
-    private TextView titleTextView;
     private WakeLock wakeLock;
 
     public final ActivityResultLauncher<Intent> filterLauncher = registerForActivityResult(
@@ -341,7 +339,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.d("ACCOUNTSACTIVITY", "onCreate() has just run");
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "AccountsActivity:DoNotDimScreen");
@@ -890,14 +889,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         });
         ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        //listView.setBackgroundColor(PocketMoneyThemes.currentTintColor());
-        this.titleTextView = layout.findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        //this.titleTextView.setTextSize(COMPLEX_UNIT_SP, 50);
-        FrameLayout theView = layout.findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        this.titleTextView.setOnClickListener(v -> AccountsActivity.this.openOptionsMenu());
-        theView.setVisibility(View.GONE);
         this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
         this.graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
         this.graphLeftArrow.setOnClickListener(v -> {

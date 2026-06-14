@@ -24,6 +24,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
@@ -94,14 +95,14 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView sundayTextView;
     private ImageView thursdayCheck;
     private TextView thursdayTextView;
-    private TextView titleTextView;
     private TransactionClass transaction;
     private ImageView tuesdayCheck;
     private TextView tuesdayTextView;
     private ImageView wednesdayCheck;
     private TextView wednesdayTextView;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LayoutInflater.from(this).inflate(R.layout.repeating_edit, null));
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -140,7 +141,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     }
 
     private void setTitle(String title) {
-        this.titleTextView.setText(title);
     }
 
     private void loadViews() {
@@ -276,11 +276,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             (view).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        FrameLayout theView = findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
     }
 
     private void reloadData() {

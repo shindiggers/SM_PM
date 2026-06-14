@@ -30,6 +30,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -76,7 +77,8 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private ListView theList;
     private WakeLock wakeLock;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "BudgetsActivity:DoNotDimScreen");
         View layout = LayoutInflater.from(this).inflate(R.layout.budgets, null, false);

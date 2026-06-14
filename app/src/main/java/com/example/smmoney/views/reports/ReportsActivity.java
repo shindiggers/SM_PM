@@ -18,6 +18,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 
 import com.example.smmoney.R;
@@ -95,7 +96,8 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
 
     private WakeLock wakeLock;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "ReportsActivity:DoNotDimScreen");
         this.datasource = PMGlobal.datasource;

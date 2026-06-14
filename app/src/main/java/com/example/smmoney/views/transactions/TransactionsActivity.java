@@ -42,6 +42,7 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.core.content.FileProvider;
 
 import com.example.smmoney.R;
@@ -211,7 +212,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
     );
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "TransactionsActivity:DoNotDimScreen");
         this.context = this;

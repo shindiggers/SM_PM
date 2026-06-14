@@ -28,6 +28,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.smmoney.R;
@@ -117,7 +118,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
             }
         }
     };
-    private TextView titleTextView;
     private WakeLock wakeLock;
 
     private final ActivityResultLauncher<String> notificationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
@@ -126,7 +126,8 @@ public class RepeatingActivity extends PocketMoneyActivity {
         }
     });
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "RepeatingActivity:DoNotDimScreen");
         this.filter = new FilterClass();
@@ -150,7 +151,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_REPEATING_TRANSACTIONS);
         Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
     }
 
@@ -162,12 +162,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
         theList.setAdapter(repeatingRowAdapter);
         theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setOnClickListener(v -> RepeatingActivity.this.openOptionsMenu());
-        FrameLayout theView = findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
         this.balanceBar = findViewById(R.id.balancebar);
         this.balanceBar.setSecondBalanceEnabled(true);
         this.balanceBar.setBackgroundResource(R.drawable.balancebarforscheduledtransactions);

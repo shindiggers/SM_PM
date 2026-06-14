@@ -7,27 +7,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!-- layoutheight 10241 - height from alternative decompile-->
-    <FrameLayout
-        android:id="@+id/the_tool_bar"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
-
-        <!-- textAppearance 16842817 - use small for now-->
-        <TextView
-
-            android:id="@+id/title_text_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:text="@string/accounts_view_title"
-            android:textAppearance="?android:textAppearanceSmall"
-            android:textStyle="bold"
-            tools:text="Pocket Money" />
-
-    </FrameLayout>
-
     <!--lh 25601-->
     <FrameLayout
         android:id="@+id/chartframelayout"

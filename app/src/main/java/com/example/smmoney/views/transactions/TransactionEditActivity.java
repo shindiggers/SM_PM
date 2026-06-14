@@ -47,6 +47,7 @@ import android.widget.TimePicker;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.DialogFragment;
@@ -343,12 +344,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private TextView timeTextView;
     @SuppressWarnings("FieldCanBeLocal")
     private ScrollView scrollView;
-    private TextView titleTextView;
     private TransactionClass transaction;
     private RadioButton transferButton;
     private RadioButton withdrawalButton;
 
-    public void onCreate(Bundle savedInstanceState) {
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         Log.d(TAG, "onCreate() called with: savedInstanceState = [" + savedInstanceState + "]");
         super.onCreate(savedInstanceState);
         Intent i = getIntent();
@@ -449,7 +450,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     }
 
     private void setTitle(String title) {
-        this.titleTextView.setText(title);
     }
 
     private void setupButtons() {
@@ -460,12 +460,6 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.scrollView = findViewById(R.id.scroll_view);
         this.scrollView.setVerticalScrollBarEnabled(false);
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        this.titleTextView.setOnClickListener(v -> TransactionEditActivity.this.openOptionsMenu());
-        FrameLayout theView = findViewById(R.id.the_tool_bar);
-        theView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        theView.setVisibility(View.GONE);
         View outterView = findViewById(R.id.outter_layout);
         View aView = outterView.findViewById(R.id.radiogroup);
         this.withdrawalButton = aView.findViewById(R.id.withdrawalbutton);
@@ -1310,14 +1304,10 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     }
 
     private void saveAmountXrates() {
-        //double amount = CurrencyExt.amountFromStringWithCurrency(this.amountEditText.getText().toString(), this.transaction.getCurrencyCode());
         double amount = CurrencyExt.amountFromString(this.amountEditText.getText().toString());
         double multiplier = 1.0d;
         if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal /*0*/ || this.transaction.getType() == Enums.kTransactionTypeTransferTo /*2*/) {
             multiplier = -1.0d;
-        }
-        if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            multiplier *= this.transaction.getXrate();
         }
 
         double newSubTotal = Math.abs(amount) * multiplier;

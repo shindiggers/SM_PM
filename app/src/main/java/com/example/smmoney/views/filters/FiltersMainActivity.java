@@ -50,7 +50,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     private FilterClass filter;
     private ArrayList<FilterClass> filterList;
     private FilterRowAdapter theAdapter;
-    private TextView titleTextView;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,7 +77,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     }
 
     private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_TOOLS_FILTERS);
         Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_TOOLS_FILTERS);
     }
 
@@ -133,10 +131,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i += 1;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setOnClickListener(v -> FiltersMainActivity.this.openOptionsMenu());
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
-        //findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.actionBarColor());
     }
 
     public void filterSelected(FilterClass aFilter) {
