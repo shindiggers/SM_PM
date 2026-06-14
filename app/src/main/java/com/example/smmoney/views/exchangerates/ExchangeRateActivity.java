@@ -151,7 +151,6 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         }
     };
     private boolean programaticUpdate;
-    private TextView titleTextView;
 
     private class MyTextWatcher implements TextWatcher {
         private MyTextWatcher() {
@@ -225,10 +224,6 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         setResult(1, i);
         finish();
         return true;
-    }
-
-    private void setTitle() {
-        this.titleTextView.setText(Locales.kLOC_GENERAL_EXCHANGERATE);
     }
 
     private void setExchangeRate(double n) {
@@ -310,14 +305,11 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
             i++;
         }
-        this.titleTextView = findViewById(R.id.title_text_view);
-        this.titleTextView.setTextColor(PocketMoneyThemes.toolbarTextColor());
         if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
             foreignAmountRadioButton.setVisibility(View.INVISIBLE);
             exchangeRateRadioButton.setVisibility(View.INVISIBLE);
             accountAmountRadioButton.setVisibility(View.INVISIBLE);
         }
-        findViewById(R.id.the_tool_bar).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
     }
 
     public void lookupExchangeRateCallback(ExchangeRateClass exchangeRateInstance, final double rate, AccountClass account) {
