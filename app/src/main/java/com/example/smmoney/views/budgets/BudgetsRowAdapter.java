@@ -320,6 +320,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
             aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
             aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
             aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
+            aFilter.setFilterName(holder.category.getCategory());
+            aFilter.setCustomFilter(true);
+            i.putExtra("subtitle", BudgetsRowAdapter.this.rangeOfPeriodAsString());
             i.putExtra("Filter", aFilter);
             BudgetsRowAdapter.this.context.startActivity(i);
         };

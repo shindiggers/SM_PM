@@ -195,7 +195,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                     if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                         this._filter.setAccount(currentAccount);
                     }
-                    Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : this._filter.getAccount());
+                    
+                    String title = this._filter.customFilter() ?
+                            (this._filter.getFilterName().isEmpty() ? Locales.kLOC_TOOLS_FILTER : this._filter.getFilterName()) :
+                            (this._filter.getAccount().isEmpty() ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
+                    
+                    Objects.requireNonNull(getSupportActionBar()).setTitle(title);
                     reloadData();
                 }
             }
@@ -221,16 +226,25 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.transactions, null);
         setupView(layout);
         setContentView(layout);
-        //findViewById(R.id.adView).setVisibility(View.GONE);
 
         this.firstOpenOfView = true;
-        //if (this._filter.getType() == 4 && !this._filter.customFilter()){
-        //    Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_ALL_TRANSACTIONS);
-        //} else {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(this._filter.customFilter() ? Locales.kLOC_TOOLS_FILTER + " - " + this._filter.getFilterName() : Objects.equals(this._filter.getAccount(), "") ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
-        //}
-        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        String title = getIntent().getStringExtra("title");
+        if (title == null) {
+            title = this._filter.customFilter() ?
+                    (this._filter.getFilterName().isEmpty() ? Locales.kLOC_TOOLS_FILTER : this._filter.getFilterName()) :
+                    (this._filter.getAccount().isEmpty() ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+            String subtitle = getIntent().getStringExtra("subtitle");
+            if (subtitle != null) {
+                getSupportActionBar().setSubtitle(subtitle);
+            }
+            getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
     }
 
     protected void onResume() {
@@ -458,7 +472,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         } else {
             this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(balance));
         }
-        this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(balanceType));
+        String label = AccountDB.totalWorthLabel(balanceType);
+        if (balanceType == Enums.kBalanceTypeFiltered) {
+            String subtitle = getIntent().getStringExtra("subtitle");
+            if (subtitle != null) {
+                label = subtitle;
+            }
+        }
+        this.balanceBar.balanceTypeTextView.setText(label);
         this.balanceBar.balanceTypeTextView.setTextColor(-1);
     }
 

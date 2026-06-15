@@ -114,6 +114,15 @@ public class BalanceBar extends FrameLayout {
 
     public void setFilter(FilterClass aFilter) {
         this.filter = aFilter;
+        if (aFilter != null && aFilter.customFilter()) {
+            setBackgroundResource(R.drawable.singlebalancebar);
+            this.nextButton.setVisibility(GONE);
+            this.previousButton.setVisibility(GONE);
+        } else {
+            setBackgroundResource(R.drawable.balance_bar2);
+            this.nextButton.setVisibility(VISIBLE);
+            this.previousButton.setVisibility(VISIBLE);
+        }
     }
 
     public int nextBalanceTypeAfter(int type) {

@@ -21,6 +21,7 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.transactions.TransactionsActivity;
 
 import java.util.ArrayList;
 import java.util.Objects;
@@ -134,10 +135,16 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     }
 
     public void filterSelected(FilterClass aFilter) {
-        Intent i = new Intent();
-        i.putExtra("Filter", aFilter);
-        setResult(FILTER_RESULT_SELECTED, i);
-        finish();
+        if (getIntent().hasExtra("ONLY SAVED")) {
+            Intent i = new Intent(this, com.example.smmoney.views.transactions.TransactionsActivity.class);
+            i.putExtra("Filter", aFilter);
+            startActivity(i);
+        } else {
+            Intent i = new Intent();
+            i.putExtra("Filter", aFilter);
+            setResult(FILTER_RESULT_SELECTED, i);
+            finish();
+        }
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
