@@ -8,7 +8,7 @@
     <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
         android:layout_width="match_parent"
-        android:layout_height="40dp" />
+        android:layout_height="58dp" />
 
     <ListView
         android:id="@+id/thelist"

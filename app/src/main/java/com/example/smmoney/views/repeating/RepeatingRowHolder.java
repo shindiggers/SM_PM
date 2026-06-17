@@ -26,7 +26,6 @@ class RepeatingRowHolder {
     public TextView payee;
     Button postButton;
     RepeatingTransactionClass repeatingTransaction;
-    public LinearLayout therow;
     public TransactionClass transaction;
 
     void setTransaction(TransactionClass trans, Context context) {
@@ -46,17 +45,12 @@ class RepeatingRowHolder {
             Drawable drawable = ResourcesCompat.getDrawable(context.getResources(), R.drawable.button_grey, null);
             this.postButton.setBackground(drawable);
         }
-        // code to go here:
+
         // find date on which transaction next repeats and assign to temp GregorianCalendar local variable
         GregorianCalendar dateOfNextRepeat = this.repeatingTransaction.getNextTransactionDateAfter(this.repeatingTransaction.lastProcessedDate);
-        // amend code on next line to set date equal to date on above code line
         this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
         this.date.setText(CalExt.descriptionWithShortDate(dateOfNextRepeat).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
-        // TODO This scaling causes date not to display - to fix
-        //        scaleTextField(this.date);
         this.frequency.setText(this.repeatingTransaction.typeEveryAsString());
-        // TODO This scaling causes frequency not to display - to fix
-        //        scaleTextField(this.frequency);
         if (this.transaction.isTransfer()) {
             this.payee.setText(this.transaction.getPayee() + " <" + this.transaction.getTransferToAccount() + ">");
         } else {

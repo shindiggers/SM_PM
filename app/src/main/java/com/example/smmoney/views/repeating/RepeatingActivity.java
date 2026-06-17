@@ -19,6 +19,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -166,9 +167,21 @@ public class RepeatingActivity extends PocketMoneyActivity {
         this.balanceBar.setSecondBalanceEnabled(true);
         this.balanceBar.setBackgroundResource(R.drawable.balancebarforscheduledtransactions);
         this.balanceBar.nextButton.setOnClickListener(v -> {
+            int padding = (int) (20 * getResources().getDisplayMetrics().density);
             final EditText textView = new EditText(RepeatingActivity.this);
-            AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this);
-            b.setView(textView);
+            textView.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+            textView.setText(String.valueOf(Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD)));
+            textView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+            
+            FrameLayout container = new FrameLayout(RepeatingActivity.this);
+            FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.leftMargin = padding;
+            params.rightMargin = padding;
+            textView.setLayoutParams(params);
+            container.addView(textView);
+
+            AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this, PocketMoneyThemes.dialogTheme());
+            b.setView(container);
             b.setTitle(Locales.kLOC_REPEATING_UPCOMING_MESSAGE);
             b.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
                 try {
@@ -179,7 +192,16 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 }
             });
             b.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
-            b.create().show();
+            AlertDialog dialog = b.create();
+            
+            // Auto-focus, select all text, and show keyboard
+            textView.requestFocus();
+            textView.selectAll();
+            if (dialog.getWindow() != null) {
+                dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+            }
+            
+            dialog.show();
         });
     }
 

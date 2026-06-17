@@ -49,7 +49,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     private String date = "";
     private GregorianCalendar dateFrom = null;
     private GregorianCalendar dateTo = null;
-    private int filterID = 0;
+    public int filterID = 0;
     private String filterName = "";
     private double internalFromDate = 0.0d;
     private double internalToDate = 0.0d;

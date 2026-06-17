@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
     android:layout_width="match_parent"
@@ -8,132 +8,102 @@
     android:clickable="true"
     android:focusable="true"
     android:minHeight="58dp"
-    android:nextFocusLeft="@+id/selected"
-    android:nextFocusDown="@+id/transtherow"
-    android:orientation="horizontal">
+    android:paddingStart="6dp"
+    android:paddingEnd="6dp">
 
-    <CheckBox
-        android:id="@+id/selected"
+    <!-- Column 1: Date and Frequency -->
+    <TextView
+        android:id="@+id/datetextview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-        android:layout_marginStart="6dp"
-        android:checked="true"
-        android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-        android:nextFocusRight="@+id/therow"
-        android:nextFocusDown="@+id/checkboxlayout" />
+        android:minWidth="70dp"
+        android:gravity="start|center_vertical"
+        android:text="@string/row_88_88_88"
+        app:layout_constraintBottom_toTopOf="@+id/checknumbertextview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    <LinearLayout
-        android:id="@+id/dateandchecknumberlayout"
-        android:layout_width="70dp"
-        android:layout_height="match_parent"
-        android:focusable="false"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/datetextview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1.0"
-            android:gravity="start|center_vertical"
-            android:text="@string/row_88_88_88" />
-
-        <TextView
-            android:id="@+id/checknumbertextview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1.0"
-            android:gravity="start|center_vertical"
-            android:maxLines="1"
-            android:text="@string/row_checknumber" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0"
-        android:focusable="false"
-        android:orientation="vertical">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1.0"
-            android:focusable="false"
-            android:orientation="horizontal"
-            tools:ignore="NestedWeights">
-
-            <TextView
-                android:id="@+id/payeetextview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:gravity="start|center_vertical"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_PAYEE"
-                tools:ignore="NestedWeights" />
-
-            <TextView
-                android:id="@+id/amounttextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:gravity="end|center_vertical"
-                android:maxWidth="100dp"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_AMOUNT" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1.0"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/categorytextview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:gravity="start|center_vertical"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_CATEGORY" />
-
-            <TextView
-                android:id="@+id/runningtotaltextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:gravity="end|center_vertical"
-                android:maxWidth="150dp"
-                android:singleLine="true"
-                android:text="@string/row_runningtotal" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-    <FrameLayout
+    <TextView
+        android:id="@+id/checknumbertextview"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:minWidth="70dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:text="@string/row_checknumber"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/datetextview" />
 
-        <Button
-            android:id="@+id/postbutton"
-            android:layout_width="55dp"
-            android:layout_height="35dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="6dp"
-            android:layout_marginEnd="6dp"
-            android:text="@string/post"
-            android:textSize="12sp" />
+    <!-- Column 2: Payee and Category -->
+    <TextView
+        android:id="@+id/payeetextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_PAYEE"
+        app:layout_constraintBottom_toTopOf="@+id/categorytextview"
+        app:layout_constraintEnd_toStartOf="@+id/amounttextview"
+        app:layout_constraintStart_toEndOf="@+id/datetextview"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-    </FrameLayout>
+    <TextView
+        android:id="@+id/categorytextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_CATEGORY"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/runningtotaltextview"
+        app:layout_constraintStart_toEndOf="@+id/checknumbertextview"
+        app:layout_constraintTop_toBottomOf="@+id/payeetextview" />
 
-</LinearLayout>
+    <!-- Column 3: Amount and Account -->
+    <TextView
+        android:id="@+id/amounttextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="end|center_vertical"
+        android:maxWidth="100dp"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_AMOUNT"
+        app:layout_constraintBaseline_toBaselineOf="@+id/payeetextview"
+        app:layout_constraintEnd_toStartOf="@+id/postbutton" />
+
+    <TextView
+        android:id="@+id/runningtotaltextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:gravity="end|center_vertical"
+        android:maxWidth="150dp"
+        android:singleLine="true"
+        android:text="@string/row_runningtotal"
+        android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/categorytextview"
+        app:layout_constraintEnd_toStartOf="@+id/postbutton" />
+
+    <!-- Column 4: Post Button -->
+    <Button
+        android:id="@+id/postbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="35dp"
+        android:minWidth="55dp"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="@string/post"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

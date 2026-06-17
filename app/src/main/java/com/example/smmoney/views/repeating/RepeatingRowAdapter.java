@@ -25,7 +25,7 @@ class RepeatingRowAdapter extends BaseAdapter {
     private final LayoutInflater mInflater;
     private final OnClickListener postButtonListener = new OnClickListener() {
         public void onClick(View v) {
-            RepeatingRowHolder holder = (RepeatingRowHolder) ((View) v.getParent().getParent()).getTag();
+            RepeatingRowHolder holder = (RepeatingRowHolder) ((View) v.getParent()).getTag();
             holder.repeatingTransaction.hydrated = false;
             if (holder.repeatingTransaction.getTransaction() != null) {
                 // Post the transaction immediately
@@ -93,7 +93,6 @@ class RepeatingRowAdapter extends BaseAdapter {
             holder.account = convertView.findViewById(R.id.runningtotaltextview);
             holder.postButton = convertView.findViewById(R.id.postbutton);
             holder.postButton.setOnClickListener(this.postButtonListener);
-            convertView.findViewById(R.id.selected).setVisibility(View.GONE);
             convertView.setTag(holder);
         } else {
             holder = (RepeatingRowHolder) convertView.getTag();

@@ -109,7 +109,8 @@ public class FilterEditActivity extends PocketMoneyActivity {
         setupButtons();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_TOOLS_FILTER_EDIT);
+            String title = (this.filter.filterID == 0) ? Locales.kLOC_FILTER_NEW : Locales.kLOC_TOOLS_FILTER_EDIT;
+            getSupportActionBar().setTitle(title);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -140,72 +141,68 @@ public class FilterEditActivity extends PocketMoneyActivity {
     }
 
     private void setupButtons() {
-        FrameLayout v = (FrameLayout) this.payeeEditText.getParent();
+        View v = findViewById(R.id.payees_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(11);
-        v = (FrameLayout) this.idEditText.getParent();
+        v = findViewById(R.id.ids_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(12);
-        v = (FrameLayout) this.transactionTypeTextView.getParent();
+        v = findViewById(R.id.transaction_type_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(8);
-        v = (FrameLayout) this.accountsTextView.getParent();
+        v = findViewById(R.id.accounts_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(9);
-        v = (FrameLayout) this.datesTextView.getParent();
+        v = findViewById(R.id.dates_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(10);
-        v = (FrameLayout) this.clearedTextView.getParent();
+        v = findViewById(R.id.cleared_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(13);
-        v = (FrameLayout) this.categoriesTextView.getParent();
+        v = findViewById(R.id.categories_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(14);
-        v = (FrameLayout) this.classesTextView.getParent();
+        v = findViewById(R.id.classes_row);
         v.setOnClickListener(getLookupListClickListener());
         v.setTag(15);
 
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) sv.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        findViewById(R.id.filter_edit_root).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        
         ArrayList<View> theViews = new ArrayList<>();
-        TextView tView = findViewById(R.id.filter_name_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        theViews.add(findViewById(R.id.filter_name_row));
+        theViews.add(findViewById(R.id.transaction_type_row));
+        theViews.add(findViewById(R.id.accounts_row));
+        theViews.add(findViewById(R.id.dates_row));
+        theViews.add(findViewById(R.id.payees_row));
+        theViews.add(findViewById(R.id.ids_row));
+        theViews.add(findViewById(R.id.cleared_row));
+        theViews.add(findViewById(R.id.categories_row));
+        theViews.add(findViewById(R.id.classes_row));
+
+        TextView label;
+        label = findViewById(R.id.filter_name_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_transaction_type_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_accounts_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_dates_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_payees_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_ids_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_cleared_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_category_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.filter_classes_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+
         this.filterNameEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_transaction_type_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.transactionTypeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_accounts_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountsTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_dates_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.datesTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_payees_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.payeeEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_ids_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.idEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_cleared_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.clearedTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_category_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.categoriesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.filter_classes_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.classesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
+
         int i = 0;
         for (View theView : theViews) {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());

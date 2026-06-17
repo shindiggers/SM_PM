@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/filter_edit_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -11,307 +13,77 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:fillViewport="true"
-        android:orientation="vertical"
-        android:scrollbarStyle="insideInset">
+        android:scrollbarStyle="insideOverlay">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_height="wrap_content">
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/filter_name_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_FILTER_NAME" />
-
-                <EditText
-                    android:id="@+id/filtereditname"
-                    android:layout_width="190dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="100dp"
-                    android:hint="@string/kLOC_FILTER_NAME"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapSentences"
-                    android:singleLine="true" />
-
-            </FrameLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@android:color/darker_gray" />
-
-            <FrameLayout
-                android:layout_width="match_parent"
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/label_barrier"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="filter_name_label,filter_transaction_type_label,filter_accounts_label,filter_dates_label,filter_payees_label,filter_ids_label,filter_cleared_label,filter_category_label,filter_classes_label" />
 
-                <TextView
-                    android:id="@+id/filter_transaction_type_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_FILTERS_TRANSACTION_TYPE" />
+            <!-- Row Backgrounds -->
+            <View android:id="@+id/filter_name_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/filter_name_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/transaction_type_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_transaction_type_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/accounts_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_accounts_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/dates_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_dates_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/payees_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_payees_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/ids_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_ids_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/cleared_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_cleared_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/categories_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_category_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View android:id="@+id/classes_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/filter_classes_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
 
-                <TextView
-                    android:id="@+id/filteredittranstype"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="130dp" />
+            <!-- Row 1: Name -->
+            <TextView android:id="@+id/filter_name_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_FILTER_NAME" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />
+            <EditText android:id="@+id/filtereditname" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_FILTER_NAME" android:importantForAutofill="no" android:inputType="textCapSentences" android:singleLine="true" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintTop_toTopOf="@id/filter_name_label" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_TRANSACTION_TYPE"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
+            <View android:id="@+id/divider1" android:layout_width="match_parent" android:layout_height="1dp" android:background="@android:color/darker_gray" app:layout_constraintTop_toBottomOf="@id/filter_name_label" />
 
-            </FrameLayout>
+            <!-- Row 2: Transaction Type -->
+            <TextView android:id="@+id/filter_transaction_type_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_FILTERS_TRANSACTION_TYPE" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/divider1" />
+            <TextView android:id="@+id/filteredittranstype" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/transtype_arrow" app:layout_constraintTop_toTopOf="@id/filter_transaction_type_label" />
+            <ImageView android:id="@+id/transtype_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_transaction_type_label" app:layout_constraintBottom_toBottomOf="@id/filter_transaction_type_label" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
+            <!-- Row 3: Accounts -->
+            <TextView android:id="@+id/filter_accounts_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_ACCOUNTS" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_transaction_type_label" />
+            <TextView android:id="@+id/filtereditaccounts" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/accounts_arrow" app:layout_constraintTop_toTopOf="@id/filter_accounts_label" />
+            <ImageView android:id="@+id/accounts_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_accounts_label" app:layout_constraintBottom_toBottomOf="@id/filter_accounts_label" />
 
-                <TextView
-                    android:id="@+id/filter_accounts_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_ACCOUNTS" />
+            <!-- Row 4: Dates -->
+            <TextView android:id="@+id/filter_dates_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_FILTER_DATES" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_accounts_label" />
+            <TextView android:id="@+id/filtereditdates" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/dates_arrow" app:layout_constraintTop_toTopOf="@id/filter_dates_label" />
+            <ImageView android:id="@+id/dates_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_dates_label" app:layout_constraintBottom_toBottomOf="@id/filter_dates_label" />
 
-                <TextView
-                    android:id="@+id/filtereditaccounts"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp" />
+            <!-- Row 5: Payees -->
+            <TextView android:id="@+id/filter_payees_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_PAYEE_TITLE" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_dates_label" />
+            <EditText android:id="@+id/filtereditpayees" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_GENERAL_PAYEE_TITLE" android:importantForAutofill="no" android:inputType="textCapWords" android:singleLine="true" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/payees_arrow" app:layout_constraintTop_toTopOf="@id/filter_payees_label" />
+            <ImageView android:id="@+id/payees_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_payees_label" app:layout_constraintBottom_toBottomOf="@id/filter_payees_label" />
 
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_ACCOUNT_TYPE_TITLE"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
+            <!-- Row 6: IDs -->
+            <TextView android:id="@+id/filter_ids_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_ID_TITLE" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_payees_label" />
+            <EditText android:id="@+id/filtereditids" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_GENERAL_ID_TITLE" android:importantForAutofill="no" android:inputType="textCapWords" android:singleLine="true" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/ids_arrow" app:layout_constraintTop_toTopOf="@id/filter_ids_label" />
+            <ImageView android:id="@+id/ids_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_ids_label" app:layout_constraintBottom_toBottomOf="@id/filter_ids_label" />
 
-            </FrameLayout>
+            <!-- Row 7: Cleared -->
+            <TextView android:id="@+id/filter_cleared_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_CLEARED" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_ids_label" />
+            <TextView android:id="@+id/filtereditcleared" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/cleared_arrow" app:layout_constraintTop_toTopOf="@id/filter_cleared_label" />
+            <ImageView android:id="@+id/cleared_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_cleared_label" app:layout_constraintBottom_toBottomOf="@id/filter_cleared_label" />
 
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
+            <!-- Row 8: Categories -->
+            <TextView android:id="@+id/filter_category_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_CATEGORY_TITLE" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_cleared_label" />
+            <EditText android:id="@+id/filtereditcategories" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_GENERAL_CATEGORY" android:importantForAutofill="no" android:inputType="textCapWords" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/categories_arrow" app:layout_constraintTop_toTopOf="@id/filter_category_label" />
+            <ImageView android:id="@+id/categories_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_category_label" app:layout_constraintBottom_toBottomOf="@id/filter_category_label" />
 
-                <TextView
-                    android:id="@+id/filter_dates_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_FILTER_DATES" />
+            <!-- Row 9: Classes -->
+            <TextView android:id="@+id/filter_classes_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_CLASSES" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/filter_category_label" />
+            <EditText android:id="@+id/filtereditclasses" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_GENERAL_CLASS" android:importantForAutofill="no" android:inputType="textCapWords" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintEnd_toStartOf="@id/classes_arrow" app:layout_constraintTop_toTopOf="@id/filter_classes_label" />
+            <ImageView android:id="@+id/classes_arrow" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="16dp" android:src="@drawable/ic_arrow_drop_down_circle" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="@id/filter_classes_label" app:layout_constraintBottom_toBottomOf="@id/filter_classes_label" />
 
-                <TextView
-                    android:id="@+id/filtereditdates"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTER_DATES"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
-
-                <TextView
-                    android:id="@+id/filter_payees_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_PAYEE_TITLE" />
-
-                <EditText
-                    android:id="@+id/filtereditpayees"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp"
-                    android:hint="@string/kLOC_GENERAL_PAYEE_TITLE"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_PAYEES"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
-
-                <TextView
-                    android:id="@+id/filter_ids_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_ID_TITLE" />
-
-                <EditText
-                    android:id="@+id/filtereditids"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp"
-                    android:hint="@string/kLOC_GENERAL_ID_TITLE"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_IDS"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
-
-                <TextView
-                    android:id="@+id/filter_cleared_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_CLEARED" />
-
-                <TextView
-                    android:id="@+id/filtereditcleared"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_GENERAL_CLEARED"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
-
-                <TextView
-                    android:id="@+id/filter_category_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_CATEGORY_TITLE" />
-
-                <EditText
-                    android:id="@+id/filtereditcategories"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp"
-                    android:hint="@string/kLOC_GENERAL_CATEGORY"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapWords" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_CATEGORIES"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt">
-
-                <TextView
-                    android:id="@+id/filter_classes_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="10dp"
-                    android:text="@string/kLOC_GENERAL_CLASSES" />
-
-                <EditText
-                    android:id="@+id/filtereditclasses"
-                    android:layout_width="150dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="100dp"
-                    android:hint="@string/kLOC_GENERAL_CLASS"
-                    android:importantForAutofill="no"
-                    android:inputType="textCapWords" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="10dp"
-                    android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
-
-            </FrameLayout>
-
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 

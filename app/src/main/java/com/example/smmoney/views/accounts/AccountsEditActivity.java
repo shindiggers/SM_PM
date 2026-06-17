@@ -161,16 +161,16 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     }
 
     private void setupButtons() {
-        LinearLayout v = (LinearLayout) this.type.getParent();
+        View v = findViewById(R.id.type_row);
         v.setOnClickListener(getBtnClickListener());
         v.setTag(1);
-        v = (LinearLayout) this.icon.getParent();
+        v = findViewById(R.id.icon_row);
         v.setTag(2);
         v.setOnClickListener(getBtnClickListener());
-        v = (LinearLayout) this.notes.getParent();
+        v = findViewById(R.id.notes_row);
         v.setTag(3);
         v.setOnClickListener(getBtnClickListener());
-        ((View) this.currency.getParent()).setOnClickListener(v1 -> {
+        findViewById(R.id.currency_row).setOnClickListener(v1 -> {
             final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
             new AlertDialog.Builder(AccountsEditActivity.this).setItems(currencyCodes, (dialog, item) -> {
                 AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
@@ -185,100 +185,71 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
 
         ArrayList<View> theViews = new ArrayList<>();
 
-        TextView tView = findViewById(R.id.account_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.accountName.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
+        theViews.add(findViewById(R.id.account_row));
+        theViews.add(findViewById(R.id.total_worth_row));
+        theViews.add(findViewById(R.id.type_row));
+        theViews.add(findViewById(R.id.icon_row));
+        theViews.add(findViewById(R.id.expires_row));
+        theViews.add(findViewById(R.id.account_number_row));
+        theViews.add(findViewById(R.id.routing_number_row));
+        theViews.add(findViewById(R.id.institution_row));
+        theViews.add(findViewById(R.id.phone_row));
+        theViews.add(findViewById(R.id.website_row));
+        theViews.add(findViewById(R.id.fee_row));
+        theViews.add(findViewById(R.id.limit_row));
+        theViews.add(findViewById(R.id.check_number_row));
+        theViews.add(findViewById(R.id.currency_row));
+        theViews.add(findViewById(R.id.xrate_row));
 
-        tView = findViewById(R.id.total_worth_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_type_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.type.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_icon_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_expires_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.expires.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_number_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.accountNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.routing_number_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.bankID.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_institution_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.institution.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_phone_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.phone.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_website_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.website.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_fee_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.fee.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_limit_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.limit.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_check_number_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.checkNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_currency_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.currency.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_exchangerate_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.exchangeRate.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-
-        tView = findViewById(R.id.account_keep_the_change_account_label);
+        TextView tView = findViewById(R.id.account_keep_the_change_account_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
 
         TextView exchangeRateSuffix = findViewById(R.id.amount_xrate_text_view);
         exchangeRateSuffix.setTextColor(PocketMoneyThemes.primaryCellTextColor());
 
         this.keepTheChangeAccountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        View aView = (View) tView.getParent();
+        View aView = findViewById(R.id.ktc_account_row);
         aView.setTag(18);
         aView.setOnClickListener(getBtnClickListener());
         theViews.add(aView);
 
-        tView = findViewById(R.id.account_keep_the_change_round_to_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.keepTheChangeRoundToEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
+        theViews.add(findViewById(R.id.ktc_round_row));
+        theViews.add(findViewById(R.id.notes_row));
 
-        tView = findViewById(R.id.account_notes_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        TextView label;
+        label = findViewById(R.id.account_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.total_worth_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_type_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_icon_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_expires_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_number_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.routing_number_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_institution_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_phone_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_website_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_fee_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_limit_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_check_number_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_currency_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_exchangerate_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_keep_the_change_round_to_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+        label = findViewById(R.id.account_notes_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
+
+        this.accountName.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.type.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.expires.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.accountNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.bankID.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.institution.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.phone.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.website.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.fee.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.limit.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.checkNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.currency.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.exchangeRate.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.keepTheChangeRoundToEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.notes.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
 
         int i = 0;
         for (View theView : theViews) {
