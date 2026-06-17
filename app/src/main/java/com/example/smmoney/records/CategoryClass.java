@@ -454,6 +454,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public double budgetLimit(GregorianCalendar startDate, GregorianCalendar endDate) {
+        hydrate();
         if (!this.rollover) {
             return budgetLimitWithoutRollover(startDate, endDate);
         }
@@ -467,7 +468,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         } else {
             rolloverStartDate = CalExt.beginningOfDay(rolloverStartDate);
         }
-        List<CategoryBudgetClass> budgetItems = CategoryBudgetClass.budgetItems(this.category, CalExt.endOfDay(startDate), CalExt.endOfDay(endDate));
+        List<CategoryBudgetClass> budgetItems = CategoryBudgetClass.budgetItems(this.category, CalExt.beginningOfDay(startDate), CalExt.endOfDay(endDate));
         double spentPrior = querySpentInCategory(this.category, this.includeSubcategories, rolloverStartDate, startDate);
         double newBudgetLimit = 0.0d;
         GregorianCalendar currentStartDate = CalExt.subtractSecond((GregorianCalendar) rolloverStartDate.clone());

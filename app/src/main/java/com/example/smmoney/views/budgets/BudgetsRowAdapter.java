@@ -369,18 +369,18 @@ public class BudgetsRowAdapter extends BaseAdapter {
         ArrayList<CategoryClass> afterZeroIncomes = new ArrayList<>();
         for (CategoryClass category : tempIncomeCategories) {
             category.spent = CategoryClass.querySpentInCategory(category.getCategory(), category.getIncludeSubcategories(), startDate, endDate);
-            if (category.spent != 0.0d || !hideZeroActuals) {
+            category.budget = ((double) Math.round(100.0d * category.budgetLimit(startDate, endDate))) / 100.0d;
+            if (category.spent != 0.0d || category.budget != 0.0d || !hideZeroActuals) {
                 afterZeroIncomes.add(category);
-                category.budget = ((double) Math.round(100.0d * category.budgetLimit(startDate, endDate))) / 100.0d;
             }
         }
         List<CategoryClass> tempExpenseCategories = CategoryClass.queryExpenseCategoriesWithBudgets();
         ArrayList<CategoryClass> afterZeroExpenses = new ArrayList<>();
         for (CategoryClass category2 : tempExpenseCategories) {
             category2.spent = CategoryClass.querySpentInCategory(category2.getCategory(), category2.getIncludeSubcategories(), startDate, endDate);
-            if (category2.spent != 0.0d || !hideZeroActuals) {
+            category2.budget = ((double) Math.round(100.0d * category2.budgetLimit(startDate, endDate))) / 100.0d;
+            if (category2.spent != 0.0d || category2.budget != 0.0d || !hideZeroActuals) {
                 afterZeroExpenses.add(category2);
-                category2.budget = ((double) Math.round(100.0d * category2.budgetLimit(startDate, endDate))) / 100.0d;
             }
         }
         if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED)) {

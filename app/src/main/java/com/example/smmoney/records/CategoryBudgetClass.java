@@ -203,6 +203,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     static double limitPrior(GregorianCalendar toDate, double originalLimit, String category) {
+        // 1. Try to find the most recent budget entry BEFORE the requested date
         Cursor curs = Database.rawQuery("SELECT budgetLimit FROM categoryBudgets WHERE deleted=0 AND date < " + toDate.getTimeInMillis() / 1000 + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date DESC", null);
         if (curs.getCount() > 0) {
             curs.moveToFirst();
@@ -211,6 +212,20 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
             return limit;
         }
         curs.close();
+
+        // 2. No history found before this date. 
+        // Does this category have ANY variable budget records at all?
+        curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND categoryName LIKE " + Database.SQLFormat(category) + " LIMIT 1", null);
+        boolean hasAnyHistory = curs.getCount() > 0;
+        curs.close();
+
+        if (hasAnyHistory) {
+            // This is a Variable Budget, but we are looking at a time BEFORE the timeline started.
+            // Return 0 so we don't "pollute" the past with the current simple budget value.
+            return 0.0d;
+        }
+
+        // 3. This is a Simple Budget (no history exists). Fallback to the perpetual simple limit.
         return originalLimit;
     }
 
@@ -266,7 +281,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     public static void renameBudgetItems(String oldCategory, String newCategory) {
-        Database.rawQuery("UPDATE categoryBudgets SET categoryName=" + Database.SQLFormat(oldCategory) + ", timestamp=" + System.currentTimeMillis() + " WHERE categoryName=" + Database.SQLFormat(newCategory), null);
+        Database.execSQL("UPDATE categoryBudgets SET categoryName=" + Database.SQLFormat(newCategory) + ", timestamp=" + System.currentTimeMillis() / 1000 + " WHERE categoryName=" + Database.SQLFormat(oldCategory));
     }
 
     public static ArrayList<CategoryBudgetClass> budgetItemsForCategory(String category) {

@@ -142,38 +142,64 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.originalHistoryBudgetTextView = findViewById(R.id.originalhistorybudget);
         this.originalHistoryBudgetTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.originalHistoryDateTextView.setOnClickListener(v -> {
-            BudgetsEditActivity.this.selectedBudgetItem = null;
-            BudgetsEditActivity.this.showDatePickerDialog();
+            BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v.getParent()).getTag();
+            if (BudgetsEditActivity.this.selectedBudgetItem != null) {
+                BudgetsEditActivity.this.showDatePickerDialog();
+            }
         });
         this.originalHistoryBudgetTextView.setOnClickListener(v -> {
             BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v.getParent()).getTag();
-            BudgetsEditActivity.this.showBudgetAmountDialog();
+            if (BudgetsEditActivity.this.selectedBudgetItem != null) {
+                BudgetsEditActivity.this.showBudgetAmountDialog();
+            }
         });
         this.enableVariableBudgetCell = findViewById(R.id.enablevariablebutton);
         this.enableVariableBudgetCell.setOnClickListener(v -> {
+            // When enabling, we move the current static budget into a variable history item starting today
             CategoryBudgetClass budgetItem = new CategoryBudgetClass();
             budgetItem.setCategoryName(BudgetsEditActivity.this.category.getCategory());
             budgetItem.setDate(new GregorianCalendar());
-            budgetItem.setBudgetLimit(CurrencyExt.amountFromString(BudgetsEditActivity.this.budgetEditText.getText().toString()));
+            double initialAmount = CurrencyExt.amountFromString(BudgetsEditActivity.this.budgetEditText.getText().toString());
+            budgetItem.setBudgetLimit(initialAmount);
             BudgetsEditActivity.this.categoryBudgetItems.add(budgetItem);
             BudgetsEditActivity.this.reloadData();
         });
+        
         this.addBudgetCell = findViewById(R.id.addbudgetcell);
         this.addBudgetCell.setOnClickListener(v -> {
-            CategoryBudgetClass budgetItem = new CategoryBudgetClass();
-            budgetItem.setCategoryName(BudgetsEditActivity.this.category.getCategory());
-            budgetItem.setDate(new GregorianCalendar());
-            budgetItem.setBudgetLimit(CurrencyExt.amountFromString(BudgetsEditActivity.this.budgetEditText.getText().toString()));
-            BudgetsEditActivity.this.categoryBudgetItems.add(budgetItem);
-            BudgetsEditActivity.this.reloadData();
+            // Determine starting point for the Date Picker (latest entry or today)
+            GregorianCalendar anchorDate;
+            if (!BudgetsEditActivity.this.categoryBudgetItems.isEmpty()) {
+                anchorDate = (GregorianCalendar) BudgetsEditActivity.this.categoryBudgetItems.get(0).getDate().clone();
+            } else {
+                anchorDate = new GregorianCalendar();
+            }
+
+            // Launch Date Picker immediately
+            new DatePickerDialog(BudgetsEditActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
+                GregorianCalendar pickedDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+                CategoryBudgetClass newItem = new CategoryBudgetClass();
+                newItem.setCategoryName(BudgetsEditActivity.this.category.getCategory());
+                newItem.setDate(pickedDate);
+                
+                // Use latest known amount as the default for the new row
+                double latestAmount;
+                if (!BudgetsEditActivity.this.categoryBudgetItems.isEmpty()) {
+                    latestAmount = BudgetsEditActivity.this.categoryBudgetItems.get(0).getBudgetLimit();
+                } else {
+                    latestAmount = CurrencyExt.amountFromString(BudgetsEditActivity.this.budgetEditText.getText().toString());
+                }
+                newItem.setBudgetLimit(latestAmount);
+                
+                BudgetsEditActivity.this.categoryBudgetItems.add(newItem);
+                BudgetsEditActivity.this.reloadData();
+            }, anchorDate.get(Calendar.YEAR), anchorDate.get(Calendar.MONTH), anchorDate.get(Calendar.DAY_OF_MONTH)).show();
         });
     }
 
     private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
         GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
-        if (BudgetsEditActivity.this.selectedBudgetItem == null) {
-            BudgetsEditActivity.this.categoryBudgetItems.get(0).setDate(newCal);
-        } else {
+        if (BudgetsEditActivity.this.selectedBudgetItem != null) {
             BudgetsEditActivity.this.selectedBudgetItem.setDate(newCal);
         }
         BudgetsEditActivity.this.reloadData();
@@ -242,57 +268,62 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private void reloadData() {
         this.outterView.removeViews(9, (this.outterView.getChildCount() - 9) - 2);
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-        Collections.sort(this.categoryBudgetItems, (o1, o2) -> (int) (o2.getDate().getTimeInMillis() - o1.getDate().getTimeInMillis()));
+        
+        // Sort Newest to Oldest (Descending)
+        Collections.sort(this.categoryBudgetItems, (o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+        
         if (!this.categoryBudgetItems.isEmpty()) {
-            this.originalHistoryBudgetTextView.setText(CurrencyExt.amountAsCurrency(this.category.getBudgetLimit()));
-            this.originalHistoryDateTextView.setText(CalExt.descriptionWithMediumDate(this.categoryBudgetItems.get(this.categoryBudgetItems.size() - 1).getDate()));
+            // The "Original" row represents the oldest entry in the history (now at the end of our sorted list)
+            CategoryBudgetClass oldestItem = this.categoryBudgetItems.get(this.categoryBudgetItems.size() - 1);
+            this.originalHistoryCell.setTag(oldestItem);
+            this.originalHistoryBudgetTextView.setText(CurrencyExt.amountAsCurrency(oldestItem.getBudgetLimit()));
+            this.originalHistoryDateTextView.setText(CalExt.descriptionWithMediumDate(oldestItem.getDate()));
         }
+        
         int i = 0;
-        for (CategoryBudgetClass budgetItem : this.categoryBudgetItems) {
+        // Display all entries EXCEPT the oldest one (which is in the static footer)
+        for (int index = 0; index < this.categoryBudgetItems.size() - 1; index++) {
+            CategoryBudgetClass budgetItem = this.categoryBudgetItems.get(index);
             View v = vi.inflate(R.layout.budgets_variable_row, null);
             registerForContextMenu(v);
             v.setTag(budgetItem);
+            
+            // Apply alternating colors based on position in the visible list
             if (1 == i % 2) {
                 v.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
             } else {
                 v.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
             }
             i++;
-            TextView textView = v.findViewById(R.id.date);
-            textView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-            textView.setText(CalExt.descriptionWithMediumDate(budgetItem.getDate()));
-            textView.setOnClickListener(v2 -> {
+            
+            TextView dateTextView = v.findViewById(R.id.date);
+            dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+            dateTextView.setText(CalExt.descriptionWithMediumDate(budgetItem.getDate()));
+            dateTextView.setOnClickListener(v2 -> {
                 BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v2.getParent()).getTag();
-                GregorianCalendar theDate = BudgetsEditActivity.this.selectedBudgetItem == null ? BudgetsEditActivity.this.categoryBudgetItems.get(0).getDate() : BudgetsEditActivity.this.selectedBudgetItem.getDate();
-                new DatePickerDialog(BudgetsEditActivity.this, BudgetsEditActivity.this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
+                showDatePickerDialog();
             });
-            textView = v.findViewById(R.id.budget);
-            textView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-            textView.setText(CurrencyExt.amountAsCurrency(budgetItem.getBudgetLimit()));
-            textView.setOnClickListener(v1 -> {
+            
+            TextView budgetAmtTextView = v.findViewById(R.id.budget);
+            budgetAmtTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+            budgetAmtTextView.setText(CurrencyExt.amountAsCurrency(budgetItem.getBudgetLimit()));
+            budgetAmtTextView.setOnClickListener(v1 -> {
                 BudgetsEditActivity.this.selectedBudgetItem = (CategoryBudgetClass) ((View) v1.getParent()).getTag();
-                Builder alert = new Builder(BudgetsEditActivity.this);
-                final EditText input = new EditText(BudgetsEditActivity.this);
-                input.setText(CurrencyExt.amountAsString(BudgetsEditActivity.this.selectedBudgetItem == null ? BudgetsEditActivity.this.category.getBudgetLimit() : BudgetsEditActivity.this.selectedBudgetItem.getBudgetLimit()));
-                alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
-                    String value = input.getText().toString().trim();
-                    if (BudgetsEditActivity.this.selectedBudgetItem == null) {
-                        BudgetsEditActivity.this.category.setBudgetLimit(CurrencyExt.amountFromString(value));
-                    } else {
-                        BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
-                    }
-                    BudgetsEditActivity.this.reloadData();
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
-                alert.create().show();
+                showBudgetAmountDialog();
             });
+            
             CheckBox checkBox = v.findViewById(R.id.resetrollovercheckbox);
             checkBox.setChecked(budgetItem.getResetRollover());
             checkBox.setVisibility(this.rolloverCheckBox.isChecked() ? View.VISIBLE : View.INVISIBLE);
-            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> ((CategoryBudgetClass) ((View) buttonView.getParent()).getTag()).setResetRollover(isChecked));
-            this.outterView.addView(v, 9, new LayoutParams(-1, -2));
+            checkBox.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                CategoryBudgetClass item = (CategoryBudgetClass) ((View) buttonView.getParent()).getTag();
+                if (item != null) {
+                    item.setResetRollover(isChecked);
+                }
+            });
+            
+            // Insert each row under the "Add New" button (index 9, 10, 11...)
+            this.outterView.addView(v, 9 + index, new LayoutParams(-1, -2));
         }
         if (!this.categoryBudgetItems.isEmpty()) {
             this.budgetCell.setVisibility(View.GONE);
@@ -372,24 +403,16 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     }
 
     private void showBudgetAmountDialog() {
-        double budgetLimit;
+        if (this.selectedBudgetItem == null) return;
+        
         Builder alert = new Builder(this);
         final EditText input = new EditText(this);
-        if (this.selectedBudgetItem == null) {
-            budgetLimit = this.category.getBudgetLimit();
-        } else {
-            budgetLimit = this.selectedBudgetItem.getBudgetLimit();
-        }
-        input.setText(CurrencyExt.amountAsString(budgetLimit));
+        input.setText(CurrencyExt.amountAsString(this.selectedBudgetItem.getBudgetLimit()));
         alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
         alert.setView(input);
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
-            if (BudgetsEditActivity.this.selectedBudgetItem == null) {
-                BudgetsEditActivity.this.category.setBudgetLimit(CurrencyExt.amountFromString(value));
-            } else {
-                BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
-            }
+            BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
             BudgetsEditActivity.this.reloadData();
         });
         alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
@@ -433,16 +456,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     }
 
     private void showDatePickerDialog() {
-        GregorianCalendar theDate;
-        if (this.selectedBudgetItem == null) {
-            if (this.categoryBudgetItems.isEmpty()) {
-                theDate = new GregorianCalendar();
-            } else {
-                theDate = this.categoryBudgetItems.get(0).getDate();
-            }
-        } else {
-            theDate = this.selectedBudgetItem.getDate();
-        }
+        if (this.selectedBudgetItem == null) return;
+        
+        GregorianCalendar theDate = this.selectedBudgetItem.getDate();
         new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
