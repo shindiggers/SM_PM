@@ -82,6 +82,26 @@ public class PocketMoneyThemes {
         theme = white_theme_primary_row_color;
     }
 
+    public static void setTheme(String themeStr) {
+        if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLACK)) {
+            theme = kThemeBlack;
+        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLUE)) {
+            theme = kThemeBlue;
+        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_GREEN)) {
+            theme = kThemeGreen;
+        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_PURPLE)) {
+            theme = kThemePurple;
+        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_GRAY)) {
+            theme = kThemeGray;
+        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_COFFEE)) {
+            theme = kThemeCoffee;
+        } else if (themeStr.equals("Ruby")) {
+            theme = kThemeRuby;
+        } else if (themeStr.equals("White")) {
+            theme = kThemeWhite;
+        }
+    }
+
     private static int getTheme() {
         if (theme == white_theme_primary_row_color) {
             String themeStr = Prefs.getStringPref(Prefs.THEME_COLOR);
@@ -203,6 +223,10 @@ public class PocketMoneyThemes {
             case kThemeWhite /*7*/ -> R.style.DatePicker_White;
             default -> R.style.DatePicker_Black;
         };
+    }
+
+    public static int timePickerTheme() {
+        return datePickerTheme();
     }
 
     public static int dialogTheme() {
@@ -341,6 +365,18 @@ public class PocketMoneyThemes {
 
     public static int redBarColor() {
         return theme_red_bar_color;
+    }
+
+    public static int balanceBarBackgroundColor() {
+        return black_theme_background_color;
+    }
+
+    public static int balanceBarArrowColor() {
+        return black_theme_text;
+    }
+
+    public static int balanceBarTextViewColor() {
+        return black_theme_text; // This is the off-white color used in the black theme
     }
 
     public static int chkBoxColorChecked() {

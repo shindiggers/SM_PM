@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatDialogFragment;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
 
@@ -24,7 +25,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_REPEATING_FREQUENCY_DAILY, Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_BUDGETS_BIWEEKLY, Locales.kLOC_BUDGETS_4WEEKS, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY, Locales.kLOC_BUDGETS_BIMONTHLY, Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY, Locales.kLOC_BUDGETS_HALFYEAR, Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), R.style.Theme_MaterialComponents_Light_Dialog_Alert);
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD), (dialog, which) -> {
                     int periodType = -1;

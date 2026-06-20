@@ -263,7 +263,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     private void deleteBudget(final CategoryClass cat) {
-        Builder b = new Builder(this);
+        Builder b = new Builder(this, PocketMoneyThemes.dialogTheme());
         b.setTitle(Locales.kLOC_BUDGETCATEGORY_DELETE);
         b.setMessage(Locales.kLOC_BUDGETCATEGORY_DELETE_BODY);
         b.setPositiveButton(Locales.kLOC_BUDGETCATEGORY_DELETE_BUDGET, (dialog, which) -> {

@@ -176,7 +176,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             }
 
             // Launch Date Picker immediately
-            new DatePickerDialog(BudgetsEditActivity.this, (view, year, monthOfYear, dayOfMonth) -> {
+            new DatePickerDialog(BudgetsEditActivity.this, PocketMoneyThemes.datePickerTheme(), (view, year, monthOfYear, dayOfMonth) -> {
                 GregorianCalendar pickedDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
                 CategoryBudgetClass newItem = new CategoryBudgetClass();
                 newItem.setCategoryName(BudgetsEditActivity.this.category.getCategory());
@@ -355,7 +355,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             finish();
         } else {
             CharSequence[] items = new CharSequence[]{Locales.kLOC_LOOKUPS_POPUPLIST, Locales.kLOC_LOOKUPS_EVERYWHERE};
-            Builder builder = new Builder(this);
+            Builder builder = new Builder(this, PocketMoneyThemes.dialogTheme());
             builder.setTitle(Locales.kLOC_LOOKUPS_CHANGEBODY);
             builder.setItems(items, (dialog, item) -> {
                 int catID = CategoryClass.idForCategory(BudgetsEditActivity.this.category.getCategory());
@@ -405,7 +405,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private void showBudgetAmountDialog() {
         if (this.selectedBudgetItem == null) return;
         
-        Builder alert = new Builder(this);
+        Builder alert = new Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
         input.setText(CurrencyExt.amountAsString(this.selectedBudgetItem.getBudgetLimit()));
         alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
@@ -459,7 +459,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         if (this.selectedBudgetItem == null) return;
         
         GregorianCalendar theDate = this.selectedBudgetItem.getDate();
-        new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
 

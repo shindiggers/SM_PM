@@ -150,7 +150,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public void onResume() {
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO)) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setMessage(Locales.kLOC_TIP_ACCOUNT_INFO);
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_ACCOUNT_INFO, true);
@@ -172,7 +172,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         v.setOnClickListener(getBtnClickListener());
         findViewById(R.id.currency_row).setOnClickListener(v1 -> {
             final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-            new AlertDialog.Builder(AccountsEditActivity.this).setItems(currencyCodes, (dialog, item) -> {
+            new AlertDialog.Builder(AccountsEditActivity.this, PocketMoneyThemes.dialogTheme()).setItems(currencyCodes, (dialog, item) -> {
                 AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
                 dialog.dismiss();
                 ((Runnable) () -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).run();

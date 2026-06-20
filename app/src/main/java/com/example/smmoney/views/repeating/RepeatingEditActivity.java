@@ -129,7 +129,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     public void onResume() {
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_REPEATING)) {
-            Builder alert = new Builder(this);
+            Builder alert = new Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setTitle(Locales.kLOC_TIP_REEPEATING_TITLE);
             alert.setMessage(Locales.kLOC_TIP_REEPEATING);
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {

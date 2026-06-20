@@ -174,7 +174,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public void onResume() {
         super.onResume();
         if (this.currentType == ACCOUNT_TYPE_LOOKUP && !Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_TYPE_OPTIONS)) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setTitle(Locales.kLOC_ACCOUNTTYPES_URL_TITLE);
             alert.setMessage(Locales.kLOC_ACCOUNTTYPES_URL_BODY);
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
@@ -351,7 +351,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         }
 
         final int theItem = this.currentType;
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
         alert.setTitle("");
         alert.setView(input);
@@ -398,13 +398,13 @@ public class LookupsListActivity extends PocketMoneyActivity {
             case CMENU_EDIT /*1*/:
                 final int theItem = this.currentType;
                 originalString = this.theStrings.get(info.position);
-                alert = new AlertDialog.Builder(this);
+                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
                 input.setText(originalString);
                 alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                 alert.setView(input);
                 alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
-                    AlertDialog.Builder b = new AlertDialog.Builder(LookupsListActivity.this);
+                    AlertDialog.Builder b = new AlertDialog.Builder(LookupsListActivity.this, PocketMoneyThemes.dialogTheme());
                     b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                     b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
                     CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
@@ -474,7 +474,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 return true;
             case CMENU_SUBCATEGORY /*4*/:
                 originalString = this.theStrings.get(info.position);
-                alert = new AlertDialog.Builder(this);
+                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
                 alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
                 alert.setView(input);

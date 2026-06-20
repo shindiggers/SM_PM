@@ -118,7 +118,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         } else {
             theDate = CalExt.dateFromDescriptionWithMediumDate((isFromDate ? this.fromDate : this.toDate).getText().toString());
         }
-        new DatePickerDialog(this, getDateListener(isFromDate), theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), getDateListener(isFromDate), theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     private OnDateSetListener getDateListener(boolean isAFromDate) {

@@ -45,7 +45,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         }
         this.passwordPref.setText(this.storedPassword);
         this.confirmPref.setText(this.storedPassword);
-        Builder alt_bld = new Builder(this);
+        Builder alt_bld = new Builder(this, PocketMoneyThemes.dialogTheme());
         alt_bld.setMessage(Locales.kLOC_PREFERENCES_PASSWORD_NOTMATCH).setCancelable(false).setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, id) -> {
             SecurityPrefsActivity.this.clearToPrefs();
             dialog.cancel();

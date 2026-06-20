@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentLocalStorageTransfers extends DialogFragment {
 
@@ -22,7 +23,7 @@ public class DialogFragmentLocalStorageTransfers extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder;
         CharSequence[] items5 = new CharSequence[]{Locales.kLOC_TOOLS_BACKUP_SD, Locales.kLOC_TOOLS_RESTORE_SD, Locales.kLOC_TOOLS_IMPORT_SD, Locales.kLOC_TOOLS_EXPORT_SD};
-        builder = new AlertDialog.Builder(getActivity());
+        builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD);
         builder.setItems(items5, (dialog, item) -> {
             DialogLocalStorageTransferListener activity = (DialogLocalStorageTransferListener) getActivity();

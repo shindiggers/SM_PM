@@ -363,7 +363,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     public static void displayLiteDialog(final Activity c) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(c);
+        AlertDialog.Builder builder = new AlertDialog.Builder(c, PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_LITE_UPGRADE)
                 .setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID)
                 .setCancelable(false)
@@ -417,7 +417,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             checkLicense();
         }
         if (!Prefs.getBooleanPref(Prefs.HINT_WELCOME) && (this.tipDialog == null || !this.tipDialog.isShowing())) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setTitle(Locales.kLOC_TIP_WELCOME_TITLE);
             alert.setCancelable(false);
             alert.setMessage(Locales.kLOC_TIP_WELCOME);
@@ -429,7 +429,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             this.tipDialog = alert.show();
         }
         if (Prefs.getBooleanPref(Prefs.HINT_WELCOME) && Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO) && !Prefs.getBooleanPref(Prefs.HINT_FIRSTNEWACCOUNT)) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setTitle(Locales.kLOC_TIP_WELCOMEBACK_TITLE);
             int i = R.string.kLOC_TIP_FIRST_TRANSACTION;
             Object[] objArr = new Object[ACCOUNT_REQUEST_FILTER];
@@ -659,7 +659,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             AccountsActivity.this.progressDialog.dismiss();
                             AccountsActivity.this.progressDialog.setProgress(0);
                         }
-                        AlertDialog alert = new AlertDialog.Builder(AccountsActivity.this.context).create();
+                        AlertDialog alert = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme()).create();
                         alert.setTitle("Error");
                         alert.setMessage((String) msg.obj);
                         alert.setCancelable(false);
@@ -771,11 +771,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
             runOnUiThread(() -> {
                 if (isFinishing()) return;
                 balanceBar.balanceAmountTextView.setVisibility(View.VISIBLE);
-                balanceBar.balanceAmountTextView.setTextColor(totalWorth < 0.0d ? ContextCompat.getColor(this, R.color.theme_red_label_color_on_black) : ContextCompat.getColor(this, R.color.black_theme_text));
+                balanceBar.balanceAmountTextView.setTextColor(totalWorth < 0.0d ? PocketMoneyThemes.redOnBlackLabelColor() : PocketMoneyThemes.balanceBarTextViewColor());
                 balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(totalWorth));
                 balanceBar.balanceTypeTextView.setVisibility(View.VISIBLE);
                 balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(finalPref));
-                balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text));
+                balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
                 balanceBar.progressBar.setVisibility(View.GONE);
                 synchronized (adapter) {
                     reloadData();
@@ -813,11 +813,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void deleteAccount(final AccountClass account) {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         alert.setTitle(Locales.kLOC_ACCOUNT_DELETE);
         alert.setMessage(Locales.kLOC_ACCOUNT_DELETE_BODY);
         alert.setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, whichButton) -> {
-            AlertDialog.Builder alert1 = new AlertDialog.Builder(AccountsActivity.this.context);
+            AlertDialog.Builder alert1 = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme());
             alert1.setTitle(Locales.kLOC_ACCOUNT_DELETE);
             alert1.setMessage(Locales.kLOC_ACCOUNT_DELETE_CONFIRM);
             CharSequence charSequence = Locales.kLOC_GENERAL_DELETE;
@@ -1086,11 +1086,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void restoreFromSD() {
-        AlertDialog.Builder alert2 = new AlertDialog.Builder(this.context);
+        AlertDialog.Builder alert2 = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme());
         alert2.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
         alert2.setMessage(Locales.kLOC_TRANSFERS_RESTORE);
         alert2.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, whichButton) -> {
-            AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context);
+            AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme());
             alert.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
             alert.setMessage(Locales.kLOC_TRANSFERS_RESTORE_CONFIRM);
             alert.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, whichButton2) -> {
@@ -1168,7 +1168,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void backupToSD() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this.context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme());
         alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
         alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
@@ -1361,7 +1361,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void showReportsDialog() {
-        new AlertDialog.Builder(this).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, (dialog, which) -> {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, (dialog, which) -> {
             FilterClass f = new FilterClass();
             ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
             Intent i;
@@ -1460,7 +1460,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void showLicensingDialog() {
-        new AlertDialog.Builder(this).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", (dialog, which) -> {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", (dialog, which) -> {
             AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
             AccountsActivity.this.finish();
         }).setNegativeButton("Quit", (dialog, which) -> {

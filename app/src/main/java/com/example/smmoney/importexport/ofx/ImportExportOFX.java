@@ -10,6 +10,7 @@ import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -131,7 +132,7 @@ public class ImportExportOFX {
     }
 
     private void displayError(String error) {
-        Builder builder = new Builder(SMMoney.getAppContext());
+        Builder builder = new Builder(SMMoney.getAppContext(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(error);
         builder.setPositiveButton(Locales.kLOC_GENERAL_OK, null);
         builder.create().show();

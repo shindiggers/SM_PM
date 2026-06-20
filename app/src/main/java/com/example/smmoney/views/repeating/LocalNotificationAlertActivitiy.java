@@ -32,7 +32,7 @@ public class LocalNotificationAlertActivitiy extends Activity {
         }
         gregorianCalendar = new GregorianCalendar();
     };
-    private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
+    private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
     private final OnClickListener snoozeMenuListener = (dialog, which) -> {
         String transferToAccount;
         int hours = switch (which) {
@@ -69,7 +69,7 @@ public class LocalNotificationAlertActivitiy extends Activity {
         ((AlarmManager) LocalNotificationAlertActivitiy.this.context.getSystemService(ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), PendingIntent.getBroadcast(LocalNotificationAlertActivitiy.this.context, LocalNotificationAlertActivitiy.this.repeatingTransaction.repeatingID, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     };
     private RepeatingTransactionClass repeatingTransaction;
-    private final OnClickListener mainSnoozeListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context).setItems(new CharSequence[]{Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_REPEATING_ONE_DAY, Locales.kLOC_REPEATING_TWO_DAYS}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
+    private final OnClickListener mainSnoozeListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_REPEATING_ONE_DAY, Locales.kLOC_REPEATING_TWO_DAYS}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,7 +80,7 @@ public class LocalNotificationAlertActivitiy extends Activity {
         this.date = (GregorianCalendar) extras.get("date");
         String amount = extras.getString("amount");
         String body = extras.getString("body");
-        Builder builder = new Builder(this.context);
+        Builder builder = new Builder(this.context, PocketMoneyThemes.dialogTheme());
         builder.setMessage(body);
         builder.setPositiveButton("Post", this.mainPostListener);
         builder.setNegativeButton("Snooze", this.mainSnoozeListener);

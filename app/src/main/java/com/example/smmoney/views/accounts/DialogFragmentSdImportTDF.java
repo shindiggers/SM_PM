@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentSdImportTDF extends DialogFragment {
 
@@ -21,7 +22,7 @@ public class DialogFragmentSdImportTDF extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder;
-        builder = new AlertDialog.Builder(getActivity());
+        builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
         builder.setMessage("The file to 'SMMoney.txt' should be placed in the folder '/Download/PocketMoneyBackup'");
         builder.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {

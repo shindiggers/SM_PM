@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentFileTransfer extends DialogFragment {
 
@@ -26,7 +27,7 @@ public class DialogFragmentFileTransfer extends DialogFragment {
         items[0] = Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL;
         items[1] = Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD;
         items[2] = Locales.kLOC_DESKTOPSYNC_TITLE;
-        builder = new AlertDialog.Builder(getActivity());
+        builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
         builder.setItems(items, (dialog, item) -> {
             DialogFileTransferListener activity = (DialogFileTransferListener) getActivity();

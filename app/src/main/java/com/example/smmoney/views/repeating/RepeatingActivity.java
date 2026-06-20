@@ -165,7 +165,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
         ((View) theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.balanceBar = findViewById(R.id.balancebar);
         this.balanceBar.setSecondBalanceEnabled(true);
-        this.balanceBar.setBackgroundResource(R.drawable.balancebarforscheduledtransactions);
         this.balanceBar.nextButton.setOnClickListener(v -> {
             int padding = (int) (20 * getResources().getDisplayMetrics().density);
             final EditText textView = new EditText(RepeatingActivity.this);
@@ -225,21 +224,21 @@ public class RepeatingActivity extends PocketMoneyActivity {
         if (overdueAmount < 0.0d) {
             this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         } else {
-            this.balanceBar.balanceAmountTextView.setTextColor(-1);
+            this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         }
         if (upcomingAmount < 0.0d) {
             this.balanceBar.secondBalanceAmountTextView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         } else if (upcomingAmount > 0.0d) {
             this.balanceBar.secondBalanceAmountTextView.setTextColor(PocketMoneyThemes.greenDepositColor());
         } else {
-            this.balanceBar.secondBalanceAmountTextView.setTextColor(-1);
+            this.balanceBar.secondBalanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         }
         this.balanceBar.secondBalanceAmountTextView.setText(CurrencyExt.amountAsCurrency(upcomingAmount));
         this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(overdueAmount));
         this.balanceBar.secondBalanceTypeTextView.setText(text);
-        this.balanceBar.secondBalanceTypeTextView.setTextColor(-1);
+        this.balanceBar.secondBalanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_REPEATING_OVERDUE_LABEL);
-        this.balanceBar.balanceTypeTextView.setTextColor(-1);
+        this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
     private void reloadData() {
@@ -318,7 +317,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
     private void showDatePickerDialog() {
         GregorianCalendar theDate = new GregorianCalendar();
-        new DatePickerDialog(this, (view, year, monthOfYear, dayOfMonth) -> {
+        new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), (view, year, monthOfYear, dayOfMonth) -> {
             if (!RepeatingActivity.this.isProcessingToDate) {
                 RepeatingActivity.this.isProcessingToDate = true;
                 final GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);

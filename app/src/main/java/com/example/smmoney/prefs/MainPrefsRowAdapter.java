@@ -81,9 +81,9 @@ class MainPrefsRowAdapter extends BaseAdapter {
         if (AccountsActivity.IS_GOOGLE_MARKET) {
             this.listenerList.add(v -> {
                 if (SMMoney.isLiteVersion()) {
-                    new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases are not available in the Lite version").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+                    new Builder(MainPrefsRowAdapter.this.context, PocketMoneyThemes.dialogTheme()).setTitle("In-App Purchases").setMessage("In-App Purchases are not available in the Lite version").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
                 } else {
-                    new Builder(MainPrefsRowAdapter.this.context).setTitle("In-App Purchases").setMessage("In-App Purchases now included!").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+                    new Builder(MainPrefsRowAdapter.this.context, PocketMoneyThemes.dialogTheme()).setTitle("In-App Purchases").setMessage("In-App Purchases now included!").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
                 }
             });
         }
@@ -95,7 +95,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
         this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, RepeatingTransactionPrefsActivity.class)));
         this.listenerList.add(v -> Prefs.resetHints());
         if (AccountsActivity.IS_GOOGLE_MARKET) {
-            this.listenerList.add(v -> new Builder(MainPrefsRowAdapter.this.context).setTitle("Restore Purchases").setMessage("This will restore your in-app-purchases. Please ensure that you are connected to the internet.").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show());
+            this.listenerList.add(v -> new Builder(MainPrefsRowAdapter.this.context, PocketMoneyThemes.dialogTheme()).setTitle("Restore Purchases").setMessage("This will restore your in-app-purchases. Please ensure that you are connected to the internet.").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show());
         }
         if (AccountsActivity.IS_GOOGLE_MARKET) {
             this.nameList = new String[]{Locales.kLOC_PREFERENCES_ABOUT_TITLE, Locales.kLOC_PREFERENCES_HELP_TITLE, "In App Purchases", Locales.kLOC_PREFS_SECURITY, Locales.kLOC_ACCOUNT_CURRENCY_LABEL, Locales.kLOC_PREFS_DATATRANFER, Locales.kLOC_PREFS_VIEWOPTIONS, Locales.kLOC_PREFS_MANAGEDLISTS, Locales.kLOC_REPEATING_TRANSACTIONS, Locales.kLOC_PREFERENCES_TIPS_TITLE};

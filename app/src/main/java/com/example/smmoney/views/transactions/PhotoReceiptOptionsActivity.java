@@ -86,7 +86,7 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
         TextView deleteTextView = findViewById(R.id.delete);
         deleteTextView.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
         deleteTextView.setOnClickListener(v -> {
-            Builder b = new Builder(PhotoReceiptOptionsActivity.this);
+            Builder b = new Builder(PhotoReceiptOptionsActivity.this, PocketMoneyThemes.dialogTheme());
             b.setMessage("Are you sure you want to delete this picture?");
             b.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> {
                 Intent i = new Intent();

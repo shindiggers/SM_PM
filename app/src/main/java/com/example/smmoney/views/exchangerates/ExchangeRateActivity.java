@@ -264,7 +264,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         v.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         v.setOnClickListener(v1 -> {
             final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-            new Builder(ExchangeRateActivity.this).setItems(currencyCodes, (dialog, item) -> {
+            new Builder(ExchangeRateActivity.this, PocketMoneyThemes.dialogTheme()).setItems(currencyCodes, (dialog, item) -> {
                 if (ExchangeRateActivity.this.exchangeRateRadioButton.isChecked()) {
                     if (ExchangeRateActivity.this.foreignAmountRadioButton.isEnabled()) {
                         ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);

@@ -13,6 +13,7 @@ import android.widget.TextView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Enums;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 
 public class BalanceBar extends FrameLayout {
@@ -20,8 +21,8 @@ public class BalanceBar extends FrameLayout {
     public final TextView balanceTypeTextView;
     public final LinearLayout balanceView;
     private FilterClass filter;
-    public final View nextButton;
-    public final View previousButton;
+    public final ImageView nextButton;
+    public final ImageView previousButton;
     public final ProgressBar progressBar;
     public final TextView secondBalanceAmountTextView;
     public final TextView secondBalanceTypeTextView;
@@ -31,95 +32,111 @@ public class BalanceBar extends FrameLayout {
 
     public BalanceBar(Context context, AttributeSet attrs) {
         super(context, attrs);
-        setBackgroundResource(R.drawable.balance_bar2);
-        LinearLayout layout1 = new LinearLayout(context);
+        setBackgroundColor(PocketMoneyThemes.balanceBarBackgroundColor());
+        
+        float density = getResources().getDisplayMetrics().density;
+
+        // Previous Button (Left Arrow)
+        this.previousButton = new ImageView(context);
+        this.previousButton.setImageResource(R.drawable.leftarrow);
+        this.previousButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
+        this.previousButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        this.previousButton.setPadding((int)(8 * density), 0, (int)(16 * density), 0);
+        LayoutParams prevLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
+        addView(this.previousButton, prevLp);
+
+        // Next Button (Right Arrow)
+        this.nextButton = new ImageView(context);
+        this.nextButton.setImageResource(R.drawable.rightarrow);
+        this.nextButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
+        this.nextButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+        this.nextButton.setPadding((int)(16 * density), 0, (int)(8 * density), 0);
+        LayoutParams nextLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END);
+        addView(this.nextButton, nextLp);
+
         this.balanceView = new LinearLayout(context);
-        this.balanceView.setLayoutParams(new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/));
-        LayoutParams lp = new LayoutParams(-1/*MATCHPARENT*/, -1/*MATCHPARENT*/, 1/*CENTRE_HORIZONTAL*/);
-        layout1.setOrientation(LinearLayout.HORIZONTAL);
-        LinearLayout.LayoutParams llp = new LinearLayout.LayoutParams(0, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 1.0f);
-        this.previousButton = new View(context);
-        this.nextButton = new View(context);
-        layout1.addView(this.previousButton, llp);
-        layout1.addView(this.nextButton, llp);
-        addView(layout1, lp);
+        this.balanceView.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.CENTER));
+        this.balanceView.setGravity(Gravity.CENTER);
+        
         this.innerLinearLayout = new LinearLayout(context);
         this.innerLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+        this.innerLinearLayout.setGravity(Gravity.CENTER);
+
         this.secondInnerLinearLayout = new LinearLayout(context);
         this.secondInnerLinearLayout.setOrientation(LinearLayout.VERTICAL);
         this.secondInnerLinearLayout.setVisibility(GONE);
-        LinearLayout.LayoutParams innerllp = new LinearLayout.LayoutParams(/*width*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 1.0f);
-        lp = new LayoutParams(/*width*/ ViewGroup.LayoutParams.WRAP_CONTENT /*-2*/, /*height*/ ViewGroup.LayoutParams.WRAP_CONTENT /*-2*/, Gravity.CENTER /*17*/);
+        this.secondInnerLinearLayout.setGravity(Gravity.CENTER);
+
         this.balanceTypeTextView = new TextView(context);
         this.balanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_CURRENT);
-        this.balanceTypeTextView.setGravity(Gravity.CENTER /*17*/);
+        this.balanceTypeTextView.setGravity(Gravity.CENTER);
+        this.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        
         this.balanceAmountTextView = new TextView(context);
         this.balanceAmountTextView.setText(R.string.accounts_view_net_worth);
-        this.balanceAmountTextView.setGravity(Gravity.CENTER /*17*/);
-        llp.setMargins(10, 0, 0, 0);
-        this.innerLinearLayout.addView(this.balanceTypeTextView, innerllp);
-        this.innerLinearLayout.addView(this.balanceAmountTextView, innerllp);
-        this.balanceView.addView(this.innerLinearLayout, llp);
+        this.balanceAmountTextView.setGravity(Gravity.CENTER);
+        this.balanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        
+        LinearLayout.LayoutParams textLp = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        textLp.setMargins((int)(10 * density), 0, (int)(10 * density), 0);
+
+        this.innerLinearLayout.addView(this.balanceTypeTextView, textLp);
+        this.innerLinearLayout.addView(this.balanceAmountTextView, textLp);
+        this.balanceView.addView(this.innerLinearLayout);
+
         this.seperatorImage = new ImageView(context);
         this.seperatorImage.setBackgroundResource(R.drawable.seperatorline);
         this.seperatorImage.setVisibility(GONE);
-        this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(0, /*height*/ ViewGroup.LayoutParams.MATCH_PARENT /*-1*/, 0.0f));
+        this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(1, ViewGroup.LayoutParams.MATCH_PARENT));
+        this.balanceView.addView(this.seperatorImage);
+
         this.secondBalanceTypeTextView = new TextView(context);
         this.secondBalanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_2NDLINE);
         this.secondBalanceTypeTextView.setVisibility(GONE);
-        this.secondBalanceTypeTextView.setGravity(17);
+        this.secondBalanceTypeTextView.setGravity(Gravity.CENTER);
+        this.secondBalanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        
         this.secondBalanceAmountTextView = new TextView(context);
         this.secondBalanceAmountTextView.setText(R.string.accounts_view_net_worth);
         this.secondBalanceAmountTextView.setVisibility(GONE);
-        this.secondBalanceAmountTextView.setGravity(Gravity.CENTER /*17*/);
-        llp.setMargins(10, 0, 0, 0);
-        this.secondInnerLinearLayout.addView(this.secondBalanceTypeTextView, innerllp);
-        this.secondInnerLinearLayout.addView(this.secondBalanceAmountTextView, innerllp);
-        this.balanceView.addView(this.secondInnerLinearLayout, llp);
+        this.secondBalanceAmountTextView.setGravity(Gravity.CENTER);
+        this.secondBalanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+
+        this.secondInnerLinearLayout.addView(this.secondBalanceTypeTextView, textLp);
+        this.secondInnerLinearLayout.addView(this.secondBalanceAmountTextView, textLp);
+        this.balanceView.addView(this.secondInnerLinearLayout);
+
         this.progressBar = new ProgressBar(context);
         this.progressBar.setIndeterminate(true);
         this.progressBar.setVisibility(GONE);
-        this.progressBar.setLayoutParams(new LinearLayout.LayoutParams(-2, -2, 0.0f));
+        this.progressBar.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         this.balanceView.addView(this.progressBar);
+
         addView(this.balanceView);
     }
 
     public void setSecondBalanceEnabled(boolean enable) {
-        int i;
-        int i2 = 0;
         this.secondBalanceAmountTextView.setVisibility(enable ? VISIBLE : GONE);
+        this.secondBalanceTypeTextView.setVisibility(enable ? VISIBLE : GONE);
+        this.seperatorImage.setVisibility(enable ? VISIBLE : GONE);
+        this.innerLinearLayout.setOrientation(enable ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
+        this.secondInnerLinearLayout.setVisibility(enable ? VISIBLE : GONE);
+        
         if (enable) {
-            i = VISIBLE /*0*/;
-        } else {
-            i = GONE /*8*/;
+            this.previousButton.setVisibility(GONE);
         }
-        this.secondBalanceTypeTextView.setVisibility(i);
-        if (enable) {
-            i = VISIBLE /*0*/;
-        } else {
-            i = GONE /*8*/;
-        }
-        this.seperatorImage.setVisibility(i);
-        if (enable) {
-            i = LinearLayout.VERTICAL /*1*/;
-        } else {
-            i = LinearLayout.HORIZONTAL /*0*/;
-        }
-        this.innerLinearLayout.setOrientation(i);
-        if (!enable) {
-            i2 = GONE /*8*/;
-        }
-        this.secondInnerLinearLayout.setVisibility(i2);
     }
 
     public void setFilter(FilterClass aFilter) {
         this.filter = aFilter;
         if (aFilter != null && aFilter.customFilter()) {
-            setBackgroundResource(R.drawable.singlebalancebar);
-            this.nextButton.setVisibility(GONE);
+            setBackgroundColor(PocketMoneyThemes.balanceBarBackgroundColor());
+            if (this.secondBalanceAmountTextView.getVisibility() != VISIBLE) {
+                this.nextButton.setVisibility(GONE);
+            }
             this.previousButton.setVisibility(GONE);
         } else {
-            setBackgroundResource(R.drawable.balance_bar2);
+            setBackgroundColor(PocketMoneyThemes.balanceBarBackgroundColor());
             this.nextButton.setVisibility(VISIBLE);
             this.previousButton.setVisibility(VISIBLE);
         }

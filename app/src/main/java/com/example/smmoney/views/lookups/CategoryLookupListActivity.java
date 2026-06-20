@@ -114,14 +114,14 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
             case CMENU_EDIT /*1*/:
                 // int theItem = this.currentType; ** Coded out as inspection showed theItem was never used
                 originalString = this.adapter.getItem(info.position);
-                alert = new AlertDialog.Builder(this);
+                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
                 input.setText(originalString);
                 alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                 alert.setView(input);
                 alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
                     final String value = input.getText().toString().trim();
-                    AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this);
+                    AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this, PocketMoneyThemes.dialogTheme());
                     b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
                     b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
                     CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
@@ -160,7 +160,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 return true;
             case CMENU_SUBCATEGORY /*4*/:
                 originalString = this.adapter.getItem(info.position);
-                alert = new AlertDialog.Builder(this);
+                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
                 alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
                 alert.setView(input);

@@ -321,7 +321,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     private void markAsClear() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         alert.setMessage("Are you sure you want to mark all the transactions clear?");
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
             for (TransactionClass trans : TransactionsActivity.this.adapter.getElements()) {
@@ -363,14 +363,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private void adjustBalance() {
         // check if there is a valid account for which we are going to adjust the balance. Return without doing anything if not
         if (this._filter.getAccount() == null || this._filter.getAccount().isEmpty() || AccountDB.recordFor(this._filter.getAccount()) == null) {
-            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setMessage("You need to have an account selected that exists to adjust the balance");
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> dialog.dismiss());
             alert.show();
             return;
         }
         // Open AlertDialog, allow user to input a signed & decimal number and then adjust the balance to the number entered, or allow user to cancel
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
         input.setInputType(InputType.TYPE_CLASS_NUMBER + InputType.TYPE_NUMBER_FLAG_DECIMAL + InputType.TYPE_NUMBER_FLAG_SIGNED /*12290*/); // 12290 = InputType.TYPE_NUMBER_FLAG_DECIMAL (8192) + IT.TYPE_NUMBER_FLAG_SIGNED (4096) + IT.TYPE_CLASS_NUMBER (2)
         alert.setMessage(Locales.kLOC_TOOLS_RECONCILE_BODY);
@@ -393,7 +393,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             clearedAdjust = act.balanceOfType(Enums.kBalanceTypeCleared /*1*/);
             futureAdjust = act.balanceOfType(Enums.kBalanceTypeFuture /*0*/);
 
-            AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+            AlertDialog.Builder alt_bld = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             final double d = newBalance;
             final double d2 = newBalance;
             alt_bld.setCancelable(false).setMessage(Locales.kLOC_TOOLS_RECONCILE_ALLCLEARED).setPositiveButton(Locales.kLOC_GENERAL_CLEARED, (dialog, id) -> TransactionsActivity.this.adjustBalanceConfirm(true, d - clearedAdjust)).setNegativeButton(Locales.kLOC_TOOLS_RECONCILE_ALL, (dialog, id) -> TransactionsActivity.this.adjustBalanceConfirm(false, d2 - futureAdjust));
@@ -408,7 +408,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         if (act != null) {
             titleString = getString(R.string.kLOC_TOOLS_RECONCILE_CONFIRM, act.formatAmountAsCurrency(newBalance));
         }
-        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+        AlertDialog.Builder alt_bld = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         alt_bld.setCancelable(false).setMessage(titleString).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, id) -> TransactionsActivity.this.adjustBalanceToAmount(onlyCleared, newBalance)).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, id) -> dialog.cancel());
         alt_bld.create().show();
     }
@@ -463,9 +463,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             balance = act.balanceOfType(balanceType);
         }
         if (Enums.kBalanceTypeFiltered /*5*/ == this._filter.getType() || act == null || !act.balanceExceedsLimit()) {
-            this.balanceBar.balanceAmountTextView.setTextColor(-1);
+            this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         } else {
-            this.balanceBar.balanceAmountTextView.setTextColor(-65536);
+            this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.redLabelColor());
         }
         if (this._filter.getAccount() == null || this._filter.allAccounts()) {
             this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(balance));
@@ -480,14 +480,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
         }
         this.balanceBar.balanceTypeTextView.setText(label);
-        this.balanceBar.balanceTypeTextView.setTextColor(-1);
+        this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
     private void rollupAction() {
         if (!this.adapter.getElements().isEmpty()) {
-            AlertDialog.Builder alt_bld = new AlertDialog.Builder(this);
+            AlertDialog.Builder alt_bld = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
             alt_bld.setMessage(getString(R.string.kLOC_TOOLS_ROLLUP_ALERT, String.valueOf(this.adapter.getElements().size()))).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, id) -> {
-                AlertDialog.Builder alt_bld1 = new AlertDialog.Builder(TransactionsActivity.this.context);
+                AlertDialog.Builder alt_bld1 = new AlertDialog.Builder(TransactionsActivity.this.context, PocketMoneyThemes.dialogTheme());
                 alt_bld1.setMessage(Locales.kLOC_TOOLS_ROLLUP_CONFIRM).setCancelable(false).setTitle(Locales.kLOC_TOOLS_ROLLUP).setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, id2) -> {
                     TransactionDB.rollupTransactionsInFilter(TransactionsActivity.this.adapter.getElements(), TransactionsActivity.this._filter);
                     TransactionsActivity.this.reloadData();
@@ -645,7 +645,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void showFileTransfersDialog() {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_TOOLS_EMAILREGISTER, Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
                 .setItems(items, (dialog, item) -> {
                     switch (item) {
@@ -662,7 +662,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void showEmailTransfersDialog() {
         CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL)
                 .setItems(items3, (dialog, item) -> {
                     String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
@@ -720,7 +720,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void showLookupFileTransfersDialog() {
         CharSequence[] items4 = new CharSequence[]{"QIF", "TDF", "CSV"};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
                 .setItems(items4, (dialog, item) -> {
                     switch (item) {
@@ -746,7 +746,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void showSdExportDialog() {
         CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
-        new AlertDialog.Builder(this)
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
                 .setItems(items6, (dialog, item) -> {
                     switch (item) {
@@ -793,12 +793,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         } else {
             theDate = ((TransactionClass) this.adapter.getItem(firstPosition)).getDate();
         }
-        new DatePickerDialog(this, this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
+        new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
     @SuppressWarnings("unused")
     public void displayError(String msg) {
-        AlertDialog alert = new AlertDialog.Builder(this.context).create();
+        AlertDialog alert = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme()).create();
         alert.setTitle("Error");
         alert.setMessage(msg);
         alert.setCancelable(false);
@@ -928,7 +928,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         if (TransactionsActivity.this.progressDialog != null) {
                             TransactionsActivity.this.progressDialog.dismiss();
                         }
-                        AlertDialog alert = new AlertDialog.Builder(TransactionsActivity.this.context).create();
+                        AlertDialog alert = new AlertDialog.Builder(TransactionsActivity.this.context, PocketMoneyThemes.dialogTheme()).create();
                         alert.setTitle("Error");
                         alert.setMessage((String) msg.obj);
                         alert.setCancelable(false);

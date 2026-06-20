@@ -15,6 +15,8 @@ import androidx.preference.PreferenceManager;
 
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
+import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
@@ -158,11 +160,11 @@ public class Prefs {
     private static SharedPreferences sharedPrefs = null;
 
     public static void processDataBase(final Context context) {
-        Builder alt_bld = new Builder(context);
+        Builder alt_bld = new Builder(context, PocketMoneyThemes.dialogTheme());
         alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing")
                 .setCancelable(false)
                 .setPositiveButton("Import", (dialog, which) -> {
-                    Builder sub_bld = new Builder(context);
+                    Builder sub_bld = new Builder(context, PocketMoneyThemes.dialogTheme());
                     sub_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?")
                             .setCancelable(false)
                             .setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, id) -> Prefs.importDB(context))
@@ -277,7 +279,7 @@ public class Prefs {
     public static void setPref(String thePref, String newPref) {
         Editor editor = getSharedPrefs().edit();
         editor.putString(thePref, newPref);
-        editor.apply();
+        editor.commit(); // Use commit to ensure it's on disk before an app restart
     }
 
     public static void setPref(String thePref, int newPref) {

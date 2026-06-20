@@ -10,6 +10,7 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentEmailTransfers extends DialogFragment {
     private final int EMAIL_CSV = 2;
@@ -26,7 +27,7 @@ public class DialogFragmentEmailTransfers extends DialogFragment {
     @Override
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         CharSequence[] items3 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX", Locales.kLOC_TOOLS_BACKUPFILES};
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL);
         builder.setItems(items3, (dialog, item) -> {
             DialogEmailTransferListener activity = (DialogEmailTransferListener) getActivity();

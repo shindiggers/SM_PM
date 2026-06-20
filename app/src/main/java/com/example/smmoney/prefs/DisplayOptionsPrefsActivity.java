@@ -63,10 +63,15 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
         return (preference, newValue) -> {
-            preference.setSummary((String) newValue);
-            PocketMoneyThemes.refreshTheme();
+            String newTheme = (String) newValue;
+            preference.setSummary(newTheme);
+            
+            // Force immediate save and update the theme engine
+            Prefs.setPref(Prefs.THEME_COLOR, newTheme);
+            PocketMoneyThemes.setTheme(newTheme);
+
             DisplayOptionsPrefsActivity.this.runOnUiThread(() -> {
-                Builder alert = new Builder(DisplayOptionsPrefsActivity.this);
+                Builder alert = new Builder(DisplayOptionsPrefsActivity.this, PocketMoneyThemes.dialogTheme());
                 alert.setTitle(Locales.kLOC_GENERAL_RELAUNCH_APP);
                 alert.setMessage(Locales.kLOC_GENERAL_RELAUNCH_APP_THEME);
                 alert.setPositiveButton(Locales.kLOC_GENERAL_QUIT, (dialog, whichButton) -> {

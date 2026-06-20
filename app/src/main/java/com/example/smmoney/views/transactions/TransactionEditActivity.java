@@ -61,6 +61,7 @@ import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.NoteEditor;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -413,7 +414,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         Log.d(TAG, "onResume() called");
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_EDITTRANSACTION)) {
-            Builder alert = new Builder(this);
+            Builder alert = new Builder(this, PocketMoneyThemes.dialogTheme());
             alert.setMessage(Locales.kLOC_TIP_EDITTRANSACTION);
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_EDITTRANSACTION, true);
@@ -746,7 +747,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         } else if (this.transaction.transactionID == 0 || this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID <= 0 || !this.repeatingTransaction.isRepeating() || this.dateChanged != 0) {
             saveAction();
         } else {
-            Builder b = new Builder(this);
+            Builder b = new Builder(this, PocketMoneyThemes.dialogTheme());
             b.setTitle(Locales.kLOC_GENERAL_EDIT);
             b.setMessage(Locales.kLOC_EDIT_TRANSACTION_CHANGE_INFO);
             b.setPositiveButton(Locales.kLOC_EDIT_TRANSACTION_CHANGE_BOTH, (dialog, which) -> {
@@ -958,7 +959,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
             int modTransfer = useCanModifyChildTransferOfBasedOn(this.transaction, originalRecord);
             if (modTransfer == Enums.kModifyOtherEndOnly /*0*/) {
-                AlertDialog alert = new Builder(this).create();
+                AlertDialog alert = new Builder(this, PocketMoneyThemes.dialogTheme()).create();
                 alert.setMessage(Locales.kLOC_EDIT_TRANSACTION_EDITOTHEREND);
                 alert.setCancelable(false);
                 alert.setButton(-1, Locales.kLOC_GENERAL_OK, (dialog, id) -> dialog.dismiss());
@@ -1538,41 +1539,41 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     }
 
     private void showDeleteConfirmDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, item) -> dialog.dismiss()).setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, item) -> TransactionEditActivity.this.deleteConfirmed()).show();
     }
 
     private void showDuplicateDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(Locales.kLOC_DUPLICATE_TRANSACTION_TITLE)
                 .setNegativeButton(Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, (dialog, item) -> TransactionEditActivity.this.duplicateTransaction(false)).setPositiveButton(Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME, (dialog, item) -> TransactionEditActivity.this.duplicateTransaction(true)).show();
     }
 
     private void showFeeDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setMessage(Locales.kLOC_FEE_MISSING_ALERT)
                 .setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, item) -> dialog.dismiss()).show();
     }
 
     private void showTimePickerDialog() {
         GregorianCalendar theTime = this.transaction.getDate();
-        new TimePickerDialog(this, this.mTimeSetListener, theTime.get(Calendar.HOUR_OF_DAY), theTime.get(Calendar.MINUTE), DateFormat.is24HourFormat(this)).show();
+        new TimePickerDialog(this, PocketMoneyThemes.timePickerTheme(), this.mTimeSetListener, theTime.get(Calendar.HOUR_OF_DAY), theTime.get(Calendar.MINUTE), DateFormat.is24HourFormat(this)).show();
     }
 
     private void showNeedAccountDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setMessage(Locales.kLOC_EDIT_TRANSACTION_MISSINGACCOUNT)
                 .setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, item) -> dialog.dismiss()).show();
     }
 
     private void showNeedRepeatingDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.\n\nTap the calendar icon to the right of the Date to configure the repeating info for this transaction.")
                 .setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, item) -> dialog.dismiss()).show();
     }
 
     private void showCameraDialog() {
-        new Builder(this)
+        new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setMessage("Choose existing or take new")
                 .setPositiveButton("New", (dialog, item) -> {
                     try {
@@ -1710,13 +1711,13 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             TransactionEditActivity.this.dateChanged = Enums.DateChangeTypeUpdateRepeating /*2*/;
             return;
         }
-        Builder b = new Builder(TransactionEditActivity.this);
+        Builder b = new Builder(TransactionEditActivity.this, PocketMoneyThemes.dialogTheme());
         b.setTitle("Date");
         b.setMessage("Change the date of the transaction and repeating event, or change the date of this transaction only?");
         b.setPositiveButton("Both", (dialog, which) -> {
             TransactionEditActivity.this.getCells();
             if (!(TransactionEditActivity.this.repeatingTransaction.getTransaction() == null || (TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.repeatingTransaction.getTransaction().getDate()) && TransactionEditActivity.this.repeatingTransaction.repeatsOnDate(TransactionEditActivity.this.transaction.getDate())))) {
-                Builder b1 = new Builder(TransactionEditActivity.this);
+                Builder b1 = new Builder(TransactionEditActivity.this, PocketMoneyThemes.dialogTheme());
                 b1.setTitle("");
                 b1.setMessage("Please ensure that the start date selected follows the rules of the repeating transaction. If you are changing an existing repeating transaction you may have to update the repeating settings in the repeating edit screen.");
                 b1.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog1, which1) -> dialog1.dismiss());
