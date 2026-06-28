@@ -752,4 +752,7 @@
     <string name="permission_dialog_title">Photos, media and files permission</string>
     <string name="permissions_declined_permission_message"><![CDATA[We understand your privacy choice.<br><br>We can\'t send your data without this permission.<br><br>You can update your choice at any time in <b>App Settings -> Permissions</b>.<br><br>You can go there now and select <b>Permissions</b> to change your choice. If you\'re sure then confirm your previous choice]]></string>
     <string name="permissions_declined_permission_dialog_title">Permission declined</string>
+    <string name="error_invalid_date_range">End date cannot be before start date</string>
+    <string name="custom_date_range_title">Custom Date Range</string>
+    <string name="any_date">ANY DATE</string>
 </resources>

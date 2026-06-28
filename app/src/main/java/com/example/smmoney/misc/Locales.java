@@ -613,4 +613,6 @@ public class Locales {
     public static final String kLOC_VIEW_OPTIONS = SMMoney.getAppContext().getString(R.string.kLOC_VIEW_OPTIONS);
     public static final String kLOC_WEBBROWSER_PASSWORD = SMMoney.getAppContext().getString(R.string.kLOC_WEBBROWSER_PASSWORD);
     public static final String kLOC_WEEK_ORDINALS = SMMoney.getAppContext().getString(R.string.kLOC_WEEK_ORDINALS);
+    public static final String kLOC_CUSTOM_DATE_RANGE = SMMoney.getAppContext().getString(R.string.custom_date_range_title);
+    public static final String kLOC_ANY_DATE = SMMoney.getAppContext().getString(R.string.any_date);
 }
