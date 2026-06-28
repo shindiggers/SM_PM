@@ -269,6 +269,14 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         tView = findViewById(R.id.memo_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.memoEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        android.widget.ImageView iconView;
+        if ((iconView = findViewById(R.id.transtoto_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.category_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.class_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.amount_currency_button)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
         theViews.add((View) tView.getParent());
         int i = 0;
         for (View theView : theViews) {

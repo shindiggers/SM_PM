@@ -113,6 +113,8 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             i.putExtra("Filter", FiltersMainActivity.this.filter);
             filterEditLauncher.launch(i);
         });
+        ((android.widget.ImageView) findViewById(R.id.filtercurrentedit)).setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
+
         theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ArrayList<View> theViews = new ArrayList<>();
         TextView tView = findViewById(R.id.reset_filter_label);

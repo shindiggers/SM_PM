@@ -296,6 +296,10 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.accountAmountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.accountCurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theViews.add((View) tView.getParent());
+        
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        ((android.widget.ImageView) findViewById(R.id.imageView1)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
         this.currencyKeyboard = findViewById(R.id.keyboardView);
         this.currencyKeyboard.setEditText(this.foreignAmountEditText, this.onFocusChangedRunnableForeignAmount);
         this.currencyKeyboard.setEditText(this.exchangeRateEditText, this.onFocusChangedRunnableExchangeAmount);

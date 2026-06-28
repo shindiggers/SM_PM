@@ -203,6 +203,16 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.categoriesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.classesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
 
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        ((android.widget.ImageView) findViewById(R.id.transtype_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.accounts_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.dates_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.payees_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.ids_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.cleared_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.categories_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ((android.widget.ImageView) findViewById(R.id.classes_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
         int i = 0;
         for (View theView : theViews) {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());

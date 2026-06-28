@@ -162,11 +162,13 @@
                     android:text="@string/transaction_edit_the_account" />
 
                 <ImageButton
+                    android:id="@+id/account_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/content_description_open_account_pick_list" />
 
@@ -206,11 +208,13 @@
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
+                    android:id="@+id/payee_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/content_description_open_payee_pick_list" />
 
@@ -263,11 +267,13 @@
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
+                    android:id="@+id/category_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
 
@@ -338,7 +344,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue" />
 
@@ -384,11 +391,13 @@
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
+                    android:id="@+id/id_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_id_pick_list" />
 
@@ -470,11 +479,13 @@
                     android:textColorHint="@color/blue_theme_text_alt" />
 
                 <ImageButton
+                    android:id="@+id/class_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_class_pick_list" />
 

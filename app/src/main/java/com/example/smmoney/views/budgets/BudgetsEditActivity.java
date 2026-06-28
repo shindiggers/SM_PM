@@ -106,6 +106,12 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.budgetTypeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         ((TextView) aView.findViewById(R.id.budgettypelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        android.widget.ImageView iconView;
+        if ((iconView = findViewById(R.id.budget_type_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.period_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
         aView = this.outterView.findViewById(R.id.periodbutton);
         aView.setOnClickListener(v -> {
             BudgetsEditActivity.this.getCells();

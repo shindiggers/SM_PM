@@ -96,10 +96,12 @@
                     android:singleLine="true" />
 
                 <ImageButton
+                    android:id="@+id/budget_type_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_BUDGETS_TYPE" />
 
@@ -135,10 +137,12 @@
                     android:singleLine="true" />
 
                 <ImageButton
+                    android:id="@+id/period_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_BUDGETS_PERIOD" />
 

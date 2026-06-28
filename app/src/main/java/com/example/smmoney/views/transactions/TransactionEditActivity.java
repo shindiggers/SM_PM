@@ -513,7 +513,16 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.accountTextView = aView.findViewById(R.id.accounttextview);
         ((TextView) outterView.findViewById(R.id.account_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.accountTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        //Todo set PorterDuff color of dropdown arrow. Need to use its id (account_drop_down) and reference it from code here and then set poterduff in same was ay for repeatingIcon above. Same for all other dropdown arrows on each row of this activity view
+
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        ImageView iconView;
+        if ((iconView = outterView.findViewById(R.id.account_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = outterView.findViewById(R.id.payee_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = outterView.findViewById(R.id.category_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = outterView.findViewById(R.id.id_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = outterView.findViewById(R.id.class_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = outterView.findViewById(R.id.amount_currency_button)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+
         View cView = outterView.findViewById(R.id.categorybutton);
 
         cView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());

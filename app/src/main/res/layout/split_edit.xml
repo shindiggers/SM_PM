@@ -103,11 +103,13 @@
                     android:singleLine="true" />
 
                 <ImageButton
+                    android:id="@+id/transtoto_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_EDIT_TRANSACTION_TRANS_TO" />
 
@@ -145,11 +147,13 @@
                     android:singleLine="true" />
 
                 <ImageButton
+                    android:id="@+id/category_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_category_pick_list" />
 
@@ -198,7 +202,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE" />
 
@@ -241,11 +246,13 @@
                     android:singleLine="true" />
 
                 <ImageButton
+                    android:id="@+id/class_drop_down"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
-                    android:background="@drawable/ic_arrow_drop_down_circle"
+                    android:background="@null"
+                    android:src="@drawable/ic_arrow_drop_down_circle"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES" />
 

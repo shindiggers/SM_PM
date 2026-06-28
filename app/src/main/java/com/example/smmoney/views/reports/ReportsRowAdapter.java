@@ -78,6 +78,9 @@ class ReportsRowAdapter extends BaseAdapter {
             };
             ColorStateList colorStateList = new ColorStateList(states, colors);
             CompoundButtonCompat.setButtonTintList(holder.checked, colorStateList);
+            
+            ((android.widget.ImageView) convertView.findViewById(R.id.icon_image)).setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
+
             convertView.setTag(holder);
         } else {
             holder = (ReportsRowHolder) convertView.getTag();

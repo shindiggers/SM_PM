@@ -33,6 +33,7 @@ import com.example.smmoney.misc.NoteEditor;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
+import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
@@ -251,6 +252,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.keepTheChangeRoundToEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.notes.setTextColor(PocketMoneyThemes.primaryCellTextColor());
 
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        ImageView iconView;
+        if ((iconView = findViewById(R.id.type_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.icon_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.currency_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.ktc_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.notes_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+
         int i = 0;
         for (View theView : theViews) {
             (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
@@ -286,6 +295,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         }
         this.accountName.setText(this.account.getAccount());
         this.totalworth.setChecked(this.account.getTotalWorth());
+        CheckBoxTint.colorCheckBox(this.totalworth);
         this.type.setText(this.account.typeAsString());
         this.expires.setText(this.account.getExpirationDate());
         this.accountNumber.setText(this.account.getAccountNumber());

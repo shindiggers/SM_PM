@@ -68,6 +68,7 @@ class FilterRowAdapter extends BaseAdapter {
             this.delegate.registerForContextMenu(holder.theRow);
             holder.editImage = convertView.findViewById(R.id.filterroweditimage);
             holder.editImage.setOnClickListener(getEditClickListener());
+            holder.editImage.setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
             convertView.setTag(holder);
         } else {
             holder = (FilterRowHolder) convertView.getTag();

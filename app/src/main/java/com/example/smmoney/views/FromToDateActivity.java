@@ -71,8 +71,8 @@ public class FromToDateActivity extends PocketMoneyActivity {
         this.toDateButton.setBackgroundResource(rowBackground);
 
         // Tint the calendar icons to match theme
-        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.fromDateButton, android.content.res.ColorStateList.valueOf(themeActionColor));
-        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.toDateButton, android.content.res.ColorStateList.valueOf(themeActionColor));
+        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.fromDateButton, android.content.res.ColorStateList.valueOf(themeLabelColor));
+        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.toDateButton, android.content.res.ColorStateList.valueOf(themeLabelColor));
 
         // Helper Buttons
         fromToday.setTextColor(themeTextColor);
