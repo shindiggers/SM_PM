@@ -61,7 +61,8 @@ public class BudgetsHeaderHolder extends View {
         canvas.drawBitmap(collBarBitmap, (float) ((width - 20) - collBarBitmap.getWidth()), (float) ((height / 2) - (collBarBitmap.getHeight() / 2)), p);
         p.setTextAlign(Align.CENTER);
         int spSize = 14;
-        float scaledSizeInPixels = spSize * getResources().getDisplayMetrics().scaledDensity;
+        float scaledDensity = getResources().getConfiguration().fontScale * getResources().getDisplayMetrics().density;
+        float scaledSizeInPixels = spSize * scaledDensity;
         p.setTextSize(scaledSizeInPixels);
         p.setColor(ContextCompat.getColor(getContext(), R.color.black_theme_text));
         p.setTypeface(Typeface.SANS_SERIF);
@@ -86,8 +87,7 @@ public class BudgetsHeaderHolder extends View {
     }
 
     private double getDPFromPixels(double pixels) {
-        DisplayMetrics metrics = new DisplayMetrics();
-        ((WindowManager) this.context.getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(metrics);
+        DisplayMetrics metrics = getResources().getDisplayMetrics();
         return switch (metrics.densityDpi) {
             case 120 -> pixels * 0.75d;
             case 160, 320, 480, 560, 640 -> pixels * 2.0d;

@@ -176,7 +176,14 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         Bundle b = getIntent().getExtras();
         try {
             if (b != null) {
-                this.accountCurrency = Objects.requireNonNull(AccountDB.recordFor(((TransactionClass) Objects.requireNonNull(b.get("transaction"))).getAccount())).getCurrencyCode();
+                TransactionClass transaction;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    transaction = b.getSerializable("transaction", TransactionClass.class);
+                } else {
+                    //noinspection deprecation
+                    transaction = (TransactionClass) b.get("transaction");
+                }
+                this.accountCurrency = Objects.requireNonNull(AccountDB.recordFor(Objects.requireNonNull(transaction).getAccount())).getCurrencyCode();
             }
         } catch (NullPointerException e) {
             this.accountCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
@@ -184,7 +191,12 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         try {
             SplitsClass s = null;
             if (b != null) {
-                s = (SplitsClass) b.get("split");
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    s = b.getSerializable("split", SplitsClass.class);
+                } else {
+                    //noinspection deprecation
+                    s = (SplitsClass) b.get("split");
+                }
             }
             double xrate;
             if (s != null) {

@@ -102,7 +102,15 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.filter = extras.getSerializable("Filter", FilterClass.class);
+            } else {
+                //noinspection deprecation
+                this.filter = (FilterClass) extras.get("Filter");
+            }
+        }
         this.currentActivity = this;
         setContentView(R.layout.filter_edit);
         loadInfo();

@@ -191,7 +191,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             result -> {
                 if (result.getResultCode() == 1 && result.getData() != null) {
                     String currentAccount = this._filter.getAccount();
-                    this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        this._filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
+                    } else {
+                        //noinspection deprecation
+                        this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
+                    }
                     if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                         this._filter.setAccount(currentAccount);
                     }
@@ -222,7 +227,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "TransactionsActivity:DoNotDimScreen");
         this.context = this;
-        this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this._filter = Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter", FilterClass.class);
+        } else {
+            //noinspection deprecation
+            this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
+        }
         LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.transactions, null);
         setupView(layout);
         setContentView(layout);
@@ -821,13 +831,27 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, TransactionEditActivity.class);
                 if (b != null) {
-                    anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
+                    TransactionClass transaction;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        transaction = b.getSerializable("Transaction", TransactionClass.class);
+                    } else {
+                        //noinspection deprecation
+                        transaction = (TransactionClass) b.get("Transaction");
+                    }
+                    anIntent.putExtra("Transaction", transaction);
                 }
                 editLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {
-                    ((TransactionClass) Objects.requireNonNull(b.get("Transaction"))).transactionDelete();
+                    TransactionClass transaction;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        transaction = b.getSerializable("Transaction", TransactionClass.class);
+                    } else {
+                        //noinspection deprecation
+                        transaction = (TransactionClass) b.get("Transaction");
+                    }
+                    if (transaction != null) transaction.transactionDelete();
                 }
                 reloadData();
                 reloadBalanceBar();

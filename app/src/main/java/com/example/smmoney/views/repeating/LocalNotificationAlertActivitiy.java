@@ -77,7 +77,12 @@ public class LocalNotificationAlertActivitiy extends Activity {
         setTheme(R.style.MyTheme); //MyTheme used as placeholder. Work on it for final
         Bundle extras = getIntent().getExtras();
         this.repeatingTransaction = new RepeatingTransactionClass(extras.getInt("repeatingID"));
-        this.date = (GregorianCalendar) extras.get("date");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this.date = (GregorianCalendar) extras.getSerializable("date", GregorianCalendar.class);
+        } else {
+            //noinspection deprecation
+            this.date = (GregorianCalendar) extras.get("date");
+        }
         String amount = extras.getString("amount");
         String body = extras.getString("body");
         Builder builder = new Builder(this.context, PocketMoneyThemes.dialogTheme());

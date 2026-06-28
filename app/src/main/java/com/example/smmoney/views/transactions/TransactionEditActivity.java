@@ -21,6 +21,7 @@ import android.os.Looper;
 import android.os.Message;
 import android.text.Editable;
 import android.text.Html;
+import android.text.Spanned;
 import android.text.format.DateFormat;
 import android.text.method.KeyListener;
 import android.util.Log;
@@ -186,7 +187,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     });
     private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
-            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.transaction = result.getData().getSerializableExtra("Transaction", TransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            }
             if (this.transaction != null) {
                 this.transaction.hydrated = true;
                 this.transaction.dirty = true;
@@ -197,11 +203,21 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     });
     private final ActivityResultLauncher<Intent> repeatingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
-            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.transaction = result.getData().getSerializableExtra("Transaction", TransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
+            }
             this.transaction.hydrated = true;
             this.transaction.dirty = true;
             this.repeatingTransaction = null;
-            this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.repeatingTransaction = result.getData().getSerializableExtra("RepeatingTransaction", RepeatingTransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
+            }
             this.repeatingTransaction.getTransaction().hydrated = false;
             getCells();
         }
@@ -361,7 +377,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             Log.d(TAG, "onCreate: this.posting = true");
             this.posting = true;
             this.isLocalNotification = extras.getBoolean("localNotification");
-            this.repeatingTransaction = (RepeatingTransactionClass) extras.get("repeatingTransaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.repeatingTransaction = extras.getSerializable("repeatingTransaction", RepeatingTransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.repeatingTransaction = (RepeatingTransactionClass) extras.get("repeatingTransaction");
+            }
             if (this.repeatingTransaction != null) {
                 this.repeatingTransaction.hydrated = false;
                 this.repeatingTransaction.hydratedTransaction = false;
@@ -383,7 +404,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             handleIReceipt(data);
             this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         } else if (extras != null && extras.containsKey("Transaction")) {
-            this.transaction = (TransactionClass) extras.get("Transaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.transaction = extras.getSerializable("Transaction", TransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.transaction = (TransactionClass) extras.get("Transaction");
+            }
             if (this.transaction != null) {
                 this.transaction.hydrated = true;
                 this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
@@ -802,7 +828,14 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         emailIntent.setType("text/html");
         emailIntent.putExtra("android.intent.extra.EMAIL", emails);
         emailIntent.putExtra("android.intent.extra.SUBJECT", Locales.kLOC_EMAILPARTNEROPTIONS_EMAILSUBJECT);
-        emailIntent.putExtra("android.intent.extra.TEXT", Html.fromHtml(sb.toString()));
+        android.text.Spanned body;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+            body = android.text.Html.fromHtml(sb.toString(), android.text.Html.FROM_HTML_MODE_LEGACY);
+        } else {
+            //noinspection deprecation
+            body = android.text.Html.fromHtml(sb.toString());
+        }
+        emailIntent.putExtra("android.intent.extra.TEXT", body);
         try {
             startActivity(emailIntent);
         } catch (ActivityNotFoundException e) {

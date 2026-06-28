@@ -39,7 +39,13 @@ public class SplitsActivity extends PocketMoneyActivity {
             result -> {
                 if (result.getResultCode() == RESULT_CHANGED && result.getData() != null) {
                     Intent data = result.getData();
-                    SplitsClass split = (SplitsClass) data.getExtras().get("Split");
+                    SplitsClass split;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        split = data.getSerializableExtra("Split", SplitsClass.class);
+                    } else {
+                        //noinspection deprecation
+                        split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
+                    }
                     int index = data.getIntExtra("SplitIndex", -1);
                     if (index != -1) {
                         this.transaction.getSplits().remove(index);
@@ -79,7 +85,12 @@ public class SplitsActivity extends PocketMoneyActivity {
         this.context = this;
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
-            this.transaction = (TransactionClass) intent.getExtras().get("Transaction");
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                this.transaction = intent.getSerializableExtra("Transaction", TransactionClass.class);
+            } else {
+                //noinspection deprecation
+                this.transaction = (TransactionClass) intent.getExtras().get("Transaction");
+            }
             if (this.transaction != null) {
                 this.transaction.hydrated = true;
                 this.transaction.dirty = true;
@@ -288,11 +299,22 @@ public class SplitsActivity extends PocketMoneyActivity {
         switch (item.getItemId()) {
             case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, SplitsEditActivity.class);
-                anIntent.putExtra("Transaction", (TransactionClass) Objects.requireNonNull(b).get("Transaction"));
-                anIntent.putExtra("Split", (SplitsClass) b.get("Split"));
+                TransactionClass trans;
+                SplitsClass split;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    trans = Objects.requireNonNull(b).getSerializable("Transaction", TransactionClass.class);
+                    split = b.getSerializable("Split", SplitsClass.class);
+                } else {
+                    //noinspection deprecation
+                    trans = (TransactionClass) Objects.requireNonNull(b).get("Transaction");
+                    //noinspection deprecation
+                    split = (SplitsClass) b.get("Split");
+                }
+                anIntent.putExtra("Transaction", trans);
+                anIntent.putExtra("Split", split);
                 // Add the index so we know which one to replace in the launcher callback
                 int index = -1;
-                SplitsClass target = (SplitsClass) b.get("Split");
+                SplitsClass target = split;
                 for (int i = 0; i < this.transaction.getSplits().size(); i++) {
                     if (this.transaction.getSplits().get(i).getAmount() == target.getAmount() &&
                             Objects.equals(this.transaction.getSplits().get(i).getCategory(), target.getCategory())) {
@@ -304,7 +326,14 @@ public class SplitsActivity extends PocketMoneyActivity {
                 editSplitLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
-                this.transaction.deleteSplitAtIndex(this.transaction.getSplits().indexOf(Objects.requireNonNull(b).get("Split")));
+                SplitsClass targetDelete;
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    targetDelete = Objects.requireNonNull(b).getSerializable("Split", SplitsClass.class);
+                } else {
+                    //noinspection deprecation
+                    targetDelete = (SplitsClass) b.get("Split");
+                }
+                this.transaction.deleteSplitAtIndex(this.transaction.getSplits().indexOf(targetDelete));
                 setTransactionAsResult();
                 reloadData();
                 return true;

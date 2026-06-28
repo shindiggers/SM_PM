@@ -295,14 +295,26 @@ public class RepeatingActivity extends PocketMoneyActivity {
             case CMENU_EDIT /*1*/:
                 Intent anIntent = new Intent(this, TransactionEditActivity.class);
                 if (b != null) {
-                    anIntent.putExtra("Transaction", (TransactionClass) b.get("Transaction"));
+                    TransactionClass transaction;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        transaction = b.getSerializable("Transaction", TransactionClass.class);
+                    } else {
+                        //noinspection deprecation
+                        transaction = (TransactionClass) b.get("Transaction");
+                    }
+                    anIntent.putExtra("Transaction", transaction);
                 }
                 editLauncher.launch(anIntent);
                 return true;
             case CMENU_DELETE /*3*/:
                 TransactionClass transaction = null;
                 if (b != null) {
-                    transaction = (TransactionClass) b.get("Transaction");
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        transaction = b.getSerializable("Transaction", TransactionClass.class);
+                    } else {
+                        //noinspection deprecation
+                        transaction = (TransactionClass) b.get("Transaction");
+                    }
                 }
                 if (transaction != null) {
                     new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();

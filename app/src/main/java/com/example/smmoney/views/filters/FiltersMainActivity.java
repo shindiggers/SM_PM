@@ -186,13 +186,27 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             case CMENU_EDIT /*1*/:
                 Intent intent = new Intent(this.context, FilterEditActivity.class);
                 if (b != null) {
-                    intent.putExtra("Filter", (FilterClass) b.get("Filter"));
+                    FilterClass filter;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        filter = b.getSerializable("Filter", FilterClass.class);
+                    } else {
+                        //noinspection deprecation
+                        filter = (FilterClass) b.get("Filter");
+                    }
+                    intent.putExtra("Filter", filter);
                 }
                 filterEditLauncher.launch(intent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {
-                    ((FilterClass) Objects.requireNonNull(b.get("Filter"))).deleteFromDatabase();
+                    FilterClass filter;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        filter = b.getSerializable("Filter", FilterClass.class);
+                    } else {
+                        //noinspection deprecation
+                        filter = (FilterClass) b.get("Filter");
+                    }
+                    if (filter != null) filter.deleteFromDatabase();
                 }
                 this.theAdapter.reloadData();
                 return true;

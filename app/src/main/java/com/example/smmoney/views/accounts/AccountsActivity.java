@@ -218,7 +218,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
             result -> {
                 if (result.getResultCode() == ACCOUNT_REQUEST_FILTER && result.getData() != null) {
                     Intent i = new Intent(this, TransactionsActivity.class);
-                    i.putExtra("Filter", (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter"));
+                    FilterClass filter;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
+                    } else {
+                        //noinspection deprecation
+                        filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
+                    }
+                    i.putExtra("Filter", filter);
                     startActivity(i);
                 }
             }
@@ -881,7 +888,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
             if (!AccountsActivity.this.progUpdate) {
                 Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
                 budgetLauncher.launch(intent);
-                AccountsActivity.this.overridePendingTransition(0, 0);
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                    AccountsActivity.this.overrideActivityTransition(android.app.Activity.OVERRIDE_TRANSITION_OPEN, 0, 0);
+                } else {
+                    //noinspection deprecation
+                    AccountsActivity.this.overridePendingTransition(0, 0);
+                }
                 AccountsActivity.this.progUpdate = true;
                 AccountsActivity.this.accountRadioButton.setChecked(true);
                 AccountsActivity.this.progUpdate = false;
@@ -1414,13 +1426,27 @@ public class AccountsActivity extends PocketMoneyActivity implements
             case CMENU_EDIT /*1*/:
                 Intent it = new Intent(this, AccountsEditActivity.class);
                 if (b != null) {
-                    it.putExtra("Account", (AccountClass) b.get("Account"));
+                    AccountClass account;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        account = b.getSerializable("Account", AccountClass.class);
+                    } else {
+                        //noinspection deprecation
+                        account = (AccountClass) b.get("Account");
+                    }
+                    it.putExtra("Account", account);
                 }
                 startActivity(it);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {
-                    deleteAccount((AccountClass) b.get("Account"));
+                    AccountClass account;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        account = b.getSerializable("Account", AccountClass.class);
+                    } else {
+                        //noinspection deprecation
+                        account = (AccountClass) b.get("Account");
+                    }
+                    deleteAccount(account);
                 }
                 return true;
             default:
@@ -1637,7 +1663,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
         } else {
             // permission denied. Disable the functionality that depends on this permission.
-            showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), Html.fromHtml(getString(R.string.permissions_declined_permission_message)));
+            Spanned message;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                message = Html.fromHtml(getString(R.string.permissions_declined_permission_message), Html.FROM_HTML_MODE_LEGACY);
+            } else {
+                //noinspection deprecation
+                message = Html.fromHtml(getString(R.string.permissions_declined_permission_message));
+            }
+            showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), message);
         }
     }
 

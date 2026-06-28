@@ -227,6 +227,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.category = getIntent().getSerializableExtra("Category", CategoryClass.class);
         } else {
+            //noinspection deprecation
             this.category = (CategoryClass) getIntent().getSerializableExtra("Category");
         }
         this.oldCategory = this.category.getCategory();
@@ -453,8 +454,15 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         if (item.getItemId() == CMENU_DELETE) { /*1*/
-            this.categoryBudgetItems.remove(b.get("BudgetItem"));
-            this.deletedCategoryBudgetItems.add((CategoryBudgetClass) b.get("BudgetItem"));
+            CategoryBudgetClass budgetItem;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                budgetItem = b.getSerializable("BudgetItem", CategoryBudgetClass.class);
+            } else {
+                //noinspection deprecation
+                budgetItem = (CategoryBudgetClass) b.get("BudgetItem");
+            }
+            this.categoryBudgetItems.remove(budgetItem);
+            this.deletedCategoryBudgetItems.add(budgetItem);
             reloadData();
             return true;
         }

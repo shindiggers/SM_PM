@@ -1,5 +1,6 @@
 package com.example.smmoney.views.budgets;
 
+import android.app.Activity;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
@@ -161,7 +162,12 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         RadioGroup rg = layout.findViewById(R.id.radiogroup);
         rg.setOnCheckedChangeListener((group, checkedId) -> {
             BudgetsActivity.this.finish();
-            BudgetsActivity.this.overridePendingTransition(0, 0);
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                BudgetsActivity.this.overrideActivityTransition(android.app.Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0);
+            } else {
+                //noinspection deprecation
+                BudgetsActivity.this.overridePendingTransition(0, 0);
+            }
         });
         ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
@@ -336,14 +342,28 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             case CMENU_EDIT /*1*/ -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 if (b != null) {
-                    anIntent.putExtra("Category", (CategoryClass) b.get("Category"));
+                    CategoryClass category;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        category = b.getSerializable("Category", CategoryClass.class);
+                    } else {
+                        //noinspection deprecation
+                        category = (CategoryClass) b.get("Category");
+                    }
+                    anIntent.putExtra("Category", category);
                 }
                 editLauncher.launch(anIntent);
                 return true;
             }
             case CMENU_DELETE /*3*/ -> {
                 if (b != null) {
-                    deleteBudget((CategoryClass) b.get("Category"));
+                    CategoryClass category;
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                        category = b.getSerializable("Category", CategoryClass.class);
+                    } else {
+                        //noinspection deprecation
+                        category = (CategoryClass) b.get("Category");
+                    }
+                    deleteBudget(category);
                 }
                 reloadData();
                 return true;

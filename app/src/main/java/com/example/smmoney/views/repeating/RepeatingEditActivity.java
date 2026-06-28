@@ -109,7 +109,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             this.repeatingTransaction = getIntent().getSerializableExtra("RepeatingTransaction", RepeatingTransactionClass.class);
             this.transaction = getIntent().getSerializableExtra("Transaction", TransactionClass.class);
         } else {
+            //noinspection deprecation
             this.repeatingTransaction = (RepeatingTransactionClass) getIntent().getSerializableExtra("RepeatingTransaction");
+            //noinspection deprecation
             this.transaction = (TransactionClass) getIntent().getSerializableExtra("Transaction");
         }
         this.repeatingTransaction.hydrate();

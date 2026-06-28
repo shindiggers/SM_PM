@@ -112,6 +112,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.account = getIntent().getSerializableExtra("Account", AccountClass.class);
         } else {
+            //noinspection deprecation
             this.account = (AccountClass) getIntent().getSerializableExtra("Account");
         }
         loadInfo();

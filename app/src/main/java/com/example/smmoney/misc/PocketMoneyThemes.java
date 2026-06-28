@@ -308,17 +308,44 @@ public class PocketMoneyThemes {
 
     public static int balanceBarBackgroundColor() {
         return switch (getTheme()) {
-            case kThemeBlack, kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby, kThemeWhite -> getColor(R.color.black);
+            case kThemeBlack -> getColor(R.color.black);
+            case kThemeBlue -> getColor(R.color.black);
+            case kThemeGreen -> getColor(R.color.black);
+            case kThemePurple -> getColor(R.color.black);
+            case kThemeGray -> getColor(R.color.black);
+            case kThemeCoffee -> getColor(R.color.black);
+            case kThemeRuby -> getColor(R.color.black);
+            case kThemeWhite -> getColor(R.color.black);
             default -> getColor(R.color.black);
         };
     }
 
     public static int balanceBarArrowColor() {
-        return getColor(R.color.black_theme_text);
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_text);
+            case kThemeBlue -> getColor(R.color.black_theme_text);
+            case kThemeGreen -> getColor(R.color.black_theme_text);
+            case kThemePurple -> getColor(R.color.black_theme_text);
+            case kThemeGray -> getColor(R.color.black_theme_text);
+            case kThemeCoffee -> getColor(R.color.black_theme_text);
+            case kThemeRuby -> getColor(R.color.black_theme_text);
+            case kThemeWhite -> getColor(R.color.black_theme_text);
+            default -> getColor(R.color.black_theme_text);
+        };
     }
 
     public static int balanceBarTextViewColor() {
-        return getColor(R.color.black_theme_text);
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_text);
+            case kThemeBlue -> getColor(R.color.black_theme_text);
+            case kThemeGreen -> getColor(R.color.black_theme_text);
+            case kThemePurple -> getColor(R.color.black_theme_text);
+            case kThemeGray -> getColor(R.color.black_theme_text);
+            case kThemeCoffee -> getColor(R.color.black_theme_text);
+            case kThemeRuby -> getColor(R.color.black_theme_text);
+            case kThemeWhite -> getColor(R.color.black_theme_text);
+            default -> getColor(R.color.black_theme_text);
+        };
     }
 
     public static int chkBoxColorChecked() {
