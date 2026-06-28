@@ -215,7 +215,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
         int i = 0;
         for (View theView : theViews) {
-            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
             i++;
         }
     }

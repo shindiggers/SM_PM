@@ -306,7 +306,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.currencyKeyboard.setEditText(this.accountAmountEditText, this.onFocusChangedRunnableAccountAmount);
         int i = 0;
         for (View theView : theViews) {
-            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
             i++;
         }
         if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {

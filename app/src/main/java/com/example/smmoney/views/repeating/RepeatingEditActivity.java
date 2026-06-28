@@ -273,7 +273,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.suffixTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         int i = 0;
         for (View view : theViews) {
-            (view).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+            view.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
             i++;
         }
     }

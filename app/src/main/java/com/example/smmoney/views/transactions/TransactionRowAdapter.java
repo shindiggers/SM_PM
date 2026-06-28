@@ -84,9 +84,9 @@ class TransactionRowAdapter extends BaseAdapter {
             holder = (TransactionRowHolder) convertView.getTag();
         }
         if (position % 2 == 0) {
-            convertView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
-        } else {
             convertView.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
+        } else {
+            convertView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         }
         holder.setTransaction(transaction, this.mContext);
         return convertView;

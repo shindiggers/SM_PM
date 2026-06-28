@@ -44,8 +44,8 @@
     <color name="theme_green_bar_color">#ff4d9c26</color>
     <color name="theme_red_bar_color">#ffca1414</color>
 
-    <color name="black_theme_primary_row_color">#E6121212</color>
-    <color name="black_theme_alternating_row_color">#ff333333</color>
+    <color name="black_theme_primary_row_color">#454040</color>
+    <color name="black_theme_alternating_row_color">#333333</color>
     <color name="black_theme_tint_color">#ffb8b8b8</color>
     <color name="black_theme_background_color">#000000</color>
     <color name="black_theme_dialog_background_color">#212121</color>

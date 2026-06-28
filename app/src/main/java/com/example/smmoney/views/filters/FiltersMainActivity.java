@@ -129,10 +129,10 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         View separatorView = findViewById(R.id.filter_separator);
         separatorView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         //theViews.add((View) separatorView);
-        int i = 1;
+        int i = 0;
         for (View theView : theViews) {
-            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
-            i += 1;
+            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
+            i++;
         }
     }
 

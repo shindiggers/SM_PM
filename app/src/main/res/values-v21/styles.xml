@@ -93,9 +93,13 @@
         <item name="preferenceTheme">@style/PreferenceTheme</item>
     </style>
 
+    <style name="PreferenceTheme.Black" parent="PreferenceTheme">
+        <item name="android:background">@color/black_theme_background_color</item>
+    </style>
+
     <style name="MyTheme.Black" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/black_theme_background_color</item>
-        <item name="android:background">@color/black_theme_dialog_background_color</item>
+        <item name="android:background">@color/black_theme_background_color</item>
         <item name="android:textColorPrimary">@color/black_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/black_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
@@ -106,7 +110,7 @@
         <item name="textColorAlertDialogListItem">@color/black_theme_text</item>
         <item name="dialogTheme">@style/DialogTheme.Black</item>
         <item name="alertDialogTheme">@style/DialogTheme.Black</item>
-        <item name="preferenceTheme">@style/PreferenceTheme</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Black</item>
         <item name="colorAccent">@color/black_theme_text</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Black</item>
     </style>

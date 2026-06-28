@@ -235,9 +235,9 @@ class AccountRowAdapter extends BaseAdapter {
             holder = (AccountRowHolder) convertView.getTag();
         }
         if (position % 2 == 0) {
-            holder.therow.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
-        } else {
             holder.therow.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
+        } else {
+            holder.therow.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         }
         holder.setAccount((AccountClass) obj, this.mContext);
         if (this.textSize == 0.0f) {

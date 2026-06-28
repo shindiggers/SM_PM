@@ -718,7 +718,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         ((TextView) outterView.findViewById(R.id.memo_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         int i = 0;
         for (View view : theViews) {
-            view.setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
+            view.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
             i++;
         }
         for (i = 1; i < selectableViews.size(); i++) {
