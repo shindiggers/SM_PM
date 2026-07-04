@@ -180,40 +180,54 @@ public class Prefs {
     }
 
     public static void importDB(Context c) {
-        File dbBackupFile = new File(Environment.getExternalStorageDirectory().getAbsolutePath() + "/PocketMoneyBackup/SMMoneyDB.sql");
+        File dbBackupFile = new File(SMMoney.getExternalPocketMoneyDirectory(), "SMMoneyDB.sql");
         if (!dbBackupFile.exists()) {
             Log.w(SMMoney.TAG, "Database backup file does not exist, cannot import.");
+            return;
         } else if (!dbBackupFile.canRead()) {
             Log.w(SMMoney.TAG, "Database backup file exists, but is not readable, cannot import.");
+            return;
         }
-        File dbFile = new File(Environment.getDataDirectory() + "/data/" + c.getPackageName() + "/databases/SMMoneyDB.sql");
+        File dbFile = c.getDatabasePath("SMMoneyDB.sql");
         if (dbFile.exists()) {
             dbFile.delete();
         }
         try {
+            if (dbFile.getParentFile() != null && !dbFile.getParentFile().exists()) {
+                dbFile.getParentFile().mkdirs();
+            }
             dbFile.createNewFile();
             copyFile(dbBackupFile, dbFile);
+            Toast.makeText(c, "Import Successful", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
-            Log.e("com.catamount.com", e.getMessage(), e);
+            Log.e(SMMoney.TAG, e.getMessage(), e);
+            Toast.makeText(c, "Import Failed", Toast.LENGTH_LONG).show();
         }
     }
 
-    public static void exportDB(Context c) {
-        File dbFile = new File(Environment.getDataDirectory() + "/data/" + c.getPackageName() + "/databases/SMMoneyDB.sql");
+    public static File exportDB(Context c) {
+        File dbFile = c.getDatabasePath("SMMoneyDB.sql");
         if (SMMoney.IsExternalStorageWritable()) {
-            //File exportDir = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), "PocketMoneyBackup");
-            File exportDir = new File(Environment.getExternalStorageDirectory(), "PocketMoneyBackup");
-            exportDir.mkdirs();
+            File exportDir = new File(SMMoney.getExternalPocketMoneyDirectory());
+            if (!exportDir.exists()) {
+                exportDir.mkdirs();
+            }
             File file = new File(exportDir, dbFile.getName());
             try {
+                if (file.exists()) {
+                    file.delete();
+                }
                 file.createNewFile();
                 copyFile(dbFile, file);
                 Toast.makeText(c, "Backup Successful", Toast.LENGTH_LONG).show();
+                return file;
             } catch (IOException e) {
                 Log.e(SMMoney.TAG, e.getMessage(), e);
                 Toast.makeText(c, "Failed to copy backup file", Toast.LENGTH_LONG).show();
+                return null;
             }
         }
+        return null;
     }
 
     public static void copyFile(File src, File dst) throws IOException {

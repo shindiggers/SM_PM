@@ -101,7 +101,7 @@ public class SMMoney extends Application {
             }
             return ret;
         } catch (Exception e2) {
-            return new String[]{Environment.getExternalStorageDirectory().getAbsolutePath()};
+            return new String[]{Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()};
         }
     }
 
