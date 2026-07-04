@@ -111,6 +111,52 @@ public class TransactionDB {
         return TimeZone.getDefault().getOffset(0) / 1000;
     }
 
+    private static String getInClauseForAccounts(String accounts) {
+        if (accounts == null || accounts.isEmpty()) return "";
+        if (!accounts.contains(";")) return " t.accountID=" + AccountClass.idForAccount(accounts);
+        
+        String[] names = accounts.split(";");
+        StringBuilder sb = new StringBuilder();
+        for (String name : names) {
+            int id = AccountClass.idForAccount(name);
+            if (id != 0) {
+                if (sb.length() > 0) sb.append(",");
+                sb.append(id);
+            }
+        }
+        return sb.length() > 0 ? " t.accountID IN (" + sb.toString() + ")" : "";
+    }
+
+    private static String getInClause(String field, String values, String unfiledLabel) {
+        if (values == null || values.isEmpty()) return "";
+        String[] parts = values.split(";");
+        StringBuilder sb = new StringBuilder();
+        boolean hasUnfiled = false;
+        for (String part : parts) {
+            if (unfiledLabel != null && part.equals(unfiledLabel)) {
+                hasUnfiled = true;
+                continue;
+            }
+            if (sb.length() > 0) sb.append(",");
+            sb.append(Database.SQLFormat(part));
+        }
+        
+        String inClause = "";
+        if (sb.length() > 0) {
+            inClause = field + " IN (" + sb.toString() + ")";
+        }
+        
+        if (hasUnfiled) {
+            String unfiledCondition = "(" + field + " = '' OR " + field + " IS NULL)";
+            if (!inClause.isEmpty()) {
+                return "(" + inClause + " OR " + unfiledCondition + ")";
+            } else {
+                return unfiledCondition;
+            }
+        }
+        return inClause;
+    }
+
     private static String queryWithFilterWhereClause(FilterClass filter) {
         String where = "deleted=0";
         int type = filter.getType();
@@ -124,7 +170,10 @@ public class TransactionDB {
             where = where.concat(" AND t.type = " + type);
         }
         if (!filter.allAccounts()) {
-            where = where.concat(" AND t.accountID=" + AccountClass.idForAccount(filter.getAccount()));
+            String inClause = getInClauseForAccounts(filter.getAccount());
+            if (!inClause.isEmpty()) {
+                where = where.concat(" AND " + inClause);
+            }
         } else if (Enums.kViewAccountsTotalWorth/*2*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             where = where.concat(" AND t.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1)");
         } else if (Enums.kViewAccountsNonZero/*1*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
@@ -157,7 +206,10 @@ public class TransactionDB {
             }
         }
         if (!filter.getPayee().isEmpty()) {
-            where = where.concat(" AND t.payee LIKE " + Database.SQLFormat(filter.getPayee() + "%"));
+            String inClause = getInClause("t.payee", filter.getPayee(), null);
+            if (!inClause.isEmpty()) {
+                where = where.concat(" AND " + inClause);
+            }
         }
         if (!filter.getCheckNumber().isEmpty()) {
             where = where.concat(" AND t.checkNumber LIKE " + Database.SQLFormat(filter.getCheckNumber()));
@@ -168,19 +220,19 @@ public class TransactionDB {
             where = where.concat(" AND t.cleared = 0");
         }
         if (!filter.getCategory().isEmpty() && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
-            if (filter.getCategory().equals(Locales.kLOC_FILTERS_UNFILED)) {
-                where = where.concat(" AND s.categoryID = ''");
-            } else {
-                where = where.concat(" AND s.categoryID LIKE " + Database.SQLFormat(filter.getCategory()));
+            String inClause = getInClause("s.categoryID", filter.getCategory(), Locales.kLOC_FILTERS_UNFILED);
+            if (!inClause.isEmpty()) {
+                where = where.concat(" AND " + inClause);
             }
         }
         if (filter.getClassName().length() <= 0 || filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
             return where;
         }
-        if (filter.getClassName().equals(Locales.kLOC_FILTERS_UNFILED)) {
-            return where.concat(" AND (s.classID = '' OR s.classID ISNULL)");
+        String inClause = getInClause("s.classID", filter.getClassName(), Locales.kLOC_FILTERS_UNFILED);
+        if (!inClause.isEmpty()) {
+            where = where.concat(" AND " + inClause);
         }
-        return where.concat(" AND s.classID LIKE " + Database.SQLFormat(filter.getClassName()));
+        return where;
     }
 
     private static String queryWithFilterSpotlightClause(String spotlight) {

@@ -386,17 +386,12 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public void setAccount(String aString) {
-        if (this.account != null || aString != null) {
-            if (this.account == null || !this.account.equals(aString)) {
-                if (this.account == null) {
-                    this.account = "";
-                } else {
-                    this.account = aString;
-                }
-                this.dirty = true;
-                if (this.account == null || this.account.isEmpty() || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
-                    this.customFilter = true;
-                }
+        if (aString == null) aString = "";
+        if (!this.account.equals(aString)) {
+            this.account = aString;
+            this.dirty = true;
+            if (this.account.isEmpty() || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+                this.customFilter = true;
             }
         }
     }
@@ -548,11 +543,20 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 setDateFrom(dateFromInternalDate((double) dateFrom));
                 setDateTo(dateFromInternalDate((double) dateTo));
                 col = col2 + 1;
-                int accountID = curs.getInt(col2);
-                if (accountID == -2) {
-                    setAccount(Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
+                String accountVal = curs.getString(col2);
+                if (accountVal != null && !accountVal.isEmpty()) {
+                    try {
+                        int acctID = Integer.parseInt(accountVal);
+                        if (acctID == -2) {
+                            setAccount(Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
+                        } else {
+                            setAccount(AccountClass.accountForID(acctID));
+                        }
+                    } catch (NumberFormatException e) {
+                        setAccount(accountVal); // Multi-select string
+                    }
                 } else {
-                    setAccount(AccountClass.accountForID(accountID));
+                    setAccount("");
                 }
                 col2 = col + 1;
                 str = curs.getString(col);
@@ -678,11 +682,15 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             content.put("type", this.type);
             content.put("dateFrom", internalDateAsDateUsingFromDate(true));
             content.put("dateTo", internalDateAsDateUsingFromDate(false));
-            int acctID = AccountClass.idForAccount(this.account);
-            if (this.account.equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
-                acctID = -2;
+            if (this.account.contains(";") || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+                content.put("accountID", this.account);
+            } else {
+                int acctID = AccountClass.idForAccount(this.account);
+                if (this.account.equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+                    acctID = -2;
+                }
+                content.put("accountID", acctID);
             }
-            content.put("accountID", acctID);
             content.put("categoryID", this.category);
             content.put("payee", this.payee);
             content.put("checkNumber", this.checkNumber);
@@ -808,18 +816,53 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     @SuppressWarnings("unused")
     public boolean validTransaction(TransactionClass transaction) {
-        if (getAccount().compareToIgnoreCase(transaction.getAccount()) != 0) {
-            return false;
+        if (!allAccounts()) {
+            boolean match = false;
+            String[] accts = getAccount().split(";");
+            for (String a : accts) {
+                if (a.equalsIgnoreCase(transaction.getAccount())) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) return false;
         }
         if (getCleared() != 2) {
             if ((this.cleared == 1) != transaction.getCleared()) {
                 return false;
             }
         }
-        if (!getPayee().isEmpty() && this.payee.compareToIgnoreCase(transaction.getPayee()) != 0) {
-            return false;
+        if (!getPayee().isEmpty()) {
+            boolean match = false;
+            String[] payees = getPayee().split(";");
+            for (String p : payees) {
+                if (p.equalsIgnoreCase(transaction.getPayee())) {
+                    match = true;
+                    break;
+                }
+            }
+            if (!match) return false;
         }
-        return getCategory().length() <= 0 || this.category.compareToIgnoreCase(transaction.getCategory()) == 0;
+        if (!getCategory().isEmpty() && !getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+            if (getCategory().equals(Locales.kLOC_FILTERS_UNFILED)) {
+                if (transaction.getCategory() != null && !transaction.getCategory().isEmpty()) return false;
+            } else {
+                boolean match = false;
+                String[] cats = getCategory().split(";");
+                for (String c : cats) {
+                    if (c.equals(Locales.kLOC_FILTERS_UNFILED)) {
+                         if (transaction.getCategory() == null || transaction.getCategory().isEmpty()) {
+                             match = true; break;
+                         }
+                    } else if (c.equalsIgnoreCase(transaction.getCategory())) {
+                        match = true;
+                        break;
+                    }
+                }
+                if (!match) return false;
+            }
+        }
+        return true;
     }
 
     private static int getMaxDayForMonth(GregorianCalendar cal) {

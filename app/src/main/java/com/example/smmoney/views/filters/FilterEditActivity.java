@@ -283,10 +283,53 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
     private OnClickListener getLookupListClickListener() {
         return view -> {
+            int tag = ((Integer) view.getTag()).intValue();
             Intent i = new Intent(FilterEditActivity.this.currentActivity, LookupsListActivity.class);
-            i.putExtra("type", ((Integer) view.getTag()).intValue());
-            i.putExtra("FromDate", FilterEditActivity.this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateFrom()) : "*");
-            i.putExtra("ToDate", FilterEditActivity.this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateTo()) : "*");
+            i.putExtra("type", tag);
+            
+            // Enable Multi-Select for relevant filter fields
+            boolean multi = false;
+            String currentSelection = "";
+            switch (tag) {
+                case 8: // TRANSACTION_TYPE
+                    currentSelection = transactionTypeTextView.getText().toString();
+                    multi = true;
+                    break;
+                case 9: // ACCOUNTS
+                    currentSelection = accountsTextView.getText().toString();
+                    multi = true;
+                    break;
+                case 11: // PAYEES
+                    currentSelection = payeeEditText.getText().toString();
+                    multi = true;
+                    break;
+                case 12: // IDS
+                    currentSelection = idEditText.getText().toString();
+                    multi = true;
+                    break;
+                case 13: // CLEARED
+                    currentSelection = clearedTextView.getText().toString();
+                    multi = true;
+                    break;
+                case 14: // CATEGORIES
+                    currentSelection = categoriesTextView.getText().toString();
+                    multi = true;
+                    break;
+                case 15: // CLASSES
+                    currentSelection = classesTextView.getText().toString();
+                    multi = true;
+                    break;
+                case 10: // DATES - No multi-select for dates activity
+                    i.putExtra("FromDate", FilterEditActivity.this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateFrom()) : "*");
+                    i.putExtra("ToDate", FilterEditActivity.this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(FilterEditActivity.this.filter.getDateTo()) : "*");
+                    break;
+            }
+            
+            if (multi) {
+                i.putExtra("isMultiSelect", true);
+                i.putExtra("currentSelection", currentSelection);
+            }
+
             lookupLauncher.launch(i);
         };
     }

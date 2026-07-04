@@ -1,24 +1,22 @@
 package com.example.smmoney.views.lookups;
 
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView;
 import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.BaseAdapter;
+import android.widget.CheckedTextView;
 import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.ListView;
@@ -72,9 +70,10 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private final int CMENU_EDIT = 1;
     private final int CMENU_SUBCATEGORY = 4;
     private int currentType;
+    private boolean isMultiSelect = false;
+    private boolean mIsUpdatingCheckState = false;
     private ListView theList;
     private ArrayList<String> theStrings = null;
-    private TextView titleTextView;
 
     private class LookupRowAdapter<T> extends BaseAdapter {
         final LayoutInflater inflator;
@@ -100,12 +99,26 @@ public class LookupsListActivity extends PocketMoneyActivity {
         }
 
         public View getView(int pos, View convertView, ViewGroup arg2) {
-            String category = (String) getItem(pos);
+            String item = (String) getItem(pos);
             if (convertView == null) {
-                convertView = this.inflator.inflate(this.layoutResId, null);
-                ((TextView) convertView).setTextColor(PocketMoneyThemes.primaryCellTextColor());
+                convertView = this.inflator.inflate(this.layoutResId, arg2, false);
             }
-            ((TextView) convertView).setText(category);
+            
+            TextView tv = (TextView) convertView;
+            tv.setText(item);
+            tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+
+            if (convertView instanceof CheckedTextView && LookupsListActivity.this.isMultiSelect) {
+                CheckedTextView ctv = (CheckedTextView) convertView;
+                ctv.setCheckMarkTintList(android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor()));
+                // Row background is handled by ListView selector in ChoiceMode
+                if (pos % 2 == 0) {
+                    ctv.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
+                } else {
+                    ctv.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
+                }
+            }
+            
             return convertView;
         }
     }
@@ -154,7 +167,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.lookups);
-        this.currentType = Objects.requireNonNull(getIntent().getExtras()).getInt("type");
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            this.currentType = extras.getInt("type");
+            this.isMultiSelect = extras.getBoolean("isMultiSelect", false);
+        }
         setupView();
         setupList();
 
@@ -167,7 +184,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onSupportNavigateUp() {
-        getOnBackPressedDispatcher().onBackPressed();
+        if (this.isMultiSelect) {
+            returnDoneResult();
+        } else {
+            getOnBackPressedDispatcher().onBackPressed();
+        }
         return true;
     }
 
@@ -188,9 +209,52 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private void setupView() {
         this.theList = findViewById(R.id.the_list);
         this.theList.setFastScrollEnabled(true);
-        this.theList.setOnItemClickListener((adapterView, arg1, arg2, arg3) -> LookupsListActivity.this.onListItemClick(arg2));
+        if (this.isMultiSelect) {
+            this.theList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        }
+        this.theList.setOnItemClickListener((adapterView, view, position, id) -> {
+            if (!LookupsListActivity.this.isMultiSelect) {
+                LookupsListActivity.this.onListItemClick(position);
+            } else {
+                LookupsListActivity.this.handleMultiClick(position);
+            }
+        });
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+    }
+
+    private void handleMultiClick(int position) {
+        if (mIsUpdatingCheckState) return;
+        
+        String clickedItem = this.theStrings.get(position);
+        boolean isNowChecked = this.theList.isItemChecked(position);
+        
+        mIsUpdatingCheckState = true;
+        if (isAllItem(clickedItem)) {
+            if (isNowChecked) {
+                // Uncheck everything else if "All" is selected
+                for (int i = 0; i < this.theStrings.size(); i++) {
+                    if (i != position) {
+                        this.theList.setItemChecked(i, false);
+                    }
+                }
+            }
+        } else if (isNowChecked) {
+            // If a specific item is selected, uncheck any "All" items
+            for (int i = 0; i < this.theStrings.size(); i++) {
+                if (isAllItem(this.theStrings.get(i))) {
+                    this.theList.setItemChecked(i, false);
+                }
+            }
+        }
+        mIsUpdatingCheckState = false;
+    }
+
+    private boolean isAllItem(String item) {
+        return item.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS) ||
+               item.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES) ||
+               item.equals(Locales.kLOC_FILTERS_ALL_CLASSES) ||
+               item.equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
     }
 
     private void setupList() {
@@ -284,15 +348,44 @@ public class LookupsListActivity extends PocketMoneyActivity {
             }
             i2 += ACCOUNT_TYPE_LOOKUP;
         }
+        
+        int layoutId = this.isMultiSelect ? R.layout.lookup_multi_row : PocketMoneyThemes.simpleListItem();
+        
         if (alphabetList) {
             Collections.sort(this.theStrings, String.CASE_INSENSITIVE_ORDER);
-            this.theList.setAdapter(new MyIndexerAdapter(getApplicationContext(), PocketMoneyThemes.simpleListItem(), this.theStrings));
+            this.theList.setAdapter(new MyIndexerAdapter(getApplicationContext(), layoutId, this.theStrings));
         } else {
-            ListView listView = this.theList;
-            ListAdapter lookupRowAdapter = new LookupRowAdapter(PocketMoneyThemes.simpleListItem(), this.theStrings);
-            listView.setAdapter(lookupRowAdapter);
+            this.theList.setAdapter(new LookupRowAdapter(layoutId, this.theStrings));
         }
         registerForContextMenu(this.theList);
+        
+        if (this.isMultiSelect) {
+            preCheckItems();
+        }
+    }
+
+    private void preCheckItems() {
+        String currentSelection = getIntent().getStringExtra("currentSelection");
+        if (currentSelection == null || currentSelection.isEmpty() || currentSelection.equals(Locales.kLOC_FILTER_DATES_ALL)) {
+            // Default check "All" items if nothing selected
+            for (int i = 0; i < this.theStrings.size(); i++) {
+                if (isAllItem(this.theStrings.get(i))) {
+                    this.theList.setItemChecked(i, true);
+                    break;
+                }
+            }
+            return;
+        }
+        String[] selected = currentSelection.split(";");
+        for (int i = 0; i < this.theStrings.size(); i++) {
+            String item = this.theStrings.get(i);
+            for (String s : selected) {
+                if (item.equals(s)) {
+                    this.theList.setItemChecked(i, true);
+                    break;
+                }
+            }
+        }
     }
 
     private void reloadData() {
@@ -315,15 +408,15 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     public String getTypeAsString() {
-        return switch (this.currentType) { /*1*//*8*//*16*/
+        return switch (this.currentType) {
             case ACCOUNT_TYPE_LOOKUP, FILTER_TRANSACTION_TYPE, REPEAT_TYPE, BUDGET_TYPE /*19*/ ->
-                    Locales.kLOC_ACCOUNT_TYPE_LABEL; /*3*//*17*//*9*/
+                    Locales.kLOC_ACCOUNT_TYPE_LABEL;
             case ACCOUNT_LOOKUP, ACCOUNT_LOOKUP_TRANS, FILTER_ACCOUNTS,
-                 ACCOUNT_LOOKUP_WITH_NONE /*18*/ -> Locales.kLOC_GENERAL_ACCOUNTS; /*4*/
-            case PAYEE_LOOKUP, FILTER_PAYEES /*11*/ -> Locales.kLOC_GENERAL_PAYEE_TITLE; /*5*/
+                 ACCOUNT_LOOKUP_WITH_NONE /*18*/ -> Locales.kLOC_GENERAL_ACCOUNTS;
+            case PAYEE_LOOKUP, FILTER_PAYEES /*11*/ -> Locales.kLOC_GENERAL_PAYEE_TITLE;
             case CATEGORY_LOOKUP, FILTER_CATEGORIES /*14*/ ->
-                    Locales.kLOC_GENERAL_CATEGORY_TITLE; /*6*/
-            case CLASS_LOOKUP, FILTER_CLASSES /*15*/ -> Locales.kLOC_GENERAL_CLASSES; /*7*/
+                    Locales.kLOC_GENERAL_CATEGORY_TITLE;
+            case CLASS_LOOKUP, FILTER_CLASSES /*15*/ -> Locales.kLOC_GENERAL_CLASSES;
             case ID_LOOKUP, FILTER_IDS /*12*/ -> Locales.kLOC_GENERAL_ID_TITLE;
             case FILTER_DATES /*10*/ -> Locales.kLOC_FILTER_DATES;
             case FILTER_CLEARED /*13*/ -> Locales.kLOC_GENERAL_CLEARED;
@@ -333,8 +426,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
+        if (this.isMultiSelect) {
+            menu.add(0, 2 /* MENU_DONE */, 0, Locales.kLOC_GENERAL_DONE).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
         if (this.currentType != PAYEE_LOOKUP && this.currentType != CATEGORY_LOOKUP && this.currentType != CLASS_LOOKUP && this.currentType != ID_LOOKUP) {
-            return false;
+            return this.isMultiSelect;
         }
         int MENU_ADD = 1;
         menu.add(0, MENU_ADD, 0, "").setIcon(R.drawable.ic_arrow_drop_down_circle);
@@ -343,7 +439,15 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == android.R.id.home) {
-            getOnBackPressedDispatcher().onBackPressed();
+            if (this.isMultiSelect) {
+                returnDoneResult();
+            } else {
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+            return true;
+        }
+        if (item.getItemId() == 2 /* MENU_DONE */) {
+            returnDoneResult();
             return true;
         }
         if (item.getItemId() != 1 /* MENU_ADD */) {
@@ -427,9 +531,6 @@ public class LookupsListActivity extends PocketMoneyActivity {
                         LookupsListActivity.this.reloadData();
                     });
                     charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
-                    //editText = input;
-                    //i = theItem;
-                    //str = originalString;
                     b.setNegativeButton(charSequence, (dialog1, which) -> {
                         String value = input.getText().toString().trim();
                         switch (theItem) {
@@ -489,5 +590,46 @@ public class LookupsListActivity extends PocketMoneyActivity {
             default:
                 return super.onContextItemSelected(item);
         }
+    }
+
+    private void returnDoneResult() {
+        StringBuilder sb = new StringBuilder();
+        android.util.SparseBooleanArray checked = this.theList.getCheckedItemPositions();
+        boolean hasSpecificSelection = false;
+        String allItemValue = "";
+
+        for (int i = 0; i < this.theStrings.size(); i++) {
+            if (checked.get(i)) {
+                String val = this.theStrings.get(i);
+                if (isAllItem(val)) {
+                    allItemValue = val;
+                } else {
+                    if (sb.length() > 0) sb.append(";");
+                    sb.append(val);
+                    hasSpecificSelection = true;
+                }
+            }
+        }
+        
+        String result;
+        if (hasSpecificSelection) {
+            result = sb.toString();
+        } else {
+            result = allItemValue;
+        }
+        
+        Intent i = new Intent();
+        i.putExtra("selection", result);
+        setResult(this.currentType, i);
+        finish();
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
+        if (keyCode == android.view.KeyEvent.KEYCODE_BACK && this.isMultiSelect) {
+            returnDoneResult();
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 }
