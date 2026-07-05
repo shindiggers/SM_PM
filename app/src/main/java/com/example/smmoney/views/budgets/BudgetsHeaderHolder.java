@@ -1,98 +1,61 @@
 package com.example.smmoney.views.budgets;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
-import android.graphics.Paint.Align;
-import android.graphics.PorterDuff.Mode;
-import android.graphics.PorterDuffColorFilter;
-import android.graphics.Rect;
-import android.graphics.Typeface;
-import android.util.DisplayMetrics;
+import android.graphics.PorterDuff;
 import android.util.TypedValue;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.WindowManager;
-import android.widget.AbsListView.LayoutParams;
+import android.view.LayoutInflater;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import androidx.core.content.ContextCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
-public class BudgetsHeaderHolder extends View {
+public class BudgetsHeaderHolder extends RelativeLayout {
     public final String label;
-    final Rect r = new Rect(0, 0, 0, 0);
-    final Paint p = new Paint();
-    final PorterDuffColorFilter porterDuffColorFilter = new PorterDuffColorFilter(PocketMoneyThemes.actionBarColor(), Mode.DARKEN);
-    final Bitmap catBarBitmap;
-    final Bitmap collBarBitmap;
-    private final Context context;
     private final String xofy;
+    private final TextView labelTextView;
+    private final TextView valueTextView;
+    private final ImageView iconView;
 
     public BudgetsHeaderHolder(Context context, String label, String xofy) {
         super(context);
-        this.context = context;
         this.label = label;
         this.xofy = xofy;
-        setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT/*-1*/, ViewGroup.LayoutParams.WRAP_CONTENT/*-2*/));
-        setMinimumHeight((int) (((double) getPrefferedItemHeight()) * 0.5d));
-        catBarBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.categorybar);
-        collBarBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.collapseandexpand);
+        
+        LayoutInflater.from(context).inflate(R.layout.header_row, this, true);
+        
+        this.labelTextView = findViewById(R.id.header_label);
+        this.valueTextView = findViewById(R.id.header_value);
+        this.iconView = findViewById(R.id.header_icon);
+        
+        setupTheme();
+        updateDisplay();
     }
 
-    private float getPrefferedItemHeight() {
-        TypedValue typedValue = new TypedValue();
-        DisplayMetrics displayMetrics = this.context.getResources().getDisplayMetrics();
-        this.context.getTheme().resolveAttribute(16842829, typedValue, true);
-        return typedValue.getDimension(displayMetrics);
+    private void setupTheme() {
+        int backgroundColor = PocketMoneyThemes.actionBarColor();
+        setBackgroundColor(backgroundColor);
+        
+        int textColor = ContextCompat.getColor(getContext(), R.color.black_theme_text);
+        this.labelTextView.setTextColor(textColor);
+        this.valueTextView.setTextColor(textColor);
+        
+        this.iconView.setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
     }
 
-    protected void onDraw(Canvas canvas) {
-        int width = getWidth();
-        int height = getHeight();
-        r.set(0, 0, width, height);
-        p.setColorFilter(porterDuffColorFilter);
-        canvas.drawBitmap(catBarBitmap, null, r, p);
-        p.setColorFilter(null);
-        //Bitmap collapseBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.collapseandexpand);
-        canvas.drawBitmap(collBarBitmap, (float) ((width - 20) - collBarBitmap.getWidth()), (float) ((height / 2) - (collBarBitmap.getHeight() / 2)), p);
-        p.setTextAlign(Align.CENTER);
-        int spSize = 14;
-        float scaledDensity = getResources().getConfiguration().fontScale * getResources().getDisplayMetrics().density;
-        float scaledSizeInPixels = spSize * scaledDensity;
-        p.setTextSize(scaledSizeInPixels);
-        p.setColor(ContextCompat.getColor(getContext(), R.color.black_theme_text));
-        p.setTypeface(Typeface.SANS_SERIF);
-        p.setAntiAlias(true);
-        float y = (((float) height) / 2.0f) + (p.getTextSize() / 2.0f);
-        float text_w = p.measureText(this.label);
-        float totalTextWidth = ((float) getWidth()) * 0.45f;
-        float xscale = 1.0f;
-        if (totalTextWidth < text_w) {
-            xscale = totalTextWidth / text_w;
+    private void updateDisplay() {
+        this.labelTextView.setText(this.label);
+        this.valueTextView.setText(this.xofy);
+    }
+
+    public void setExpanded(boolean expanded) {
+        if (expanded) {
+            this.iconView.setImageResource(R.drawable.ic_expand_less);
+        } else {
+            this.iconView.setImageResource(R.drawable.ic_expand_more);
         }
-        p.setTextScaleX(xscale);
-        canvas.drawText(this.label, (p.measureText(this.label) / 2.0f) + 50.0f, y, p);
-        text_w = p.measureText(this.xofy);
-        totalTextWidth = ((float) getWidth()) * 0.65f;
-        xscale = 1.0f;
-        if (totalTextWidth < text_w) {
-            xscale = totalTextWidth / text_w;
-        }
-        p.setTextScaleX(xscale);
-        canvas.drawText(this.xofy, ((((float) width) - (p.measureText(this.xofy) / 2.0f)) - 50.0f) - ((float) collBarBitmap.getWidth()), y, p);
-    }
-
-    private double getDPFromPixels(double pixels) {
-        DisplayMetrics metrics = getResources().getDisplayMetrics();
-        return switch (metrics.densityDpi) {
-            case 120 -> pixels * 0.75d;
-            case 160, 320, 480, 560, 640 -> pixels * 2.0d;
-            case 240 -> pixels * 3.0d;
-            default -> pixels;
-        };
     }
 }

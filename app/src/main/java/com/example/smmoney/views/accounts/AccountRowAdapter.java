@@ -15,6 +15,7 @@ import android.widget.TextView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
+import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -184,7 +185,22 @@ class AccountRowAdapter extends BaseAdapter {
         Object obj = getItem(position);
         if (obj.getClass() == String.class) {
             if (((String) obj).charAt(0) == 'H') {
-                BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.mContext, ((String) obj).substring(1), "");
+                String label = ((String) obj).substring(1);
+                String balance = "";
+                
+                // Find section index and expanded state
+                for (int i = 0; i < this.sectionedAccountStrings.length; i++) {
+                    if (label.equals(this.sectionedAccountStrings[i])) {
+                        balance = balanceForSection(i);
+                        BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.mContext, label, balance);
+                        header.setTag(null);
+                        header.setOnClickListener(this.headerClickListener);
+                        header.setExpanded(getShowSection(i));
+                        return header;
+                    }
+                }
+                
+                BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.mContext, label, "");
                 header.setTag(null);
                 header.setOnClickListener(this.headerClickListener);
                 return header;
@@ -284,6 +300,7 @@ class AccountRowAdapter extends BaseAdapter {
                     ((AccountsActivity) AccountRowAdapter.this.mContext).clearBalanceCache();
                     ((AccountsActivity) AccountRowAdapter.this.mContext).reloadBalanceBar();
                     ((AccountsActivity) AccountRowAdapter.this.mContext).reloadCharts();
+                    AccountRowAdapter.this.notifyDataSetChanged();
                 }
             }
         };
@@ -295,6 +312,19 @@ class AccountRowAdapter extends BaseAdapter {
 
     private void setShowSection(int section, boolean show) {
         Prefs.setPref(this.showSectionedAccountsPrefs[section], show);
+    }
+
+    private String balanceForSection(int sectionIndex) {
+        int balanceType = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
+        double total = 0.0;
+        if (sectionIndex < this.sectionedAccounts.size()) {
+            for (AccountClass act : this.sectionedAccounts.get(sectionIndex)) {
+                if (act.getTotalWorth()) {
+                    total += act.balanceOfType(balanceType);
+                }
+            }
+        }
+        return CurrencyExt.amountAsCurrency(total);
     }
 
     private boolean getShowSection(int section) {

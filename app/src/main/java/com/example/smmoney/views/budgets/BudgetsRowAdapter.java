@@ -293,8 +293,18 @@ public class BudgetsRowAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         Object cat = getItem(position);
         if (cat.getClass() == String.class) {
-            BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.context, (String) cat, balanceForCategory((String) cat));
+            String label = (String) cat;
+            BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.context, label, balanceForCategory(label));
             header.setOnClickListener(getHeaderClickListener());
+            
+            // Set expanded state
+            if (label.equals(Locales.kLOC_BUDGETS_INCOME)) {
+                header.setExpanded(getShowSection(this.showIncome));
+            } else if (label.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
+                header.setExpanded(getShowSection(this.showExpense));
+            } else if (label.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
+                header.setExpanded(getShowSection(this.showNonBudgeted));
+            }
             return header;
         }
         if (convertView == null || convertView.getClass() != BudgetsRowHolder.class) {
