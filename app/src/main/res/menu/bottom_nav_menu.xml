@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_accounts"
+        android:icon="@drawable/ic_accounts"
+        android:title="@string/kLOC_GENERAL_ACCOUNTS" />
+    <item
+        android:id="@+id/nav_budgets"
+        android:icon="@drawable/ic_budgets"
+        android:title="@string/kLOC_GENERAL_BUDGETS" />
+    <item
+        android:id="@+id/nav_charts"
+        android:icon="@drawable/ic_charts"
+        android:title="@string/kLOC_CHARTS_MORECHARTS" />
+    <item
+        android:id="@+id/nav_reports"
+        android:icon="@drawable/ic_reports"
+        android:title="@string/kLOC_GENERAL_REPORTS" />
+</menu>

@@ -364,4 +364,40 @@ public class PocketMoneyThemes {
     public static int chkBoxColorUnchecked() {
         return chkBoxColorChecked();
     }
+
+    public static android.content.res.ColorStateList bottomNavColorStateList() {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        
+        int activeColor;
+        int inactiveColor;
+        
+        switch (getTheme()) {
+            case kThemeWhite:
+                activeColor = getColor(R.color.blue_theme_field_label_color); // A dark blue for contrast
+                inactiveColor = 0x8A000000; // Material dark secondary text (54% black)
+                break;
+            case kThemeBlack:
+                activeColor = getColor(R.color.white);
+                inactiveColor = 0x8AFFFFFF; // 54% white
+                break;
+            default:
+                // For themed bars (Purple, Blue, etc), use white and dimmed white
+                activeColor = getColor(R.color.white);
+                inactiveColor = 0x8AFFFFFF;
+                break;
+        }
+        
+        return new android.content.res.ColorStateList(states, new int[]{activeColor, inactiveColor});
+    }
+
+    public static int bottomNavBackgroundColor() {
+        return switch (getTheme()) {
+            case kThemeWhite -> getColor(R.color.white);
+            case kThemeBlack -> getColor(R.color.black);
+            default -> actionBarColor();
+        };
+    }
 }

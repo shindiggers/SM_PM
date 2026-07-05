@@ -45,6 +45,8 @@ import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.accounts.AccountsActivity;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -76,6 +78,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private View progressiBeamBar;
     private ProgressBar reloadProgressBar;
     private ListView theList;
+    private BottomNavigationView bottomNav;
     private WakeLock wakeLock;
 
     @Override
@@ -99,6 +102,9 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     public void onResume() {
         super.onResume();
+        if (this.bottomNav != null) {
+            this.bottomNav.setSelectedItemId(R.id.nav_budgets);
+        }
         this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
         reloadData();
     }
@@ -159,17 +165,36 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.theList.setAdapter(this.adapter);
         this.theList.setFocusable(false);
         this.theList.setVisibility(View.INVISIBLE);
-        RadioGroup rg = layout.findViewById(R.id.radiogroup);
-        rg.setOnCheckedChangeListener((group, checkedId) -> {
-            BudgetsActivity.this.finish();
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                BudgetsActivity.this.overrideActivityTransition(android.app.Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0);
-            } else {
-                //noinspection deprecation
-                BudgetsActivity.this.overridePendingTransition(0, 0);
+        
+        this.bottomNav = layout.findViewById(R.id.bottom_navigation);
+        this.bottomNav.setSelectedItemId(R.id.nav_budgets);
+        this.bottomNav.setBackgroundColor(PocketMoneyThemes.bottomNavBackgroundColor());
+        this.bottomNav.setItemIconTintList(PocketMoneyThemes.bottomNavColorStateList());
+        this.bottomNav.setItemTextColor(PocketMoneyThemes.bottomNavColorStateList());
+        this.bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_accounts) {
+                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.accounts.AccountsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                return true;
+            } else if (itemId == R.id.nav_reports) {
+                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.nav_charts) {
+                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
             }
+            return itemId == R.id.nav_budgets;
         });
-        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());

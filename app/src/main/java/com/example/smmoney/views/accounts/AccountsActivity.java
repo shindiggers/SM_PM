@@ -48,6 +48,7 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
@@ -175,11 +176,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private final int PERMISSION_RESTORE_DB = 106;
     //public final int REQUEST_EDIT = 2;
     //public final int REQUEST_NEW = 1;
-    private RadioButton accountRadioButton;
     private AccountRowAdapter adapter;
     private double availableCreditBalanceCache = 0.0d;
     private double availableFundsBalanceCache = 0.0d;
     private BalanceBar balanceBar;
+    private BottomNavigationView bottomNav;
     //private AsyncTask balanceBarTask;
     private ChartView cashFlowChartView;
     private double clearedBalanceCache = 0.0d;
@@ -417,6 +418,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     protected void onResume() {
         super.onResume();
+        if (this.bottomNav != null) {
+            this.bottomNav.setSelectedItemId(R.id.nav_accounts);
+        }
         Log.d("ACCOUNTSACTIVITY", "onResume just called");
         if (isLite(this)) {
             checkLastUpgradeDialog();
@@ -882,24 +886,36 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.adapter = new AccountRowAdapter(this);
         listView.setAdapter(this.adapter);
         listView.setFocusable(false);
-        this.accountRadioButton = layout.findViewById(R.id.accountsbutton);
-        RadioGroup rg = layout.findViewById(R.id.radiogroup);
-        rg.setOnCheckedChangeListener((group, checkedId) -> {
-            if (!AccountsActivity.this.progUpdate) {
-                Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
-                budgetLauncher.launch(intent);
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
-                    AccountsActivity.this.overrideActivityTransition(android.app.Activity.OVERRIDE_TRANSITION_OPEN, 0, 0);
-                } else {
-                    //noinspection deprecation
-                    AccountsActivity.this.overridePendingTransition(0, 0);
-                }
-                AccountsActivity.this.progUpdate = true;
-                AccountsActivity.this.accountRadioButton.setChecked(true);
-                AccountsActivity.this.progUpdate = false;
+        
+        this.bottomNav = layout.findViewById(R.id.bottom_navigation);
+        this.bottomNav.setSelectedItemId(R.id.nav_accounts);
+        this.bottomNav.setBackgroundColor(PocketMoneyThemes.bottomNavBackgroundColor());
+        this.bottomNav.setItemIconTintList(PocketMoneyThemes.bottomNavColorStateList());
+        this.bottomNav.setItemTextColor(PocketMoneyThemes.bottomNavColorStateList());
+        this.bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+            if (itemId == R.id.nav_budgets) {
+                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.budgets.BudgetsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.nav_reports) {
+                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
+            } else if (itemId == R.id.nav_charts) {
+                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                startActivity(intent);
+                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                return true;
             }
+            return itemId == R.id.nav_accounts;
         });
-        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
         this.graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
