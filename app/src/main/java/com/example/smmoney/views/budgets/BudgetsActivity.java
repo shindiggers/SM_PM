@@ -90,7 +90,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         setContentView(layout);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.app_name);
+            getSupportActionBar().setTitle(Locales.kLOC_GENERAL_BUDGETS);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         }
     }
