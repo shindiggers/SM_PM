@@ -39,11 +39,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import android.widget.TimePicker;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -329,7 +328,7 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     private int dateChanged;
     private TextView dateTextView;
     private final ArrayList<String> deletedImages = new ArrayList<>();
-    private RadioButton depositButton;
+    private MaterialButton depositButton;
     private AutoCompleteTextView idEditText;
     private boolean isIReceipt = false;
     private boolean isLocalNotification = false;
@@ -362,8 +361,8 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
     @SuppressWarnings("FieldCanBeLocal")
     private ScrollView scrollView;
     private TransactionClass transaction;
-    private RadioButton transferButton;
-    private RadioButton withdrawalButton;
+    private MaterialButton transferButton;
+    private MaterialButton withdrawalButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -492,7 +491,27 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         this.withdrawalButton = aView.findViewById(R.id.withdrawalbutton);
         this.depositButton = aView.findViewById(R.id.depositbutton);
         this.transferButton = aView.findViewById(R.id.transferbutton);
-        ((RadioGroup) aView).setOnCheckedChangeListener(getRadioChangedListener());
+        
+        MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) aView;
+        group.addOnButtonCheckedListener(getRadioChangedListener());
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        this.withdrawalButton.setBackgroundTintList(bgTint);
+        this.withdrawalButton.setTextColor(textTint);
+        this.withdrawalButton.setStrokeColor(strokeTint);
+        
+        this.depositButton.setBackgroundTintList(bgTint);
+        this.depositButton.setTextColor(textTint);
+        this.depositButton.setStrokeColor(strokeTint);
+        
+        this.transferButton.setBackgroundTintList(bgTint);
+        this.transferButton.setTextColor(textTint);
+        this.transferButton.setStrokeColor(strokeTint);
+        
         aView = outterView.findViewById(R.id.datebutton);
         theViews.add(aView);
         aView.setOnClickListener(v -> {
@@ -1690,9 +1709,9 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
         };
     }
 
-    private OnCheckedChangeListener getRadioChangedListener() {
-        return (group, checkedId) -> {
-            if (!TransactionEditActivity.this.programaticUpdate) {
+    private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
+        return (group, checkedId, isChecked) -> {
+            if (isChecked && !TransactionEditActivity.this.programaticUpdate) {
                 TransactionEditActivity.this.clearKeepTheChange();
                 if (checkedId == R.id.withdrawalbutton) {
                     TransactionEditActivity.this.payeeEditText.setEnabled(true);

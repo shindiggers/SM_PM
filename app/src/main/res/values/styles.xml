@@ -37,7 +37,7 @@
         <item name="android:shouldDisableView">false</item>
     </style>
 
-    <style name="MyTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="MyTheme" parent="Theme.MaterialComponents.Light.DarkActionBar.Bridge">
         <item name="android:windowNoTitle">true</item>
         <item name="android:preferenceCategoryStyle">@style/Category</item>
         <item name="android:textColorHint">@color/black_theme_text</item>

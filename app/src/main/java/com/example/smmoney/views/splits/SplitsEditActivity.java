@@ -18,9 +18,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -117,7 +116,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private AutoCompleteTextView classEditText;
     private CurrencyKeyboard currencyKeyboard;
     private Activity currentActivity;
-    private RadioButton depositButton;
+    private MaterialButton depositButton;
     @SuppressWarnings("FieldCanBeLocal")
     private FrameLayout keyboardToolbar;
     private EditText memoEditText;
@@ -129,8 +128,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private TextView transToTextView;
     private TextView transToTitleTextView;
     private TransactionClass transaction;
-    private RadioButton transferButton;
-    private RadioButton withdrawalButton;
+    private MaterialButton transferButton;
+    private MaterialButton withdrawalButton;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -227,7 +226,27 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         //this.classEditText.setAdapter(new ArrayAdapter<>(this, R.layout.lookups_category, ClassNameClass.allClassNamesInDatabase()));
         // TODO Customise as for above category class adapter
         this.classEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ClassNameClass.allClassNamesInDatabase()));
-        ((RadioGroup) this.withdrawalButton.getParent()).setOnCheckedChangeListener(getRadioChangedListener());
+        
+        MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) this.withdrawalButton.getParent();
+        group.addOnButtonCheckedListener(getRadioChangedListener());
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        this.withdrawalButton.setBackgroundTintList(bgTint);
+        this.withdrawalButton.setTextColor(textTint);
+        this.withdrawalButton.setStrokeColor(strokeTint);
+        
+        this.depositButton.setBackgroundTintList(bgTint);
+        this.depositButton.setTextColor(textTint);
+        this.depositButton.setStrokeColor(strokeTint);
+        
+        this.transferButton.setBackgroundTintList(bgTint);
+        this.transferButton.setTextColor(textTint);
+        this.transferButton.setStrokeColor(strokeTint);
+
         ((LinearLayout) this.memoEditText.getParent()).setOnClickListener(view -> {
             Intent i = new Intent(SplitsEditActivity.this.currentActivity, NoteEditor.class);
             i.putExtra("note", SplitsEditActivity.this.split.getMemo());
@@ -459,9 +478,9 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         };
     }
 
-    private OnCheckedChangeListener getRadioChangedListener() {
-        return (group, checkedId) -> {
-            if (!SplitsEditActivity.this.programaticUpdate) {
+    private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
+        return (group, checkedId, isChecked) -> {
+            if (isChecked && !SplitsEditActivity.this.programaticUpdate) {
                 if (checkedId == R.id.withdrawalbutton) {
                     SplitsEditActivity.this.getCells();
                     SplitsEditActivity.this.splitTransactionType = 0;

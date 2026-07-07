@@ -33,11 +33,10 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -158,19 +157,19 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     };
     private BalanceBar balanceBar;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private RadioButton allButton;
+    private MaterialButton allButton;
     private Context context;
     private String emailFileLocation;
     private ArrayList<String> fileNames;
     private boolean firstOpenOfView;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private RadioButton clearedButton;
+    private MaterialButton clearedButton;
     @SuppressWarnings("FieldCanBeLocal")
     private ListView listView;
     private Handler mHandler = null;
     private int msgEmail = -1;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private RadioButton pendingButton;
+    private MaterialButton pendingButton;
     private PocketMoneyProgressDialog progressDialog = null;
     private EditText searchEditText;
     private LinearLayout searchView;
@@ -311,7 +310,27 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.pendingButton = aView.findViewById(R.id.pendingbutton);
         this.clearedButton = aView.findViewById(R.id.clearedbutton);
         this.allButton = aView.findViewById(R.id.allbutton);
-        ((RadioGroup) aView).setOnCheckedChangeListener(getRadioChangedListener());
+        
+        MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) aView;
+        group.addOnButtonCheckedListener(getRadioChangedListener());
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        this.pendingButton.setBackgroundTintList(bgTint);
+        this.pendingButton.setTextColor(textTint);
+        this.pendingButton.setStrokeColor(strokeTint);
+        
+        this.clearedButton.setBackgroundTintList(bgTint);
+        this.clearedButton.setTextColor(textTint);
+        this.clearedButton.setStrokeColor(strokeTint);
+        
+        this.allButton.setBackgroundTintList(bgTint);
+        this.allButton.setTextColor(textTint);
+        this.allButton.setStrokeColor(strokeTint);
+        
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 
@@ -974,16 +993,18 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return true;
     }
 
-    private OnCheckedChangeListener getRadioChangedListener() {
-        return (group, checkedId) -> {
-            if (checkedId == R.id.pendingbutton) {
-                TransactionsActivity.this._filter.setCleared(0);
-            } else if (checkedId == R.id.clearedbutton) {
-                TransactionsActivity.this._filter.setCleared(1);
-            } else if (checkedId == R.id.allbutton) {
-                TransactionsActivity.this._filter.setCleared(2);
+    private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
+        return (group, checkedId, isChecked) -> {
+            if (isChecked) {
+                if (checkedId == R.id.pendingbutton) {
+                    TransactionsActivity.this._filter.setCleared(0);
+                } else if (checkedId == R.id.clearedbutton) {
+                    TransactionsActivity.this._filter.setCleared(1);
+                } else if (checkedId == R.id.allbutton) {
+                    TransactionsActivity.this._filter.setCleared(2);
+                }
+                TransactionsActivity.this.reloadData();
             }
-            TransactionsActivity.this.reloadData();
         };
     }
 }

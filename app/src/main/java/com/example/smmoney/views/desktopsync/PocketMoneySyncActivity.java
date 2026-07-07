@@ -15,10 +15,9 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -57,7 +56,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private final int DIALOG_WIFI = 9;
     @SuppressWarnings("unused")
     private Hashtable addresses;
-    private RadioButton clientRadioButton;
+    private MaterialButton clientRadioButton;
     private TextView descriptionTextView;
     private int firstSyncToUDIDAction;
     private EditText ipaddressEditText;
@@ -72,7 +71,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private CheckBox restoreCheckBox;
     private TextView restoreTextView;
     @SuppressWarnings("FieldCanBeLocal")
-    private RadioButton serverRadioButton;
+    private MaterialButton serverRadioButton;
     private ProgressBar spinningWheel;
     private TextView statusTextView;
     private Button syncButton;
@@ -161,8 +160,10 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.spinningWheel.setVisibility(View.INVISIBLE);
         this.progressBar.setVisibility(View.INVISIBLE);
         this.statusTextView.setText("");
-        ((RadioGroup) this.clientRadioButton.getParent()).setOnCheckedChangeListener((group, checkedId) -> {
-            if (!PocketMoneySyncActivity.this.programmaticUpdate) {
+        
+        MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) this.clientRadioButton.getParent();
+        group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
+            if (isChecked && !PocketMoneySyncActivity.this.programmaticUpdate) {
                 Prefs.setPref(Prefs.PMSYNC_CLIENTSERVER, PocketMoneySyncActivity.this.clientRadioButton.isChecked());
                 if (PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
                     PocketMoneySyncActivity.this.stopSyncing();
@@ -172,6 +173,20 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                 PocketMoneySyncActivity.this.reloadData();
             }
         });
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        this.clientRadioButton.setBackgroundTintList(bgTint);
+        this.clientRadioButton.setTextColor(textTint);
+        this.clientRadioButton.setStrokeColor(strokeTint);
+        
+        this.serverRadioButton.setBackgroundTintList(bgTint);
+        this.serverRadioButton.setTextColor(textTint);
+        this.serverRadioButton.setStrokeColor(strokeTint);
+
         this.syncButton.setOnClickListener(v -> {
             try {
                 if (PocketMoneySyncActivity.this.pocketmoneySync != null) {

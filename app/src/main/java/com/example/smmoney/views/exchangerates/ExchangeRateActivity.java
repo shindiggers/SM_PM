@@ -13,7 +13,8 @@ import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 import android.widget.TextView;
 
 import com.example.smmoney.R;
@@ -36,16 +37,16 @@ import java.util.Objects;
 public class ExchangeRateActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
     private double accountAmount;
     private EditText accountAmountEditText;
-    private RadioButton accountAmountRadioButton;
+    private MaterialButton accountAmountRadioButton;
     private String accountCurrency;
     private TextView accountCurrencyTextView;
     private CurrencyKeyboard currencyKeyboard;
     private double exchangeRate;
     private EditText exchangeRateEditText;
-    private RadioButton exchangeRateRadioButton;
+    private MaterialButton exchangeRateRadioButton;
     private double foreignAmount;
     private EditText foreignAmountEditText;
-    private RadioButton foreignAmountRadioButton;
+    private MaterialButton foreignAmountRadioButton;
     private String foreignCurrency;
     private TextView foreignCurrencyTextView;
     @SuppressWarnings("unused")
@@ -316,6 +317,31 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.currencyKeyboard.setEditText(this.foreignAmountEditText, this.onFocusChangedRunnableForeignAmount);
         this.currencyKeyboard.setEditText(this.exchangeRateEditText, this.onFocusChangedRunnableExchangeAmount);
         this.currencyKeyboard.setEditText(this.accountAmountEditText, this.onFocusChangedRunnableAccountAmount);
+        
+        MaterialButtonToggleGroup group = findViewById(R.id.radioGroup1);
+        group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
+            if (isChecked && !ExchangeRateActivity.this.programaticUpdate) {
+                ExchangeRateActivity.this.textFieldDidChange();
+            }
+        });
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        this.foreignAmountRadioButton.setBackgroundTintList(bgTint);
+        this.foreignAmountRadioButton.setTextColor(textTint);
+        this.foreignAmountRadioButton.setStrokeColor(strokeTint);
+        
+        this.exchangeRateRadioButton.setBackgroundTintList(bgTint);
+        this.exchangeRateRadioButton.setTextColor(textTint);
+        this.exchangeRateRadioButton.setStrokeColor(strokeTint);
+        
+        this.accountAmountRadioButton.setBackgroundTintList(bgTint);
+        this.accountAmountRadioButton.setTextColor(textTint);
+        this.accountAmountRadioButton.setStrokeColor(strokeTint);
+
         int i = 0;
         for (View theView : theViews) {
             theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));

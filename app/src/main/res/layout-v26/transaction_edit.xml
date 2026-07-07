@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -21,58 +22,50 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <FrameLayout
+            <com.google.android.material.button.MaterialButtonToggleGroup
+                android:id="@+id/radiogroup"
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:baselineAligned="false"
-                android:padding="0dp">
+                app:selectionRequired="true"
+                app:singleSelection="true">
 
-                <com.example.makeramen.segmented.SegmentedRadioGroup
-                    android:id="@+id/radiogroup"
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:orientation="horizontal">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/withdrawalbutton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
+                    android:text="@string/kLOC_GENERAL_WITHDRAWAL"
+                    app:cornerRadius="0dp" />
 
-                    <RadioButton
-                        android:id="@+id/withdrawalbutton"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.0"
-                        android:button="@null"
-                        android:checked="true"
-                        android:gravity="center"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
-                        android:text="@string/kLOC_GENERAL_WITHDRAWAL"
-                        android:textColor="@drawable/segment_radio_text_color" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/depositbutton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
+                    android:text="@string/kLOC_GENERAL_DEPOSIT"
+                    app:cornerRadius="0dp" />
 
-                    <RadioButton
-                        android:id="@+id/depositbutton"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.0"
-                        android:button="@null"
-                        android:gravity="center"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
-                        android:text="@string/kLOC_GENERAL_DEPOSIT"
-                        android:textColor="@drawable/segment_radio_text_color" />
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/transferbutton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.0"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
+                    android:text="@string/kLOC_GENERAL_TRANSFER"
+                    app:cornerRadius="0dp" />
 
-                    <RadioButton
-                        android:id="@+id/transferbutton"
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1.0"
-                        android:button="@null"
-                        android:gravity="center"
-                        android:minWidth="40dp"
-                        android:minHeight="40dp"
-                        android:text="@string/kLOC_GENERAL_TRANSFER"
-                        android:textColor="@drawable/segment_radio_text_color" />
-
-                </com.example.makeramen.segmented.SegmentedRadioGroup>
-
-            </FrameLayout>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
             <View
                 android:layout_width="match_parent"

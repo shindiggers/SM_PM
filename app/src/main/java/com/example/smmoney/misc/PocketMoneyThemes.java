@@ -1,6 +1,9 @@
 package com.example.smmoney.misc;
 
 import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
+
 import androidx.core.content.ContextCompat;
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -399,5 +402,31 @@ public class PocketMoneyThemes {
             case kThemeBlack -> getColor(R.color.black);
             default -> actionBarColor();
         };
+    }
+
+    public static ColorStateList segmentedButtonBackgroundTint() {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        int[] colors = new int[]{
+                currentTintColor(),
+                Color.TRANSPARENT
+        };
+        return new ColorStateList(states, colors);
+    }
+
+    public static ColorStateList segmentedButtonTextTint() {
+        int[][] states = new int[][]{
+                new int[]{android.R.attr.state_checked},
+                new int[]{-android.R.attr.state_checked}
+        };
+        int[] colors = new int[]{
+                Color.WHITE,
+                primaryCellTextColor()
+        };
+        // For black theme, maybe black text on gray background? 
+        // Let's stick with white for now as currentTintColor is usually a brand color.
+        return new ColorStateList(states, colors);
     }
 }

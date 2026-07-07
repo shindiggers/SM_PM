@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -10,40 +11,39 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <com.example.makeramen.segmented.SegmentedRadioGroup
+    <com.google.android.material.button.MaterialButtonToggleGroup
         android:id="@+id/radiogroup"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:orientation="horizontal">
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        app:selectionRequired="true"
+        app:singleSelection="true">
 
-        <RadioButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/payeebutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1.0"
-            android:button="@null"
-            android:checked="true"
-            android:gravity="center_horizontal|center_vertical"
-            android:minWidth="100dp"
-            android:minHeight="30dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
             android:text="@string/kLOC_GENERAL_ACCOUNTS"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="@drawable/segment_radio_text_color" />
+            app:cornerRadius="0dp" />
 
-        <RadioButton
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/allbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
             android:layout_weight="1.0"
-            android:button="@null"
-            android:gravity="center_vertical|center_horizontal"
-            android:minWidth="100dp"
-            android:minHeight="30dp"
+            android:insetTop="0dp"
+            android:insetBottom="0dp"
+            android:padding="0dp"
             android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
             android:textAppearance="?android:textAppearanceSmall"
-            android:textColor="@drawable/segment_radio_text_color" />
+            app:cornerRadius="0dp" />
 
-    </com.example.makeramen.segmented.SegmentedRadioGroup>
+    </com.google.android.material.button.MaterialButtonToggleGroup>
 
 </LinearLayout>

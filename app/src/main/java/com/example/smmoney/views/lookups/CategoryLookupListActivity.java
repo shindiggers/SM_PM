@@ -16,10 +16,9 @@ import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.RadioButton;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -53,30 +52,42 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         this.listView = findViewById(R.id.listView);
         this.listView.setAdapter(this.adapter);
         registerForContextMenu(this.listView);
-        final RadioButton payeeRadioButton = findViewById(R.id.payeebutton);
-        payeeRadioButton.setText(this.payee);
-        final RadioButton allRadioButton = findViewById(R.id.allbutton);
-        RadioGroup rg = findViewById(R.id.radiogroup);
+        final MaterialButton payeeButton = findViewById(R.id.payeebutton);
+        payeeButton.setText(this.payee);
+        final MaterialButton allButton = findViewById(R.id.allbutton);
+        MaterialButtonToggleGroup group = findViewById(R.id.radiogroup);
         if (this.payee.isEmpty()) {
             this.currentType = TYPE_ALL/*1*/;
-            allRadioButton.setChecked(true);
-            payeeRadioButton.setText("<empty>");
+            allButton.setChecked(true);
+            payeeButton.setText("<empty>");
         }
-        rg.setOnCheckedChangeListener((group, checkedId) -> {
-            if (!CategoryLookupListActivity.this.progUpdate) {
+        group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
+            if (isChecked && !CategoryLookupListActivity.this.progUpdate) {
                 CategoryLookupListActivity.this.progUpdate = true;
                 if (checkedId == R.id.payeebutton) {
-                    payeeRadioButton.setChecked(true);
                     CategoryLookupListActivity.this.currentType = 2;
                 } else if (checkedId == R.id.allbutton) {
-                    allRadioButton.setChecked(true);
                     CategoryLookupListActivity.this.currentType = 1;
                 }
                 CategoryLookupListActivity.this.progUpdate = false;
                 CategoryLookupListActivity.this.reloadData();
             }
         });
-        ((View) rg.getParent()).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        
+        // Theme the buttons
+        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        
+        payeeButton.setBackgroundTintList(bgTint);
+        payeeButton.setTextColor(textTint);
+        payeeButton.setStrokeColor(strokeTint);
+        
+        allButton.setBackgroundTintList(bgTint);
+        allButton.setTextColor(textTint);
+        allButton.setStrokeColor(strokeTint);
+
+        ((View) group).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 

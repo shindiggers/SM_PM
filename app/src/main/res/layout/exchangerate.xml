@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -131,61 +132,54 @@
 
             </FrameLayout>
 
-            <com.example.makeramen.segmented.SegmentedRadioGroup
+            <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/radioGroup1"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:orientation="horizontal">
+                app:selectionRequired="true"
+                app:singleSelection="true">
 
-                <RadioButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/foreign_amount_segmented"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
+                    android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:maxLines="2"
-                    android:minWidth="70dp"
-                    android:minHeight="50dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@drawable/segment_radio_text_color"
-                    tools:text="Change\nForeign Amount" />
+                    app:cornerRadius="0dp" />
 
-                <RadioButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/exchange_rate_segmented"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="50dp"
-                    android:layout_gravity="top"
+                    android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:button="@null"
-                    android:gravity="center"
-                    android:maxLines="2"
-                    android:minWidth="70dp"
-                    android:minHeight="50dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
                     android:text="@string/kLOC_GENERAL_EXCHANGERATE"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@drawable/segment_radio_text_color"
-                    tools:text="Change\nExchange Rate" />
+                    app:cornerRadius="0dp" />
 
-                <RadioButton
+                <com.google.android.material.button.MaterialButton
                     android:id="@+id/account_amount_segmented"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="top"
+                    android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:button="@null"
-                    android:gravity="center_horizontal|center_vertical"
-                    android:maxLines="2"
-                    android:minWidth="70dp"
-                    android:minHeight="50dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
+                    android:padding="0dp"
                     android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
                     android:textAppearance="?android:textAppearanceSmall"
-                    android:textColor="@drawable/segment_radio_text_color"
-                    tools:text="Change\nAccount Amount" />
+                    app:cornerRadius="0dp" />
 
-            </com.example.makeramen.segmented.SegmentedRadioGroup>
+            </com.google.android.material.button.MaterialButtonToggleGroup>
 
         </LinearLayout>
 
