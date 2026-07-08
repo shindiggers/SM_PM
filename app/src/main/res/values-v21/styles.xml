@@ -60,25 +60,25 @@
     <style name="DialogTheme.Coffee" parent="DialogTheme">
         <item name="android:background">@color/coffee_theme_background_color</item>
         <item name="android:windowBackground">@color/coffee_theme_background_color</item>
-        <item name="android:colorAccent">@color/coffee_theme_field_label_color</item>
+        <item name="android:colorAccent">@color/blue_theme_field_label_color</item>
     </style>
 
     <style name="DialogTheme.Ruby" parent="DialogTheme">
         <item name="android:background">@color/ruby_theme_background_color</item>
         <item name="android:windowBackground">@color/ruby_theme_background_color</item>
-        <item name="android:colorAccent">@color/ruby_theme_field_label_color</item>
+        <item name="android:colorAccent">@color/blue_theme_field_label_color</item>
     </style>
 
     <style name="DialogTheme.Gray" parent="DialogTheme">
         <item name="android:background">@color/gray_theme_background_color</item>
         <item name="android:windowBackground">@color/gray_theme_background_color</item>
-        <item name="android:colorAccent">@color/gray_theme_field_label_color</item>
+        <item name="android:colorAccent">@color/blue_theme_field_label_color</item>
     </style>
 
     <style name="DialogTheme.White" parent="DialogTheme">
         <item name="android:background">@color/white_theme_background_color</item>
         <item name="android:windowBackground">@color/white_theme_background_color</item>
-        <item name="android:colorAccent">@color/white_theme_field_label_color</item>
+        <item name="android:colorAccent">@color/blue_theme_field_label_color</item>
     </style>
 
     <style name="PreferenceTheme" parent="PreferenceThemeOverlay.v14.Material">
@@ -87,19 +87,71 @@
         <item name="android:textColorSecondary">@color/black_theme_text</item>
         <item name="android:textColorHighlight">@color/black_theme_text</item>
         <item name="android:editTextColor">@color/black_theme_field_label_color</item>
-        <item name="android:colorAccent">@color/black</item>
+        <item name="android:colorAccent">@color/black_theme_tint_color</item>
+        <item name="colorControlActivated">@color/black_theme_tint_color</item>
         <item name="android:dialogTheme">@style/DialogTheme</item>
         <item name="alertDialogTheme">@style/DialogTheme</item>
         <item name="preferenceTheme">@style/PreferenceTheme</item>
     </style>
 
     <style name="PreferenceTheme.Black" parent="PreferenceTheme">
-        <item name="android:background">@color/black_theme_background_color</item>
+        <item name="android:colorAccent">@color/black_theme_tint_color</item>
+        <item name="colorControlActivated">@color/black_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Black</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Black</item>
+    </style>
+
+    <style name="PreferenceTheme.Blue" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/blue_theme_tint_color</item>
+        <item name="colorControlActivated">@color/blue_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Blue</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Blue</item>
+    </style>
+
+    <style name="PreferenceTheme.Green" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/green_theme_tint_color</item>
+        <item name="colorControlActivated">@color/green_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Green</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Green</item>
+    </style>
+
+    <style name="PreferenceTheme.Purple" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/purple_theme_tint_color</item>
+        <item name="colorControlActivated">@color/purple_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Purple</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Purple</item>
+    </style>
+
+    <style name="PreferenceTheme.Coffee" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/coffee_theme_tint_color</item>
+        <item name="colorControlActivated">@color/coffee_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Coffee</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Coffee</item>
+    </style>
+
+    <style name="PreferenceTheme.Ruby" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/ruby_theme_tint_color</item>
+        <item name="colorControlActivated">@color/ruby_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Ruby</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Ruby</item>
+    </style>
+
+    <style name="PreferenceTheme.Gray" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/gray_theme_tint_color</item>
+        <item name="colorControlActivated">@color/gray_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.Gray</item>
+        <item name="alertDialogTheme">@style/DialogTheme.Gray</item>
+    </style>
+
+    <style name="PreferenceTheme.White" parent="PreferenceTheme">
+        <item name="android:colorAccent">@color/white_theme_tint_color</item>
+        <item name="colorControlActivated">@color/white_theme_tint_color</item>
+        <item name="android:dialogTheme">@style/DialogTheme.White</item>
+        <item name="alertDialogTheme">@style/DialogTheme.White</item>
     </style>
 
     <style name="MyTheme.Black" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/black_theme_background_color</item>
-        <item name="android:background">@color/black_theme_background_color</item>
         <item name="android:textColorPrimary">@color/black_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/black_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
@@ -121,32 +173,28 @@
 
     <style name="MyTheme.Blue" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/blue_theme_tint_color</item>
-        <item name="android:background">@color/blue_theme_background_color</item>
         <item name="android:textColorPrimary">@color/blue_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/blue_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/blue_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Blue</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Blue</item>
+        <item name="colorControlActivated">@color/blue_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Blue" parent="android:Theme.Material.Light.Dialog">
         <item name="android:colorAccent">@color/blue_theme_tint_color</item>
     </style>
 
-    <style name="PreferenceTheme.Blue" parent="PreferenceTheme">
-        <item name="android:dialogTheme">@style/DialogTheme.Blue</item>
-        <item name="android:alertDialogTheme">@style/DialogTheme.Blue</item>
-    </style>
-
     <style name="MyTheme.Green" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/green_theme_tint_color</item>
-        <item name="android:background">@color/green_theme_background_color</item>
         <item name="android:textColorPrimary">@color/green_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/green_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/green_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Green</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Green</item>
+        <item name="colorControlActivated">@color/green_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Green" parent="android:Theme.Material.Light.Dialog">
@@ -155,12 +203,13 @@
 
     <style name="MyTheme.Purple" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/purple_theme_tint_color</item>
-        <item name="android:background">@color/purple_theme_background_color</item>
         <item name="android:textColorPrimary">@color/purple_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/purple_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/purple_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Purple</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Purple</item>
+        <item name="colorControlActivated">@color/purple_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Purple" parent="android:Theme.Material.Light.Dialog">
@@ -169,12 +218,13 @@
 
     <style name="MyTheme.Coffee" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/coffee_theme_tint_color</item>
-        <item name="android:background">@color/coffee_theme_background_color</item>
         <item name="android:textColorPrimary">@color/coffee_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/coffee_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/coffee_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Coffee</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Coffee</item>
+        <item name="colorControlActivated">@color/coffee_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Coffee" parent="android:Theme.Material.Light.Dialog">
@@ -183,12 +233,13 @@
 
     <style name="MyTheme.Ruby" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/ruby_theme_tint_color</item>
-        <item name="android:background">@color/ruby_theme_background_color</item>
         <item name="android:textColorPrimary">@color/ruby_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/ruby_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/ruby_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Ruby</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Ruby</item>
+        <item name="colorControlActivated">@color/ruby_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Ruby" parent="android:Theme.Material.Light.Dialog">
@@ -197,12 +248,13 @@
 
     <style name="MyTheme.Gray" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/gray_theme_tint_color</item>
-        <item name="android:background">@color/gray_theme_background_color</item>
         <item name="android:textColorPrimary">@color/gray_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/gray_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/gray_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Gray</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.Gray</item>
+        <item name="colorControlActivated">@color/gray_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.Gray" parent="android:Theme.Material.Light.Dialog">
@@ -211,12 +263,13 @@
 
     <style name="MyTheme.White" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/white_theme_tint_color</item>
-        <item name="android:background">@color/white_theme_background_color</item>
         <item name="android:textColorPrimary">@color/white_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/white_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>
         <item name="android:textColor">@color/white_theme_field_label_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.White</item>
+        <item name="preferenceTheme">@style/PreferenceTheme.White</item>
+        <item name="colorControlActivated">@color/white_theme_tint_color</item>
     </style>
 
     <style name="DatePicker.White" parent="android:Theme.Material.Light.Dialog">

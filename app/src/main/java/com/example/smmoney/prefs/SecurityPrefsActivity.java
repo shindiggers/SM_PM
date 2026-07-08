@@ -29,6 +29,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
+        setTitle(Locales.kLOC_PREFS_SECURITY);
         loadParentFragment(R.xml.prefs_security);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }

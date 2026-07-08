@@ -19,6 +19,7 @@ public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceAc
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
+        setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
         loadParentFragment(R.xml.prefs_display_edit_transaction);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }

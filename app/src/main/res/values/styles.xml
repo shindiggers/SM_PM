@@ -41,11 +41,12 @@
         <item name="android:windowNoTitle">true</item>
         <item name="android:preferenceCategoryStyle">@style/Category</item>
         <item name="android:textColorHint">@color/black_theme_text</item>
+        <item name="colorControlNormal">@color/black_theme_tint_color</item>
+        <item name="colorControlActivated">@color/black_theme_tint_color</item>
     </style>
 
     <style name="MyTheme.Black" parent="@style/MyTheme">
         <item name="android:colorForeground">@color/black_theme_tint_color</item>
-        <item name="android:background">@color/black_theme_background_color</item>
         <item name="android:textColorPrimary">@color/black_theme_field_label_color</item>
         <item name="android:textColorSecondary">@color/black_theme_text</item>
         <item name="android:textColorTertiary">#ffffff</item>

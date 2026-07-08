@@ -23,6 +23,7 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
+        setTitle(Locales.kLOC_PREFS_VIEWOPTIONS);
         loadParentFragment(R.xml.prefs_display_main);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }

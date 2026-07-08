@@ -12,6 +12,7 @@ import androidx.preference.PreferenceFragmentCompat;
 import com.example.smmoney.R;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
@@ -27,6 +28,7 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
+        setTitle(Locales.kLOC_ACCOUNT_CURRENCY_LABEL);
         loadParentFragment(R.xml.prefs_currency);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }
