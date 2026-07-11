@@ -5,40 +5,30 @@ import android.content.Context;
 import android.inputmethodservice.Keyboard;
 import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
-import android.os.Handler;
-import android.os.Looper;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
 import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 
-import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
 
 import java.text.DecimalFormatSymbols;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
-@SuppressWarnings("deprecation")
-public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, OnKeyListener {
-    private final Context context;
+public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, View.OnKeyListener {
+    private Context context;
     private EditText editText;
     private Map<String, String> keyValues = null;
     private View toolbar;
     private boolean toolbarEnabled = true;
 
     private void init() {
-        setKeyboard(new Keyboard(this.context, R.xml.keyboard));
-        setEnabled(true);
-        setPreviewEnabled(false);
-        setOnKeyListener(this);
+        setKeyboard(new Keyboard(this.context, com.example.smmoney.R.xml.keyboard));
         setOnKeyboardActionListener(this);
         initKeyCodes();
     }
@@ -119,52 +109,46 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.editText.setText("0");
     }
 
-    private void show() {
-        ((InputMethodManager) Objects.requireNonNull(this.context.getSystemService(Context.INPUT_METHOD_SERVICE))).hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            if (CurrencyKeyboard.this.editText.hasFocus()) {
-                int i = CurrencyKeyboard.this.getVisibility();
-                if (i == View.INVISIBLE || i == View.GONE) {
-                    CurrencyKeyboard.this.setVisibility(VISIBLE);
-                    CurrencyKeyboard.this.setToolbarVisibility(VISIBLE);
-                }
-            }
-        }, 150);
+    public void show() {
+        setToolbarVisibility(0);
+        setVisibility(View.VISIBLE);
+        this.editText.setShowSoftInputOnFocus(false);
+        InputMethodManager imm = (InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        if (imm != null) {
+            imm.hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+        }
     }
 
     public boolean hide() {
-        boolean isShowing = getVisibility() == VISIBLE;
-        if (isShowing) {
-            setVisibility(GONE);
-            setToolbarVisibility(GONE);
+        setToolbarVisibility(GONE);
+        if (getVisibility() != View.VISIBLE) {
+            return false;
         }
-        return isShowing;
+        setVisibility(View.GONE);
+        return true;
     }
 
     private void initKeyCodes() {
         this.keyValues = new HashMap<>();
-        this.keyValues.put(String.valueOf(7), "0");
-        this.keyValues.put(String.valueOf(8), "1");
-        this.keyValues.put(String.valueOf(9), "2");
-        this.keyValues.put(String.valueOf(10), "3");
-        this.keyValues.put(String.valueOf(11), "4");
-        this.keyValues.put(String.valueOf(12), "5");
-        this.keyValues.put(String.valueOf(13), "6");
-        this.keyValues.put(String.valueOf(14), "7");
-        this.keyValues.put(String.valueOf(15), "8");
-        this.keyValues.put(String.valueOf(16), "9");
-        this.keyValues.put(String.valueOf(81), "+");
-        this.keyValues.put(String.valueOf(69), "-");
-        this.keyValues.put(String.valueOf(76), "/");
-        this.keyValues.put(String.valueOf(17), "*");
-        this.keyValues.put(String.valueOf(55), "00");
-        this.keyValues.put(String.valueOf(56), String.valueOf(decimalSeparator()));
+        this.keyValues.put("14", "7");
+        this.keyValues.put("15", "8");
+        this.keyValues.put("16", "9");
+        this.keyValues.put("11", "4");
+        this.keyValues.put("12", "5");
+        this.keyValues.put("13", "6");
+        this.keyValues.put("8", "1");
+        this.keyValues.put("9", "2");
+        this.keyValues.put("10", "3");
+        this.keyValues.put("7", "0");
+        this.keyValues.put("55", "00");
+        this.keyValues.put("56", String.valueOf(decimalSeparator()));
+        this.keyValues.put("81", "+");
+        this.keyValues.put("69", "-");
+        this.keyValues.put("17", "*");
+        this.keyValues.put("76", "/");
     }
 
-    public String processMath(String currentValue) {
-        if (currentValue == null || currentValue.isEmpty() || currentValue.equals("-")) {
-            return "";
-        }
+    public static String processMath(String currentValue) {
         double savedDouble;
         MyScanner s = new MyScanner(currentValue);
         char savedSign = '\u0000';
@@ -275,57 +259,59 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
 
     private static class MyScanner {
         String amount = null;
-        final int end;
+        int end;
         int index = 0;
         char sign = '\u0000';
         StringBuilder strBuff;
-        final char[] theChars;
+        char[] theChars;
 
-        MyScanner(String s) {
-            this.theChars = s.toCharArray();
+        MyScanner(String amount) {
+            this.theChars = amount.toCharArray();
             this.end = this.theChars.length;
         }
 
         boolean findNext() {
-            if (this.index >= this.end) {
-                return false;
-            }
-            int i = this.index;
-            this.index = i + 1;
-            this.sign = this.theChars[i];
             this.strBuff = new StringBuilder();
-            while (this.index != this.end) {
-                if (isDelimiter(this.theChars[this.index])) {
-                    break;
+            while (this.index < this.end) {
+                char c = this.theChars[this.index];
+                this.index++;
+                if (isDelimiter(c)) {
+                    this.sign = c;
+                    while (this.index < this.end) {
+                        char c2 = this.theChars[this.index];
+                        if (isDelimiter(c2)) {
+                            break;
+                        }
+                        this.strBuff.append(c2);
+                        this.index++;
+                    }
+                    this.amount = this.strBuff.toString();
+                    return true;
                 }
             }
-            this.amount = this.strBuff.toString();
-            return true;
+            return false;
         }
 
         private boolean isDelimiter(char c) {
-            switch (c) {
-                case '*':
-                case '+':
-                case '-':
-                case '/':
-                    return true;
-                default:
-                    this.strBuff.append(c);
-                    this.index++;
-                    return false;
+            if (c == '+' || c == '-') {
+                return true;
             }
+            char decimalSeparator = new DecimalFormatSymbols().getDecimalSeparator();
+            if (c == decimalSeparator || Character.isDigit(c)) {
+                return false;
+            }
+            return c != ' ' && c != ',' && c != '$' && c != '£' && c != '€';
         }
 
-        private void firstNumber() {
+        void firstNumber() {
             this.strBuff = new StringBuilder();
-            if (this.index == 0 && this.index != this.end && this.theChars[this.index] == '-') {
-                this.index++;
-            }
-            while (this.index != this.end) {
-                if (isDelimiter(this.theChars[this.index])) {
+            while (this.index < this.end) {
+                char c = this.theChars[this.index];
+                if (isDelimiter(c)) {
                     break;
                 }
+                this.strBuff.append(c);
+                this.index++;
             }
             this.amount = this.strBuff.toString();
         }

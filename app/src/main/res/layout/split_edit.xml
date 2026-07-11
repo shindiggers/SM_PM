@@ -205,7 +205,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:src="@drawable/ic_fx"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE" />
 

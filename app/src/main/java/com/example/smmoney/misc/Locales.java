@@ -220,6 +220,12 @@ public class Locales {
     public static final String kLOC_ERROR_NO_NETWORK_CONNECTION_MSG = SMMoney.getAppContext().getString(R.string.kLOC_ERROR_NO_NETWORK_CONNECTION_MSG);
     public static final String kLOC_ERROR_NO_NETWORK_CONNECTION_TITLE = SMMoney.getAppContext().getString(R.string.kLOC_ERROR_NO_NETWORK_CONNECTION_TITLE);
     public static final String kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT);
+    public static final String kLOC_EXCHANGERATE_CHANGE_FOREIGN_AMOUNT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_CHANGE_FOREIGN_AMOUNT);
+    public static final String kLOC_EXCHANGERATE_CHANGE_EXCHANGE_RATE = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_CHANGE_EXCHANGE_RATE);
+    public static final String kLOC_EXCHANGERATE_ACCOUNT_AMOUNT_MULTI = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_ACCOUNT_AMOUNT_MULTI);
+    public static final String kLOC_EXCHANGERATE_EXCHANGE_RATE_MULTI = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_EXCHANGE_RATE_MULTI);
+    public static final String kLOC_EXCHANGERATE_CHANGE_ACCOUNT_AMOUNT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_CHANGE_ACCOUNT_AMOUNT);
+    public static final String kLOC_EXCHANGERATE_FOREIGN_AMOUNT_MULTI = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_FOREIGN_AMOUNT_MULTI);
     public static final String kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT);
     public static final String kLOC_EXCHANGERATE_WORKSHEET_INVERT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_WORKSHEET_INVERT);
     public static final String kLOC_FEE_CATEGORY = SMMoney.getAppContext().getString(R.string.kLOC_FEE_CATEGORY);

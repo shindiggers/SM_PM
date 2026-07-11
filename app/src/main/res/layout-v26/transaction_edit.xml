@@ -324,9 +324,10 @@
                         android:id="@+id/amount_xrate_text_view"
                         android:layout_width="150dp"
                         android:layout_height="0dp"
-                        android:layout_gravity="center_vertical"
+                        android:layout_gravity="center_vertical|center_horizontal"
                         android:layout_weight="1"
                         android:gravity="center_vertical"
+                        android:textSize="8sp"
                         android:singleLine="true"
                         android:text="@string/transaction_edit_x_xrate" />
                 </LinearLayout>
@@ -338,7 +339,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginEnd="4dp"
                     android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:src="@drawable/ic_fx"
                     android:clickable="false"
                     android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue" />
 

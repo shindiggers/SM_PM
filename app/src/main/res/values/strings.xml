@@ -166,6 +166,12 @@
     <string name="kLOC_GENERAL_EXCHANGERATE">Exchange Rate</string>
     <string name="kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT">Foreign Amount</string>
     <string name="kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT">Account Amount</string>
+    <string name="kLOC_EXCHANGERATE_CHANGE_FOREIGN_AMOUNT">Change\nForeign Amount</string>
+    <string name="kLOC_EXCHANGERATE_CHANGE_EXCHANGE_RATE">Change\nExchange Rate</string>
+    <string name="kLOC_EXCHANGERATE_ACCOUNT_AMOUNT_MULTI">Account\nAmount</string>
+    <string name="kLOC_EXCHANGERATE_EXCHANGE_RATE_MULTI">Exchange\nRate</string>
+    <string name="kLOC_EXCHANGERATE_CHANGE_ACCOUNT_AMOUNT">Change\nAccount Amount</string>
+    <string name="kLOC_EXCHANGERATE_FOREIGN_AMOUNT_MULTI">Foreign\nAmount</string>
     <string name="kLOC_EXCHANGERATE_WORKSHEET_INVERT">1/x</string>
     <string name="kLOC_CURRENCYEXCHANGE_SYMBOL">Currency Symbol</string>
     <string name="kLOC_CURRENCYEXCHANGE_PREFIXSYMBOL">Prefix Symbol</string>

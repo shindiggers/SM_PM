@@ -1,25 +1,29 @@
 package com.example.smmoney.views.exchangerates;
 
-import android.app.AlertDialog.Builder;
-import android.content.DialogInterface;
+import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.View.OnFocusChangeListener;
-import android.widget.Button;
+import android.view.ViewGroup;
 import android.widget.EditText;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.transition.TransitionManager;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
 import com.example.smmoney.misc.Locales;
@@ -31,194 +35,95 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import java.util.ArrayList;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ExchangeRateActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
+    private static final String TAG = "ExchangeRateActivity";
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
+
+    private enum CalculatedField { FOREIGN, RATE, ACCOUNT }
+    private CalculatedField currentCalculatedField = CalculatedField.ACCOUNT;
+
+    // Formula: foreignAmount * exchangeRate = accountAmount
     private double accountAmount;
-    private EditText accountAmountEditText;
-    private MaterialButton accountAmountRadioButton;
-    private String accountCurrency;
-    private TextView accountCurrencyTextView;
-    private CurrencyKeyboard currencyKeyboard;
-    private double exchangeRate;
-    private EditText exchangeRateEditText;
-    private MaterialButton exchangeRateRadioButton;
+    private double exchangeRate = 1.0;
     private double foreignAmount;
-    private EditText foreignAmountEditText;
-    private MaterialButton foreignAmountRadioButton;
+    
+    private String accountCurrency;
     private String foreignCurrency;
-    private TextView foreignCurrencyTextView;
-    @SuppressWarnings("unused")
-    private final OnFocusChangeListener mFocusChangedListener = (v, hasFocus) -> {
-        if (hasFocus) {
-            ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (v.equals(ExchangeRateActivity.this.foreignAmountEditText)) {
-                if (ExchangeRateActivity.this.foreignAmountRadioButton.isChecked()) {
-                    ExchangeRateActivity.this.exchangeRateRadioButton.setChecked(true);
-                }
-                ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(false);
-                ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(50);
-            } else if (v.equals(ExchangeRateActivity.this.exchangeRateEditText)) {
-                if (ExchangeRateActivity.this.exchangeRateRadioButton.isChecked()) {
-                    ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
-                }
-                ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(false);
-                ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(50);
-            } else if (v.equals(ExchangeRateActivity.this.accountAmountEditText)) {
-                if (ExchangeRateActivity.this.accountAmountRadioButton.isChecked()) {
-                    ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
-                }
-                ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(false);
-                ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(50);
-            }
+    private TransactionClass transaction;
+
+    private EditText row1EditText;
+    private EditText row2EditText;
+    private EditText row3EditText;
+    
+    private ImageView lockRow1Icon;
+    private ImageView lockRow2Icon;
+    private ImageView lockRow3Icon;
+    private ImageView fetchRateButton;
+    
+    private TextView row1CurrencyTextView;
+    private TextView row3CurrencyTextView;
+    private TextView statusTextView;
+    
+    private CurrencyKeyboard currencyKeyboard;
+    private boolean programaticUpdate = false;
+    private boolean isSwapped = false;
+
+    private final TextWatcher row1Watcher = new TextWatcher() {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        @Override public void afterTextChanged(Editable s) {
+            if (programaticUpdate) return;
+            double val = CurrencyExt.amountFromString(s.toString());
+            if (isSwapped) accountAmount = val;
+            else foreignAmount = val;
+            performCalculation();
         }
     };
-    private final Runnable onFocusChangedRunnableAccountAmount = new Runnable() {
-        public void run() {
-            foreignAmountRadioButton.setVisibility(View.VISIBLE);
-            exchangeRateRadioButton.setVisibility(View.VISIBLE);
-            accountAmountRadioButton.setVisibility(View.VISIBLE);
-            ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
-                exchangeRateRadioButton.setChecked(true);
-            }
-            if (ExchangeRateActivity.this.accountAmountRadioButton.isChecked()) {
-                ExchangeRateActivity.this.exchangeRateRadioButton.setChecked(true);
-            }
-            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Change\nForeign Amount");
-            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Change\nExchange Rate");
-            ExchangeRateActivity.this.accountAmountRadioButton.setText("Account\nAmount");
-            ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(false);
-            ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(50);
+
+    private final TextWatcher row2Watcher = new TextWatcher() {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        @Override public void afterTextChanged(Editable s) {
+            if (programaticUpdate) return;
+            double val = CurrencyExt.amountFromString(s.toString());
+            if (isSwapped) exchangeRate = val != 0 ? 1.0 / val : 1.0;
+            else exchangeRate = val != 0 ? val : 1.0;
+            performCalculation();
         }
     };
-    private final Runnable onFocusChangedRunnableExchangeAmount = new Runnable() {
-        public void run() {
-            foreignAmountRadioButton.setVisibility(View.VISIBLE);
-            exchangeRateRadioButton.setVisibility(View.VISIBLE);
-            accountAmountRadioButton.setVisibility(View.VISIBLE);
-            ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
-                foreignAmountRadioButton.setChecked(true);
-            }
-            if (ExchangeRateActivity.this.exchangeRateRadioButton.isChecked()) {
-                ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
-            }
-            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Change\nForeign Amount");
-            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Exchange\nRate");
-            ExchangeRateActivity.this.accountAmountRadioButton.setText("Change\nAccount Amount");
-            ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(false);
-            ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(50);
+
+    private final TextWatcher row3Watcher = new TextWatcher() {
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        @Override public void afterTextChanged(Editable s) {
+            if (programaticUpdate) return;
+            double val = CurrencyExt.amountFromString(s.toString());
+            if (isSwapped) foreignAmount = val;
+            else accountAmount = val;
+            performCalculation();
         }
     };
-    private final Runnable onFocusChangedRunnableForeignAmount = new Runnable() {
-        public void run() {
-            foreignAmountRadioButton.setVisibility(View.VISIBLE);
-            exchangeRateRadioButton.setVisibility(View.VISIBLE);
-            accountAmountRadioButton.setVisibility(View.VISIBLE);
-            ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.exchangeRateRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.accountAmountRadioButton.setEnabled(true);
-            ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.exchangeRateRadioButton.getBackground().setAlpha(255);
-            ExchangeRateActivity.this.accountAmountRadioButton.getBackground().setAlpha(255);
-            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
-                exchangeRateRadioButton.setChecked(true);
-            }
-            if (ExchangeRateActivity.this.foreignAmountRadioButton.isChecked() || exchangeRateRadioButton.isChecked()) {
-                ExchangeRateActivity.this.exchangeRateRadioButton.setChecked(true);
-            }
-            ExchangeRateActivity.this.foreignAmountRadioButton.setText("Foreign\nAmount");
-            ExchangeRateActivity.this.exchangeRateRadioButton.setText("Change\nExchange Rate");
-            ExchangeRateActivity.this.accountAmountRadioButton.setText("Change\nAccount Amount");
-            ExchangeRateActivity.this.foreignAmountRadioButton.setEnabled(false);
-            ExchangeRateActivity.this.foreignAmountRadioButton.getBackground().setAlpha(50);
-        }
-    };
-    private boolean programaticUpdate;
 
-    private class MyTextWatcher implements TextWatcher {
-        private MyTextWatcher() {
-        }
-
-        public void afterTextChanged(Editable s) {
-            if (!ExchangeRateActivity.this.programaticUpdate) {
-                ExchangeRateActivity.this.textFieldDidChange();
-            }
-        }
-
-        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        }
-
-        public void onTextChanged(CharSequence s, int start, int before, int count) {
-        }
-    }
-
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-        double d = 0.0d;
         super.onCreate(savedInstanceState);
-        setResult(0);
-        Bundle b = getIntent().getExtras();
-        try {
-            if (b != null) {
-                TransactionClass transaction;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    transaction = b.getSerializable("transaction", TransactionClass.class);
-                } else {
-                    //noinspection deprecation
-                    transaction = (TransactionClass) b.get("transaction");
-                }
-                this.accountCurrency = Objects.requireNonNull(AccountDB.recordFor(Objects.requireNonNull(transaction).getAccount())).getCurrencyCode();
-            }
-        } catch (NullPointerException e) {
-            this.accountCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
-        }
-        try {
-            SplitsClass s = null;
-            if (b != null) {
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                    s = b.getSerializable("split", SplitsClass.class);
-                } else {
-                    //noinspection deprecation
-                    s = (SplitsClass) b.get("split");
-                }
-            }
-            double xrate;
-            if (s != null) {
-                xrate = s.getXrate();
-
-                setExchangeRate(xrate);
-                setAccountAmount(s.getAmount());
-                if (xrate != 0.0d) {
-                    d = s.getAmount() / xrate;
-                }
-
-                setForeignAmount(d);
-                this.foreignCurrency = s.getCurrencyCode();
-            }
-        } catch (NullPointerException e2) {
-            this.exchangeRate = 1.0d;
-            this.accountAmount = 1.0d;
-            this.foreignAmount = 1.0d;
-        }
+        setResult(Activity.RESULT_CANCELED);
+        extractData();
         setContentView(R.layout.exchangerate);
-        setupButtons();
+        setupView();
+        updateLockStates();
         loadCells();
 
         if (getSupportActionBar() != null) {
@@ -228,201 +133,271 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         }
     }
 
+    private void extractData() {
+        Bundle b = getIntent().getExtras();
+        if (b == null) return;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            this.transaction = b.getSerializable("transaction", TransactionClass.class);
+        } else {
+            //noinspection deprecation
+            this.transaction = (TransactionClass) b.get("transaction");
+        }
+        if (this.transaction != null) {
+            AccountClass acct = AccountDB.recordFor(this.transaction.getAccount());
+            this.accountCurrency = acct != null ? acct.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        } else {
+            this.accountCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        }
+        SplitsClass s;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+            s = b.getSerializable("split", SplitsClass.class);
+        } else {
+            //noinspection deprecation
+            s = (SplitsClass) b.get("split");
+        }
+        if (s != null) {
+            this.exchangeRate = s.getXrate() != 0 ? s.getXrate() : 1.0;
+            this.accountAmount = Math.abs(s.getAmount());
+            this.foreignAmount = round(this.accountAmount / this.exchangeRate);
+            this.foreignCurrency = s.getCurrencyCode();
+        } else {
+            this.exchangeRate = 1.0;
+            this.accountAmount = 0.0;
+            this.foreignAmount = 0.0;
+            this.foreignCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        }
+    }
+
+    private void setupView() {
+        this.row1EditText = findViewById(R.id.foreign_amount_edit_text);
+        this.row2EditText = findViewById(R.id.exchange_rate_edit_text);
+        this.row3EditText = findViewById(R.id.account_amount_edit_text);
+        this.lockRow1Icon = findViewById(R.id.lock_foreign);
+        this.lockRow2Icon = findViewById(R.id.lock_rate);
+        this.lockRow3Icon = findViewById(R.id.lock_account);
+        this.row1CurrencyTextView = findViewById(R.id.foreign_text_view);
+        this.row3CurrencyTextView = findViewById(R.id.account_currency_text_view);
+        this.statusTextView = findViewById(R.id.status_text);
+        this.fetchRateButton = findViewById(R.id.fetch_rate_button);
+        this.lockRow1Icon.setOnClickListener(v -> setCalculatedField(isSwapped ? CalculatedField.ACCOUNT : CalculatedField.FOREIGN));
+        this.lockRow2Icon.setOnClickListener(v -> setCalculatedField(CalculatedField.RATE));
+        this.lockRow3Icon.setOnClickListener(v -> setCalculatedField(isSwapped ? CalculatedField.FOREIGN : CalculatedField.ACCOUNT));
+        this.fetchRateButton.setOnClickListener(v -> fetchHistoricalRate());
+        findViewById(R.id.swap_button).setOnClickListener(v -> performVisualSwap());
+        findViewById(R.id.foreign_row).setOnClickListener(v -> { if (!isSwapped) openCurrencyPicker(); });
+        findViewById(R.id.account_row).setOnClickListener(v -> { if (isSwapped) openCurrencyPicker(); });
+        this.row1EditText.addTextChangedListener(row1Watcher);
+        this.row2EditText.addTextChangedListener(row2Watcher);
+        this.row3EditText.addTextChangedListener(row3Watcher);
+
+        // Suppress system keyboard
+        this.row1EditText.setShowSoftInputOnFocus(false);
+        this.row2EditText.setShowSoftInputOnFocus(false);
+        this.row3EditText.setShowSoftInputOnFocus(false);
+
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        int amountColor = getAmountTextColor();
+        int groupBg = PocketMoneyThemes.groupTableViewBackgroundColor();
+        
+        findViewById(R.id.parent_view).setBackgroundColor(groupBg);
+        findViewById(R.id.scrollView).setBackgroundColor(groupBg);
+
+        // Theme the rows
+        findViewById(R.id.foreign_row).setBackgroundResource(PocketMoneyThemes.editRowSelector(0));
+        findViewById(R.id.rate_row).setBackgroundResource(PocketMoneyThemes.editRowSelector(1));
+        findViewById(R.id.account_row).setBackgroundResource(PocketMoneyThemes.editRowSelector(2));
+
+        this.row1EditText.setTextColor(amountColor);
+        this.row2EditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.row3EditText.setTextColor(amountColor);
+        this.row1CurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.row3CurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+
+        ((TextView)findViewById(R.id.foreign_amount_label)).setTextColor(fieldLabelColor);
+        ((TextView)findViewById(R.id.exchange_rate_label)).setTextColor(fieldLabelColor);
+        ((TextView)findViewById(R.id.account_amount_label)).setTextColor(fieldLabelColor);
+        this.statusTextView.setTextColor(fieldLabelColor);
+        
+        // Tint links and swap lines
+        findViewById(R.id.link1).setBackgroundColor(fieldLabelColor);
+        findViewById(R.id.link2).setBackgroundColor(fieldLabelColor);
+        findViewById(R.id.swap_vertical_line).setBackgroundColor(fieldLabelColor);
+        findViewById(R.id.swap_top_tick).setBackgroundColor(fieldLabelColor);
+        findViewById(R.id.swap_bottom_tick).setBackgroundColor(fieldLabelColor);
+        ((TextView)findViewById(R.id.multiply_label)).setTextColor(fieldLabelColor);
+        ((TextView)findViewById(R.id.equals_label)).setTextColor(fieldLabelColor);
+
+        this.fetchRateButton.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        ((ImageView)findViewById(R.id.currency_picker_arrow)).setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        ((ImageView)findViewById(R.id.account_currency_picker_arrow)).setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        ((ImageView)findViewById(R.id.swap_button)).setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        this.currencyKeyboard = findViewById(R.id.keyboardView);
+        this.currencyKeyboard.setEditText(this.row1EditText, null);
+        this.currencyKeyboard.setEditText(this.row2EditText, null);
+        this.currencyKeyboard.setEditText(this.row3EditText, null);
+    }
+
+    private int getAmountTextColor() {
+        if (this.transaction == null) return PocketMoneyThemes.primaryEditTextColor();
+        return (this.transaction.getType() == Enums.kTransactionTypeWithdrawal || this.transaction.getType() == Enums.kTransactionTypeTransferTo) 
+            ? PocketMoneyThemes.primaryEditTextColor() : PocketMoneyThemes.greenDepositColor();
+    }
+
+    private void setCalculatedField(CalculatedField field) {
+        this.currentCalculatedField = field;
+        updateLockStates();
+        performCalculation();
+    }
+
+    private void updateLockStates() {
+        int activeTint = PocketMoneyThemes.currentTintColor();
+        int inactiveTint = Color.GRAY;
+        boolean row1Calculated = isSwapped ? currentCalculatedField == CalculatedField.ACCOUNT : currentCalculatedField == CalculatedField.FOREIGN;
+        boolean row2Calculated = currentCalculatedField == CalculatedField.RATE;
+        boolean row3Calculated = isSwapped ? currentCalculatedField == CalculatedField.FOREIGN : currentCalculatedField == CalculatedField.ACCOUNT;
+        this.lockRow1Icon.setImageResource(row1Calculated ? R.drawable.ic_lock : R.drawable.ic_lock_open);
+        this.lockRow2Icon.setImageResource(row2Calculated ? R.drawable.ic_lock : R.drawable.ic_lock_open);
+        this.lockRow3Icon.setImageResource(row3Calculated ? R.drawable.ic_lock : R.drawable.ic_lock_open);
+        this.lockRow1Icon.setColorFilter(row1Calculated ? activeTint : inactiveTint);
+        this.lockRow2Icon.setColorFilter(row2Calculated ? activeTint : inactiveTint);
+        this.lockRow3Icon.setColorFilter(row3Calculated ? activeTint : inactiveTint);
+        this.row1EditText.setEnabled(!row1Calculated);
+        this.row2EditText.setEnabled(!row2Calculated);
+        this.row3EditText.setEnabled(!row3Calculated);
+        this.fetchRateButton.setVisibility(currentCalculatedField == CalculatedField.RATE ? View.GONE : View.VISIBLE);
+        updateInstructionalText();
+    }
+
+    private void updateInstructionalText() {
+        String foreignLabel = Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT;
+        String rateLabel = Locales.kLOC_GENERAL_EXCHANGERATE;
+        String accountLabel = Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT;
+        String instruction = switch (currentCalculatedField) {
+            case FOREIGN -> "Enter " + rateLabel + " and " + accountLabel + " to calculate " + foreignLabel + ".";
+            case RATE -> "Enter " + foreignLabel + " and " + accountLabel + " to calculate " + rateLabel + ".";
+            case ACCOUNT -> "Enter " + foreignLabel + " and " + rateLabel + " to calculate " + accountLabel + ".";
+        };
+        this.statusTextView.setText(instruction);
+    }
+
+    private double round(double val) { return Math.round(val * 100.0) / 100.0; }
+
+    private void performCalculation() {
+        switch (currentCalculatedField) {
+            case FOREIGN -> { if (exchangeRate != 0) foreignAmount = round(accountAmount / exchangeRate); }
+            case RATE -> { if (foreignAmount != 0) exchangeRate = accountAmount / foreignAmount; }
+            case ACCOUNT -> { accountAmount = round(foreignAmount * exchangeRate); }
+        }
+        programaticUpdate = true;
+        updateVisualFields(false);
+        programaticUpdate = false;
+    }
+
+    private void updateVisualFields(boolean forceAll) {
+        View focused = getCurrentFocus();
+        if (isSwapped) {
+            if (forceAll || focused != row1EditText) this.row1EditText.setText(CurrencyExt.amountAsString(accountAmount));
+            if (forceAll || focused != row2EditText) this.row2EditText.setText(CurrencyExt.exchangeRateAsString(exchangeRate != 0 ? 1.0 / exchangeRate : 1.0));
+            if (forceAll || focused != row3EditText) this.row3EditText.setText(CurrencyExt.amountAsString(foreignAmount));
+        } else {
+            if (forceAll || focused != row1EditText) this.row1EditText.setText(CurrencyExt.amountAsString(foreignAmount));
+            if (forceAll || focused != row2EditText) this.row2EditText.setText(CurrencyExt.exchangeRateAsString(exchangeRate));
+            if (forceAll || focused != row3EditText) this.row3EditText.setText(CurrencyExt.amountAsString(accountAmount));
+        }
+    }
+
+    private void loadCells() {
+        programaticUpdate = true;
+        updateVisualFields(true);
+        this.row1CurrencyTextView.setText(isSwapped ? accountCurrency : foreignCurrency);
+        this.row3CurrencyTextView.setText(isSwapped ? foreignCurrency : accountCurrency);
+        TextView l1 = findViewById(R.id.foreign_amount_label);
+        TextView l3 = findViewById(R.id.account_amount_label);
+        l1.setText(isSwapped ? Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT : Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT);
+        l3.setText(isSwapped ? Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT : Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT);
+        findViewById(R.id.currency_picker_arrow).setVisibility(isSwapped ? View.GONE : View.VISIBLE);
+        findViewById(R.id.account_currency_picker_arrow).setVisibility(isSwapped ? View.VISIBLE : View.GONE);
+        programaticUpdate = false;
+    }
+
+    private void performVisualSwap() {
+        TransitionManager.beginDelayedTransition(findViewById(R.id.inner_layout));
+        this.isSwapped = !this.isSwapped;
+        updateLockStates();
+        loadCells();
+    }
+
+    private void openCurrencyPicker() {
+        final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setItems(currencyCodes, (dialog, item) -> {
+                    this.foreignCurrency = currencyCodes[item].substring(0, 3);
+                    loadCells(); // Update labels immediately
+                    if (currentCalculatedField != CalculatedField.RATE) fetchHistoricalRate();
+                }).show();
+    }
+
+    private void fetchHistoricalRate() {
+        if (this.transaction == null || currentCalculatedField == CalculatedField.RATE) return;
+        String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(this.transaction.getDate().getTime());
+        String from = this.foreignCurrency;
+        String to = this.accountCurrency;
+        this.statusTextView.setText(String.format("Fetching rate for %s...", dateStr));
+        executor.execute(() -> {
+            try {
+                if (from.equals(to)) {
+                    runOnUiThread(() -> {
+                        this.exchangeRate = 1.0;
+                        performCalculation();
+                        loadCells();
+                        updateInstructionalText();
+                    });
+                    return;
+                }
+                URL url = new URL("https://api.frankfurter.app/" + dateStr + "?from=" + from + "&to=" + to);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = r.readLine()) != null) sb.append(line);
+                r.close();
+                JSONObject json = new JSONObject(sb.toString());
+                double rate = json.getJSONObject("rates").getDouble(to);
+                runOnUiThread(() -> {
+                    this.exchangeRate = rate;
+                    performCalculation();
+                    loadCells();
+                    updateInstructionalText();
+                    Toast.makeText(this, "Rate updated", Toast.LENGTH_SHORT).show();
+                });
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    this.statusTextView.setText("Failed to fetch rate.");
+                    Toast.makeText(this, "Fetch error", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
+    }
+
     @Override
     public boolean onSupportNavigateUp() {
         Intent i = new Intent();
         i.putExtra("xrate", this.exchangeRate);
         i.putExtra("amount", this.accountAmount);
         i.putExtra("currency", this.foreignCurrency);
-        setResult(1, i);
+        setResult(Activity.RESULT_OK, i);
         finish();
         return true;
     }
 
-    private void setExchangeRate(double n) {
-        n = Math.abs(n);
-        if (n == 0.0d) {
-            this.exchangeRate = 1.0d;
-        } else {
-            this.exchangeRate = n;
-        }
-    }
+    @Override public void lookupExchangeRateCallback(ExchangeRateClass ex, double r, AccountClass a) {}
 
-    private void setAccountAmount(double n) {
-        this.accountAmount = Math.abs(n);
-    }
-
-    private void setForeignAmount(double n) {
-        this.foreignAmount = Math.abs(n);
-    }
-
-    private void setupButtons() {
-        this.foreignAmountEditText = findViewById(R.id.foreign_amount_edit_text);
-        this.foreignCurrencyTextView = findViewById(R.id.foreign_text_view);
-        this.exchangeRateEditText = findViewById(R.id.exchange_rate_edit_text);
-        this.accountAmountEditText = findViewById(R.id.account_amount_edit_text);
-        this.accountCurrencyTextView = findViewById(R.id.account_currency_text_view);
-        Button invertButton = findViewById(R.id.invert_button);
-        this.foreignAmountRadioButton = findViewById(R.id.foreign_amount_segmented);
-        this.exchangeRateRadioButton = findViewById(R.id.exchange_rate_segmented);
-        this.accountAmountRadioButton = findViewById(R.id.account_amount_segmented);
-        invertButton.setOnClickListener(v -> {
-            if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
-                accountAmountRadioButton.setChecked(true);
-            }
-            ExchangeRateActivity.this.saveXrate();
-            ExchangeRateActivity.this.exchangeRateEditText.setText(CurrencyExt.exchangeRateAsString(1.0d / ExchangeRateActivity.this.exchangeRate));
-        });
-        View v = (View) this.foreignAmountEditText.getParent();
-        v.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        v.setOnClickListener(v1 -> {
-            final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-            new Builder(ExchangeRateActivity.this, PocketMoneyThemes.dialogTheme()).setItems(currencyCodes, (dialog, item) -> {
-                if (ExchangeRateActivity.this.exchangeRateRadioButton.isChecked()) {
-                    if (ExchangeRateActivity.this.foreignAmountRadioButton.isEnabled()) {
-                        ExchangeRateActivity.this.foreignAmountRadioButton.setChecked(true);
-                    } else {
-                        ExchangeRateActivity.this.accountAmountRadioButton.setChecked(true);
-                    }
-                }
-                ExchangeRateActivity.this.selectedCurrency(currencyCodes[item].substring(0, 3));
-            }).show();
-        });
-        this.foreignAmountEditText.addTextChangedListener(new MyTextWatcher());
-        this.exchangeRateEditText.addTextChangedListener(new MyTextWatcher());
-        this.accountAmountEditText.addTextChangedListener(new MyTextWatcher());
-        findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        findViewById(R.id.linearLayout1).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        findViewById(R.id.linearLayout2).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ArrayList<View> theViews = new ArrayList<>();
-        TextView tView = findViewById(R.id.foreign_amount_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.foreignAmountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        this.foreignCurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.exchange_rate_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.exchangeRateEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
-        tView = findViewById(R.id.account_amount_label);
-        tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.accountAmountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        this.accountCurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
-        
-        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
-        ((android.widget.ImageView) findViewById(R.id.imageView1)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-
-        this.currencyKeyboard = findViewById(R.id.keyboardView);
-        this.currencyKeyboard.setEditText(this.foreignAmountEditText, this.onFocusChangedRunnableForeignAmount);
-        this.currencyKeyboard.setEditText(this.exchangeRateEditText, this.onFocusChangedRunnableExchangeAmount);
-        this.currencyKeyboard.setEditText(this.accountAmountEditText, this.onFocusChangedRunnableAccountAmount);
-        
-        MaterialButtonToggleGroup group = findViewById(R.id.radioGroup1);
-        group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
-            if (isChecked && !ExchangeRateActivity.this.programaticUpdate) {
-                ExchangeRateActivity.this.textFieldDidChange();
-            }
-        });
-        
-        // Theme the buttons
-        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
-        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
-        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
-        
-        this.foreignAmountRadioButton.setBackgroundTintList(bgTint);
-        this.foreignAmountRadioButton.setTextColor(textTint);
-        this.foreignAmountRadioButton.setStrokeColor(strokeTint);
-        
-        this.exchangeRateRadioButton.setBackgroundTintList(bgTint);
-        this.exchangeRateRadioButton.setTextColor(textTint);
-        this.exchangeRateRadioButton.setStrokeColor(strokeTint);
-        
-        this.accountAmountRadioButton.setBackgroundTintList(bgTint);
-        this.accountAmountRadioButton.setTextColor(textTint);
-        this.accountAmountRadioButton.setStrokeColor(strokeTint);
-
-        int i = 0;
-        for (View theView : theViews) {
-            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
-            i++;
-        }
-        if (!foreignAmountRadioButton.isChecked() && !exchangeRateRadioButton.isChecked() && !accountAmountRadioButton.isChecked()) {
-            foreignAmountRadioButton.setVisibility(View.INVISIBLE);
-            exchangeRateRadioButton.setVisibility(View.INVISIBLE);
-            accountAmountRadioButton.setVisibility(View.INVISIBLE);
-        }
-    }
-
-    public void lookupExchangeRateCallback(ExchangeRateClass exchangeRateInstance, final double rate, AccountClass account) {
-        runOnUiThread(() -> {
-            if (rate == 0.0d) {
-                ExchangeRateActivity.this.exchangeRateEditText.setText("1");
-                return;
-            }
-            ExchangeRateActivity.this.exchangeRateEditText.setText(CurrencyExt.exchangeRateAsString(1.0d / rate));
-            ExchangeRateActivity.this.exchangeRateEditText.invalidate();
-        });
-    }
-
-    private void selectedCurrency(final String currencyCode) {
-        this.foreignCurrency = currencyCode;
-        this.foreignCurrencyTextView.setText(this.foreignCurrency);
-        ((Runnable) () -> new ExchangeRateClass(false, ExchangeRateActivity.this).lookupExchangeRate(currencyCode, ExchangeRateActivity.this.accountCurrencyTextView.getText().toString(), null)).run();
-    }
-
-    private void loadCells() {
-        this.programaticUpdate = true;
-        this.foreignAmountEditText.setText(this.foreignAmount != 0.0d ? CurrencyExt.amountAsString(this.foreignAmount) : "");
-        this.foreignCurrencyTextView.setText(this.foreignCurrency);
-        this.exchangeRateEditText.setText(this.exchangeRate != 0.0d ? CurrencyExt.amountAsString(this.exchangeRate) : "");
-        this.accountAmountEditText.setText(this.accountAmount != 0.0d ? CurrencyExt.amountAsString(this.accountAmount) : "");
-        this.accountCurrencyTextView.setText(this.accountCurrency);
-        this.programaticUpdate = false;
-    }
-
-    private void screenDataToValues() {
-        setForeignAmount(CurrencyExt.amountFromString(this.foreignAmountEditText.getText().toString()));
-        this.foreignCurrency = this.foreignCurrencyTextView.getText().toString();
-        saveXrate();
-        setAccountAmount(CurrencyExt.amountFromString(this.accountAmountEditText.getText().toString()));
-        this.accountCurrency = this.accountCurrencyTextView.getText().toString();
-    }
-
-    private void saveXrate() {
-        setExchangeRate(CurrencyExt.amountFromStringWithCurrency(this.exchangeRateEditText.getText().toString(), null));
-    }
-
-    private void textFieldDidChange() {
-        double d = 0.0d;
-        this.programaticUpdate = true;
-        screenDataToValues();
-        if (this.exchangeRateRadioButton.isChecked()) {
-            if (this.foreignAmount != 0.0d) {
-                d = this.accountAmount / this.foreignAmount;
-            }
-            setExchangeRate(d);
-            this.exchangeRateEditText.setText(CurrencyExt.exchangeRateAsString(this.exchangeRate));
-        } else if (this.foreignAmountRadioButton.isChecked()) {
-            if (this.exchangeRate != 0.0d) {
-                d = this.accountAmount / this.exchangeRate;
-            }
-            setForeignAmount(d);
-            this.foreignAmountEditText.setText(CurrencyExt.amountAsString(this.foreignAmount));
-        } else if (this.accountAmountRadioButton.isChecked()) {
-            setAccountAmount(this.foreignAmount * this.exchangeRate);
-            this.accountAmountEditText.setText(CurrencyExt.amountAsString(this.accountAmount));
-        }
-        this.programaticUpdate = false;
-    }
-
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == 4) {
-            if (this.currencyKeyboard.hide()) {
-                return false;
-            }
-            onSupportNavigateUp();
-            return true;
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if (this.currencyKeyboard.hide()) return false;
+            return onSupportNavigateUp();
         }
         return super.onKeyDown(keyCode, event);
     }

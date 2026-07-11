@@ -1,197 +1,295 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:background="@color/white_theme_background_color">
 
-    <LinearLayout
-        android:id="@+id/linearLayout1"
+    <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:orientation="vertical">
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@+id/keyboardView"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:id="@+id/linearLayout2"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/inner_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:padding="16dp">
 
-            <FrameLayout
-                android:id="@+id/FrameLayout01"
-                android:layout_width="match_parent"
+            <!-- Vertical Guideline for Swap Button -->
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline_end"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.82" />
+
+            <!-- Row 1: Amount 1 (Foreign by default) -->
+            <LinearLayout
+                android:id="@+id/foreign_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:id="@+id/lock_foreign"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_lock_open"
+                    app:tint="@color/blue_theme_field_label_color" />
 
                 <TextView
                     android:id="@+id/foreign_amount_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
+                    android:paddingStart="4dp"
+                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
+                    android:textSize="10sp" />
 
                 <EditText
                     android:id="@+id/foreign_amount_edit_text"
-                    android:layout_width="wrap_content"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="120dp"
-                    android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
-                    android:importantForAutofill="no"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="0.00"
                     android:inputType="numberDecimal"
-                    android:nextFocusDown="@id/exchange_rate_edit_text" />
+                    android:padding="8dp"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/foreign_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="50dp"
-                    android:text="@string/usd" />
+                    android:paddingEnd="4dp"
+                    android:text="EUR"
+                    android:textStyle="bold" />
 
                 <ImageView
-                    android:id="@+id/imageView1"
+                    android:id="@+id/currency_picker_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:contentDescription="@string/content_description_select_currency"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
+            </LinearLayout>
 
-            </FrameLayout>
+            <!-- Vertical Link 1 -->
+            <View
+                android:id="@+id/link1"
+                android:layout_width="2dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="31dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/foreign_row" />
 
-            <FrameLayout
-                android:id="@+id/FrameLayout02"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/multiply_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:layout_marginStart="12dp"
+                android:text="×"
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@id/link1"
+                app:layout_constraintStart_toEndOf="@id/link1"
+                app:layout_constraintTop_toTopOf="@id/link1" />
+
+            <!-- Row 2: Exchange Rate -->
+            <LinearLayout
+                android:id="@+id/rate_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/link1">
+
+                <ImageView
+                    android:id="@+id/lock_rate"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_lock_open"
+                    app:tint="@color/blue_theme_field_label_color" />
 
                 <TextView
                     android:id="@+id/exchange_rate_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/kLOC_GENERAL_EXCHANGERATE" />
+                    android:paddingStart="4dp"
+                    android:text="@string/kLOC_GENERAL_EXCHANGERATE"
+                    android:textSize="10sp" />
 
                 <EditText
                     android:id="@+id/exchange_rate_edit_text"
-                    android:layout_width="145dp"
+                    android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="120dp"
-                    android:hint="@string/kLOC_GENERAL_EXCHANGERATE"
-                    android:importantForAutofill="no"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="1.0000"
                     android:inputType="numberDecimal"
-                    android:nextFocusDown="@id/account_amount_edit_text" />
+                    android:padding="8dp"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
-                <Button
-                    android:id="@+id/invert_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="5dp"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_INVERT" />
+                <ImageView
+                    android:id="@+id/fetch_rate_button"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginEnd="4dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:padding="6dp"
+                    android:src="@drawable/ic_globe"
+                    app:tint="@color/blue_theme_field_label_color" />
+            </LinearLayout>
 
-            </FrameLayout>
+            <!-- Vertical Link 2 -->
+            <View
+                android:id="@+id/link2"
+                android:layout_width="2dp"
+                android:layout_height="24dp"
+                android:layout_marginStart="31dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/rate_row" />
 
-            <FrameLayout
-                android:id="@+id/FrameLayout03"
-                android:layout_width="match_parent"
+            <TextView
+                android:id="@+id/equals_label"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:paddingStart="16dp"
-                android:paddingEnd="16dp">
+                android:layout_marginStart="12dp"
+                android:text="="
+                android:textSize="20sp"
+                app:layout_constraintBottom_toBottomOf="@id/link2"
+                app:layout_constraintStart_toEndOf="@id/link2"
+                app:layout_constraintTop_toTopOf="@id/link2" />
+
+            <!-- Row 3: Amount 2 (Account by default) -->
+            <LinearLayout
+                android:id="@+id/account_row"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/guideline_end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/link2">
+
+                <ImageView
+                    android:id="@+id/lock_account"
+                    android:layout_width="32dp"
+                    android:layout_height="32dp"
+                    android:padding="4dp"
+                    android:src="@drawable/ic_lock"
+                    app:tint="@color/blue_theme_field_label_color" />
 
                 <TextView
                     android:id="@+id/account_amount_label"
-                    android:layout_width="wrap_content"
+                    android:layout_width="60dp"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT" />
+                    android:paddingStart="4dp"
+                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
+                    android:textSize="10sp" />
+
+                <EditText
+                    android:id="@+id/account_amount_edit_text"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@android:color/transparent"
+                    android:hint="0.00"
+                    android:inputType="numberDecimal"
+                    android:padding="8dp"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
 
                 <TextView
                     android:id="@+id/account_currency_text_view"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="15dp"
-                    android:text="@string/usd" />
+                    android:paddingEnd="4dp"
+                    android:text="GBP"
+                    android:textStyle="bold" />
 
-                <EditText
-                    android:id="@+id/account_amount_edit_text"
-                    android:layout_width="145dp"
+                <ImageView
+                    android:id="@+id/account_currency_picker_arrow"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_horizontal"
-                    android:layout_marginStart="120dp"
-                    android:hint="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
-                    android:importantForAutofill="no"
-                    android:inputType="numberDecimal" />
+                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:visibility="gone" />
+            </LinearLayout>
 
-            </FrameLayout>
+            <!-- Swap/Invert Section on the right -->
+            <View
+                android:id="@+id/swap_vertical_line"
+                android:layout_width="2dp"
+                android:layout_height="0dp"
+                android:layout_marginStart="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/swap_bottom_tick"
+                app:layout_constraintStart_toEndOf="@id/swap_top_tick"
+                app:layout_constraintTop_toTopOf="@id/swap_top_tick" />
 
-            <com.google.android.material.button.MaterialButtonToggleGroup
-                android:id="@+id/radioGroup1"
+            <View
+                android:id="@+id/swap_top_tick"
+                android:layout_width="16dp"
+                android:layout_height="2dp"
+                app:layout_constraintBottom_toBottomOf="@id/foreign_row"
+                app:layout_constraintStart_toEndOf="@id/guideline_end"
+                app:layout_constraintTop_toTopOf="@id/foreign_row" />
+
+            <View
+                android:id="@+id/swap_bottom_tick"
+                android:layout_width="16dp"
+                android:layout_height="2dp"
+                app:layout_constraintBottom_toBottomOf="@id/account_row"
+                app:layout_constraintStart_toEndOf="@id/guideline_end"
+                app:layout_constraintTop_toTopOf="@id/account_row" />
+
+            <ImageButton
+                android:id="@+id/swap_button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_marginStart="8dp"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:padding="8dp"
+                android:src="@drawable/ic_swap_vert"
+                app:layout_constraintBottom_toBottomOf="@id/swap_vertical_line"
+                app:layout_constraintStart_toEndOf="@id/swap_vertical_line"
+                app:layout_constraintTop_toTopOf="@id/swap_vertical_line"
+                app:tint="@color/blue_theme_field_label_color" />
+
+            <!-- Status/Instructional Indicator -->
+            <TextView
+                android:id="@+id/status_text"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_gravity="center"
-                app:selectionRequired="true"
-                app:singleSelection="true">
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:gravity="center"
+                android:padding="16dp"
+                android:text="Instructional text will appear here."
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:textColor="#888888"
+                app:layout_constraintTop_toBottomOf="@id/account_row" />
 
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/foreign_amount_segmented"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    app:cornerRadius="0dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/exchange_rate_segmented"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:text="@string/kLOC_GENERAL_EXCHANGERATE"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    app:cornerRadius="0dp" />
-
-                <com.google.android.material.button.MaterialButton
-                    android:id="@+id/account_amount_segmented"
-                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-                    android:layout_width="0dp"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
-                    android:textAppearance="?android:textAppearanceSmall"
-                    app:cornerRadius="0dp" />
-
-            </com.google.android.material.button.MaterialButtonToggleGroup>
-
-        </LinearLayout>
-
-    </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </ScrollView>
 
     <com.example.smmoney.views.CurrencyKeyboard
         android:id="@+id/keyboardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:visibility="gone"
-        tools:visibility="visible" />
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
