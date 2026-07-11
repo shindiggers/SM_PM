@@ -217,7 +217,7 @@ class AccountRowAdapter extends BaseAdapter {
             }
         }
         if (convertView == null || convertView.getTag() == null) {
-            convertView = this.mInflater.inflate(R.layout.accounts_row, null);
+            convertView = this.mInflater.inflate(R.layout.accounts_row, parent, false);
             holder = new AccountRowHolder();
             holder.therow = convertView.findViewById(R.id.therow);
             ((Activity) this.mContext).registerForContextMenu(holder.therow);
@@ -231,7 +231,7 @@ class AccountRowAdapter extends BaseAdapter {
             holder.newtransbutton = convertView.findViewById(R.id.accountsnewtransbutton);
             holder.newtransbutton.setColorFilter(PocketMoneyThemes.currentTintColor());
             holder.newtransbutton.setOnClickListener(v -> {
-                AccountRowHolder holder1 = (AccountRowHolder) ((View) v.getParent().getParent()).getTag();
+                AccountRowHolder holder1 = (AccountRowHolder) ((View) v.getParent()).getTag();
                 Intent i = new Intent(AccountRowAdapter.this.mContext, TransactionEditActivity.class);
                 TransactionClass trans = new TransactionClass();
                 AccountClass a1 = AccountDB.recordFor((String) holder1.accountname.getText());

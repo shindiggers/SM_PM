@@ -3,7 +3,6 @@ package com.example.smmoney.views.accounts;
 import android.content.Context;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.AppCompatCheckBox;
@@ -20,9 +19,9 @@ class AccountRowHolder {
     TextView accountname;
     public TextView exchangeRate;
     ImageView icon_image;
-    ImageView newtransbutton;
+    public ImageView newtransbutton;
     public AppCompatCheckBox selected;
-    public RelativeLayout therow;
+    public View therow;
     public TextView totalworth;
 
     public void setAccount(AccountClass act, Context mContext) {
