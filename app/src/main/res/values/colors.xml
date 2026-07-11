@@ -38,20 +38,21 @@
     <color name="wallet_link_text_light">#0000ee</color>
 
     <color name="theme_red_label_color">#ffca1414</color>
-    <color name="theme_red_label_color_on_black">#ffff6666</color>
+    <color name="theme_red_label_color_on_black">#e06c75</color>
     <color name="theme_orange_label_color">#ffff850b</color>
     <color name="theme_green_deposit_color">#ff4d9c26</color>
     <color name="theme_green_bar_color">#ff4d9c26</color>
     <color name="theme_red_bar_color">#ffca1414</color>
 
-    <color name="black_theme_primary_row_color">#454040</color>
-    <color name="black_theme_alternating_row_color">#333333</color>
+    <color name="black_theme_primary_row_color">#1A1A1A</color>
+    <color name="black_theme_alternating_row_color">#2a2a2a</color>
     <color name="black_theme_tint_color">#ffb8b8b8</color>
-    <color name="black_theme_background_color">#000000</color>
+    <color name="black_theme_background_color">#1A1A1A</color>
     <color name="black_theme_dialog_background_color">#212121</color>
-    <color name="black_theme_field_label_color">#fff7f7f7</color>
-    <color name="black_theme_text">#fff7f7f7</color>
-    <color name="black_theme_text_alt">#ff939393</color>
+    <color name="black_theme_field_label_color">#ffb8b8b8</color>
+    <color name="black_theme_text">#E0E0E0</color>
+    <color name="black_theme_text_alt">#939393</color>
+    <color name="black_theme_action_bar_color">#111111</color>
 
     <color name="white_theme_primary_row_color">#ffffffff</color>
     <color name="white_theme_alternating_row_color">#ffe8e8e8</color>

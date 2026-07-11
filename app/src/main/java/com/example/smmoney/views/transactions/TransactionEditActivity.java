@@ -1122,12 +1122,12 @@ public class TransactionEditActivity extends PocketMoneyActivity implements Date
             this.balanceBar.balanceAmountTextView.setText(account.formatAmountAsCurrency(account.balanceOfType(balanceType)));
         }
         if (account == null || !account.balanceExceedsLimit()) {
-            this.balanceBar.balanceAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text)/*Original value -1 = white*/);
+            this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         } else {
-            this.balanceBar.balanceAmountTextView.setTextColor(ContextCompat.getColor(this, R.color.theme_red_label_color_on_black)/*Original color -65536*/);
+            this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         }
         this.balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(balanceType));
-        this.balanceBar.balanceTypeTextView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text)/* Original value -1 = white*/);
+        this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
     private void editTransactionDelete() {

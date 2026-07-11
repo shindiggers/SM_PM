@@ -19,7 +19,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -235,7 +234,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
             this.balanceLabelView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
             this.balanceAmountView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
         } else {
-            this.balanceLabelView.setTextColor(ContextCompat.getColor(this, R.color.black_theme_text));
+            this.balanceLabelView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
             this.balanceAmountView.setTextColor(PocketMoneyThemes.greenDepositColor());
         }
     }

@@ -62,7 +62,7 @@ public class PocketMoneyThemes {
 
     public static int actionBarColor() {
         return switch (getTheme()) {
-            case kThemeBlack -> getColor(R.color.black_theme_background_color);
+            case kThemeBlack -> getColor(R.color.black_theme_action_bar_color);
             case kThemeBlue -> getColor(R.color.blue_theme_tint_color);
             case kThemeGreen -> getColor(R.color.green_theme_tint_color);
             case kThemePurple -> getColor(R.color.purple_theme_tint_color);
@@ -190,6 +190,13 @@ public class PocketMoneyThemes {
             case kThemeRuby -> getColor(R.color.ruby_theme_field_label_color);
             case kThemeWhite -> getColor(R.color.white_theme_field_label_color);
             default -> getColor(R.color.black_theme_field_label_color);
+        };
+    }
+
+    public static int headerTextColor() {
+        return switch (getTheme()) {
+            case kThemeWhite -> getColor(R.color.white_theme_text);
+            default -> getColor(R.color.black_theme_text);
         };
     }
 
@@ -353,7 +360,7 @@ public class PocketMoneyThemes {
 
     public static int chkBoxColorChecked() {
         return switch (getTheme()) {
-            case kThemeBlack -> getColor(R.color.black_theme_text_alt);
+            case kThemeBlack -> getColor(R.color.black_theme_tint_color);
             case kThemeBlue -> getColor(R.color.blue_theme_tint_color);
             case kThemeGreen -> getColor(R.color.green_theme_tint_color);
             case kThemePurple -> getColor(R.color.purple_theme_tint_color);
