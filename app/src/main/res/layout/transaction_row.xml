@@ -1,122 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="58dp"
     android:clickable="true"
     android:focusable="true"
-    android:minHeight="58dp"
     android:nextFocusLeft="@+id/selected"
-    android:nextFocusDown="@+id/transtherow"
-    android:orientation="horizontal">
+    android:nextFocusDown="@+id/transtherow">
 
     <CheckBox
         android:id="@+id/selected"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center_vertical"
         android:layout_marginStart="6dp"
         android:checked="true"
-        android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:gravity="center"
         android:nextFocusRight="@+id/therow"
-        android:nextFocusDown="@+id/checkboxlayout" />
+        android:nextFocusDown="@+id/checkboxlayout"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-    <LinearLayout
-        android:id="@+id/dateandchecknumberlayout"
+    <!-- Row 1 Vertical Anchor -->
+    <TextView
+        android:id="@+id/datetextview"
         android:layout_width="75dp"
-        android:layout_height="match_parent"
-        android:focusable="false"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="4dp"
+        android:gravity="start|center_vertical"
+        android:textSize="12sp"
+        app:layout_constraintStart_toEndOf="@+id/selected"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="12/31/24" />
 
-        <TextView
-            android:id="@+id/datetextview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1.0"
-            android:gravity="start|center_vertical"
-            android:text="@string/row_88_88_88"
-            android:textSize="13sp" />
+    <!-- Row 2 Vertical Anchor -->
+    <TextView
+        android:id="@+id/checknumbertextview"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:layout_marginBottom="4dp"
+        android:gravity="start|center_vertical"
+        android:maxLines="1"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/selected"
+        tools:text="12345" />
 
-        <TextView
-            android:id="@+id/checknumbertextview"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
-            android:layout_weight="1.0"
-            android:gravity="start|center_vertical"
-            android:maxLines="1"
-            android:text="@string/row_checknumber" />
-
-    </LinearLayout>
-
-    <LinearLayout
+    <TextView
+        android:id="@+id/payeetextview"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
-        android:layout_weight="1.0"
-        android:focusable="false"
-        android:orientation="vertical">
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_PAYEE"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/datetextview"
+        app:layout_constraintEnd_toStartOf="@+id/amounttextview"
+        app:layout_constraintStart_toEndOf="@+id/datetextview"
+        app:layout_constraintTop_toTopOf="@+id/datetextview" />
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1.0"
-            android:focusable="false"
-            android:orientation="horizontal">
+    <TextView
+        android:id="@+id/amounttextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:gravity="end|center_vertical"
+        android:maxWidth="100dp"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_AMOUNT"
+        android:textSize="13sp"
+        app:layout_constraintBottom_toBottomOf="@+id/datetextview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/datetextview" />
 
-            <TextView
-                android:id="@+id/payeetextview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:gravity="start|center_vertical"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_PAYEE" />
+    <TextView
+        android:id="@+id/categorytextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="5dp"
+        android:ellipsize="end"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        android:text="@string/kLOC_GENERAL_CATEGORY"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/checknumbertextview"
+        app:layout_constraintEnd_toStartOf="@+id/runningtotaltextview"
+        app:layout_constraintStart_toEndOf="@+id/checknumbertextview"
+        app:layout_constraintTop_toTopOf="@+id/checknumbertextview" />
 
-            <TextView
-                android:id="@+id/amounttextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:gravity="end|center_vertical"
-                android:maxWidth="100dp"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_AMOUNT" />
+    <TextView
+        android:id="@+id/runningtotaltextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="10dp"
+        android:gravity="end|center_vertical"
+        android:maxWidth="100dp"
+        android:singleLine="true"
+        android:text="@string/row_runningtotal"
+        android:textColor="@color/blue_theme_text_alt"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="@+id/checknumbertextview"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/checknumbertextview" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="10dp"
-            android:layout_weight="1.0"
-            android:focusable="false"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/categorytextview"
-                android:layout_width="0dp"
-                android:layout_height="match_parent"
-                android:layout_weight="1.0"
-                android:gravity="start|center_vertical"
-                android:singleLine="true"
-                android:text="@string/kLOC_GENERAL_CATEGORY" />
-
-            <TextView
-                android:id="@+id/runningtotaltextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_marginEnd="10dp"
-                android:gravity="end|center_vertical"
-                android:maxWidth="100dp"
-                android:singleLine="true"
-                android:text="@string/row_runningtotal"
-                android:textColor="@color/blue_theme_text_alt" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

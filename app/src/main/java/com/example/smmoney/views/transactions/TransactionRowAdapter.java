@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 
 import androidx.annotation.NonNull;
@@ -21,9 +20,7 @@ import com.example.smmoney.records.TransactionClass;
 
 import java.util.ArrayList;
 
-//import android.widget.CheckBox;
-//import android.widget.LinearLayout;
-//import android.widget.TextView;
+
 
 class TransactionRowAdapter extends BaseAdapter {
     private ArrayList<TransactionClass> elements = new ArrayList<>();
@@ -78,7 +75,6 @@ class TransactionRowAdapter extends BaseAdapter {
             holder.runningTotal = convertView.findViewById(R.id.runningtotaltextview);
             holder.selected = convertView.findViewById(R.id.selected);
             holder.selected.setOnCheckedChangeListener(getCheckListener());
-            holder.dateAndChecknumberLayout = convertView.findViewById(R.id.dateandchecknumberlayout);
             convertView.setTag(holder);
         } else {
             holder = (TransactionRowHolder) convertView.getTag();

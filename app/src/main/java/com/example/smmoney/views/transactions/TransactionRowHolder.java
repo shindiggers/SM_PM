@@ -2,9 +2,8 @@ package com.example.smmoney.views.transactions;
 
 import android.content.Context;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.LinearLayout.LayoutParams;
 import android.widget.TextView;
 
 import com.example.smmoney.database.AccountDB;
@@ -26,10 +25,9 @@ class TransactionRowHolder {
     public TextView date;
     public TextView payee;
     public CheckBox selected;
-    public LinearLayout therow;
+    public View therow;
     public TransactionClass transaction;
     TextView checkNumber;
-    LinearLayout dateAndChecknumberLayout;
     TextView runningTotal;
 
     void setTransaction(TransactionClass trans, Context context) {
@@ -61,7 +59,8 @@ class TransactionRowHolder {
         }
         if (willDisplay(Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_ID_FIELD), this.checkNumber)) {
             if (!Prefs.getBooleanPref(Prefs.TRANSACTIONS_TRUNCATE_ID) && this.transaction.getCheckNumber().length() > 7) {
-                this.dateAndChecknumberLayout.setLayoutParams(new LayoutParams(-2, -1));
+                this.checkNumber.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
+                this.date.getLayoutParams().width = ViewGroup.LayoutParams.WRAP_CONTENT;
             }
             this.checkNumber.setText(this.transaction.getCheckNumber());
         }
