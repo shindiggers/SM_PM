@@ -316,6 +316,48 @@ public class PocketMoneyThemes {
         return getColor(R.color.theme_red_bar_color);
     }
 
+    public static int budgetBarGreenColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_budget_bar_green);
+            case kThemeBlue -> getColor(R.color.blue_theme_budget_bar_green);
+            case kThemeGreen -> getColor(R.color.green_theme_budget_bar_green);
+            case kThemePurple -> getColor(R.color.purple_theme_budget_bar_green);
+            case kThemeGray -> getColor(R.color.gray_theme_budget_bar_green);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_budget_bar_green);
+            case kThemeRuby -> getColor(R.color.ruby_theme_budget_bar_green);
+            case kThemeWhite -> getColor(R.color.white_theme_budget_bar_green);
+            default -> getColor(R.color.theme_green_bar_color);
+        };
+    }
+
+    public static int budgetBarRedColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_budget_bar_red);
+            case kThemeBlue -> getColor(R.color.blue_theme_budget_bar_red);
+            case kThemeGreen -> getColor(R.color.green_theme_budget_bar_red);
+            case kThemePurple -> getColor(R.color.purple_theme_budget_bar_red);
+            case kThemeGray -> getColor(R.color.gray_theme_budget_bar_red);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_budget_bar_red);
+            case kThemeRuby -> getColor(R.color.ruby_theme_budget_bar_red);
+            case kThemeWhite -> getColor(R.color.white_theme_budget_bar_red);
+            default -> getColor(R.color.theme_red_bar_color);
+        };
+    }
+
+    public static int budgetBarYellowColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_budget_bar_yellow);
+            case kThemeBlue -> getColor(R.color.blue_theme_budget_bar_yellow);
+            case kThemeGreen -> getColor(R.color.green_theme_budget_bar_yellow);
+            case kThemePurple -> getColor(R.color.purple_theme_budget_bar_yellow);
+            case kThemeGray -> getColor(R.color.gray_theme_budget_bar_yellow);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_budget_bar_yellow);
+            case kThemeRuby -> getColor(R.color.ruby_theme_budget_bar_yellow);
+            case kThemeWhite -> getColor(R.color.white_theme_budget_bar_yellow);
+            default -> getColor(R.color.theme_yellow_bar_color);
+        };
+    }
+
     public static int balanceBarBackgroundColor() {
         return switch (getTheme()) {
             case kThemeBlack -> getColor(R.color.black);

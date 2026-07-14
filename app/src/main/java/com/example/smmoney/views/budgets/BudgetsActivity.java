@@ -18,15 +18,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
-import android.widget.RadioGroup;
-import android.widget.RadioGroup.OnCheckedChangeListener;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -45,7 +42,6 @@ import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.accounts.AccountsActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.util.GregorianCalendar;
@@ -65,20 +61,16 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                reloadData();
-            }
+            result -> reloadData()
     );
 
     private BudgetsRowAdapter adapter;
     private BalanceBar balanceBar;
-    private TextView budgetDisplay;
-    private ProgressBar budgetProgressBar;
-    private Button periodButton;
-    private View progressiBeamBar;
     private ProgressBar reloadProgressBar;
     private ListView theList;
     private BottomNavigationView bottomNav;
+    private View progressiBeamBar;
+    private Button periodButton;
     private WakeLock wakeLock;
 
     @Override
@@ -124,39 +116,14 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         });
         this.balanceBar = layout.findViewById(R.id.balancebar);
         this.balanceBar.nextButton.setOnClickListener(v -> {
-            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
-            } else {
-                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
-            }
+            Prefs.setPref(Prefs.BUDGETSAVEDBEAT, Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0 ? 1 : 0);
             BudgetsActivity.this.reloadData();
         });
         this.balanceBar.previousButton.setOnClickListener(v -> {
-            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 1);
-            } else {
-                Prefs.setPref(Prefs.BUDGETSAVEDBEAT, 0);
-            }
+            Prefs.setPref(Prefs.BUDGETSAVEDBEAT, Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0 ? 1 : 0);
             BudgetsActivity.this.reloadData();
         });
 
-        this.budgetDisplay = layout.findViewById(R.id.budgetdisplaytextview);
-        this.budgetDisplay.setVisibility(View.INVISIBLE);
-        this.budgetDisplay.setTextColor(-1);
-        this.budgetDisplay.setOnClickListener(v -> {
-            if (Enums.kBudgetDisplayExpenseBudgeted == Prefs.getIntPref(Prefs.BUDGETDISPLAY)) {
-                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseAvailable);
-            } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable) {
-                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseOver);
-            } else {
-                Prefs.setPref(Prefs.BUDGETDISPLAY, Enums.kBudgetDisplayExpenseBudgeted);
-            }
-            BudgetsActivity.this.budgetProgressBar.setVisibility(View.VISIBLE);
-            BudgetsActivity.this.budgetDisplay.setVisibility(View.INVISIBLE);
-            BudgetsActivity.this.reloadData();
-        });
-        this.budgetProgressBar = layout.findViewById(R.id.budgetprogressbar);
-        this.budgetProgressBar.setVisibility(View.INVISIBLE);
         this.reloadProgressBar = layout.findViewById(R.id.reloadprogressbar);
         this.theList = layout.findViewById(R.id.the_list);
         this.theList.setItemsCanFocus(true);
@@ -221,31 +188,35 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         } else {
             savings = (totalIncome - budgetedIncome) + (budgetedExpense - totalExpense);
         }
-        this.balanceBar.balanceAmountTextView.setTextColor(-1);
-        if (showCents()) {
-            this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(savings));
+        
+        String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(savings)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(savings));
+        int textColor = PocketMoneyThemes.headerTextColor();
+        
+        if (savings < 0.0d) {
+            this.balanceBar.balanceAmountTextView.setText("(" + text + ")");
         } else {
-            this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrencyWithoutCents(savings));
+            this.balanceBar.balanceAmountTextView.setText(text);
         }
+        this.balanceBar.balanceAmountTextView.setTextColor(textColor);
+
         if (savings >= 0.0d) {
-            this.balanceBar.balanceTypeTextView.setTextColor(-1);
             if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
                 this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_SAVED);
             } else {
-                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_BEATBUDGET);
+                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGET_LBL_BEATING_BY);
             }
-            return;
-        }
-        this.balanceBar.balanceTypeTextView.setTextColor(-1);
-        if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-            this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_DEFICIT);
         } else {
-            this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_OVERBUDGET);
+            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
+                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_DEFICIT);
+            } else {
+                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGET_LBL_MISSING_BY);
+            }
         }
+        this.balanceBar.balanceTypeTextView.setTextColor(textColor);
     }
 
     private void reloadData() {
-        if (this.budgetProgressBar.getVisibility() == View.INVISIBLE) {
+        if (this.reloadProgressBar.getVisibility() == View.INVISIBLE) {
             this.reloadProgressBar.setVisibility(View.VISIBLE);
         }
         executor.execute(() -> {
@@ -259,22 +230,14 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     private void reloadDataCallBack() {
         this.periodButton.setText(this.adapter.rangeOfPeriodAsString());
-        if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseBudgeted/*2*/) {
-            this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BUDGETED);
-        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseAvailable/*0*/) {
-            this.budgetDisplay.setText(Locales.kLOC_BUDGETS_AVAILABLE);
-        } else if (Prefs.getIntPref(Prefs.BUDGETDISPLAY) == Enums.kBudgetDisplayExpenseOver/*3*/) {
-            this.budgetDisplay.setText(Locales.kLOC_BUDGETS_BALANCE);
-        }
-        int newWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9.0f, getResources().getDisplayMetrics());
-
+        
         loadBalanceBar();
-        this.budgetProgressBar.setVisibility(View.INVISIBLE);
         this.reloadProgressBar.setVisibility(View.INVISIBLE);
-        this.budgetDisplay.setVisibility(View.VISIBLE);
         this.theList.setVisibility(View.VISIBLE);
+        
+        int newWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9.0f, getResources().getDisplayMetrics());
         LayoutParams lp = new LayoutParams(newWidth, this.theList.getHeight());
-        lp.gravity = Gravity.START/*3*/;
+        lp.gravity = Gravity.START;
         int width = this.theList.getWidth();
         int leftMargin = (int) (((double) width) * this.adapter.getProgressPercent());
         if (leftMargin + newWidth > width) {
@@ -325,24 +288,24 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case MENU_NEW /*1*/ -> {
+            case MENU_NEW -> {
                 newBudget();
                 return true;
             }
-            case MENU_PREFS /*2*/ -> {
+            case MENU_PREFS -> {
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
             }
-            case MENU_GOTODATE /*3*/ -> {
+            case MENU_GOTODATE -> {
                 DialogFragment datePicker = new BudgetsDatePickerDialog();
                 datePicker.show(getSupportFragmentManager(), "date picker");
                 return true;
             }
-            case MENU_VIEW /*4*/ -> {
+            case MENU_VIEW -> {
                 startActivity(new Intent(this, BudgetsViewOptionsActivity.class));
                 return true;
             }
-            case MENU_QUIT /*5*/ -> {
+            case MENU_QUIT -> {
                 Prefs.setPref(Prefs.SHUTTINGDOWN, true);
                 setResult(1);
                 finish();
@@ -354,7 +317,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        BudgetsRowHolder aHolder = (BudgetsRowHolder) v;
+        BudgetsRowHolder aHolder = (BudgetsRowHolder) v.getTag();
         Intent i = new Intent();
         i.putExtra("Category", aHolder.category);
         menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
@@ -364,7 +327,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     public boolean onContextItemSelected(MenuItem item) {
         Bundle b = item.getIntent().getExtras();
         switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/ -> {
+            case CMENU_EDIT -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 if (b != null) {
                     CategoryClass category;
@@ -379,7 +342,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 editLauncher.launch(anIntent);
                 return true;
             }
-            case CMENU_DELETE /*3*/ -> {
+            case CMENU_DELETE -> {
                 if (b != null) {
                     CategoryClass category;
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
@@ -419,12 +382,12 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != 4) {
-            return super.onKeyDown(keyCode, event);
+        if (keyCode == 4) {
+            Prefs.setPref(Prefs.SHUTTINGDOWN, true);
+            setResult(1);
+            finish();
+            return true;
         }
-        Prefs.setPref(Prefs.SHUTTINGDOWN, true);
-        setResult(1);
-        finish();
-        return true;
+        return super.onKeyDown(keyCode, event);
     }
 }

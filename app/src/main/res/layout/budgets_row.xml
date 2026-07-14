@@ -1,29 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/therow"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="36dp"
+    android:background="@android:color/transparent"
+    android:clickable="true"
+    android:focusable="true">
 
+    <!-- Progress Visualization (Background) -->
+    <View
+        android:id="@+id/budget_bar_foreground"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/budget_bar_background"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.5" />
+
+    <View
+        android:id="@+id/budget_bar_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/budget_bar_foreground"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- Left: Actual -->
     <TextView
         android:id="@+id/spent"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="start"
-        tools:text="Spent" />
+        android:layout_marginStart="12dp"
+        android:gravity="start"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="£450.00" />
 
+    <!-- Middle: Category + Variance -->
+    <LinearLayout
+        android:id="@+id/middle_block"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/budget"
+        app:layout_constraintStart_toEndOf="@+id/spent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/category"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxWidth="100dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Groceries" />
+
+        <TextView
+            android:id="@+id/variance"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:singleLine="true"
+            android:textColor="@color/black"
+            android:textSize="11sp"
+            tools:text="• Ahead £50" />
+    </LinearLayout>
+
+    <!-- Right: Budget -->
     <TextView
         android:id="@+id/budget"
-        android:layout_width="wrap_content"
+        android:layout_width="70dp"
         android:layout_height="wrap_content"
-        android:layout_gravity="end"
-        tools:text="Budget" />
+        android:layout_marginEnd="12dp"
+        android:gravity="end"
+        android:textColor="@color/black"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="£500.00" />
 
-    <TextView
-        android:id="@+id/category"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        tools:text="Category" />
-
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

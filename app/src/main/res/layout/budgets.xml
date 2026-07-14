@@ -38,51 +38,6 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:background="@drawable/budgetblackbar">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="10dp"
-            android:contentDescription="@string/content_description_choose_between_actual_budgeted_and_available"
-            android:src="@drawable/grapharrowright" />
-
-        <ProgressBar
-            android:id="@+id/reloadprogressbar"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center" />
-
-        <ProgressBar
-            android:id="@+id/budgetprogressbar"
-            android:layout_width="20dp"
-            android:layout_height="20dp"
-            android:layout_gravity="center"
-            android:layout_marginEnd="30dp" />
-
-        <TextView
-            android:id="@+id/budgetdisplaytextview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="40dp"
-            android:text="@string/kLOC_BUDGETS_ACTUAL"
-            tools:textColor="@color/black_theme_text" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="10dp"
-            android:text="@string/kLOC_BUDGETS_ACTUAL"
-            android:textColor="@color/black_theme_text" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
 
@@ -90,6 +45,13 @@
             android:id="@+id/the_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
+
+        <ProgressBar
+            android:id="@+id/reloadprogressbar"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="center"
+            android:visibility="gone" />
 
         <View
             android:id="@+id/progressbar"

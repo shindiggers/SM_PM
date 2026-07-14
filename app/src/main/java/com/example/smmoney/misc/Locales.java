@@ -82,6 +82,12 @@ public class Locales {
     public static final String kLOC_BUDGETS_TYPE = SMMoney.getAppContext().getString(R.string.kLOC_BUDGETS_TYPE);
     public static final String kLOC_BUDGETS_UNBUDGETEDITEMS = SMMoney.getAppContext().getString(R.string.kLOC_BUDGETS_UNBUDGETEDITEMS);
     public static final String kLOC_BUDGETS_XOFY = SMMoney.getAppContext().getString(R.string.kLOC_BUDGETS_XOFY);
+    public static final String kLOC_BUDGET_LBL_ACTUAL = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_ACTUAL);
+    public static final String kLOC_BUDGET_LBL_BUDGETED = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_BUDGETED);
+    public static final String kLOC_BUDGET_LBL_AHEAD = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_AHEAD);
+    public static final String kLOC_BUDGET_LBL_BEHIND = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_BEHIND);
+    public static final String kLOC_BUDGET_LBL_BEATING_BY = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_BEATING_BY);
+    public static final String kLOC_BUDGET_LBL_MISSING_BY = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_MISSING_BY);
     public static final String kLOC_BUDGET_ENABLE_VARIABLE = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_ENABLE_VARIABLE);
     public static final String kLOC_BUDGET_INCLUDEUNBUDGETED = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_INCLUDEUNBUDGETED);
     public static final String kLOC_BUDGET_NEW_BUDGET = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_NEW_BUDGET);

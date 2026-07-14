@@ -326,10 +326,11 @@
     <string name="kLOC_BUDGETS_AMOUNT">Budget</string>
     <string name="kLOC_BUDGETS_TOTALSUBCATEGORY">Include subcategories</string>
     <string name="kLOC_BUDGETS_BUDGETED">Budgeted</string>
-    <string name="kLOC_BUDGETS_AVAILABLE">Available</string>
-    <string name="kLOC_BUDGETS_BALANCE">Balance</string>
+    <string name="kLOC_BUDGETS_AVAILABLE">Remaining Budget</string>
+    <string name="kLOC_BUDGETS_BALANCE">Budget Status</string>
     <string name="kLOC_BUDGETS_ACTUAL">Actual</string>
     <string name="kLOC_BUDGETS_XOFY">%1$s of %2$s</string>
+
     <string name="kLOC_BUDGETS_EDIT_TITLE">Edit Budget</string>
     <string name="kLOC_TIP_BUDGETS_TITLE">About Budgets</string>
     <string name="kLOC_TIP_BUDGETS">Budgeting can help you plan and control your spending.\n\nThe Edit button lets you edit budget category details and delete categories.\n\nGo ahead and press the \'Edit\' button to list all the budget categories. Tapping on a category from the Edit screen will open an editor screen for the category so you can set your budget limit. Set as many budget limits as you wish to track. Tap Done and the Budgets screen will show all the categories you are tracking budgets for. If a category has transactions associated with it, tapping on the category line will open a transaction register showing all transactions for that category.\n\nThe Balance/Available/Budgeted column heading can be tapped to change what is displayed - balance is the amount you are over or under budget; available is the amount under budget you are, if you are over budget it shows zero available; budgeted is the amount budgeted in that category.</string>
@@ -761,4 +762,10 @@
     <string name="error_invalid_date_range">End date cannot be before start date</string>
     <string name="custom_date_range_title">Custom Date Range</string>
     <string name="any_date">ANY DATE</string>
+    <string name="kLOC_BUDGET_LBL_ACTUAL">Actual</string>
+    <string name="kLOC_BUDGET_LBL_BUDGETED">Budgeted</string>
+    <string name="kLOC_BUDGET_LBL_AHEAD">Ahead by %1$s</string>
+    <string name="kLOC_BUDGET_LBL_BEHIND">Behind by %1$s</string>
+    <string name="kLOC_BUDGET_LBL_BEATING_BY">Beating budget by</string>
+    <string name="kLOC_BUDGET_LBL_MISSING_BY">Missing budget by</string>
 </resources>

@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
 
+import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
@@ -33,36 +34,23 @@ public class BudgetsRowAdapter extends BaseAdapter {
         switch (Prefs.getIntPref(Prefs.BUDGETS_SORTON)) {
             case Enums.kBudgetsSortTypeActual /*1*/:
                 diff = category2.spent - category1.spent;
-                if (diff < 0.0d) {
-                    return -1;
-                }
+                if (diff < 0.0d) return -1;
                 return diff > 0.0d ? 1 : 0;
             case Enums.kBudgetsSortTypeBudgeted /*2*/:
                 diff = category2.budget - category1.budget;
-                if (diff < 0.0d) {
-                    return -1;
-                }
-                return diff > 0.0d ? 1 : 0;
-            case Enums.kBudgetsSortTypePercentage /*3*/:
-                diff = (category1.spent / category1.budget) - (category2.spent / category2.budget);
-                if (diff < 0.0d) {
-                    return -1;
-                }
+                if (diff < 0.0d) return -1;
                 return diff > 0.0d ? 1 : 0;
             default:
                 return category1.getCategory().toUpperCase().compareTo(category2.getCategory().toUpperCase());
         }
     };
+
     GregorianCalendar currentDate;
     int currentPeriod;
     private final Context context;
-    private List<CategoryClass> elements;
     private List<CategoryClass> expenseCategories;
     private List<CategoryClass> incomeCategories;
-    @SuppressWarnings("FieldCanBeLocal")
     private final LayoutInflater inflater;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final ListView listView;
     private List<CategoryClass> nonBudgetedCategories;
     private final String showExpense = Prefs.COLLAPSE_EXPENSES;
     private final String showIncome = Prefs.COLLAPSE_INCOME;
@@ -70,261 +58,91 @@ public class BudgetsRowAdapter extends BaseAdapter {
 
     BudgetsRowAdapter(Context aContext, ListView theList) {
         this.context = aContext;
-        this.listView = theList;
         this.inflater = LayoutInflater.from(this.context);
         this.currentDate = new GregorianCalendar();
         this.currentPeriod = Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD);
     }
 
-    public static GregorianCalendar startOfPeriod(GregorianCalendar inputDate, int budgetPeriod) {
-        String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
-        GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
-        if (budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
-            budgetStartDate = new GregorianCalendar();
-            budgetStartDate.set(Calendar.YEAR/*1*/, 1989);
-            budgetStartDate.set(Calendar.MONTH/*2*/, 0);
-            budgetStartDate.set(Calendar.DAY_OF_MONTH/*5*/, 1);
-            budgetStartDate.set(Calendar.HOUR_OF_DAY/*11*/, 0);
-            budgetStartDate.set(Calendar.MINUTE/*12*/, 0);
-            budgetStartDate.set(Calendar.SECOND/*13*/, 0);
-        }
-
-        GregorianCalendar eomForBudgetStartDate = CalExt.endOfMonth(budgetStartDate);
-        boolean endOfMonth;
-        endOfMonth = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/) == eomForBudgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-
-        GregorianCalendar clonedInputDate;
-        label175:
-        {
-            clonedInputDate = (GregorianCalendar) inputDate.clone();
-            switch (budgetPeriod) {
-                case Enums.kBudgetPeriodDay/*0*/:
-                    return CalExt.beginningOfDay(inputDate);
-                case Enums.kBudgetPeriodWeek/*1*/:
-                    int dowBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/);
-                    int dowInputDate = inputDate.get(Calendar.DAY_OF_WEEK/*7*/);
-                    GregorianCalendar returnDate;
-                    if (inputDate.get(Calendar.DAY_OF_WEEK/*7*/) < budgetStartDate.get(Calendar.DAY_OF_WEEK/*7*/)) {
-                        returnDate = CalExt.subtractDays(inputDate, 7 - (dowBudgetStartDate - dowInputDate));
-                    } else {
-                        returnDate = CalExt.subtractDays(inputDate, dowInputDate - dowBudgetStartDate);
-                    }
-
-                    return returnDate;
-                case Enums.kBudgetPeriodMonth/*2*/:
-                    CalExt.daysBetween(budgetStartDate, inputDate);
-                    if (inputDate.get(Calendar.DAY_OF_MONTH/*5*/) < budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)) {
-                        clonedInputDate = CalExt.subtractMonth(clonedInputDate);
-                    }
-
-                    if (endOfMonth) {
-                        return CalExt.endOfMonth(clonedInputDate);
-                    }
-
-                    clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(clonedInputDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                    return clonedInputDate;
-                case Enums.kBudgetPeriodYear/*4*/:
-                    break label175;
-                case Enums.kBudgetPeriodBiweekly/*5*/:
-                    int weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
-                    int weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
-                    boolean twoWeeksBetweenDays;
-                    twoWeeksBetweenDays = weeksBetweenStartDateAndInputDate % 2 == 0;
-
-                    //GregorianCalendar returnDate;
-                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
-                        byte twoWeekAdjustments;
-                        if (twoWeeksBetweenDays) {
-                            twoWeekAdjustments = 0;
-                        } else {
-                            twoWeekAdjustments = 7;
-                        }
-
-                        returnDate = CalExt.subtractDays(inputDate, twoWeekAdjustments + weekdaysBetweenStartDateAndInputDate);
-                    } else {
-                        byte twoWeekAdjustments;
-                        if (twoWeeksBetweenDays) {
-                            twoWeekAdjustments = 7;
-                        } else {
-                            twoWeekAdjustments = 0;
-                        }
-
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + twoWeekAdjustments + 6);
-                    }
-
-                    return returnDate;
-                case Enums.kBudgetPeriodBimonthly/*6*/:
-                    int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-                    int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-                    int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    //GregorianCalendar returnDate;
-                    if ((monthOfInputDate - monthOfBudgetStartDate) % 2 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 2);
-                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 2 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
-                    } else {
-                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 2));
-                    }
-
-                    if (!endOfMonth) {
-                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                        return returnDate;
-                    }
-
-                    CalExt.endOfMonth(returnDate);
-                case Enums.kBudgetPeriodQuarter/*3*/:
-                    monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-                    domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-                    domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-                    //GregorianCalendar returnDate;
-                    if ((monthOfInputDate - monthOfBudgetStartDate) % 3 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 3);
-                    } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                        returnDate = CalExt.subtractMonths(inputDate, 3 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
-                    } else {
-                        returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 3));
-                    }
-
-                    if (!endOfMonth) {
-                        returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                        return returnDate;
-                    }
-
-                    CalExt.endOfMonth(returnDate);
-                case Enums.kBudgetPeriodHalfYear/*7*/:
-                    break;
-                case Enums.kBudgetPeriod4Weeks/*8*/:
-                    weeksBetweenStartDateAndInputDate = CalExt.weeksBetween(budgetStartDate, inputDate);
-                    weekdaysBetweenStartDateAndInputDate = CalExt.daysBetween(budgetStartDate, inputDate) % 7;
-                    //GregorianCalendar returnDate;
-                    if (weeksBetweenStartDateAndInputDate >= 0 && weekdaysBetweenStartDateAndInputDate >= 0) {
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + weeksBetweenStartDateAndInputDate * 7 % 4);
-                    } else {
-                        returnDate = CalExt.subtractDays(inputDate, weekdaysBetweenStartDateAndInputDate + 6 + 7 * (3 - Math.abs(weeksBetweenStartDateAndInputDate % 4)));
-                    }
-
-                    return returnDate;
-                default:
-                    return null;
-            }
-
-            int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-            int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-            int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-            int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-            GregorianCalendar returnDate;
-            if ((monthOfInputDate - monthOfBudgetStartDate) % 6 == 0 && domOfInputDate < domOfBudgetStartDate) {
-                returnDate = CalExt.subtractMonths(inputDate, 6);
-            } else if (monthOfInputDate < monthOfBudgetStartDate) {
-                returnDate = CalExt.subtractMonths(inputDate, 6 - Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
-            } else {
-                returnDate = CalExt.subtractMonths(inputDate, Math.abs((monthOfInputDate - monthOfBudgetStartDate) % 6));
-            }
-
-            if (!endOfMonth) {
-                returnDate.set(Calendar.DAY_OF_MONTH/*5*/, Math.min(CalExt.endOfMonth(returnDate).get(Calendar.DAY_OF_MONTH/*5*/), budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/)));
-                return returnDate;
-            }
-
-            clonedInputDate = CalExt.endOfMonth(returnDate);
-        }
-
-        int monthOfBudgetStartDate = budgetStartDate.get(Calendar.MONTH/*2*/);
-        int domOfBudgetStartDate = budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/);
-        int monthOfInputDate = inputDate.get(Calendar.MONTH/*2*/);
-        int domOfInputDate = inputDate.get(Calendar.DAY_OF_MONTH/*5*/);
-        if (monthOfInputDate < monthOfBudgetStartDate || monthOfInputDate == monthOfBudgetStartDate && domOfInputDate < domOfBudgetStartDate) {
-            clonedInputDate = CalExt.subtractYear(inputDate);
-        }
-
-        clonedInputDate.set(Calendar.DAY_OF_MONTH/*5*/, budgetStartDate.get(Calendar.DAY_OF_MONTH/*5*/));
-        clonedInputDate.set(Calendar.MONTH/*2*/, budgetStartDate.get(Calendar.MONTH/*2*/));
-        return clonedInputDate;
-    }
-
     public int getCount() {
         int count = 3;
-        if (this.incomeCategories != null && getShowSection(this.showIncome)) {
-            count = 3 + this.incomeCategories.size();
-        }
-        if (this.expenseCategories != null && getShowSection(this.showExpense)) {
-            count += this.expenseCategories.size();
-        }
-        if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED) && this.nonBudgetedCategories != null && getShowSection(this.showNonBudgeted)) {
-            return count + this.nonBudgetedCategories.size();
-        }
-        if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED)) {
-            return count;
-        }
-        return count - 1;
+        if (this.incomeCategories != null && getShowSection(this.showIncome)) count += this.incomeCategories.size();
+        if (this.expenseCategories != null && getShowSection(this.showExpense)) count += this.expenseCategories.size();
+        if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED) && this.nonBudgetedCategories != null && getShowSection(this.showNonBudgeted)) count += this.nonBudgetedCategories.size();
+        return count;
     }
 
     public Object getItem(int position) {
         int incomeSize = (this.incomeCategories == null || !getShowSection(this.showIncome)) ? 0 : this.incomeCategories.size();
         int expenseSize = (this.expenseCategories == null || !getShowSection(this.showExpense)) ? 0 : this.expenseCategories.size();
-        int nonBudgetedSize = (this.nonBudgetedCategories == null || !getShowSection(this.showNonBudgeted)) ? 0 : this.nonBudgetedCategories.size();
-        if (position == 0) {
-            return Locales.kLOC_BUDGETS_INCOME;
-        }
-        if (position < incomeSize + 1) {
-            return this.incomeCategories.get(position - 1);
-        }
-        if (position == incomeSize + 1) {
-            return Locales.kLOC_BUDGETS_EXPENSES;
-        }
-        if (position < (incomeSize + expenseSize) + 2) {
-            return this.expenseCategories.get((position - incomeSize) - 2);
-        }
-        if (position == (incomeSize + expenseSize) + 2) {
-            return Locales.kLOC_BUDGETS_NONBUDGETED;
-        }
-        if (position < ((incomeSize + expenseSize) + nonBudgetedSize) + 3) {
-            return this.nonBudgetedCategories.get(((position - incomeSize) - expenseSize) - 3);
-        }
-        return null;
+        if (position == 0) return Locales.kLOC_BUDGETS_INCOME;
+        if (position < incomeSize + 1) return this.incomeCategories.get(position - 1);
+        if (position == incomeSize + 1) return Locales.kLOC_BUDGETS_EXPENSES;
+        if (position < (incomeSize + expenseSize) + 2) return this.expenseCategories.get((position - incomeSize) - 2);
+        if (position == (incomeSize + expenseSize) + 2) return Locales.kLOC_BUDGETS_NONBUDGETED;
+        return this.nonBudgetedCategories.get(((position - incomeSize) - expenseSize) - 3);
     }
 
-    public long getItemId(int position) {
-        return 0;
-    }
+    public long getItemId(int position) { return position; }
 
     public View getView(int position, View convertView, ViewGroup parent) {
         Object cat = getItem(position);
-        if (cat.getClass() == String.class) {
+        if (cat instanceof String) {
             String label = (String) cat;
-            BudgetsHeaderHolder header = new BudgetsHeaderHolder(this.context, label, balanceForCategory(label));
+            BudgetsListHeaderHolder header = new BudgetsListHeaderHolder(this.context);
             header.setOnClickListener(getHeaderClickListener());
             
-            // Set expanded state
+            double actual, target, diff;
+            String targetLabel, sentence;
+            
             if (label.equals(Locales.kLOC_BUDGETS_INCOME)) {
+                actual = totalIncomes();
+                target = budgetedIncomes();
+                diff = actual - target;
+                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
                 header.setExpanded(getShowSection(this.showIncome));
             } else if (label.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
+                actual = Math.abs(totalExpenses());
+                target = Math.abs(budgetedExpenses());
+                diff = target - actual;
+                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
                 header.setExpanded(getShowSection(this.showExpense));
-            } else if (label.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
+            } else { // Unbudgeted
+                actual = Math.abs(totalNonBudgeted());
+                target = 0.0;
+                diff = -actual;
+                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
                 header.setExpanded(getShowSection(this.showNonBudgeted));
             }
+
+            sentence = (diff >= 0) ? Locales.kLOC_BUDGET_LBL_AHEAD.replace("%1$s", formatAmount(diff)) : 
+                                     Locales.kLOC_BUDGET_LBL_BEHIND.replace("%1$s", formatAmount(diff));
+            header.setData(label, actual, targetLabel, target, sentence);
             return header;
         }
-        if (convertView == null || convertView.getClass() != BudgetsRowHolder.class) {
-            convertView = new BudgetsRowHolder(this.context);
+
+        BudgetsRowHolder holder;
+        if (convertView == null || convertView.getTag() == null || !(convertView.getTag() instanceof BudgetsRowHolder)) {
+            convertView = this.inflater.inflate(R.layout.budgets_row, parent, false);
+            holder = new BudgetsRowHolder(convertView);
             convertView.setOnClickListener(getRowClickListener());
             ((Activity) this.context).registerForContextMenu(convertView);
-        }
-        if (position % 2 == 0) {
-            convertView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
+            convertView.setTag(holder);
         } else {
-            convertView.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
+            holder = (BudgetsRowHolder) convertView.getTag();
         }
-        ((BudgetsRowHolder) convertView).setCategory((CategoryClass) cat);
+        holder.setCategory((CategoryClass) cat);
         return convertView;
+    }
+
+    private String formatAmount(double amount) {
+        String text = Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS) ? CurrencyExt.amountAsCurrency(Math.abs(amount)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(amount));
+        return (amount < 0) ? "(" + text + ")" : text;
     }
 
     private OnClickListener getRowClickListener() {
         return view -> {
             Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
-            BudgetsRowHolder holder = (BudgetsRowHolder) view;
+            BudgetsRowHolder holder = (BudgetsRowHolder) view.getTag();
             FilterClass aFilter = new FilterClass();
             aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
             aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
@@ -340,377 +158,154 @@ public class BudgetsRowAdapter extends BaseAdapter {
 
     private OnClickListener getHeaderClickListener() {
         return view -> {
-            boolean z = false;
-            String cat = ((BudgetsHeaderHolder) view).label;
-            BudgetsRowAdapter budgetsRowAdapter;
-            String str;
-            if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) {
-                budgetsRowAdapter = BudgetsRowAdapter.this;
-                str = BudgetsRowAdapter.this.showIncome;
-                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showIncome)) {
-                    z = true;
-                }
-                budgetsRowAdapter.setShowSection(str, z);
-            } else if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
-                budgetsRowAdapter = BudgetsRowAdapter.this;
-                str = BudgetsRowAdapter.this.showExpense;
-                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showExpense)) {
-                    z = true;
-                }
-                budgetsRowAdapter.setShowSection(str, z);
-            } else if (cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
-                budgetsRowAdapter = BudgetsRowAdapter.this;
-                str = BudgetsRowAdapter.this.showNonBudgeted;
-                if (!BudgetsRowAdapter.this.getShowSection(BudgetsRowAdapter.this.showNonBudgeted)) {
-                    z = true;
-                }
-                budgetsRowAdapter.setShowSection(str, z);
-            }
+            String cat = ((BudgetsListHeaderHolder) view).label;
+            if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) setShowSection(this.showIncome, !getShowSection(this.showIncome));
+            else if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) setShowSection(this.showExpense, !getShowSection(this.showExpense));
+            else if (cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) setShowSection(this.showNonBudgeted, !getShowSection(this.showNonBudgeted));
             BudgetsRowAdapter.this.notifyDataSetChanged();
         };
     }
 
     public void reloadData() {
-        List<CategoryClass> nonBudgetedCategoriesHolder;
         boolean hideZeroActuals = Prefs.getBooleanPref(Prefs.BUDGETHIDEZEROSACTUALS);
-        GregorianCalendar startDate = startOfPeriod();
-        GregorianCalendar endDate = endOfPeriod();
-        List<CategoryClass> tempIncomeCategories = CategoryClass.queryIncomeCategoriesWithBudgets();
-        ArrayList<CategoryClass> afterZeroIncomes = new ArrayList<>();
-        for (CategoryClass category : tempIncomeCategories) {
-            category.spent = CategoryClass.querySpentInCategory(category.getCategory(), category.getIncludeSubcategories(), startDate, endDate);
-            category.budget = ((double) Math.round(100.0d * category.budgetLimit(startDate, endDate))) / 100.0d;
-            if (category.spent != 0.0d || category.budget != 0.0d || !hideZeroActuals) {
-                afterZeroIncomes.add(category);
-            }
+        GregorianCalendar start = startOfPeriod();
+        GregorianCalendar end = endOfPeriod();
+        
+        List<CategoryClass> incomes = CategoryClass.queryIncomeCategoriesWithBudgets();
+        this.incomeCategories = new ArrayList<>();
+        for (CategoryClass c : incomes) {
+            c.spent = CategoryClass.querySpentInCategory(c.getCategory(), c.getIncludeSubcategories(), start, end);
+            c.budget = round(c.budgetLimit(start, end));
+            if (c.spent != 0.0d || c.budget != 0.0d || !hideZeroActuals) this.incomeCategories.add(c);
         }
-        List<CategoryClass> tempExpenseCategories = CategoryClass.queryExpenseCategoriesWithBudgets();
-        ArrayList<CategoryClass> afterZeroExpenses = new ArrayList<>();
-        for (CategoryClass category2 : tempExpenseCategories) {
-            category2.spent = CategoryClass.querySpentInCategory(category2.getCategory(), category2.getIncludeSubcategories(), startDate, endDate);
-            category2.budget = ((double) Math.round(100.0d * category2.budgetLimit(startDate, endDate))) / 100.0d;
-            if (category2.spent != 0.0d || category2.budget != 0.0d || !hideZeroActuals) {
-                afterZeroExpenses.add(category2);
-            }
+        
+        List<CategoryClass> expenses = CategoryClass.queryExpenseCategoriesWithBudgets();
+        this.expenseCategories = new ArrayList<>();
+        for (CategoryClass c : expenses) {
+            c.spent = CategoryClass.querySpentInCategory(c.getCategory(), c.getIncludeSubcategories(), start, end);
+            c.budget = round(c.budgetLimit(start, end));
+            if (c.spent != 0.0d || c.budget != 0.0d || !hideZeroActuals) this.expenseCategories.add(c);
         }
+        
+        this.nonBudgetedCategories = new ArrayList<>();
         if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED)) {
-            List<CategoryClass> tempNonBudgetdCategories = CategoryClass.queryNonBudgettedCategories();
-            ArrayList<CategoryClass> afterZeroNonBudgeted = new ArrayList<>();
-            for (CategoryClass category22 : tempNonBudgetdCategories) {
-                category22.spent = CategoryClass.querySpentInCategory(category22.getCategory(), category22.getIncludeSubcategories(), startDate, endDate);
-                if (category22.spent != 0.0d || !hideZeroActuals) {
-                    afterZeroNonBudgeted.add(category22);
-                }
+            List<CategoryClass> unbudgeted = CategoryClass.queryNonBudgettedCategories();
+            for (CategoryClass c : unbudgeted) {
+                c.spent = CategoryClass.querySpentInCategory(c.getCategory(), c.getIncludeSubcategories(), start, end);
+                if (c.spent != 0.0d || !hideZeroActuals) this.nonBudgetedCategories.add(c);
             }
-            nonBudgetedCategoriesHolder = afterZeroNonBudgeted;
-        } else {
-            nonBudgetedCategoriesHolder = null;
         }
-        Collections.sort(afterZeroIncomes, categoryComparator);
-        Collections.sort(afterZeroExpenses, categoryComparator);
-        if (nonBudgetedCategoriesHolder != null) {
-            Collections.sort(nonBudgetedCategoriesHolder, categoryComparator);
-        }
-        final List<CategoryClass> list = nonBudgetedCategoriesHolder;
-        final List<CategoryClass> list2 = afterZeroExpenses;
-        final List<CategoryClass> list3 = afterZeroIncomes;
-        ((Activity) this.context).runOnUiThread(() -> {
-            BudgetsRowAdapter.this.nonBudgetedCategories = list;
-            BudgetsRowAdapter.this.expenseCategories = list2;
-            BudgetsRowAdapter.this.incomeCategories = list3;
-            BudgetsRowAdapter.this.notifyDataSetChanged();
-        });
+        
+        Collections.sort(this.incomeCategories, categoryComparator);
+        Collections.sort(this.expenseCategories, categoryComparator);
+        Collections.sort(this.nonBudgetedCategories, categoryComparator);
+        
+        ((Activity) this.context).runOnUiThread(this::notifyDataSetChanged);
     }
 
-    private void setShowSection(String section, boolean show) {
-        Prefs.setPref(section, show);
-    }
-
-    private boolean getShowSection(String section) {
-        return Prefs.getBooleanPref(section);
-    }
+    private double round(double v) { return Math.round(v * 100.0) / 100.0; }
+    private void setShowSection(String s, boolean show) { Prefs.setPref(s, show); }
+    private boolean getShowSection(String s) { return Prefs.getBooleanPref(s); }
 
     double totalIncomes() {
-        double earned = 0.0d;
-        if (this.incomeCategories != null) {
-            for (CategoryClass category : this.incomeCategories) {
-                earned += category.spent;
-            }
-        }
-        return earned;
+        double t = 0;
+        if (incomeCategories != null) for (CategoryClass c : incomeCategories) t += c.spent;
+        return t;
     }
-
     double totalExpenses() {
-        double spent = 0.0d;
-        if (this.expenseCategories != null) {
-            for (CategoryClass category : this.expenseCategories) {
-                spent += category.spent;
-            }
-        }
-        return spent;
+        double t = 0;
+        if (expenseCategories != null) for (CategoryClass c : expenseCategories) t += c.spent;
+        return t;
     }
-
     double totalNonBudgeted() {
-        double spent = 0.0d;
-        if (this.nonBudgetedCategories != null) {
-            for (CategoryClass category : this.nonBudgetedCategories) {
-                spent += category.spent;
-            }
-        }
-        return spent;
+        double t = 0;
+        if (nonBudgetedCategories != null) for (CategoryClass c : nonBudgetedCategories) t += c.spent;
+        return t;
     }
-
     double budgetedIncomes() {
-        double budget = 0.0d;
-        if (this.incomeCategories != null) {
-            for (CategoryClass category : this.incomeCategories) {
-                budget += category.budget;
-            }
-        }
-        return budget;
+        double t = 0;
+        if (incomeCategories != null) for (CategoryClass c : incomeCategories) t += c.budget;
+        return t;
     }
-
     double budgetedExpenses() {
-        double budget = 0.0d;
-        if (this.expenseCategories != null) {
-            for (CategoryClass category : this.expenseCategories) {
-                budget += category.budget;
-            }
-        }
-        return budget;
+        double t = 0;
+        if (expenseCategories != null) for (CategoryClass c : expenseCategories) t += c.budget;
+        return t;
     }
 
-    private boolean showCents() {
-        return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
-    }
-
-    private String xOfy(double x, double y) {
-        String xofy = Locales.kLOC_BUDGETS_XOFY;
-        if (showCents()) {
-            return xofy.replace("%1$s", CurrencyExt.amountAsCurrency(x)).replace("%2$s", CurrencyExt.amountAsCurrency(y));
-        }
-        return xofy.replace("%1$s", CurrencyExt.amountAsCurrencyWithoutCents(x)).replace("%2$s", CurrencyExt.amountAsCurrencyWithoutCents(y));
-    }
-
-    private String balanceForCategory(String cat) {
-        String retVal = "";
-        if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) {
-            return xOfy(totalIncomes(), budgetedIncomes());
-        }
-        if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
-            double totalExpense = totalExpenses();
-            double budgetedExpense = Math.abs(budgetedExpenses());
-            if (totalExpense != 0.0d) {
-                totalExpense *= -1.0d;
-            }
-            return xOfy(totalExpense, budgetedExpense);
-        }
-        if (!cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) {
-            return retVal;
-        }
-        double totalUnbudgeted = totalNonBudgeted();
-        double unbudgetedAvailable = budgetedIncomes() - Math.abs(budgetedExpenses());
-        if (totalUnbudgeted != 0.0d) {
-            totalUnbudgeted *= -1.0d;
-        }
-        return xOfy(totalUnbudgeted, unbudgetedAvailable);
-    }
-
-    String rangeOfPeriodAsString() {
-        return switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/ ->
-                    CalExt.descriptionWithMediumDate(this.currentDate); /*1*//*5*/
-            case Enums.kBudgetPeriodWeek, Enums.kBudgetPeriodBiweekly,
-                 Enums.kBudgetPeriod4Weeks /*8*/ ->
-                    CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            case Enums.kBudgetPeriodMonth /*2*/ -> {
-                if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    yield CalExt.descriptionWithMonth(this.currentDate) + " " + CalExt.descriptionWithYear(this.currentDate);
-                }
-                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            }
-            case Enums.kBudgetPeriodQuarter /*3*/ -> {
-                if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    yield CalExt.descriptionWithMonth(CalExt.beginningOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.beginningOfQuarter(this.currentDate)) + " - " + CalExt.descriptionWithMonth(CalExt.endOfQuarter(this.currentDate)) + " " + CalExt.descriptionWithYear(CalExt.endOfQuarter(this.currentDate));
-                }
-                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            }
-            case Enums.kBudgetPeriodYear /*4*/ -> {
-                if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    yield CalExt.descriptionWithYear(this.currentDate);
-                }
-                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            }
-            case Enums.kBudgetPeriodBimonthly /*6*/ -> {
-                if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    yield CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
-                }
-                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            }
-            case Enums.kBudgetPeriodHalfYear /*7*/ -> {
-                if (Prefs.getStringPref(Prefs.BUDGETSTARTDATE).equals(Locales.kLOC_GENERAL_DEFAULT)) {
-                    yield CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
-                }
-                yield CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
-            }
-            default -> "All";
-        };
-    }
-
-    private GregorianCalendar startOfPeriod() {
-        return startOfPeriod(this.currentDate, this.currentPeriod);
-    }
-
-    private GregorianCalendar endOfPeriod() {
-        boolean firstOfMonth;
+    public static GregorianCalendar startOfPeriod(GregorianCalendar inputDate, int budgetPeriod) {
         String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
         GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
-        boolean endOfMonth = false;
         if (budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
-            budgetStartDate = null;
-        } else
-            endOfMonth = budgetStartDate.get(Calendar.DAY_OF_MONTH) == CalExt.endOfMonth(budgetStartDate).get(Calendar.DAY_OF_MONTH);
-        firstOfMonth = budgetStartDate == null || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
-        GregorianCalendar budgetEndDate;
+            budgetStartDate = new GregorianCalendar();
+            budgetStartDate.set(1989, 0, 1, 0, 0, 0);
+        }
+        GregorianCalendar clonedInputDate = (GregorianCalendar) inputDate.clone();
+        switch (budgetPeriod) {
+            case Enums.kBudgetPeriodDay -> { return CalExt.beginningOfDay(inputDate); }
+            case Enums.kBudgetPeriodWeek -> {
+                int dowStart = budgetStartDate.get(Calendar.DAY_OF_WEEK);
+                int dowInput = inputDate.get(Calendar.DAY_OF_WEEK);
+                return CalExt.subtractDays(inputDate, (dowInput < dowStart) ? 7 - (dowStart - dowInput) : dowInput - dowStart);
+            }
+            case Enums.kBudgetPeriodMonth -> {
+                if (inputDate.get(Calendar.DAY_OF_MONTH) < budgetStartDate.get(Calendar.DAY_OF_MONTH)) clonedInputDate = CalExt.subtractMonth(clonedInputDate);
+                clonedInputDate.set(Calendar.DAY_OF_MONTH, Math.min(CalExt.endOfMonth(clonedInputDate).get(Calendar.DAY_OF_MONTH), budgetStartDate.get(Calendar.DAY_OF_MONTH)));
+                return clonedInputDate;
+            }
+            case Enums.kBudgetPeriodYear -> {
+                if (clonedInputDate.get(Calendar.MONTH) < budgetStartDate.get(Calendar.MONTH) || (clonedInputDate.get(Calendar.MONTH) == budgetStartDate.get(Calendar.MONTH) && clonedInputDate.get(Calendar.DAY_OF_MONTH) < budgetStartDate.get(Calendar.DAY_OF_MONTH))) clonedInputDate = CalExt.subtractYear(clonedInputDate);
+                clonedInputDate.set(Calendar.MONTH, budgetStartDate.get(Calendar.MONTH));
+                clonedInputDate.set(Calendar.DAY_OF_MONTH, budgetStartDate.get(Calendar.DAY_OF_MONTH));
+                return clonedInputDate;
+            }
+            default -> { return inputDate; }
+        }
+    }
+
+    public GregorianCalendar startOfPeriod() { return startOfPeriod(this.currentDate, this.currentPeriod); }
+
+    public GregorianCalendar endOfPeriod() {
         return switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/ -> CalExt.endOfDay(this.currentDate);
-            case Enums.kBudgetPeriodWeek /*1*/ ->
-                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 1));
-            case Enums.kBudgetPeriodMonth /*2*/ -> {
-                if (firstOfMonth) {
-                    budgetEndDate = CalExt.endOfMonth(this.currentDate);
-                } else {
-                    budgetEndDate = CalExt.addMonth(CalExt.subtractDay(startOfPeriod()));
-                    if (endOfMonth) {
-                        budgetEndDate = CalExt.endOfMonth(CalExt.endOfMonth(budgetEndDate));
-                    }
-                }
-                yield budgetEndDate;
-            }
-            case Enums.kBudgetPeriodQuarter /*3*/ -> {
-                if (firstOfMonth) {
-                    budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 2));
-                } else {
-                    budgetEndDate = CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 3);
-                    if (endOfMonth) {
-                        budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
-                    }
-                }
-                yield budgetEndDate;
-            }
-            case Enums.kBudgetPeriodYear /*4*/ ->
-                    CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
-            case Enums.kBudgetPeriodBiweekly /*5*/ ->
-                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 2));
-            case Enums.kBudgetPeriodBimonthly /*6*/ -> {
-                if (firstOfMonth) {
-                    budgetEndDate = CalExt.endOfMonth(CalExt.addMonth(startOfPeriod()));
-                } else {
-                    budgetEndDate = CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 2);
-                    if (endOfMonth) {
-                        budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
-                    }
-                }
-                yield budgetEndDate;
-            }
-            case Enums.kBudgetPeriodHalfYear /*7*/ -> {
-                if (firstOfMonth) {
-                    budgetEndDate = CalExt.endOfMonth(CalExt.addMonths(startOfPeriod(), 5));
-                } else {
-                    budgetEndDate = CalExt.addMonths(CalExt.subtractDay(startOfPeriod()), 6);
-                    if (endOfMonth) {
-                        budgetEndDate = CalExt.subtractDay(CalExt.endOfMonth(budgetEndDate));
-                    }
-                }
-                yield budgetEndDate;
-            }
-            case Enums.kBudgetPeriod4Weeks /*8*/ ->
-                    CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 4));
-            default -> null;
+            case Enums.kBudgetPeriodDay -> CalExt.endOfDay(this.currentDate);
+            case Enums.kBudgetPeriodWeek -> CalExt.endOfDay(CalExt.addWeeks(CalExt.subtractDay(startOfPeriod()), 1));
+            case Enums.kBudgetPeriodMonth -> CalExt.addMonth(CalExt.subtractDay(startOfPeriod()));
+            case Enums.kBudgetPeriodYear -> CalExt.endOfDay(CalExt.addYear(CalExt.subtractDay(startOfPeriod())));
+            default -> this.currentDate;
         };
     }
 
     void nextPeriod() {
         switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                this.currentDate = CalExt.addDays(this.currentDate, 1);
-                return;
-            case Enums.kBudgetPeriodWeek /*1*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, 1);
-                return;
-            case Enums.kBudgetPeriodMonth /*2*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, 1);
-                return;
-            case Enums.kBudgetPeriodQuarter /*3*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, 3);
-                return;
-            case Enums.kBudgetPeriodYear /*4*/:
-                this.currentDate = CalExt.addYear(this.currentDate);
-                return;
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, 2);
-                return;
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, 2);
-                return;
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, 6);
-                return;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, 4);
-                return;
-            default:
+            case Enums.kBudgetPeriodDay -> this.currentDate = CalExt.addDays(this.currentDate, 1);
+            case Enums.kBudgetPeriodWeek -> this.currentDate = CalExt.addWeeks(this.currentDate, 1);
+            case Enums.kBudgetPeriodMonth -> this.currentDate = CalExt.addMonths(this.currentDate, 1);
+            case Enums.kBudgetPeriodYear -> this.currentDate = CalExt.addYear(this.currentDate);
         }
     }
 
     void previousPeriod() {
         switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay /*0*/:
-                this.currentDate = CalExt.addDays(this.currentDate, -1);
-                return;
-            case Enums.kBudgetPeriodWeek /*1*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, -1);
-                return;
-            case Enums.kBudgetPeriodMonth /*2*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, -1);
-                return;
-            case Enums.kBudgetPeriodQuarter /*3*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, -3);
-                return;
-            case Enums.kBudgetPeriodYear /*4*/:
-                this.currentDate = CalExt.subtractYear(this.currentDate);
-                return;
-            case Enums.kBudgetPeriodBiweekly /*5*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, -2);
-                return;
-            case Enums.kBudgetPeriodBimonthly /*6*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, -2);
-                return;
-            case Enums.kBudgetPeriodHalfYear /*7*/:
-                this.currentDate = CalExt.addMonths(this.currentDate, -6);
-                return;
-            case Enums.kBudgetPeriod4Weeks /*8*/:
-                this.currentDate = CalExt.addWeeks(this.currentDate, -4);
-                return;
-            default:
+            case Enums.kBudgetPeriodDay -> this.currentDate = CalExt.addDays(this.currentDate, -1);
+            case Enums.kBudgetPeriodWeek -> this.currentDate = CalExt.addWeeks(this.currentDate, -1);
+            case Enums.kBudgetPeriodMonth -> this.currentDate = CalExt.addMonths(this.currentDate, -1);
+            case Enums.kBudgetPeriodYear -> this.currentDate = CalExt.subtractYear(this.currentDate);
         }
     }
 
     double getProgressPercent() {
         GregorianCalendar today = new GregorianCalendar();
-        if (this.currentPeriod == Enums.kBudgetPeriodDay/*0*/) {
-            if (this.currentDate.after(today)) {
-                return 0.0d;
-            }
-            return 1.0d;
-        }
-        double percentIntoPeriod = ((double) (today.getTimeInMillis() - startOfPeriod().getTimeInMillis())) / ((double) (endOfPeriod().getTimeInMillis() - startOfPeriod().getTimeInMillis()));
-        if (startOfPeriod().after(today)) {
-            return 1.0d;
-        }
-        if (endOfPeriod().before(today)) {
-            return 0.0d;
-        }
-        return percentIntoPeriod;
+        if (startOfPeriod().after(today)) return 1.0;
+        if (endOfPeriod().before(today)) return 0.0;
+        return ((double) (today.getTimeInMillis() - startOfPeriod().getTimeInMillis())) / ((double) (endOfPeriod().getTimeInMillis() - startOfPeriod().getTimeInMillis()));
+    }
+
+    String rangeOfPeriodAsString() {
+        return switch (this.currentPeriod) {
+            case Enums.kBudgetPeriodDay -> CalExt.descriptionWithMediumDate(this.currentDate);
+            case Enums.kBudgetPeriodMonth -> CalExt.descriptionWithMonth(this.currentDate) + " " + CalExt.descriptionWithYear(this.currentDate);
+            case Enums.kBudgetPeriodYear -> CalExt.descriptionWithYear(this.currentDate);
+            default -> CalExt.descriptionWithMediumDate(startOfPeriod()) + " - " + CalExt.descriptionWithMediumDate(endOfPeriod());
+        };
     }
 }

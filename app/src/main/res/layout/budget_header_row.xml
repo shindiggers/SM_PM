@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/header_root"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="50dp"
+    android:paddingStart="12dp"
+    android:paddingTop="6dp"
+    android:paddingEnd="12dp"
+    android:paddingBottom="6dp">
+
+    <!-- Column 1: Left (Actual) -->
+    <TextView
+        android:id="@+id/header_actual_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:text="@string/kLOC_BUDGET_LBL_ACTUAL"
+        android:textAllCaps="true"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/header_actual_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/header_actual_label"
+        tools:text="£2,000.00" />
+
+    <!-- Column 2: Middle (Group + Helper Text) -->
+    <TextView
+        android:id="@+id/header_group_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAllCaps="true"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="INCOME" />
+
+    <TextView
+        android:id="@+id/header_sentence"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:textSize="10sp"
+        app:layout_constraintEnd_toStartOf="@+id/header_target_value"
+        app:layout_constraintStart_toEndOf="@+id/header_actual_value"
+        app:layout_constraintTop_toBottomOf="@id/header_group_label"
+        tools:text="Ahead by £1,500" />
+
+    <!-- Column 3: Right (Target Logic) -->
+    <TextView
+        android:id="@+id/header_target_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:textAllCaps="true"
+        android:gravity="end"
+        android:textSize="10sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="SmallSp"
+        tools:text="Budgeted" />
+
+    <TextView
+        android:id="@+id/header_target_value"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="80dp"
+        android:gravity="end"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        app:layout_constraintEnd_toEndOf="@+id/header_target_label"
+        app:layout_constraintTop_toBottomOf="@id/header_target_label"
+        tools:text="£3,500.00" />
+
+    <ImageView
+        android:id="@+id/header_icon"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginStart="4dp"
+        android:contentDescription="@null"
+
+        app:layout_constraintStart_toEndOf="@id/header_group_label"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_expand_less" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
