@@ -1031,48 +1031,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        TransactionRowHolder aHolder = (TransactionRowHolder) v.getTag();
-        Intent i = new Intent();
-        i.putExtra("Transaction", aHolder.transaction);
-        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
-        switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
-                Intent anIntent = new Intent(this, TransactionEditActivity.class);
-                if (b != null) {
-                    TransactionClass transaction;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        transaction = b.getSerializable("Transaction", TransactionClass.class);
-                    } else {
-                        //noinspection deprecation
-                        transaction = (TransactionClass) b.get("Transaction");
-                    }
-                    anIntent.putExtra("Transaction", transaction);
-                }
-                editLauncher.launch(anIntent);
-                return true;
-            case CMENU_DELETE /*3*/:
-                if (b != null) {
-                    TransactionClass transaction;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        transaction = b.getSerializable("Transaction", TransactionClass.class);
-                    } else {
-                        //noinspection deprecation
-                        transaction = (TransactionClass) b.get("Transaction");
-                    }
-                    if (transaction != null) transaction.transactionDelete();
-                }
-                reloadData();
-                reloadBalanceBar();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
+        return super.onContextItemSelected(item);
     }
 
     public Handler getHandler() {
