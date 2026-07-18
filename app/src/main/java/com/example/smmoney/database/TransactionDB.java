@@ -37,7 +37,7 @@ public class TransactionDB {
         return new String[]{Locales.kLOC_GENERAL_DATE, Locales.kLOC_GENERAL_AMOUNT, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CLASS, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_NOTE, Locales.kLOC_GENERAL_ID, Locales.kLOC_GENERAL_CLEARED, Locales.kLOC_TRANSACTION_SORTDATEAMOUNT};
     }
 
-    private static int transactionSortTypeFromString(String aType) {
+    public static int transactionSortTypeFromString(String aType) {
         if (aType.equals(Locales.kLOC_GENERAL_DATE)) {
             return Enums.kTransactionsSortTypeDate /*0*/;
         }

@@ -73,17 +73,12 @@
 
     </LinearLayout>
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/the_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:divider="@color/black"
-        android:drawSelectorOnTop="true"
-        android:fadingEdge="vertical"
-        android:fastScrollEnabled="true"
-        android:minHeight="30dp"
-        tools:listitem="@layout/theme_simple_list_black" />
+        tools:listitem="@layout/transaction_row" />
 
     <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"

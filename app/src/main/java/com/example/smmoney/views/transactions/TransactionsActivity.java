@@ -32,8 +32,20 @@ import android.view.View.OnClickListener;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.ItemTouchHelper;
+
 import android.widget.ListView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.drawable.Drawable;
+import androidx.core.content.ContextCompat;
+import android.content.res.ColorStateList;
 import android.widget.Toast;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
@@ -141,19 +153,36 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int MENU_WIFITRANSFERS = 2;
     @SuppressWarnings("unused")
     private final int MENU_WIFI_EXPORT = 4;
+    private final int MENU_SORT = 25;
     private FilterClass _filter;
-    private TransactionRowAdapter adapter;
+    private TransactionRecyclerViewAdapter adapter;
     private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
-        GregorianCalendar newCal = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        GregorianCalendar targetDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
+        targetDate = CalExt.beginningOfDay(targetDate);
+        
         boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
         int i = 0;
-        for (TransactionClass transaction : TransactionsActivity.this.adapter.getElements()) {
-            if ((descending && transaction.getDate().before(newCal)) || (!descending && transaction.getDate().after(newCal))) {
-                break;
+        for (TransactionClass transaction : this.adapter.getElements()) {
+            GregorianCalendar transDate = CalExt.beginningOfDay(transaction.getDate());
+            
+            // Descending: Stop at the first transaction that is ON or BEFORE the target date
+            // Ascending: Stop at the first transaction that is ON or AFTER the target date
+            if (descending) {
+                if (!transDate.after(targetDate)) break;
+            } else {
+                if (!transDate.before(targetDate)) break;
             }
             i++;
         }
-        ((ListView) TransactionsActivity.this.findViewById(R.id.the_list)).setSelection(i);
+        
+        // Ensure index is within bounds
+        int finalPosition = Math.min(i, this.adapter.getItemCount() - 1);
+        if (finalPosition < 0) finalPosition = 0;
+
+        LinearLayoutManager layoutManager = (LinearLayoutManager) this.recyclerView.getLayoutManager();
+        if (layoutManager != null) {
+            layoutManager.scrollToPositionWithOffset(finalPosition, 0);
+        }
     };
     private BalanceBar balanceBar;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
@@ -165,7 +194,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private MaterialButton clearedButton;
     @SuppressWarnings("FieldCanBeLocal")
-    private ListView listView;
+    private RecyclerView recyclerView;
     private Handler mHandler = null;
     private int msgEmail = -1;
     @SuppressWarnings({"FieldCanBeLocal", "unused"})
@@ -261,11 +290,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         reloadData();
         reloadBalanceBar();
         if (this.firstOpenOfView) {
-            ListView listView = findViewById(R.id.the_list);
+            RecyclerView recyclerView = findViewById(R.id.the_list);
             if (Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING)) {
-                listView.setSelection(0 /*i.e. first transaction*/);
+                recyclerView.scrollToPosition(0 /*i.e. first transaction*/);
             } else {
-                listView.setSelection(this.adapter.getCount()/*i.e. last transaction*/);
+                recyclerView.scrollToPosition(this.adapter.getItemCount() > 0 ? this.adapter.getItemCount() - 1 : 0/*i.e. last transaction*/);
             }
             this.firstOpenOfView = false;
         }
@@ -287,11 +316,89 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.balanceBar = layout.findViewById(R.id.balancebar);
         this.balanceBar.nextButton.setOnClickListener(getBalanceBarClickListener());
         this.balanceBar.previousButton.setOnClickListener(getBalanceBarClickListener());
-        this.listView = layout.findViewById(R.id.the_list);
-        this.listView.setItemsCanFocus(true);
-        this.adapter = new TransactionRowAdapter(this);
-        this.listView.setAdapter(this.adapter);
-        this.listView.setFocusable(false);
+        this.recyclerView = layout.findViewById(R.id.the_list);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.adapter = new TransactionRecyclerViewAdapter(this);
+        this.recyclerView.setAdapter(this.adapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+
+                TransactionClass transaction = adapter.getElements().get(position);
+                if (direction == ItemTouchHelper.RIGHT) {
+                    // Edit
+                    Intent intent = new Intent(TransactionsActivity.this, TransactionEditActivity.class);
+                    intent.putExtra("Transaction", transaction);
+                    editLauncher.launch(intent);
+                    adapter.notifyItemChanged(position);
+                } else if (direction == ItemTouchHelper.LEFT) {
+                    // Delete
+                    deleteTransaction(transaction);
+                    adapter.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+                    
+                    if (dX > 0) { // Swipe Right (Edit)
+                        paint.setColor(Color.parseColor("#4CAF50")); // Green
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(TransactionsActivity.this, R.drawable.ic_edit_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconLeft = itemView.getLeft() + iconMargin;
+                            int iconRight = iconLeft + icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+                        
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        c.drawText("Edit", (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+
+                    } else if (dX < 0) { // Swipe Left (Delete)
+                        paint.setColor(Color.parseColor("#F44336")); // Red
+                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(TransactionsActivity.this, R.drawable.ic_delete_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconRight = itemView.getRight() - iconMargin;
+                            int iconLeft = iconRight - icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        float textWidth = paint.measureText("Delete");
+                        c.drawText("Delete", (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+
         this.searchView = layout.findViewById(R.id.searchlayout);
         this.searchEditText = layout.findViewById(R.id.searcheditext);
         this.searchEditText.addTextChangedListener(new TextWatcher() {
@@ -347,6 +454,89 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     public void reloadData() {
         this.adapter.setElements(TransactionDB.queryWithFilter(this._filter));
         this.adapter.notifyDataSetChanged();
+    }
+
+    private void deleteTransaction(final TransactionClass transaction) {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_GENERAL_DELETE)
+                .setMessage("Are you sure you want to delete this transaction?")
+                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                    if (transaction != null) transaction.transactionDelete();
+                    reloadData();
+                    reloadBalanceBar();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .show();
+    }
+
+    private void showSortDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_transaction_sort, null);
+        RadioGroup propertyGroup = dialogView.findViewById(R.id.sort_property_group);
+        RadioGroup directionGroup = dialogView.findViewById(R.id.sort_direction_group);
+
+        // Theme the dialog
+        int labelColor = PocketMoneyThemes.fieldLabelColor();
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+        android.content.res.ColorStateList tint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+
+        ((TextView) dialogView.findViewById(R.id.sort_by_label)).setTextColor(labelColor);
+        ((TextView) dialogView.findViewById(R.id.order_label)).setTextColor(labelColor);
+
+        for (int i = 0; i < propertyGroup.getChildCount(); i++) {
+            View child = propertyGroup.getChildAt(i);
+            if (child instanceof RadioButton) {
+                RadioButton rb = (RadioButton) child;
+                rb.setTextColor(textColor);
+                rb.setButtonTintList(tint);
+            }
+        }
+        for (int i = 0; i < directionGroup.getChildCount(); i++) {
+            View child = directionGroup.getChildAt(i);
+            if (child instanceof RadioButton) {
+                RadioButton rb = (RadioButton) child;
+                rb.setTextColor(textColor);
+                rb.setButtonTintList(tint);
+            }
+        }
+
+        // Set current state
+        String currentSort = Prefs.getStringPref(Prefs.TRANSACTIONS_SORTON);
+        int currentSortType = TransactionDB.transactionSortTypeFromString(currentSort);
+        
+        switch (currentSortType) {
+            case Enums.kTransactionsSortTypeDate -> propertyGroup.check(R.id.sort_date);
+            case Enums.kTransactionsSortTypeAmount -> propertyGroup.check(R.id.sort_amount);
+            case Enums.kTransactionsSortTypePayee -> propertyGroup.check(R.id.sort_payee);
+            case Enums.kTransactionsSortTypeClass -> propertyGroup.check(R.id.sort_class);
+            case Enums.kTransactionsSortTypeCategory -> propertyGroup.check(R.id.sort_category);
+            case Enums.kTransactionsSortTypeDateAmount -> propertyGroup.check(R.id.sort_date_amount);
+        }
+
+        boolean isAsc = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
+        if (isAsc) directionGroup.check(R.id.sort_asc);
+        else directionGroup.check(R.id.sort_desc);
+
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON)
+                .setView(dialogView)
+                .setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+                    int selectedPropertyId = propertyGroup.getCheckedRadioButtonId();
+                    String newSort = Locales.kLOC_GENERAL_DATE;
+                    if (selectedPropertyId == R.id.sort_amount) newSort = Locales.kLOC_GENERAL_AMOUNT;
+                    else if (selectedPropertyId == R.id.sort_payee) newSort = Locales.kLOC_GENERAL_PAYEE;
+                    else if (selectedPropertyId == R.id.sort_class) newSort = Locales.kLOC_GENERAL_CLASS;
+                    else if (selectedPropertyId == R.id.sort_category) newSort = Locales.kLOC_GENERAL_CATEGORY;
+                    else if (selectedPropertyId == R.id.sort_date_amount) newSort = Locales.kLOC_TRANSACTION_SORTDATEAMOUNT;
+
+                    int selectedDirectionId = directionGroup.getCheckedRadioButtonId();
+                    String newDir = (selectedDirectionId == R.id.sort_asc) ? Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING : Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING;
+
+                    Prefs.setPref(Prefs.TRANSACTIONS_SORTON, newSort);
+                    Prefs.setPref(Prefs.NEWESTTRANSACTIONFIRST, newDir);
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .show();
     }
 
     private void markAsClear() {
@@ -589,7 +779,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         MenuItem item = menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW);
         item.setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS/*2*/);
-        menu.add(0, MENU_VIEW, 0, Locales.kLOC_VIEW_OPTIONS).setIcon(R.drawable.circleplus);
+        
+        menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        
         SubMenu toolsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_TOOLS);
         toolsMenu.setIcon(R.drawable.icon);
         menu.add(0, MENU_SEARCH, 0, Locales.kLOC_TOOLS_SEARCH).setIcon(R.drawable.places_ic_search);
@@ -597,7 +789,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         toolsMenu.add(0, MENU_TOOLS_GOTODATE, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
         toolsMenu.add(0, MENU_TOOLS_ADJUSTBALANCE, 0, Locales.kLOC_TOOLS_RECONCILE);
         toolsMenu.add(0, MENU_TOOLS_MARKASCLEAR, 0, Locales.kLOC_TOOLS_MARKCLEARED);
-        item = toolsMenu.add(0, MENU_TOOLS_ROLLUP, 0, Locales.kLOC_TOOLS_ROLLUP);
+        toolsMenu.add(0, MENU_TOOLS_ROLLUP, 0, Locales.kLOC_TOOLS_ROLLUP);
         menu.add(0, MENU_FILTER, 0, Locales.kLOC_TOOLS_FILTERS).setIcon(R.drawable.ic_arrow_drop_down_circle);
         SubMenu reportsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_REPORTS);
         reportsMenu.setIcon(R.drawable.icon);
@@ -614,8 +806,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             case MENU_NEW /*1*/:
                 newTransaction();
                 return true;
-            case MENU_VIEW /*2*/:
-                startActivity(new Intent(this, TransactionViewOptionsActivity.class));
+            case MENU_SORT /*25*/:
+                showSortDialog();
                 return true;
             case MENU_FILTER /*4*/:
                 if (AccountsActivity.isLite(this)) {
@@ -816,11 +1008,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
     private void showDatePickerDialog() {
         GregorianCalendar theDate;
-        int firstPosition = ((ListView) findViewById(R.id.the_list)).getFirstVisiblePosition();
+        LinearLayoutManager layoutManager = (LinearLayoutManager) this.recyclerView.getLayoutManager();
+        int firstPosition = (layoutManager != null) ? layoutManager.findFirstVisibleItemPosition() : 0;
+        
         if (this.adapter.getCount() == 0) {
             theDate = new GregorianCalendar();
         } else {
-            theDate = ((TransactionClass) this.adapter.getItem(firstPosition)).getDate();
+            TransactionClass trans = (TransactionClass) this.adapter.getItem(Math.max(0, firstPosition));
+            theDate = (trans != null) ? trans.getDate() : new GregorianCalendar();
         }
         new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
