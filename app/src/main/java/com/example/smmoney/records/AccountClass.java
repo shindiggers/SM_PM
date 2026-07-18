@@ -80,7 +80,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.accountID;
     }
 
-    private void setDisplayOrder(int order) {
+    public void setDisplayOrder(int order) {
         if (this.displayOrder != order) {
             this.dirty = true;
             this.displayOrder = order;

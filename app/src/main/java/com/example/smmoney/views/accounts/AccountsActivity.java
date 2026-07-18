@@ -12,7 +12,12 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.RectF;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -38,8 +43,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ListView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ProgressBar;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.RadioGroup.OnCheckedChangeListener;
@@ -176,7 +183,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private final int PERMISSION_RESTORE_DB = 106;
     //public final int REQUEST_EDIT = 2;
     //public final int REQUEST_NEW = 1;
-    private AccountRowAdapter adapter;
+    private AccountRecyclerViewAdapter adapter;
     private double availableCreditBalanceCache = 0.0d;
     private double availableFundsBalanceCache = 0.0d;
     private BalanceBar balanceBar;
@@ -444,7 +451,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             alert.setTitle(Locales.kLOC_TIP_WELCOMEBACK_TITLE);
             int i = R.string.kLOC_TIP_FIRST_TRANSACTION;
             Object[] objArr = new Object[ACCOUNT_REQUEST_FILTER];
-            objArr[0] = this.adapter.getCount() > 0 ? this.adapter.getElements().get(0).getAccount() : "";
+            objArr[0] = this.adapter.getItemCount() > 0 ? this.adapter.getElements().get(0).getAccount() : "";
             alert.setMessage(getString(i, objArr));
             alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_FIRSTNEWACCOUNT, true);
@@ -472,7 +479,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         reloadData();
                         reloadBalanceBar();
                         reloadCharts();
-                        if (adapter.getCount() == 0 && (tipDialog == null || !tipDialog.isShowing())) {
+                        if (adapter.getItemCount() == 0 && (tipDialog == null || !tipDialog.isShowing())) {
                             showMenuDialog();
                         }
                     }
@@ -874,18 +881,164 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
+    private void showTypeChangeConfirmation(AccountClass account, int oldType, int newType) {
+        String oldTypeName = getAccountTypeName(oldType);
+        String newTypeName = getAccountTypeName(newType);
+        
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle("Change Account Type?")
+                .setMessage(String.format("Do you want to change the account type for '%s' from %s to %s?", account.getAccount(), oldTypeName, newTypeName))
+                .setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> {
+                    account.hydrate();
+                    account.setType(newType);
+                    account.saveToDatabase();
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, which) -> {
+                    reloadData(); // Snap back to original position/type
+                })
+                .setCancelable(false)
+                .show();
+    }
+
+    private String getAccountTypeName(int type) {
+        AccountClass temp = new AccountClass();
+        temp.setType(type);
+        return temp.typeAsString();
+    }
+
     private void setupView(LinearLayout layout) {
         Log.d("ACCOUNTSACTIVITY", "setupView() called and started");
         createHandler();
         this.balanceBar = layout.findViewById(R.id.balancebar);
         this.balanceBar.nextButton.setOnClickListener(getBalanceBarClickListener());
         this.balanceBar.previousButton.setOnClickListener(getBalanceBarClickListener());
-        ListView listView = layout.findViewById(R.id.the_list);
-        listView.setItemsCanFocus(true);
-        listView.setVerticalScrollBarEnabled(false);
-        this.adapter = new AccountRowAdapter(this);
-        listView.setAdapter(this.adapter);
-        listView.setFocusable(false);
+        RecyclerView recyclerView = layout.findViewById(R.id.the_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.adapter = new AccountRecyclerViewAdapter(this);
+        recyclerView.setAdapter(this.adapter);
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(ItemTouchHelper.UP | ItemTouchHelper.DOWN, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            private int targetType = -1;
+            private int initialType = -1;
+
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                int fromPos = viewHolder.getAdapterPosition();
+                int toPos = target.getAdapterPosition();
+
+                if (fromPos == RecyclerView.NO_POSITION || toPos == RecyclerView.NO_POSITION) {
+                    return false;
+                }
+
+                // Identify initial type only once per drag session
+                if (initialType == -1) {
+                    initialType = ((AccountRecyclerViewAdapter.AccountViewHolder) viewHolder).account.getType();
+                }
+
+                if (adapter.canDrag(fromPos)) {
+                    // Perform the swap in the data
+                    adapter.onItemMove(fromPos, toPos);
+                    
+                    // NOW calculate the new targetType based on the item's NEW position in the list
+                    // This ensures that if we moved ABOVE a header, we detect the section ABOVE it.
+                    int sectionIndex = adapter.getSectionIndexForPosition(toPos);
+                    if (sectionIndex != -1) {
+                        targetType = adapter.typeForIndex(sectionIndex);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+
+                AccountClass account = ((AccountRecyclerViewAdapter.AccountViewHolder) viewHolder).account;
+                
+                if (direction == ItemTouchHelper.RIGHT) {
+                    // Edit
+                    Intent intent = new Intent(AccountsActivity.this, AccountsEditActivity.class);
+                    intent.putExtra("Account", account);
+                    editLauncher.launch(intent);
+                    adapter.notifyItemChanged(position);
+                } else if (direction == ItemTouchHelper.LEFT) {
+                    // Delete
+                    deleteAccount(account);
+                    adapter.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                
+                if (targetType != -1 && initialType != -1 && targetType != initialType) {
+                    AccountClass account = ((AccountRecyclerViewAdapter.AccountViewHolder) viewHolder).account;
+                    showTypeChangeConfirmation(account, initialType, targetType);
+                }
+                
+                targetType = -1;
+                initialType = -1;
+                adapter.onDragFinished();
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+                    
+                    if (dX > 0) { // Swipe Right (Edit)
+                        paint.setColor(Color.parseColor("#4CAF50")); // Green
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(AccountsActivity.this, R.drawable.ic_edit_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconLeft = itemView.getLeft() + iconMargin;
+                            int iconRight = iconLeft + icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+                        
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        c.drawText("Edit", (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+
+                    } else if (dX < 0) { // Swipe Left (Delete)
+                        paint.setColor(Color.parseColor("#F44336")); // Red
+                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(AccountsActivity.this, R.drawable.ic_delete_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconRight = itemView.getRight() - iconMargin;
+                            int iconLeft = iconRight - icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        float textWidth = paint.measureText("Delete");
+                        c.drawText("Delete", (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
         
         this.bottomNav = layout.findViewById(R.id.bottom_navigation);
         this.bottomNav.setSelectedItemId(R.id.nav_accounts);
@@ -1426,50 +1579,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        AccountRowHolder aHolder = (AccountRowHolder) v.getTag();
-        Intent i = new Intent();
-        i.putExtra("Account", aHolder.account);
-        MenuItem item = menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT);
-        item.setIcon(R.drawable.abouticon);
-        item.setIntent(i);
-        item = menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
-        item.setIcon(R.drawable.abouticon);
-        item.setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
-        switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
-                Intent it = new Intent(this, AccountsEditActivity.class);
-                if (b != null) {
-                    AccountClass account;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        account = b.getSerializable("Account", AccountClass.class);
-                    } else {
-                        //noinspection deprecation
-                        account = (AccountClass) b.get("Account");
-                    }
-                    it.putExtra("Account", account);
-                }
-                startActivity(it);
-                return true;
-            case CMENU_DELETE /*3*/:
-                if (b != null) {
-                    AccountClass account;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        account = b.getSerializable("Account", AccountClass.class);
-                    } else {
-                        //noinspection deprecation
-                        account = (AccountClass) b.get("Account");
-                    }
-                    deleteAccount(account);
-                }
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
+        return false;
     }
 
 //    TODO: check if this method is needed. Delete if not

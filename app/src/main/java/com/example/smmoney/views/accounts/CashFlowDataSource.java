@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class CashFlowDataSource extends NetWorthDataSource {
-    CashFlowDataSource(AccountRowAdapter adapter) {
+    CashFlowDataSource(AccountRecyclerViewAdapter adapter) {
         super(adapter);
     }
 

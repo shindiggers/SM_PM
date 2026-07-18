@@ -17,9 +17,9 @@ public class NetWorthDataSource implements ChartViewDataSource {
     ArrayList<ChartItem> chartAssets;
     ArrayList<ChartItem> chartLiabilities;
     ArrayList<ChartItem> chartNetworth;
-    private final AccountRowAdapter datasource;
+    private final AccountRecyclerViewAdapter datasource;
 
-    NetWorthDataSource(AccountRowAdapter adapter) {
+    NetWorthDataSource(AccountRecyclerViewAdapter adapter) {
         this.datasource = adapter;
     }
 
