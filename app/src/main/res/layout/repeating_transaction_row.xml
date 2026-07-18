@@ -93,17 +93,23 @@
         app:layout_constraintEnd_toStartOf="@+id/postbutton" />
 
     <!-- Column 4: Post Button -->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/postbutton"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="48dp"
         android:minWidth="55dp"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
+        android:paddingStart="4dp"
+        android:paddingEnd="4dp"
         android:text="@string/post"
+        android:textAllCaps="false"
+        android:gravity="center"
         android:textSize="12sp"
+        app:cornerRadius="4dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:strokeWidth="0dp"
+        app:strokeColor="@android:color/transparent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

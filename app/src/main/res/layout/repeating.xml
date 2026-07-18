@@ -10,11 +10,10 @@
         android:layout_width="match_parent"
         android:layout_height="58dp" />
 
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/thelist"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fadingEdge="vertical"
         tools:listitem="@layout/repeating_transaction_row" />
 
 </LinearLayout>

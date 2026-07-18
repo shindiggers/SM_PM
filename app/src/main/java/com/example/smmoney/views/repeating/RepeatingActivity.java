@@ -2,10 +2,13 @@ package com.example.smmoney.views.repeating;
 
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
-import android.app.DatePickerDialog.OnDateSetListener;
-import android.content.DialogInterface;
+import android.content.Context;
 import android.content.Intent;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -13,24 +16,24 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.TransactionDB;
@@ -56,17 +59,13 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class RepeatingActivity extends PocketMoneyActivity {
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int DATE_DIALOG_ID = 1;
     private final int MENU_NEW = 1;
     private final int MENU_PROCESS = 2;
-    private AccountClass account;
-    private RepeatingRowAdapter adapter;
+    private RepeatingRecyclerViewAdapter adapter;
     private BalanceBar balanceBar;
     private FilterClass filter;
     private boolean isProcessingToDate = false;
+    private RecyclerView recyclerView;
 
     final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
@@ -156,13 +155,91 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        ListView theList = findViewById(R.id.thelist); // ListView from repeating.xml
-        theList.setItemsCanFocus(true);
-        RepeatingRowAdapter repeatingRowAdapter = new RepeatingRowAdapter(this);
-        this.adapter = repeatingRowAdapter;
-        theList.setAdapter(repeatingRowAdapter);
-        theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        this.recyclerView = findViewById(R.id.thelist);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.adapter = new RepeatingRecyclerViewAdapter(this);
+        this.recyclerView.setAdapter(this.adapter);
+        this.recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((View) this.recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getAdapterPosition();
+                if (position == RecyclerView.NO_POSITION) return;
+
+                TransactionClass transaction = adapter.getElements().get(position);
+                if (direction == ItemTouchHelper.RIGHT) {
+                    // Edit
+                    Intent intent = new Intent(RepeatingActivity.this, TransactionEditActivity.class);
+                    intent.putExtra("Transaction", transaction);
+                    editLauncher.launch(intent);
+                    adapter.notifyItemChanged(position);
+                } else if (direction == ItemTouchHelper.LEFT) {
+                    // Delete
+                    deleteRepeatingTransaction(transaction);
+                    adapter.notifyItemChanged(position);
+                }
+            }
+
+            @Override
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    Paint paint = new Paint();
+                    
+                    if (dX > 0) { // Swipe Right (Edit)
+                        paint.setColor(Color.parseColor("#4CAF50")); // Green
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(RepeatingActivity.this, R.drawable.ic_edit_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconLeft = itemView.getLeft() + iconMargin;
+                            int iconRight = iconLeft + icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+                        
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        c.drawText(Locales.kLOC_GENERAL_EDIT, (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+
+                    } else if (dX < 0) { // Swipe Left (Delete)
+                        paint.setColor(Color.parseColor("#F44336")); // Red
+                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+                        
+                        Drawable icon = ContextCompat.getDrawable(RepeatingActivity.this, R.drawable.ic_delete_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconRight = itemView.getRight() - iconMargin;
+                            int iconLeft = iconRight - icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+
+                        paint.setColor(Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        float textWidth = paint.measureText(Locales.kLOC_GENERAL_DELETE);
+                        c.drawText(Locales.kLOC_GENERAL_DELETE, (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+
         this.balanceBar = findViewById(R.id.balancebar);
         this.balanceBar.setSecondBalanceEnabled(true);
         this.balanceBar.nextButton.setOnClickListener(v -> {
@@ -193,7 +270,6 @@ public class RepeatingActivity extends PocketMoneyActivity {
             b.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
             AlertDialog dialog = b.create();
             
-            // Auto-focus, select all text, and show keyboard
             textView.requestFocus();
             textView.selectAll();
             if (dialog.getWindow() != null) {
@@ -208,8 +284,10 @@ public class RepeatingActivity extends PocketMoneyActivity {
         ArrayList<RepeatingTransactionClass> repeatingTransactions = TransactionDB.queryAllRepeatingTransactions();
         int days = Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD);
         String text = Locales.kLOC_REPEATING_UPCOMING_LABEL + " " + days + " " + Locales.kLOC_REPEATING_FREQUENCY_DAYS;
-        GregorianCalendar today = new GregorianCalendar();
-        GregorianCalendar upcomingEndDate = CalExt.addDays(today, days);
+        
+        GregorianCalendar today = CalExt.beginningOfToday();
+        GregorianCalendar upcomingEndDate = CalExt.endOfDay(CalExt.addDays((GregorianCalendar) today.clone(), days));
+
         double overdueAmount = 0.0d;
         double upcomingAmount = 0.0d;
         for (RepeatingTransactionClass repeatingTransaction : repeatingTransactions) {
@@ -241,15 +319,14 @@ public class RepeatingActivity extends PocketMoneyActivity {
         this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
-    private void reloadData() {
+    public void reloadData() {
         this.adapter.setElements(TransactionDB.queryWithFilter(this.filter));
-        this.adapter.notifyDataSetChanged();
         reloadBalanceBar();
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_arrow_drop_down_circle);
-        menu.add(0, MENU_PROCESS, 0, Locales.kLOC_REPEATING_PROCESSTODATE).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_PROCESS, 0, Locales.kLOC_REPEATING_PROCESSTODATE);
         return true;
     }
 
@@ -262,7 +339,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case MENU_NEW /*1*/:
-                if (!AccountsActivity.isLite(this) || this.adapter.getElements().size() < 2) {
+                if (!AccountsActivity.isLite(this) || this.adapter.getItemCount() < 2) {
                     Intent i = new Intent(this, TransactionEditActivity.class);
                     TransactionClass trans = new TransactionClass();
                     trans.isRepeatingTransaction = true;
@@ -280,51 +357,19 @@ public class RepeatingActivity extends PocketMoneyActivity {
         }
     }
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        RepeatingRowHolder aHolder = (RepeatingRowHolder) v.getTag();
-        Intent i = new Intent();
-        i.putExtra("Transaction", aHolder.transaction);
-        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
-        switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
-                Intent anIntent = new Intent(this, TransactionEditActivity.class);
-                if (b != null) {
-                    TransactionClass transaction;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        transaction = b.getSerializable("Transaction", TransactionClass.class);
-                    } else {
-                        //noinspection deprecation
-                        transaction = (TransactionClass) b.get("Transaction");
+    private void deleteRepeatingTransaction(final TransactionClass transaction) {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_GENERAL_DELETE)
+                .setMessage("Are you sure you want to delete this repeating transaction?")
+                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                    if (transaction != null) {
+                        new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
+                        transaction.deleteFromDatabase();
                     }
-                    anIntent.putExtra("Transaction", transaction);
-                }
-                editLauncher.launch(anIntent);
-                return true;
-            case CMENU_DELETE /*3*/:
-                TransactionClass transaction = null;
-                if (b != null) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        transaction = b.getSerializable("Transaction", TransactionClass.class);
-                    } else {
-                        //noinspection deprecation
-                        transaction = (TransactionClass) b.get("Transaction");
-                    }
-                }
-                if (transaction != null) {
-                    new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
-                    transaction.deleteFromDatabase();
-                }
-                reloadData();
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .show();
     }
 
     private void showDatePickerDialog() {
