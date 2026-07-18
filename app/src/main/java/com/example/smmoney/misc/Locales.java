@@ -88,6 +88,9 @@ public class Locales {
     public static final String kLOC_BUDGET_LBL_BEHIND = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_BEHIND);
     public static final String kLOC_BUDGET_LBL_BEATING_BY = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_BEATING_BY);
     public static final String kLOC_BUDGET_LBL_MISSING_BY = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_MISSING_BY);
+    public static final String kLOC_BUDGET_LBL_VARIANCE = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_VARIANCE);
+    public static final String kLOC_BUDGET_LBL_ASCENDING = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_ASCENDING);
+    public static final String kLOC_BUDGET_LBL_DESCENDING = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_LBL_DESCENDING);
     public static final String kLOC_BUDGET_ENABLE_VARIABLE = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_ENABLE_VARIABLE);
     public static final String kLOC_BUDGET_INCLUDEUNBUDGETED = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_INCLUDEUNBUDGETED);
     public static final String kLOC_BUDGET_NEW_BUDGET = SMMoney.getAppContext().getString(R.string.kLOC_BUDGET_NEW_BUDGET);

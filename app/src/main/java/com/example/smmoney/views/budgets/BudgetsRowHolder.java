@@ -37,20 +37,24 @@ public class BudgetsRowHolder {
         return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
     }
 
-    private String formatCurrency(double amount) {
+    private void formatAmount(TextView view, double amount, boolean useBrackets) {
         String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(amount)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(amount));
         if (amount < 0) {
-            return "(" + text + ")";
+            view.setText(useBrackets ? "(" + text + ")" : text);
+        } else {
+            view.setText(text);
         }
-        return text;
+        // Always use high-contrast text color as requested
+        view.setTextColor(PocketMoneyThemes.headerTextColor());
     }
 
-    public void setCategory(CategoryClass category) {
+    public void setCategory(CategoryClass category, boolean isUnbudgeted) {
         this.category = category;
         double spent;
         
         // 1. Calculate Actual Spent
-        if (category.getType() == Enums.kCategoryExpense) {
+        // For Expenses and Unbudgeted items: Spend is positive volume.
+        if (category.getType() == Enums.kCategoryExpense || isUnbudgeted) {
             spent = ((double) Math.round(category.spent * -100.0d)) / 100.0d;
             if (spent == -0.0d) spent = 0.0d;
         } else {
@@ -61,27 +65,27 @@ public class BudgetsRowHolder {
         
         // 2. Calculate Variance (Ahead/Behind)
         double variance;
-        if (category.getType() == Enums.kCategoryExpense) {
+        if (category.getType() == Enums.kCategoryExpense || isUnbudgeted) {
             variance = budget - spent; // Expenses: Budget - Actual
         } else {
             variance = spent - budget; // Income: Actual - Budget
         }
         
-        // 3. Update UI Text (All same color as requested)
-        this.spentTextView.setText(formatCurrency(spent));
+        // 3. Update UI Text
+        formatAmount(this.spentTextView, spent, true);
         this.categoryTextView.setText(category.getCategory());
-        this.budgetTextView.setText(formatCurrency(budget));
+        this.categoryTextView.setTextColor(PocketMoneyThemes.headerTextColor());
+        formatAmount(this.budgetTextView, budget, true);
         
         // 4. Update Variance Label
         String statusPrefix = (variance >= 0) ? "• Ahead " : "• Behind ";
-        this.varianceTextView.setText(statusPrefix + formatCurrency(variance));
-        
-        // Use standard text color for all
-        int textColor = PocketMoneyThemes.headerTextColor();
-        this.spentTextView.setTextColor(textColor);
-        this.categoryTextView.setTextColor(textColor);
-        this.budgetTextView.setTextColor(textColor);
-        this.varianceTextView.setTextColor(textColor);
+        String varText = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(variance)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(variance));
+        if (variance < 0) {
+            this.varianceTextView.setText(statusPrefix + "(" + varText + ")");
+        } else {
+            this.varianceTextView.setText(statusPrefix + varText);
+        }
+        this.varianceTextView.setTextColor(PocketMoneyThemes.headerTextColor());
 
         updateBars(spent, budget);
     }

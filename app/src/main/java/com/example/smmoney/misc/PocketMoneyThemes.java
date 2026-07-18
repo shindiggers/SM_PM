@@ -193,6 +193,19 @@ public class PocketMoneyThemes {
         };
     }
 
+    public static int highlightColor() {
+        return switch (getTheme()) {
+            case kThemeBlue -> getColor(R.color.blue_theme_tint_color);
+            case kThemeGreen -> getColor(R.color.green_theme_tint_color);
+            case kThemePurple -> getColor(R.color.purple_theme_highlighted_color);
+            case kThemeGray -> getColor(R.color.gray_theme_highlighted_color);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_highlighted_color);
+            case kThemeRuby -> getColor(R.color.ruby_theme_highlighted_color);
+            case kThemeWhite -> getColor(R.color.white_theme_highlight_color);
+            default -> getColor(R.color.black_theme_highlight_color);
+        };
+    }
+
     public static int headerTextColor() {
         return switch (getTheme()) {
             case kThemeWhite -> getColor(R.color.white_theme_text);

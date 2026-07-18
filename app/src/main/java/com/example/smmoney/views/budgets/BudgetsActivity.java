@@ -5,6 +5,8 @@ import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -18,12 +20,15 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -41,8 +46,10 @@ import com.example.smmoney.prefs.MainPrefsActivity;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
+import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.button.MaterialButton;
 
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -56,12 +63,26 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private final int MENU_NEW = 1;
     private final int MENU_PREFS = 2;
     private final int MENU_QUIT = 5;
-    private final int MENU_VIEW = 4;
+    private final int MENU_SORT = 4;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> reloadData()
+    );
+
+    private final ActivityResultLauncher<Intent> startDatePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            result -> {
+                if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED && result.getData() != null) {
+                    String date = result.getData().getStringExtra("Date");
+                    Prefs.setPref(Prefs.BUDGETSTARTDATE, date);
+                    reloadData();
+                } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
+                    Prefs.setPref(Prefs.BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
+                    reloadData();
+                }
+            }
     );
 
     private BudgetsRowAdapter adapter;
@@ -70,7 +91,8 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private ListView theList;
     private BottomNavigationView bottomNav;
     private View progressiBeamBar;
-    private Button periodButton;
+    private MaterialButton periodButton;
+    private TextView startDateDisplay;
     private WakeLock wakeLock;
 
     @Override
@@ -102,10 +124,25 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     private void setupView(View layout) {
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
         ImageView leftArrow = layout.findViewById(R.id.lefttarrow);
         ImageView rightArrow = layout.findViewById(R.id.rightarrow);
+        leftArrow.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        rightArrow.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
         this.periodButton = layout.findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(v -> openBudgetPeriodDialog());
+        
+        this.startDateDisplay = layout.findViewById(R.id.start_date_display);
+        OnClickListener startDateListener = v -> {
+            Intent anIntent = new Intent(BudgetsActivity.this, com.example.smmoney.views.EndOnDateActivity.class);
+            anIntent.putExtra("Date", BudgetsActivity.this.startDateDisplay.getText().toString());
+            anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
+            startDatePickerLauncher.launch(anIntent);
+        };
+        this.startDateDisplay.setOnClickListener(startDateListener);
+        layout.findViewById(R.id.start_date_icon).setOnClickListener(startDateListener);
+        layout.findViewById(R.id.start_date_label).setOnClickListener(startDateListener);
+
         leftArrow.setOnClickListener(v -> {
             BudgetsActivity.this.adapter.previousPeriod();
             BudgetsActivity.this.reloadData();
@@ -165,6 +202,12 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((ImageView) layout.findViewById(R.id.start_date_icon)).setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        ((TextView) layout.findViewById(R.id.start_date_label)).setTextColor(fieldLabelColor);
+        this.startDateDisplay.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.periodButton.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        this.periodButton.setBackgroundTintList(ColorStateList.valueOf(PocketMoneyThemes.highlightColor()));
+        this.periodButton.setCornerRadius((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.0f, getResources().getDisplayMetrics()));
     }
 
     private boolean showCents() {
@@ -230,6 +273,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     private void reloadDataCallBack() {
         this.periodButton.setText(this.adapter.rangeOfPeriodAsString());
+        this.startDateDisplay.setText(Prefs.getStringPref(Prefs.BUDGETSTARTDATE));
         
         loadBalanceBar();
         this.reloadProgressBar.setVisibility(View.INVISIBLE);
@@ -278,10 +322,10 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_BUDGETS_NEW);
+        menu.add(0, MENU_NEW, 0, Locales.kLOC_BUDGETS_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES);
         menu.add(0, MENU_GOTODATE, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
-        menu.add(0, MENU_VIEW, 0, "View Options");
         menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT);
         return true;
     }
@@ -290,6 +334,10 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         switch (item.getItemId()) {
             case MENU_NEW -> {
                 newBudget();
+                return true;
+            }
+            case MENU_SORT -> {
+                showSortOnDialog();
                 return true;
             }
             case MENU_PREFS -> {
@@ -301,10 +349,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 datePicker.show(getSupportFragmentManager(), "date picker");
                 return true;
             }
-            case MENU_VIEW -> {
-                startActivity(new Intent(this, BudgetsViewOptionsActivity.class));
-                return true;
-            }
             case MENU_QUIT -> {
                 Prefs.setPref(Prefs.SHUTTINGDOWN, true);
                 setResult(1);
@@ -313,6 +357,67 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             }
         }
         return false;
+    }
+
+    private void showSortOnDialog() {
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_budget_sort, null);
+        RadioGroup propertyGroup = dialogView.findViewById(R.id.sort_property_group);
+        RadioGroup directionGroup = dialogView.findViewById(R.id.sort_direction_group);
+
+        // Theme the dialog
+        int labelColor = PocketMoneyThemes.fieldLabelColor();
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+        ColorStateList tint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+
+        ((TextView) dialogView.findViewById(R.id.sort_by_label)).setTextColor(labelColor);
+        ((TextView) dialogView.findViewById(R.id.order_label)).setTextColor(labelColor);
+
+        for (int i = 0; i < propertyGroup.getChildCount(); i++) {
+            RadioButton rb = (RadioButton) propertyGroup.getChildAt(i);
+            rb.setTextColor(textColor);
+            rb.setButtonTintList(tint);
+        }
+        for (int i = 0; i < directionGroup.getChildCount(); i++) {
+            RadioButton rb = (RadioButton) directionGroup.getChildAt(i);
+            rb.setTextColor(textColor);
+            rb.setButtonTintList(tint);
+        }
+
+        // Set current state
+        int currentSort = Prefs.getIntPref(Prefs.BUDGETS_SORTON);
+        int currentDir = Prefs.getIntPref(Prefs.BUDGETS_SORT_ORDER_ASCENDING);
+
+        switch (currentSort) {
+            case Enums.kBudgetsSortTypeCategory -> propertyGroup.check(R.id.sort_category);
+            case Enums.kBudgetsSortTypeActual -> propertyGroup.check(R.id.sort_actual);
+            case Enums.kBudgetsSortTypeBudgeted -> propertyGroup.check(R.id.sort_budget);
+            case Enums.kBudgetsSortTypePercentage -> propertyGroup.check(R.id.sort_percentage);
+            case Enums.kBudgetsSortTypeVariance -> propertyGroup.check(R.id.sort_variance);
+        }
+
+        if (currentDir == Enums.kBudgetsSortOrderAscending) directionGroup.check(R.id.sort_asc);
+        else directionGroup.check(R.id.sort_desc);
+
+        new Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON)
+                .setView(dialogView)
+                .setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+                    int selectedPropertyId = propertyGroup.getCheckedRadioButtonId();
+                    int newSort = Enums.kBudgetsSortTypeCategory;
+                    if (selectedPropertyId == R.id.sort_actual) newSort = Enums.kBudgetsSortTypeActual;
+                    else if (selectedPropertyId == R.id.sort_budget) newSort = Enums.kBudgetsSortTypeBudgeted;
+                    else if (selectedPropertyId == R.id.sort_percentage) newSort = Enums.kBudgetsSortTypePercentage;
+                    else if (selectedPropertyId == R.id.sort_variance) newSort = Enums.kBudgetsSortTypeVariance;
+
+                    int selectedDirectionId = directionGroup.getCheckedRadioButtonId();
+                    int newDir = (selectedDirectionId == R.id.sort_asc) ? Enums.kBudgetsSortOrderAscending : Enums.kBudgetsSortOrderDescending;
+
+                    Prefs.setPref(Prefs.BUDGETS_SORTON, newSort);
+                    Prefs.setPref(Prefs.BUDGETS_SORT_ORDER_ASCENDING, newDir);
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .show();
     }
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {

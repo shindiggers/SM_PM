@@ -391,7 +391,7 @@
     <string name="kLOC_GENERAL_ASOFDATE">As of date</string>
     <string name="kLOC_BUDGET_SHOWCENTS">Show cents</string>
     <string name="kLOC_EDIT_FUTUREBALANCE_ENDONDATE">End on date</string>
-    <string name="kLOC_BUDGET_STARTDATE">Budget start date</string>
+    <string name="kLOC_BUDGET_STARTDATE">Budget start\ndate</string>
     <string name="kLOC_QIF_TYPEENCODINGERROR">Invalid QIF file. Did not find any lines starting with \'!Type\'.\n\nTry adding \'!Type:Bank\' as the first line of the QIF file. If it already exists, then check that File Encoding is set correctly in PocketMoney\'s Preferences.</string>
     <string name="kLOC_FILTER_DATES_MODIFIEDTODAY">Modified Today</string>
     <string name="kLOC_OFX_TYPEENCODINGERROR">Unknown error processing the OFX/QFX file. Please contact support%1$scatamount.com.</string>
@@ -768,4 +768,7 @@
     <string name="kLOC_BUDGET_LBL_BEHIND">Behind by %1$s</string>
     <string name="kLOC_BUDGET_LBL_BEATING_BY">Beating budget by</string>
     <string name="kLOC_BUDGET_LBL_MISSING_BY">Missing budget by</string>
+    <string name="kLOC_BUDGET_LBL_VARIANCE">Ahead / Behind</string>
+    <string name="kLOC_BUDGET_LBL_ASCENDING">Low to High (Asc)</string>
+    <string name="kLOC_BUDGET_LBL_DESCENDING">High to Low (Desc)</string>
 </resources>

@@ -61,6 +61,7 @@ public class Prefs {
     public static final String BUDGETSHOWUNBUDGETED = "budgetShowUnbudgeted";
     public static final String BUDGETSTARTDATE = "budgetStartDate";
     public static final String BUDGETS_SORTON = "budgetsSortOn";
+    public static final String BUDGETS_SORT_ORDER_ASCENDING = "budgetsSortOrderAscending";
     public static final String COLLAPSE_ASSETS = "collapseAssets"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String COLLAPSE_BANKS = "collapseBanks"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String COLLAPSE_CASH = "collapseCash"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
@@ -439,6 +440,7 @@ public class Prefs {
             setPref(COLLAPSE_LIABILITIES, DEBUGGING);
             setPref(COLLAPSE_ONLINE, DEBUGGING);
             setPref(COLLAPSE_UNBUDGETED, DEBUGGING);
+            setPref(BUDGETS_SORT_ORDER_ASCENDING, false);
             setPref(APP_FIRST_RUN_U2_0, DEBUGGING);
         }
         if (!getBooleanPref(APP_FIRST_RUN_U2_0_5)) {

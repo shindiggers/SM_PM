@@ -53,6 +53,10 @@ public class Enums {
     public static final int kBudgetsSortTypeBudgeted = 2;
     public static final int kBudgetsSortTypeCategory = 0;
     public static final int kBudgetsSortTypePercentage = 3;
+    public static final int kBudgetsSortTypeVariance = 4;
+
+    public static final int kBudgetsSortOrderAscending = 0;
+    public static final int kBudgetsSortOrderDescending = 1;
 
     public static final int kCategoryExpense = 0;
     public static final int kCategoryIncome = 1;
