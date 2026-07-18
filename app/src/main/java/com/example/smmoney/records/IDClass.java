@@ -224,11 +224,14 @@ public class IDClass extends PocketMoneyRecordClass {
         ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.IDS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"id"}, "deleted=0", null, null, null, "UPPER(id)");
+        Cursor curs = Database.query(qb, new String[]{"id"}, "deleted=0 AND id != ''", null, null, null, "UPPER(id)");
         if (curs.getCount() != 0) {
             curs.moveToFirst();
             do {
-                array.add(curs.getString(0));
+                String val = curs.getString(0);
+                if (val != null && !val.isEmpty()) {
+                    array.add(val);
+                }
             } while (curs.moveToNext());
             curs.close();
         }

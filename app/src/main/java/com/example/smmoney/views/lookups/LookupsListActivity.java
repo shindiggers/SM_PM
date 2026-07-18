@@ -1,31 +1,34 @@
 package com.example.smmoney.views.lookups;
 
-import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AdapterView.AdapterContextMenuInfo;
-import android.widget.BaseAdapter;
-import android.widget.CheckedTextView;
 import android.widget.EditText;
-import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.SectionIndexer;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
+import com.google.android.material.snackbar.Snackbar;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
@@ -41,7 +44,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -66,103 +68,12 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public static final int ID_LOOKUP = 7;
     public static final int PAYEE_LOOKUP = 4;
     public static final int REPEAT_TYPE = 16;
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
-    private final int CMENU_SUBCATEGORY = 4;
     private int currentType;
     private boolean isMultiSelect = false;
     private boolean mIsUpdatingCheckState = false;
-    private ListView theList;
+    private RecyclerView recyclerView;
+    private LookupRecyclerViewAdapter adapter;
     private ArrayList<String> theStrings = null;
-
-    private class LookupRowAdapter<T> extends BaseAdapter {
-        final LayoutInflater inflator;
-        final List<T> items;
-        final int layoutResId;
-
-        LookupRowAdapter(int layoutResId, List<T> items) {
-            this.items = items;
-            this.inflator = LayoutInflater.from(LookupsListActivity.this);
-            this.layoutResId = layoutResId;
-        }
-
-        public int getCount() {
-            return this.items.size();
-        }
-
-        public T getItem(int arg0) {
-            return this.items.get(arg0);
-        }
-
-        public long getItemId(int arg0) {
-            return arg0;
-        }
-
-        public View getView(int pos, View convertView, ViewGroup arg2) {
-            String item = (String) getItem(pos);
-            if (convertView == null) {
-                convertView = this.inflator.inflate(this.layoutResId, arg2, false);
-            }
-            
-            TextView tv = (TextView) convertView;
-            tv.setText(item);
-            tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-
-            if (convertView instanceof CheckedTextView && LookupsListActivity.this.isMultiSelect) {
-                CheckedTextView ctv = (CheckedTextView) convertView;
-                ctv.setCheckMarkTintList(android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor()));
-                // Row background is handled by ListView selector in ChoiceMode
-                if (pos % 2 == 0) {
-                    ctv.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
-                } else {
-                    ctv.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
-                }
-            }
-            
-            return convertView;
-        }
-    }
-
-    class MyIndexerAdapter<T> extends LookupRowAdapter<T> implements SectionIndexer {
-        final HashMap<String, Integer> alphaIndexer = new HashMap<>();
-        final ArrayList<String> myElements;
-        final String[] sections;
-
-        MyIndexerAdapter(Context context, int textViewResourceId, List<T> objects) {
-            super(textViewResourceId, objects);
-            this.myElements = (ArrayList) objects;
-            int size = LookupsListActivity.this.theStrings.size();
-            int i = size - 1;
-            while (i >= 0) {
-                String element = LookupsListActivity.this.theStrings.get(i);
-                if (element == null || element.isEmpty()) {
-                    LookupsListActivity.this.theStrings.remove(i);
-                    size--;
-                    i--;
-                } else {
-                    this.alphaIndexer.put(element.substring(0, LookupsListActivity.ACCOUNT_TYPE_LOOKUP), i);
-                }
-                i--;
-            }
-            ArrayList<String> keyList = new ArrayList<>(this.alphaIndexer.keySet());
-            Collections.sort(keyList);
-            this.sections = new String[keyList.size()];
-            keyList.toArray(this.sections);
-        }
-
-        public int getPositionForSection(int section) {
-            return this.alphaIndexer.get(this.sections[section]);
-        }
-
-        public int getSectionForPosition(int position) {
-            Log.v("getSectionForPosition", "called");
-            return 0;
-        }
-
-        public Object[] getSections() {
-            return this.sections;
-        }
-    }
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -207,35 +118,117 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        this.theList = findViewById(R.id.the_list);
-        this.theList.setFastScrollEnabled(true);
-        if (this.isMultiSelect) {
-            this.theList.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
-        }
-        this.theList.setOnItemClickListener((adapterView, view, position, id) -> {
+        this.recyclerView = findViewById(R.id.the_list);
+        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        this.adapter = new LookupRecyclerViewAdapter(this, this.isMultiSelect);
+        this.recyclerView.setAdapter(this.adapter);
+        
+        this.adapter.setOnItemClickListener(position -> {
             if (!LookupsListActivity.this.isMultiSelect) {
                 LookupsListActivity.this.onListItemClick(position);
             } else {
                 LookupsListActivity.this.handleMultiClick(position);
             }
         });
-        this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+
+        if (canEdit()) {
+            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+                @Override
+                public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                    return false;
+                }
+
+                @Override
+                public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                    int position = viewHolder.getAdapterPosition();
+                    if (position == RecyclerView.NO_POSITION) return;
+
+                    if (direction == ItemTouchHelper.RIGHT) {
+                        renameItem(position);
+                        adapter.notifyItemChanged(position);
+                    } else if (direction == ItemTouchHelper.LEFT) {
+                        deleteItem(position);
+                        adapter.notifyItemChanged(position);
+                    }
+                }
+
+                @Override
+                public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                    if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                        View itemView = viewHolder.itemView;
+                        Paint paint = new Paint();
+                        
+                        if (dX > 0) { // Swipe Right (Edit)
+                            paint.setColor(Color.parseColor("#4CAF50")); // Green
+                            c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+                            
+                            Drawable icon = ContextCompat.getDrawable(LookupsListActivity.this, R.drawable.ic_edit_white_24dp);
+                            if (icon != null) {
+                                int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                                int iconTop = itemView.getTop() + iconMargin;
+                                int iconBottom = iconTop + icon.getIntrinsicHeight();
+                                int iconLeft = itemView.getLeft() + iconMargin;
+                                int iconRight = iconLeft + icon.getIntrinsicWidth();
+                                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                                icon.draw(c);
+                            }
+                            
+                            paint.setColor(Color.WHITE);
+                            paint.setTextSize(40);
+                            paint.setAntiAlias(true);
+                            c.drawText(Locales.kLOC_GENERAL_EDIT, (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+
+                        } else if (dX < 0) { // Swipe Left (Delete)
+                            paint.setColor(Color.parseColor("#F44336")); // Red
+                            c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+                            
+                            Drawable icon = ContextCompat.getDrawable(LookupsListActivity.this, R.drawable.ic_delete_white_24dp);
+                            if (icon != null) {
+                                int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                                int iconTop = itemView.getTop() + iconMargin;
+                                int iconBottom = iconTop + icon.getIntrinsicHeight();
+                                int iconRight = itemView.getRight() - iconMargin;
+                                int iconLeft = iconRight - icon.getIntrinsicWidth();
+                                icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                                icon.draw(c);
+                            }
+
+                            paint.setColor(Color.WHITE);
+                            paint.setTextSize(40);
+                            paint.setAntiAlias(true);
+                            float textWidth = paint.measureText(Locales.kLOC_GENERAL_DELETE);
+                            c.drawText(Locales.kLOC_GENERAL_DELETE, (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                        }
+                    }
+                    super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                }
+            };
+            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+        }
+
+        this.recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((View) this.recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+    }
+
+    private boolean canEdit() {
+        return this.currentType == PAYEE_LOOKUP || this.currentType == CATEGORY_LOOKUP || this.currentType == CLASS_LOOKUP || this.currentType == ID_LOOKUP;
     }
 
     private void handleMultiClick(int position) {
         if (mIsUpdatingCheckState) return;
         
         String clickedItem = this.theStrings.get(position);
-        boolean isNowChecked = this.theList.isItemChecked(position);
+        boolean isNowChecked = !this.adapter.isItemChecked(position);
         
         mIsUpdatingCheckState = true;
+        this.adapter.setItemChecked(position, isNowChecked);
+
         if (isAllItem(clickedItem)) {
             if (isNowChecked) {
                 // Uncheck everything else if "All" is selected
                 for (int i = 0; i < this.theStrings.size(); i++) {
                     if (i != position) {
-                        this.theList.setItemChecked(i, false);
+                        this.adapter.setItemChecked(i, false);
                     }
                 }
             }
@@ -243,7 +236,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             // If a specific item is selected, uncheck any "All" items
             for (int i = 0; i < this.theStrings.size(); i++) {
                 if (isAllItem(this.theStrings.get(i))) {
-                    this.theList.setItemChecked(i, false);
+                    this.adapter.setItemChecked(i, false);
                 }
             }
         }
@@ -349,15 +342,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
             i2 += ACCOUNT_TYPE_LOOKUP;
         }
         
-        int layoutId = this.isMultiSelect ? R.layout.lookup_multi_row : PocketMoneyThemes.simpleListItem();
-        
         if (alphabetList) {
             Collections.sort(this.theStrings, String.CASE_INSENSITIVE_ORDER);
-            this.theList.setAdapter(new MyIndexerAdapter(getApplicationContext(), layoutId, this.theStrings));
-        } else {
-            this.theList.setAdapter(new LookupRowAdapter(layoutId, this.theStrings));
         }
-        registerForContextMenu(this.theList);
+        
+        this.adapter.setItems(this.theStrings);
         
         if (this.isMultiSelect) {
             preCheckItems();
@@ -370,7 +359,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             // Default check "All" items if nothing selected
             for (int i = 0; i < this.theStrings.size(); i++) {
                 if (isAllItem(this.theStrings.get(i))) {
-                    this.theList.setItemChecked(i, true);
+                    this.adapter.setItemChecked(i, true);
                     break;
                 }
             }
@@ -381,7 +370,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             String item = this.theStrings.get(i);
             for (String s : selected) {
                 if (item.equals(s)) {
-                    this.theList.setItemChecked(i, true);
+                    this.adapter.setItemChecked(i, true);
                     break;
                 }
             }
@@ -401,8 +390,12 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     private void onListItemClick(int position) {
+        if (canEdit()) {
+            Snackbar.make(this.recyclerView, "Swipe right to rename, left to delete", Snackbar.LENGTH_SHORT).show();
+            return;
+        }
         Intent i = new Intent();
-        i.putExtra("selection", (String) this.theList.getItemAtPosition(position));
+        i.putExtra("selection", this.theStrings.get(position));
         setResult(this.currentType, i);
         finish();
     }
@@ -433,7 +426,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             return this.isMultiSelect;
         }
         int MENU_ADD = 1;
-        menu.add(0, MENU_ADD, 0, "").setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_ADD, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
         return true;
     }
 
@@ -457,10 +450,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
         final int theItem = this.currentType;
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
-        alert.setTitle("");
+        alert.setTitle(Locales.kLOC_TRANSACTION_NEW);
         alert.setView(input);
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
+            if (value.isEmpty()) return;
             switch (theItem) {
                 case LookupsListActivity.PAYEE_LOOKUP /*4*/:
                     PayeeClass.insertIntoDatabase(value);
@@ -482,124 +476,120 @@ public class LookupsListActivity extends PocketMoneyActivity {
         return true;
     }
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        if (this.currentType == PAYEE_LOOKUP || this.currentType == CATEGORY_LOOKUP || this.currentType == CLASS_LOOKUP || this.currentType == ID_LOOKUP) {
-            menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
-            menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
-            if (this.currentType == CATEGORY_LOOKUP) {
-                menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
+    private void renameItem(int position) {
+        final String originalString = this.theStrings.get(position);
+        final int theItem = this.currentType;
+        
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_rename_lookup, null);
+        EditText input = dialogView.findViewById(R.id.edit_new_name);
+        RadioGroup scopeGroup = dialogView.findViewById(R.id.scope_group);
+        RadioButton scopePopup = dialogView.findViewById(R.id.scope_popup_only);
+        RadioButton scopeEverywhere = dialogView.findViewById(R.id.scope_everywhere);
+        TextView helperText = dialogView.findViewById(R.id.helper_text);
+
+        // Theme the dialog elements
+        int labelColor = PocketMoneyThemes.fieldLabelColor();
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+        ColorStateList tint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+
+        ((TextView) dialogView.findViewById(R.id.label_new_name)).setTextColor(labelColor);
+        ((TextView) dialogView.findViewById(R.id.label_scope)).setTextColor(labelColor);
+        helperText.setTextColor(textColor);
+        
+        input.setText(originalString);
+        input.setTextColor(textColor);
+        
+        View underline = dialogView.findViewById(R.id.edit_underline);
+        underline.setBackgroundColor(PocketMoneyThemes.currentTintColor());
+        
+        scopePopup.setTextColor(textColor);
+        scopePopup.setButtonTintList(tint);
+        scopePopup.setText(Locales.kLOC_LOOKUPS_POPUPLIST);
+        
+        scopeEverywhere.setTextColor(textColor);
+        scopeEverywhere.setButtonTintList(tint);
+        scopeEverywhere.setText(Locales.kLOC_LOOKUPS_EVERYWHERE);
+        
+        helperText.setText(getString(R.string.dialog_rename_lookup_helper_text));
+
+        AlertDialog dialog = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM)
+                .setView(dialogView)
+                .setPositiveButton(Locales.kLOC_GENERAL_OK, (d, which) -> {
+                    String value = input.getText().toString().trim();
+                    if (value.isEmpty()) return;
+                    
+                    boolean updateEverywhere = (scopeGroup.getCheckedRadioButtonId() == R.id.scope_everywhere);
+                    
+                    switch (theItem) {
+                        case LookupsListActivity.PAYEE_LOOKUP /*4*/:
+                            PayeeClass.renameFromToInDatabase(originalString, value, updateEverywhere);
+                            break;
+                        case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
+                            CategoryClass.renameFromToInDatabase(originalString, value, updateEverywhere);
+                            break;
+                        case LookupsListActivity.CLASS_LOOKUP /*6*/:
+                            ClassNameClass.renameFromToInDatabase(originalString, value, updateEverywhere);
+                            break;
+                        case LookupsListActivity.ID_LOOKUP /*7*/:
+                            IDClass.renameFromToInDatabase(originalString, value, updateEverywhere);
+                            break;
+                    }
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .create();
+
+        // Ensure keyboard and focus are handled when dialog is shown
+        dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        
+        dialog.setOnShowListener(d -> {
+            input.requestFocus();
+            input.selectAll();
+            // Force keyboard via IMM as a secondary measure
+            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
             }
-        }
+        });
+        
+        dialog.show();
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
-        AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
-        final String originalString;
-        AlertDialog.Builder alert;
-        final EditText input;
-        switch (item.getItemId()) {
-            case CMENU_EDIT /*1*/:
-                final int theItem = this.currentType;
-                originalString = this.theStrings.get(info.position);
-                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-                input = new EditText(this);
-                input.setText(originalString);
-                alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
-                    AlertDialog.Builder b = new AlertDialog.Builder(LookupsListActivity.this, PocketMoneyThemes.dialogTheme());
-                    b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                    b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
-                    CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
-                    b.setPositiveButton(charSequence, (dialog2, which) -> {
-                        String value = input.getText().toString().trim();
-                        switch (theItem) {
-                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                PayeeClass.renameFromToInDatabase(originalString, value, false);
-                                break;
-                            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                CategoryClass.renameFromToInDatabase(originalString, value, false);
-                                break;
-                            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                ClassNameClass.renameFromToInDatabase(originalString, value, false);
-                                break;
-                            case LookupsListActivity.ID_LOOKUP /*7*/:
-                                IDClass.renameFromToInDatabase(originalString, value, false);
-                                break;
-                        }
-                        LookupsListActivity.this.reloadData();
-                    });
-                    charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
-                    b.setNegativeButton(charSequence, (dialog1, which) -> {
-                        String value = input.getText().toString().trim();
-                        switch (theItem) {
-                            case LookupsListActivity.PAYEE_LOOKUP /*4*/:
-                                PayeeClass.renameFromToInDatabase(originalString, value, true);
-                                break;
-                            case LookupsListActivity.CATEGORY_LOOKUP /*5*/:
-                                CategoryClass.renameFromToInDatabase(originalString, value, true);
-                                break;
-                            case LookupsListActivity.CLASS_LOOKUP /*6*/:
-                                ClassNameClass.renameFromToInDatabase(originalString, value, true);
-                                break;
-                            case LookupsListActivity.ID_LOOKUP /*7*/:
-                                IDClass.renameFromToInDatabase(originalString, value, true);
-                                break;
-                        }
-                        LookupsListActivity.this.reloadData();
-                    });
-                    b.create().show();
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
-                alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
-                return true;
-            case CMENU_DELETE /*3*/:
-                String value = this.theStrings.get(info.position);
-                switch (this.currentType) {
-                    case PAYEE_LOOKUP /*4*/:
-                        new PayeeClass(PayeeClass.idForPayee(value)).deleteFromDatabase();
-                        break;
-                    case CATEGORY_LOOKUP /*5*/:
-                        new CategoryClass(CategoryClass.idForCategory(value)).deleteFromDatabase();
-                        break;
-                    case CLASS_LOOKUP /*6*/:
-                        new ClassNameClass(ClassNameClass.idForClass(value)).deleteFromDatabase();
-                        break;
-                    case ID_LOOKUP /*7*/:
-                        new IDClass(IDClass.idForID(value)).deleteFromDatabase();
-                        break;
-                }
-                reloadData();
-                return true;
-            case CMENU_SUBCATEGORY /*4*/:
-                originalString = this.theStrings.get(info.position);
-                alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-                input = new EditText(this);
-                alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
-                alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
-                    CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
-                    LookupsListActivity.this.reloadData();
-                });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
-                alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, ACCOUNT_TYPE_LOOKUP);
-                return true;
-            default:
-                return super.onContextItemSelected(item);
-        }
+    private void deleteItem(int position) {
+        String value = this.theStrings.get(position);
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                .setTitle(Locales.kLOC_GENERAL_DELETE)
+                .setMessage(Locales.kLOC_GENERAL_DELETE + " '" + value + "'?")
+                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                    switch (this.currentType) {
+                        case PAYEE_LOOKUP /*4*/:
+                            new PayeeClass(PayeeClass.idForPayee(value)).deleteFromDatabase();
+                            break;
+                        case CATEGORY_LOOKUP /*5*/:
+                            new CategoryClass(CategoryClass.idForCategory(value)).deleteFromDatabase();
+                            break;
+                        case CLASS_LOOKUP /*6*/:
+                            new ClassNameClass(ClassNameClass.idForClass(value)).deleteFromDatabase();
+                            break;
+                        case ID_LOOKUP /*7*/:
+                            new IDClass(IDClass.idForID(value)).deleteFromDatabase();
+                            break;
+                    }
+                    reloadData();
+                })
+                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .show();
     }
 
     private void returnDoneResult() {
         StringBuilder sb = new StringBuilder();
-        android.util.SparseBooleanArray checked = this.theList.getCheckedItemPositions();
+        java.util.Set<Integer> checked = this.adapter.getCheckedPositions();
         boolean hasSpecificSelection = false;
         String allItemValue = "";
 
         for (int i = 0; i < this.theStrings.size(); i++) {
-            if (checked.get(i)) {
+            if (checked.contains(i)) {
                 String val = this.theStrings.get(i);
                 if (isAllItem(val)) {
                     allItemValue = val;

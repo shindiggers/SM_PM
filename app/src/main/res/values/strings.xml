@@ -98,6 +98,9 @@
     <string name="kLOC_ACCOUNT_NOTES_LABEL">Notes</string>
     <string name="kLOC_ACCOUNT_EXPIRES_LABEL">Expires</string>
     <string name="kLOC_ACCOUNT_NUMBER_LABEL">Account #</string>
+    <string name="dialog_rename_lookup_new_name">New Name</string>
+    <string name="dialog_rename_lookup_update_scope">Update Scope</string>
+    <string name="dialog_rename_lookup_helper_text">Changing \'Everywhere\' will update all transactions already posted as well as the pop up lists.</string>
     <string name="kLOC_ACCOUNT_INSTITUTION_LABEL">Institution</string>
     <string name="kLOC_ACCOUNT_PHONE_LABEL">Phone</string>
     <string name="kLOC_ACCOUNT_WEBSITE_LABEL">Website</string>
