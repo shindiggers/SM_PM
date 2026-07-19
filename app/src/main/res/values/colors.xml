@@ -45,19 +45,19 @@
     <color name="theme_red_bar_color">#BC5A5A</color>
     <color name="theme_yellow_bar_color">#D4AF37</color>
 
-    <color name="black_theme_primary_row_color">#1A1A1A</color>
-    <color name="black_theme_alternating_row_color">#2a2a2a</color>
-    <color name="black_theme_tint_color">#ffb8b8b8</color>
+    <color name="black_theme_primary_row_color">#232323</color>
+    <color name="black_theme_alternating_row_color">#2A2A2A</color>
+    <color name="black_theme_tint_color">#ffBDBDBD</color>
     <color name="black_theme_background_color">#1A1A1A</color>
-    <color name="black_theme_dialog_background_color">#212121</color>
+    <color name="black_theme_dialog_background_color">#303030</color>
     <color name="black_theme_highlight_color">#2C2C2C</color>
     <color name="black_theme_field_label_color">#ffb8b8b8</color>
-    <color name="black_theme_text">#E0E0E0</color>
-    <color name="black_theme_text_alt">#939393</color>
-    <color name="black_theme_action_bar_color">#111111</color>
-    <color name="black_theme_budget_bar_green">#7DAE5B</color>
-    <color name="black_theme_budget_bar_red">#BC5A5A</color>
-    <color name="black_theme_budget_bar_yellow">#D4AF37</color>
+    <color name="black_theme_text">#E6E6E6</color>
+    <color name="black_theme_text_alt">#A1A1A1</color>
+    <color name="black_theme_action_bar_color">#1A1A1A</color>
+    <color name="black_theme_budget_bar_green">#6B8F5E</color>
+    <color name="black_theme_budget_bar_red">#A65A5A</color>
+    <color name="black_theme_budget_bar_yellow">#C2a04A</color>
 
     <color name="white_theme_primary_row_color">#ffffffff</color>
     <color name="white_theme_alternating_row_color">#ffe8e8e8</color>
