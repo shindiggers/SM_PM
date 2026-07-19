@@ -953,6 +953,15 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
 
             @Override
+            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                // Only allow swiping for AccountViewHolder (not Header or Custom)
+                if (viewHolder instanceof AccountRecyclerViewAdapter.AccountViewHolder) {
+                    return super.getSwipeDirs(recyclerView, viewHolder);
+                }
+                return 0; // Disable swipe
+            }
+
+            @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 if (position == RecyclerView.NO_POSITION) return;
