@@ -1,6 +1,5 @@
 package com.example.smmoney.views.lookups;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -9,7 +8,6 @@ import android.view.ContextMenu.ContextMenuInfo;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
@@ -17,8 +15,6 @@ import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import com.google.android.material.button.MaterialButton;
-import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import androidx.appcompat.app.AlertDialog;
 
@@ -28,6 +24,8 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.button.MaterialButtonToggleGroup;
 
 import java.util.List;
 import java.util.Objects;
@@ -204,7 +202,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
     private class CatPayeeRowAdapter extends BaseAdapter {
         List<String> allCategories;
-        private final OnClickListener itemClickListener = v -> {
+        private final View.OnClickListener itemClickListener = v -> {
             Intent i = new Intent();
             i.putExtra("selection", (String) v.getTag());
             CategoryLookupListActivity.this.setResult(CategoryLookupListActivity.this.currentType, i);
@@ -249,11 +247,12 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         public View getView(int pos, View convertView, ViewGroup arg2) {
             String category = getItem(pos);
             if (convertView == null) {
-                convertView = CategoryLookupListActivity.this.mInflater.inflate(PocketMoneyThemes.simpleListItem(), null);
+                convertView = CategoryLookupListActivity.this.mInflater.inflate(PocketMoneyThemes.simpleListItem(), arg2, false);
                 convertView.setOnClickListener(this.itemClickListener);
-                //((TextView) convertView.findViewById(R.id.listView)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
             }
-            ((TextView) convertView).setText(category);
+            TextView tv = (TextView) convertView;
+            tv.setText(category);
+            tv.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             convertView.setTag(category);
             return convertView;
         }

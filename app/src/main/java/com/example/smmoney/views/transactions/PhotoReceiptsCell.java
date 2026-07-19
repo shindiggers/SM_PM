@@ -43,35 +43,47 @@ public class PhotoReceiptsCell extends View {
             this.imageNames.clear();
             for (String name : locations.split(";")) {
                 if (!name.isEmpty()) {
-                    try {
-                        File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
-                        File f = new File(photoDir, name);
-                        Log.d("PhotoReceiptsCell", "Checking file: " + f.getAbsolutePath() + " exists: " + f.exists());
-                        if (f.exists()) {
-                            Options bmOptions = new Options();
-                            bmOptions.inJustDecodeBounds = true;
-                            BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
-                            int width = bmOptions.outWidth;
-                            int height = bmOptions.outHeight;
-                            int scaleFactor = Math.min(width / this.PHOTO_WIDTH, height / this.PHOTO_HEIGHT);
-                            if (scaleFactor <= 0) scaleFactor = 1;
-                            bmOptions.inJustDecodeBounds = false;
-                            bmOptions.inSampleSize = scaleFactor;
-                            Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
-                            if (bitmap != null) {
-                                this.bitmaps.add(bitmap);
-                                this.imageNames.add(name);
-                                Log.d("PhotoReceiptsCell", "Added bitmap for: " + name);
-                            }
-                        }
-                    } catch (Exception e) {
-                        Log.e("PhotoReceiptsCell", "Error loading bitmap", e);
-                    }
+                    addImage(name);
                 }
             }
         }
         invalidate();
         requestLayout();
+    }
+
+    public void addImage(String name) {
+        if (name == null || name.isEmpty()) return;
+        try {
+            File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
+            File f = new File(photoDir, name);
+            if (f.exists()) {
+                Options bmOptions = new Options();
+                bmOptions.inJustDecodeBounds = true;
+                BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
+                int scaleFactor = Math.min(bmOptions.outWidth / this.PHOTO_WIDTH, bmOptions.outHeight / this.PHOTO_HEIGHT);
+                if (scaleFactor <= 0) scaleFactor = 1;
+                bmOptions.inJustDecodeBounds = false;
+                bmOptions.inSampleSize = scaleFactor;
+                Bitmap bitmap = BitmapFactory.decodeFile(f.getAbsolutePath(), bmOptions);
+                if (bitmap != null) {
+                    this.bitmaps.add(bitmap);
+                    this.imageNames.add(name);
+                    invalidate();
+                    requestLayout();
+                }
+            }
+        } catch (Exception e) {
+            Log.e("PhotoReceiptsCell", "Error adding image", e);
+        }
+    }
+
+    public String getImageLocationString() {
+        StringBuilder sb = new StringBuilder();
+        for (String name : imageNames) {
+            if (sb.length() > 0) sb.append(";");
+            sb.append(name);
+        }
+        return sb.toString();
     }
 
     protected void onDraw(Canvas canvas) {

@@ -17,10 +17,8 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -390,7 +388,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     private void onListItemClick(int position) {
-        if (canEdit()) {
+        if (canEdit() && (getIntent().getIntExtra("ONLY SAVED", 0) == 1)) {
             Snackbar.make(this.recyclerView, "Swipe right to rename, left to delete", Snackbar.LENGTH_SHORT).show();
             return;
         }

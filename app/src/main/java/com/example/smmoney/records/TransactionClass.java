@@ -31,6 +31,20 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.Serializable;
+import java.io.StringReader;
+import java.lang.reflect.Field;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+
+import javax.xml.parsers.SAXParserFactory;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -768,17 +782,26 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public ArrayList<String> imageFileNames() {
-        if (getImageLocation() == null) {
-            return null;
+        if (getImageLocation() == null || getImageLocation().isEmpty()) {
+            return new ArrayList<>();
         }
         String[] strings = getImageLocation().split(";");
         ArrayList<String> retStrings = new ArrayList<>(strings.length);
-        for (Object add : strings) {
-            if (!strings[0].isEmpty()) {
-                retStrings.add((String) add);
+        for (String s : strings) {
+            if (!s.isEmpty()) {
+                retStrings.add(s);
             }
         }
         return retStrings;
+    }
+
+    public String imageLocationFromNames(ArrayList<String> names) {
+        StringBuilder sb = new StringBuilder();
+        for (String name : names) {
+            if (sb.length() > 0) sb.append(";");
+            sb.append(name);
+        }
+        return sb.toString();
     }
 
     public void deleteSplitsfromDatabasePermentantly() {

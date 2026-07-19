@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -11,21 +11,23 @@
         android:id="@+id/scroll_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.0"
-        android:fadingEdge="vertical"
-        android:orientation="vertical"
-        android:scrollbarStyle="insideOverlay">
+        android:layout_weight="1.0">
 
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/outter_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:paddingBottom="24dp">
 
+            <!-- Transaction Type Toggle -->
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/radiogroup"
-                android:layout_width="match_parent"
-                android:layout_height="40dp"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_margin="8dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
                 app:selectionRequired="true"
                 app:singleSelection="true">
 
@@ -35,11 +37,12 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
+                    android:paddingStart="4dp"
+                    android:paddingEnd="4dp"
                     android:text="@string/kLOC_GENERAL_WITHDRAWAL"
-                    app:cornerRadius="0dp" />
+                    android:textAllCaps="false"
+                    android:textSize="13sp"
+                    app:cornerRadius="4dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/depositbutton"
@@ -47,11 +50,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
                     android:text="@string/kLOC_GENERAL_DEPOSIT"
-                    app:cornerRadius="0dp" />
+                    android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/transferbutton"
@@ -59,480 +59,524 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:insetTop="0dp"
-                    android:insetBottom="0dp"
-                    android:padding="0dp"
                     android:text="@string/kLOC_GENERAL_TRANSFER"
-                    app:cornerRadius="0dp" />
-
+                    android:textAllCaps="false"
+                    app:cornerRadius="4dp" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
 
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black_theme_background_color" />
+            <!-- Date Row -->
+            <TextView
+                android:id="@+id/date_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_DATE"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/radiogroup" />
 
-            <LinearLayout
-                android:id="@+id/datebutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
+            <TextView
+                android:id="@+id/datetextview"
+                android:layout_width="wrap_content"
+                android:layout_height="58dp"
+                android:gravity="center_vertical"
+                android:text="@string/transaction_edit_the_date"
+                app:layout_constraintStart_toEndOf="@id/date_label"
+                app:layout_constraintTop_toTopOf="@id/date_label" />
+
+            <TextView
+                android:id="@+id/timetextview"
+                android:layout_width="wrap_content"
+                android:layout_height="58dp"
+                android:layout_marginStart="12dp"
+                android:clickable="true"
                 android:focusable="true"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                android:text="@string/transaction_edit_the_time"
+                app:layout_constraintStart_toEndOf="@id/datetextview"
+                app:layout_constraintTop_toTopOf="@id/date_label" />
 
-                <TextView
-                    android:id="@+id/date_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_DATE" />
-
-                <TextView
-                    android:id="@+id/datetextview"
-                    android:layout_width="0dp"
-                    android:layout_height="58dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:text="@string/transaction_edit_the_date" />
-
-                <TextView
-                    android:id="@+id/timetextview"
-                    android:layout_width="0dp"
-                    android:layout_height="58dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:clickable="true"
-                    android:focusable="true"
-                    android:gravity="center_vertical"
-                    android:text="@string/transaction_edit_the_time" />
-
-                <ImageView
-                    android:id="@+id/repeatingimageview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="4dp"
-                    android:clickable="true"
-                    android:contentDescription="@string/transaction_edit_open_repeating_transaction_dialogue"
-                    android:focusable="true"
-                    android:src="@drawable/ic_date_range" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/accountbutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
+            <ImageView
+                android:id="@+id/repeatingimageview"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:clickable="true"
+                android:contentDescription="@string/transaction_edit_open_repeating_transaction_dialogue"
                 android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/account_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_ACCOUNT" />
-
-                <TextView
-                    android:id="@+id/accounttextview"
-                    android:layout_width="0dp"
-                    android:layout_height="58dp"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:text="@string/transaction_edit_the_account" />
-
-                <ImageButton
-                    android:id="@+id/account_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/content_description_open_account_pick_list" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/payeebutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/payeelabeltextview"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_PAYEE" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/payeetextview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_PAYEE"
-                    android:imeOptions="actionNext"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
-
-                <ImageButton
-                    android:id="@+id/payee_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/content_description_open_payee_pick_list" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/categorybutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/category_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CATEGORY" />
-
-                <TextView
-                    android:id="@+id/categorytextview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:gravity="center_vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/categoryedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_CATEGORY"
-                    android:imeOptions="actionNext"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
-
-                <ImageButton
-                    android:id="@+id/category_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/transaction_edit_open_category_pick_list" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/amount_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
-
-                <TextView
-                    android:id="@+id/amount_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_AMOUNT" />
-
-                <EditText
-                    android:id="@+id/amountedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_AMOUNT"
-                    android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
-
-                <LinearLayout
-                    android:layout_width="150dp"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/foreign_amount_text_view"
-                        android:layout_width="150dp"
-                        android:layout_height="0dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:singleLine="true"
-                        android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
-
-                    <TextView
-                        android:id="@+id/amount_xrate_text_view"
-                        android:layout_width="150dp"
-                        android:layout_height="0dp"
-                        android:layout_gravity="center_vertical"
-                        android:layout_weight="1"
-                        android:gravity="center_vertical"
-                        android:singleLine="true"
-                        android:text="@string/transaction_edit_x_xrate" />
-                </LinearLayout>
-
-                <ImageButton
-                    android:id="@+id/amount_currency_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_fx"
-                    android:clickable="false"
-                    android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue" />
-
-            </LinearLayout>
+                android:padding="12dp"
+                android:src="@drawable/ic_event_repeat"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/date_label" />
 
             <View
-                android:layout_width="match_parent"
+                android:id="@+id/divider1"
+                android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:background="@color/black_theme_background_color" />
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/date_label"
+                app:layout_constraintTop_toBottomOf="@id/date_label" />
 
-            <LinearLayout
-                android:id="@+id/idbutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:focusable="true"
+            <!-- Account Row -->
+            <TextView
+                android:id="@+id/account_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_ACCOUNT"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider1" />
+
+            <TextView
+                android:id="@+id/accounttextview"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                android:text="@string/transaction_edit_the_account"
+                app:layout_constraintEnd_toStartOf="@+id/account_drop_down"
+                app:layout_constraintStart_toEndOf="@id/account_label"
+                app:layout_constraintTop_toTopOf="@id/account_label" />
 
-                <TextView
-                    android:id="@+id/id_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_ID" />
-
-                <AutoCompleteTextView
-                    android:id="@+id/idedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_ID"
-                    android:imeOptions="actionNext"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
-
-                <ImageButton
-                    android:id="@+id/id_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/transaction_edit_open_id_pick_list" />
-
-            </LinearLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/cleared_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CLEARED" />
-
-                <CheckBox
-                    android:id="@+id/clearedcheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="4dp" />
-
-            </RelativeLayout>
+            <ImageButton
+                android:id="@+id/account_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_open_account_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/account_label" />
 
             <View
-                android:layout_width="match_parent"
+                android:id="@+id/divider2"
+                android:layout_width="0dp"
                 android:layout_height="1dp"
-                android:background="@color/black_theme_background_color" />
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/account_label"
+                app:layout_constraintTop_toBottomOf="@id/account_label" />
 
-            <LinearLayout
-                android:id="@+id/classbutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:focusable="true"
+            <!-- Payee Row -->
+            <TextView
+                android:id="@+id/payeelabeltextview"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_PAYEE"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+            <AutoCompleteTextView
+                android:id="@+id/payeetextview"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                android:hint="@string/kLOC_GENERAL_PAYEE"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/payee_drop_down"
+                app:layout_constraintStart_toEndOf="@id/payeelabeltextview"
+                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
 
-                <TextView
-                    android:id="@+id/class_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CLASS" />
+            <ImageButton
+                android:id="@+id/payee_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/content_description_open_payee_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
 
-                <TextView
-                    android:id="@+id/classtextview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:clickable="false"
-                    android:focusable="false"
-                    android:gravity="center_vertical"
-                    android:visibility="gone" />
+            <View
+                android:id="@+id/divider3"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/payeelabeltextview"
+                app:layout_constraintTop_toBottomOf="@id/payeelabeltextview" />
 
-                <AutoCompleteTextView
-                    android:id="@+id/classedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_CLASS"
-                    android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious"
-                    android:inputType="text"
-                    android:singleLine="true"
-                    android:textColorHint="@color/blue_theme_text_alt" />
+            <!-- Category Row -->
+            <TextView
+                android:id="@+id/category_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_CATEGORY"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider3" />
 
-                <ImageButton
-                    android:id="@+id/class_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
-                    android:clickable="false"
-                    android:contentDescription="@string/transaction_edit_open_class_pick_list" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/memobutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_blue_alt"
-                android:baselineAligned="false"
-                android:focusable="true"
+            <TextView
+                android:id="@+id/categorytextview"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
                 android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp"
-                android:weightSum="1.0">
-
-                <TextView
-                    android:id="@+id/memo_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_NOTE" />
-
-                <TextView
-                    android:id="@+id/memotextview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:ellipsize="end"
-                    android:gravity="start|center_vertical"
-                    android:maxLines="2"
-                    android:singleLine="false" />
-
-            </LinearLayout>
-
-            <com.example.smmoney.views.transactions.PhotoReceiptsCell
-                android:id="@+id/photocell"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/split_button"
+                app:layout_constraintStart_toEndOf="@id/category_label"
+                app:layout_constraintTop_toTopOf="@id/category_label"
+                tools:text="Category Name"
                 tools:visibility="visible" />
+
+            <AutoCompleteTextView
+                android:id="@+id/categoryedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/kLOC_GENERAL_CATEGORY"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/split_button"
+                app:layout_constraintStart_toEndOf="@id/category_label"
+                app:layout_constraintTop_toTopOf="@id/category_label" />
+
+            <ImageButton
+                android:id="@+id/split_button"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Splits"
+                android:padding="12dp"
+                android:src="@drawable/ic_call_split_white_24dp"
+                app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
+                app:layout_constraintTop_toTopOf="@id/category_label" />
+
+            <ImageButton
+                android:id="@+id/category_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_category_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/category_label" />
+
+            <View
+                android:id="@+id/divider4"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/category_label"
+                app:layout_constraintTop_toBottomOf="@id/category_label" />
+
+            <!-- Amount Row -->
+            <TextView
+                android:id="@+id/amount_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_AMOUNT"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider4" />
+
+            <EditText
+                android:id="@+id/amountedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/kLOC_GENERAL_AMOUNT"
+                android:importantForAutofill="no"
+                android:inputType="numberDecimal"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/fx_info_layout"
+                app:layout_constraintStart_toEndOf="@id/amount_label"
+                app:layout_constraintTop_toTopOf="@id/amount_label" />
+
+            <LinearLayout
+                android:id="@+id/fx_info_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="58dp"
+                android:gravity="end|center_vertical"
+                android:orientation="vertical"
+                android:paddingEnd="8dp"
+                app:layout_constraintEnd_toStartOf="@+id/amount_currency_button"
+                app:layout_constraintTop_toTopOf="@id/amount_label">
+
+                <TextView
+                    android:id="@+id/foreign_amount_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
+                    android:textSize="12sp" />
+
+                <TextView
+                    android:id="@+id/amount_xrate_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:singleLine="true"
+                    android:text="@string/transaction_edit_x_xrate"
+                    android:textSize="10sp" />
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/amount_currency_button"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_exchange_rate_dialogue"
+                android:padding="12dp"
+                android:src="@drawable/ic_foreign_exchange"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/amount_label" />
+
+            <View
+                android:id="@+id/divider5"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/amount_label"
+                app:layout_constraintTop_toBottomOf="@id/amount_label" />
+
+            <!-- ID Row -->
+            <TextView
+                android:id="@+id/id_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_ID"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider5" />
+
+            <AutoCompleteTextView
+                android:id="@+id/idedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/kLOC_GENERAL_ID"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/id_drop_down"
+                app:layout_constraintStart_toEndOf="@id/id_label"
+                app:layout_constraintTop_toTopOf="@id/id_label" />
+
+            <ImageButton
+                android:id="@+id/id_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_id_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/id_label" />
+
+            <View
+                android:id="@+id/divider6"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/id_label"
+                app:layout_constraintTop_toBottomOf="@id/id_label" />
+
+            <!-- Cleared Row -->
+            <TextView
+                android:id="@+id/cleared_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_CLEARED"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider6" />
+
+            <CheckBox
+                android:id="@+id/clearedcheckbox"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/cleared_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cleared_label" />
+
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/cleared_label"
+                app:layout_constraintTop_toBottomOf="@id/cleared_label" />
+
+            <!-- Class Row -->
+            <TextView
+                android:id="@+id/class_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/kLOC_GENERAL_CLASS"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider7" />
+
+            <TextView
+                android:id="@+id/classtextview"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/class_drop_down"
+                app:layout_constraintStart_toEndOf="@id/class_label"
+                app:layout_constraintTop_toTopOf="@id/class_label" />
+
+            <AutoCompleteTextView
+                android:id="@+id/classedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/kLOC_GENERAL_CLASS"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/class_drop_down"
+                app:layout_constraintStart_toEndOf="@id/class_label"
+                app:layout_constraintTop_toTopOf="@id/class_label" />
+
+            <ImageButton
+                android:id="@+id/class_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_class_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/class_label" />
+
+            <View
+                android:id="@+id/divider8"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/class_label"
+                app:layout_constraintTop_toBottomOf="@id/class_label" />
+
+            <!-- Memo Row (Inline) -->
+            <TextView
+                android:id="@+id/memo_label"
+                android:layout_width="85dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:gravity="start"
+                android:text="@string/kLOC_GENERAL_NOTE"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider8" />
+
+            <EditText
+                android:id="@+id/memoedittext"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:background="@null"
+                android:gravity="top|start"
+                android:hint="@string/kLOC_GENERAL_NOTE"
+                android:minHeight="58dp"
+                app:layout_constraintEnd_toStartOf="@+id/camera_button"
+                app:layout_constraintStart_toEndOf="@id/memo_label"
+                app:layout_constraintTop_toBottomOf="@id/divider8" />
+
+            <ImageButton
+                android:id="@+id/camera_button"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="Camera"
+                android:padding="12dp"
+                android:src="@drawable/ic_photo_camera_white_24dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/memoedittext" />
+
+            <View
+                android:id="@+id/divider9"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="@id/memo_label"
+                app:layout_constraintTop_toBottomOf="@id/memoedittext" />
+
+            <!-- Advanced Actions -->
+            <LinearLayout
+                android:id="@+id/advanced_actions"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:gravity="center"
+                android:orientation="horizontal"
+                app:layout_constraintTop_toBottomOf="@id/divider9">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/duplicate_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Duplicate"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/fee_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Fee"
+                    android:textAllCaps="false" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/delete_button"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/kLOC_GENERAL_DELETE"
+                    android:textAllCaps="false"
+                    app:iconTint="@color/theme_red_label_color"
+                    android:textColor="@color/theme_red_label_color" />
+            </LinearLayout>
 
             <FrameLayout
                 android:id="@+id/keyboard_spacer_view"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:visibility="gone" />
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/advanced_actions" />
 
-        </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </ScrollView>
 
+    <!-- Fixed Bottom Section (Balance and Keyboard) -->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">

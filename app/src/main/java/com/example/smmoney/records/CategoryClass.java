@@ -309,11 +309,15 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         qb.setTables(Database.CATEGORIES_TABLE_NAME);
         String[] projection = new String[]{"category"};
         qb.setDistinct(true);
-        Cursor curs = Database.query(qb, projection, "deleted=0", null, null, null, "UPPER(category)");
+        // Filter out empty categories and deleted ones
+        Cursor curs = Database.query(qb, projection, "deleted=0 AND category != ''", null, null, null, "UPPER(category)");
         if (curs.getCount() != 0) {
             curs.moveToFirst();
             do {
-                array.add(curs.getString(0));
+                String val = curs.getString(0);
+                if (val != null && !val.isEmpty()) {
+                    array.add(val);
+                }
             } while (curs.moveToNext());
         }
         curs.close();
@@ -347,12 +351,18 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static ArrayList<String> allCategoryNamesInDatabaseForPayee(String payee) {
         ArrayList<String> array = new ArrayList<>();
+        if (payee == null || payee.isEmpty()) {
+            return array;
+        }
         if (catpayee_statement == null) {
-            catpayee_statement = "SELECT DISTINCT s.categoryID FROM splits s INNER JOIN transactions t WHERE s.transactionID = t.transactionID AND t.deleted = 0 AND t.payee LIKE ? ORDER BY UPPER(s.categoryID)";
+            catpayee_statement = "SELECT DISTINCT s.categoryID FROM splits s INNER JOIN transactions t WHERE s.transactionID = t.transactionID AND t.deleted = 0 AND t.payee LIKE ? AND s.categoryID != '' ORDER BY UPPER(s.categoryID)";
         }
         Cursor c = Database.rawQuery(catpayee_statement, new String[]{payee});
         while (c.moveToNext()) {
-            array.add(c.getString(0));
+            String val = c.getString(0);
+            if (val != null && !val.isEmpty()) {
+                array.add(val);
+            }
         }
         c.close();
         return array;

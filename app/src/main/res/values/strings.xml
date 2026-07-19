@@ -774,4 +774,7 @@
     <string name="kLOC_BUDGET_LBL_VARIANCE">Ahead / Behind</string>
     <string name="kLOC_BUDGET_LBL_ASCENDING">Low to High (Asc)</string>
     <string name="kLOC_BUDGET_LBL_DESCENDING">High to Low (Desc)</string>
+    <string name="dialog_discard_changes_title">Discard Changes?</string>
+    <string name="dialog_discard_changes_message">You have unsaved changes. Do you want to discard them?</string>
+    <string name="dialog_discard_changes_positive">Discard</string>
 </resources>

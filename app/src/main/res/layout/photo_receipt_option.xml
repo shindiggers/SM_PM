@@ -16,25 +16,49 @@
     <FrameLayout
         android:id="@+id/bottom_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
+        android:layout_height="48dp"
         android:background="#000">
 
-        <TextView
-            android:id="@+id/delete"
+        <LinearLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_gravity="center"
-            android:layout_marginEnd="15dp"
-            android:background="@color/blue_theme_background_color"
-            android:focusable="true"
-            android:paddingStart="10dp"
-            android:paddingTop="3dp"
-            android:paddingEnd="10dp"
-            android:paddingBottom="3dp"
-            android:text="@string/kLOC_GENERAL_DELETE"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="bold" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/replace"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginEnd="24dp"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="16dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="6dp"
+                android:text="Replace"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="normal" />
+
+            <TextView
+                android:id="@+id/delete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:background="?android:attr/selectableItemBackground"
+                android:clickable="true"
+                android:focusable="true"
+                android:paddingStart="16dp"
+                android:paddingTop="6dp"
+                android:paddingEnd="16dp"
+                android:paddingBottom="6dp"
+                android:text="@string/kLOC_GENERAL_DELETE"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="normal" />
+
+        </LinearLayout>
 
     </FrameLayout>
 
