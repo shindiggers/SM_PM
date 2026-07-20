@@ -1,63 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/therow"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:clickable="true"
     android:focusable="true"
-    android:orientation="vertical">
+    android:minHeight="58dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_weight="1.0"
-        android:focusable="false"
-        android:orientation="horizontal">
+    <TextView
+        android:id="@+id/categorytextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        app:layout_constraintBottom_toTopOf="@+id/memotextview"
+        app:layout_constraintEnd_toStartOf="@+id/amounttextview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_chainStyle="packed"
+        tools:text="Food:Dining" />
 
-        <TextView
-            android:id="@+id/categorytextview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-            android:text="@string/kLOC_GENERAL_CATEGORY" />
+    <TextView
+        android:id="@+id/memotextview"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="start|center_vertical"
+        android:singleLine="true"
+        android:textSize="12sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/classtextview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/categorytextview"
+        tools:text="Dinner with friends" />
 
-        <TextView
-            android:id="@+id/amounttextview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1.0"
-            android:gravity="end|center_vertical"
-            android:text="@string/kLOC_GENERAL_AMOUNT" />
+    <TextView
+        android:id="@+id/amounttextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:minWidth="80dp"
+        android:singleLine="true"
+        app:layout_constraintBaseline_toBaselineOf="@+id/categorytextview"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="£25.00" />
 
-    </LinearLayout>
+    <TextView
+        android:id="@+id/classtextview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="end|center_vertical"
+        android:minWidth="80dp"
+        android:singleLine="true"
+        android:textSize="12sp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/memotextview"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:text="Personal" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="30dp"
-        android:layout_weight="1.0"
-        android:focusable="false"
-        android:orientation="horizontal">
-
-        <TextView
-            android:id="@+id/memotextview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginStart="10dp"
-            android:gravity="start|center_vertical"
-            android:text="@string/kLOC_GENERAL_NOTE" />
-
-        <TextView
-            android:id="@+id/classtextview"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_marginEnd="10dp"
-            android:layout_weight="1.0"
-            android:gravity="end|center_vertical"
-            android:text="@string/kLOC_GENERAL_CLASS" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

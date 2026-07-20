@@ -1,103 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <ListView
+    <!-- Status Card -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/status_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#1A1A1A"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/splitstotaltitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Total Transaction Value"
+            android:textAllCaps="true"
+            android:textColor="#BDBDBD"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/splitstotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/splitstotaltitle"
+            tools:text="£100.00" />
+
+        <TextView
+            android:id="@+id/edit_total_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="4dp"
+            android:text="Edit"
+            android:textAllCaps="true"
+            android:textSize="11sp"
+            android:textStyle="bold"
+            app:layout_constraintBaseline_toBaselineOf="@id/splitstotal"
+            app:layout_constraintStart_toEndOf="@id/splitstotal" />
+
+        <View
+            android:id="@+id/header_divider"
+            android:layout_width="1dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="24dp"
+            android:background="#44FFFFFF"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/splitstotaltitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/splitssplitstotaltitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:text="Allocated"
+            android:textAllCaps="true"
+            android:textColor="#BDBDBD"
+            android:textSize="10sp"
+            app:layout_constraintStart_toEndOf="@id/header_divider"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/splitssplitstotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            app:layout_constraintStart_toStartOf="@id/splitssplitstotaltitle"
+            app:layout_constraintTop_toBottomOf="@id/splitssplitstotaltitle"
+            tools:text="£75.00" />
+
+        <TextView
+            android:id="@+id/splitsremaindertitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:text="Left to allocate"
+            android:textAllCaps="true"
+            android:textColor="#BDBDBD"
+            android:textSize="10sp"
+            app:layout_constraintStart_toStartOf="@id/splitssplitstotal"
+            app:layout_constraintTop_toBottomOf="@id/splitssplitstotal" />
+
+        <TextView
+            android:id="@+id/splitsremainder"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="@id/splitsremaindertitle"
+            app:layout_constraintTop_toBottomOf="@id/splitsremaindertitle"
+            tools:text="£25.00" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/the_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:drawSelectorOnTop="true"
-        android:fadingEdge="vertical"
         tools:listitem="@layout/split_row" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
-
-            <TextView
-                android:id="@+id/splitssplitstotaltitle"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="75dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/kLOC_EDIT_SPLITS_SPLITOTAL" />
-
-            <TextView
-                android:id="@+id/splitssplitstotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="10dp"
-                android:text="@string/accounts_view_net_worth"
-                tools:text="£75.00" />
-
-        </FrameLayout>
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
-
-            <TextView
-                android:id="@+id/splitsremaindertitle"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="75dp"
-                android:gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:text="@string/kLOC_EDIT_SPLITS_REMAINDER" />
-
-            <TextView
-                android:id="@+id/splitsremainder"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="10dp"
-                android:text="@string/accounts_view_net_worth"
-                tools:text="£25.00" />
-
-        </FrameLayout>
-
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginEnd="8dp"
-            android:background="@color/black_theme_background_color" />
-
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="30dp">
-
-            <TextView
-                android:id="@+id/splitstotaltitle"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="end|center_vertical"
-                android:layout_marginEnd="75dp"
-                android:gravity="start|end|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:text="@string/kLOC_EDIT_SPLITS_TOTAL" />
-
-            <TextView
-                android:id="@+id/splitstotal"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical|end"
-                android:layout_marginEnd="10dp"
-                android:text="@string/accounts_view_net_worth"
-                tools:text="£100.00" />
-
-        </FrameLayout>
-
-    </LinearLayout>
 
 </LinearLayout>

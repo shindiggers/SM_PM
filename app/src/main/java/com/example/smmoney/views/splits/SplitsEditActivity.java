@@ -83,30 +83,31 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         }
     });
 
-    private final ActivityResultLauncher<Intent> lookupLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> categoryLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
             String selection = result.getData().getStringExtra("selection");
-            int type = result.getResultCode();
-            if (type == 5) {
-                this.split.setCategory(selection);
-                this.categoryEditText.setText(selection);
-            } else if (type == 6) {
-                this.split.setClassName(selection);
-                this.classEditText.setText(selection);
-            } else if (type == 3) {
-                this.split.setTransferToAccount(selection);
-                this.transToTextView.setText(selection);
-                updateXrates();
-            }
+            this.split.setCategory(selection);
+            this.categoryEditText.setText(selection);
             loadCells();
-        } else if (result.getResultCode() == 0 && result.getData() != null) {
-            // LookupsListActivity might not return an intent on cancel, but we handle it just in case
-            int type = result.getData().getIntExtra("type", -1);
-            if (type == 3) {
-                this.withdrawalButton.setChecked(true);
-                this.split.setTransferToAccount("");
-                loadCells();
-            }
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> classLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.split.setClassName(selection);
+            this.classEditText.setText(selection);
+            loadCells();
+        }
+    });
+
+    private final ActivityResultLauncher<Intent> transToLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (result.getResultCode() != 0 && result.getData() != null) {
+            String selection = result.getData().getStringExtra("selection");
+            this.split.setTransferToAccount(selection);
+            this.transToTextView.setText(selection);
+            updateXrates();
+            loadCells();
         }
     });
 
@@ -194,7 +195,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         }
         i.putExtra("Split", this.split);
         i.putExtra("transaction", this.transaction);
-        setResult(1, i);
+        setResult(RESULT_OK, i);
         finish();
     }
 
@@ -469,12 +470,17 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     private OnClickListener getLookupListClickListener() {
         return view -> {
-            // Save current UI state into the 'split' object before leaving
             SplitsEditActivity.this.getCells();
-
+            int type = ((Integer) view.getTag()).intValue();
             Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
-            i.putExtra("type", ((Integer) view.getTag()).intValue());
-            lookupLauncher.launch(i);
+            i.putExtra("type", type);
+            if (type == 5) {
+                categoryLauncher.launch(i);
+            } else if (type == 6) {
+                classLauncher.launch(i);
+            } else if (type == 3) {
+                transToLauncher.launch(i);
+            }
         };
     }
 
@@ -501,7 +507,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                         SplitsEditActivity.this.getCells();
                         Intent i = new Intent(SplitsEditActivity.this.currentActivity, LookupsListActivity.class);
                         i.putExtra("type", 3);
-                        lookupLauncher.launch(i);
+                        transToLauncher.launch(i);
                     }
                 }
                 SplitsEditActivity.this.setType();

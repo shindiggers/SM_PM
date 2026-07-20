@@ -226,10 +226,16 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == -1 && result.getData() != null) {
-            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
-            this.transaction.dirty = true;
-            reloadData();
-            reloadBalanceBar();
+            TransactionClass updatedTrans = (TransactionClass) result.getData().getExtras().get("Transaction");
+            if (updatedTrans != null) {
+                // Important: Copy the splits over to our active transaction object
+                this.transaction.setSplits(updatedTrans.getSplits());
+                this.transaction.setSubTotal(updatedTrans.getSubTotal());
+                this.transaction.setAmount(updatedTrans.getAmount());
+                this.transaction.dirty = true;
+                reloadData();
+                reloadBalanceBar();
+            }
         }
     });
 

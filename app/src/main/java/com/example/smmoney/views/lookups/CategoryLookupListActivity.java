@@ -205,7 +205,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         private final View.OnClickListener itemClickListener = v -> {
             Intent i = new Intent();
             i.putExtra("selection", (String) v.getTag());
-            CategoryLookupListActivity.this.setResult(CategoryLookupListActivity.this.currentType, i);
+            CategoryLookupListActivity.this.setResult(RESULT_OK, i);
             CategoryLookupListActivity.this.finish();
         };
         List<String> payeeCategories;

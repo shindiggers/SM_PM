@@ -422,8 +422,12 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public boolean isSingleXrate() {
-        String currencyCode = getSplits().get(0).getCurrencyCode();
-        for (SplitsClass splitsClass : getSplits()) {
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits == null || currentSplits.isEmpty()) {
+            return true;
+        }
+        String currencyCode = currentSplits.get(0).getCurrencyCode();
+        for (SplitsClass splitsClass : currentSplits) {
             if (!(splitsClass).getCurrencyCode().equals(currencyCode)) {
                 return false;
             }
