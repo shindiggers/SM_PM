@@ -660,7 +660,7 @@
 
         <com.example.smmoney.views.CurrencyKeyboard
             android:id="@+id/keyboardView"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/keyboard_toolbar"
             android:focusable="true"

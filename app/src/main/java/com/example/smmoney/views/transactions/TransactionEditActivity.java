@@ -402,6 +402,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        getCells();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         reloadData();

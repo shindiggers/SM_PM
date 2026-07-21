@@ -51,6 +51,11 @@ public class PocketMoneyThemes {
         }
     }
 
+    public static boolean isDarkTheme() {
+        int t = getTheme();
+        return t == kThemeBlack || t == kThemeCoffee || t == kThemeRuby;
+    }
+
     private static int getTheme() {
         if (theme == -1) {
             String themeStr = Prefs.getStringPref(Prefs.THEME_COLOR);

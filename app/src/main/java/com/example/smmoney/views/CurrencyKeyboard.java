@@ -2,47 +2,173 @@ package com.example.smmoney.views;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
-import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.KeyboardView;
-import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.text.Editable;
-import android.text.InputType;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageButton;
 
+import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 
 import java.text.DecimalFormatSymbols;
-import java.util.HashMap;
-import java.util.Map;
 
-public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionListener, View.OnKeyListener {
+public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener {
     private Context context;
     private EditText editText;
-    private Map<String, String> keyValues = null;
     private View toolbar;
     private boolean toolbarEnabled = true;
 
-    private void init() {
-        setKeyboard(new Keyboard(this.context, com.example.smmoney.R.xml.keyboard));
-        setOnKeyboardActionListener(this);
-        initKeyCodes();
-    }
-
     public CurrencyKeyboard(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
-        this.context = context;
-        init();
+        init(context);
     }
 
     public CurrencyKeyboard(Context context, AttributeSet attrs) {
         super(context, attrs);
+        init(context);
+    }
+
+    private void init(Context context) {
         this.context = context;
-        init();
+        LayoutInflater.from(context).inflate(R.layout.keyboard_layout, this, true);
+        setupKeys();
+        refreshTheme();
+    }
+
+    private void setupKeys() {
+        int[] keyIds = {
+                R.id.key_0, R.id.key_1, R.id.key_2, R.id.key_3, R.id.key_4,
+                R.id.key_5, R.id.key_6, R.id.key_7, R.id.key_8, R.id.key_9,
+                R.id.key_dot, R.id.key_minus, R.id.key_clear,
+                R.id.key_delete, R.id.key_next, R.id.key_hide
+        };
+
+        for (int id : keyIds) {
+            View v = findViewById(id);
+            if (v != null) {
+                v.setOnClickListener(this::onButtonClick);
+            }
+        }
+    }
+
+    private void onButtonClick(View v) {
+        int id = v.getId();
+        if (this.editText == null) return;
+        
+        Editable editable = this.editText.getText();
+        int start = this.editText.getSelectionStart();
+        int end = this.editText.getSelectionEnd();
+
+        if (id == R.id.key_delete) {
+            if (start > 0 || start != end) {
+                if (start == end) {
+                    editable.delete(start - 1, start);
+                } else {
+                    editable.delete(start, end);
+                }
+            }
+        } else if (id == R.id.key_clear) {
+            this.editText.setText("");
+        } else if (id == R.id.key_hide) {
+            hide();
+        } else if (id == R.id.key_next) {
+            View next = this.editText.focusSearch(FOCUS_DOWN);
+            if (next != null) {
+                next.requestFocus();
+                if (next instanceof EditText) {
+                    ((EditText) next).setSelection(((EditText) next).getText().length());
+                }
+                return;
+            }
+            hide();
+        } else {
+            String val = "";
+            if (id == R.id.key_0) val = "0";
+            else if (id == R.id.key_1) val = "1";
+            else if (id == R.id.key_2) val = "2";
+            else if (id == R.id.key_3) val = "3";
+            else if (id == R.id.key_4) val = "4";
+            else if (id == R.id.key_5) val = "5";
+            else if (id == R.id.key_6) val = "6";
+            else if (id == R.id.key_7) val = "7";
+            else if (id == R.id.key_8) val = "8";
+            else if (id == R.id.key_9) val = "9";
+            else if (id == R.id.key_dot) val = String.valueOf(decimalSeparator());
+            else if (id == R.id.key_minus) {
+                String text = editable.toString();
+                if (text.startsWith("-")) {
+                    editable.delete(0, 1);
+                } else if (!text.isEmpty() && !text.equals("0")) {
+                    editable.insert(0, "-");
+                }
+                return;
+            }
+
+            if (!val.isEmpty()) {
+                editable.replace(start, end, val);
+            }
+        }
+    }
+
+    public void refreshTheme() {
+        boolean isDark = PocketMoneyThemes.isDarkTheme();
+        int gridLineColor = isDark ? 0xFF333333 : 0xFFE0E0E0;
+        int numKeyColor = isDark ? 0xFF121212 : 0xFFFFFFFF; // Softer black
+        int sideKeyColor = isDark ? 0xFF2A2A2A : 0xFFF5F5F5; // Slightly lighter contrast
+        int actionKeyColor = PocketMoneyThemes.currentTintColor();
+        int textColor = isDark ? 0xFFFFFFFF : 0xFF000000;
+        int rippleColor = isDark ? 0x22FFFFFF : 0x22000000;
+
+        findViewById(R.id.keyboard_grid).setBackgroundColor(gridLineColor);
+
+        int[] allKeys = {
+                R.id.key_0, R.id.key_1, R.id.key_2, R.id.key_3, R.id.key_4,
+                R.id.key_5, R.id.key_6, R.id.key_7, R.id.key_8, R.id.key_9,
+                R.id.key_dot, R.id.key_minus, R.id.key_clear,
+                R.id.key_delete, R.id.key_next, R.id.key_hide
+        };
+
+        for (int id : allKeys) {
+            View v = findViewById(id);
+            int bgColor = numKeyColor;
+            
+            if (id == R.id.key_minus || id == R.id.key_clear || id == R.id.key_delete || id == R.id.key_hide) {
+                bgColor = sideKeyColor;
+            } else if (id == R.id.key_next) {
+                bgColor = actionKeyColor;
+            }
+
+            android.graphics.drawable.Drawable background = v.getBackground();
+            if (background instanceof android.graphics.drawable.RippleDrawable) {
+                android.graphics.drawable.RippleDrawable ripple = (android.graphics.drawable.RippleDrawable) background;
+                ripple.setColor(android.content.res.ColorStateList.valueOf(id == R.id.key_next ? 0x44FFFFFF : rippleColor));
+                
+                android.graphics.drawable.Drawable shape = ripple.getDrawable(0);
+                if (shape instanceof android.graphics.drawable.GradientDrawable) {
+                    android.graphics.drawable.GradientDrawable gd = (android.graphics.drawable.GradientDrawable) shape;
+                    gd.setColor(bgColor);
+                    gd.setStroke((int) (0.5f * getResources().getDisplayMetrics().density), gridLineColor);
+                }
+            }
+            
+            if (v instanceof Button) {
+                ((Button) v).setTextColor(id == R.id.key_next ? Color.WHITE : textColor);
+                if (id == R.id.key_next) ((Button) v).setText(Locales.kLOC_GENERAL_NEXT);
+            } else if (v instanceof ImageButton) {
+                ((ImageButton) v).setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
+            }
+        }
     }
 
     private char decimalSeparator() {
@@ -53,29 +179,30 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
     public void setEditText(EditText editText, final Runnable r) {
         this.editText = editText;
         final EditText theEdit = editText;
+        
+        theEdit.setShowSoftInputOnFocus(false);
+
         theEdit.setOnClickListener(v -> {
             CurrencyKeyboard.this.editText = theEdit;
             CurrencyKeyboard.this.show();
         });
+        
         theEdit.setOnFocusChangeListener((v, hasFocus) -> {
             CurrencyKeyboard.this.editText = theEdit;
             if (hasFocus) {
                 CurrencyKeyboard.this.show();
                 if (r != null) {
                     r.run();
-                    return;
                 }
-                return;
+            } else {
+                CurrencyKeyboard.this.internalProcessMath();
+                CurrencyKeyboard.this.hide();
             }
-            CurrencyKeyboard.this.processMath();
-            CurrencyKeyboard.this.hide();
         });
+        
         theEdit.setOnTouchListener((v, event) -> {
-            EditText editText1 = (EditText) v;
-            int inType = editText1.getInputType();
-            editText1.setInputType(InputType.TYPE_NULL);
-            editText1.onTouchEvent(event);
-            editText1.setInputType(inType);
+            v.requestFocus();
+            CurrencyKeyboard.this.show();
             return true;
         });
     }
@@ -84,38 +211,50 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         this.toolbar = toolbar;
     }
 
+    public void setToolbarEnabled(boolean toolbarEnabled) {
+        this.toolbarEnabled = toolbarEnabled;
+    }
+
     private void setToolbarVisibility(int visibility) {
         if ((visibility != 0 || this.toolbarEnabled) && this.toolbar != null) {
             this.toolbar.setVisibility(visibility);
         }
     }
 
-    public void setToolbarEnabled(boolean toolbarEnabled) {
-        this.toolbarEnabled = toolbarEnabled;
-    }
-
-    private void processMath() {
+    private void internalProcessMath() {
+        if (this.editText == null) return;
         String newValue = null;
         try {
             newValue = processMath(this.editText.getText().toString());
         } catch (Exception e) {
-            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in processMath", e);
+            Log.e("CurrencyKeyboard", "Exception in processMath", e);
         }
         if (newValue != null) {
             this.editText.setText(newValue);
             this.editText.setSelection(this.editText.getText().toString().length());
-            return;
+        } else {
+            this.editText.setText("0");
         }
-        this.editText.setText("0");
     }
 
     public void show() {
-        setToolbarVisibility(0);
+        refreshTheme();
+        setToolbarVisibility(VISIBLE);
         setVisibility(View.VISIBLE);
-        this.editText.setShowSoftInputOnFocus(false);
-        InputMethodManager imm = (InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE);
-        if (imm != null) {
-            imm.hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+        
+        if (this.editText != null) {
+            this.editText.setShowSoftInputOnFocus(false);
+            InputMethodManager imm = (InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+            }
+        }
+        
+        // Lock the window to never show keyboard automatically
+        if (this.context instanceof android.app.Activity) {
+            ((android.app.Activity) this.context).getWindow().setSoftInputMode(
+                android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+            );
         }
     }
 
@@ -128,24 +267,22 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         return true;
     }
 
-    private void initKeyCodes() {
-        this.keyValues = new HashMap<>();
-        this.keyValues.put("14", "7");
-        this.keyValues.put("15", "8");
-        this.keyValues.put("16", "9");
-        this.keyValues.put("11", "4");
-        this.keyValues.put("12", "5");
-        this.keyValues.put("13", "6");
-        this.keyValues.put("8", "1");
-        this.keyValues.put("9", "2");
-        this.keyValues.put("10", "3");
-        this.keyValues.put("7", "0");
-        this.keyValues.put("55", "00");
-        this.keyValues.put("56", String.valueOf(decimalSeparator()));
-        this.keyValues.put("81", "+");
-        this.keyValues.put("69", "-");
-        this.keyValues.put("17", "*");
-        this.keyValues.put("76", "/");
+    @Override
+    public void onWindowFocusChanged(boolean hasWindowFocus) {
+        super.onWindowFocusChanged(hasWindowFocus);
+        if (hasWindowFocus && getVisibility() == VISIBLE && this.editText != null) {
+            // Immediate request to hide, followed by a post-loop guard
+            InputMethodManager imm = (InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE);
+            if (imm != null) {
+                imm.hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+            }
+            // Catch the system "restore" event by posting to the end of the current message queue
+            post(() -> {
+                if (this.editText != null && imm != null) {
+                    imm.hideSoftInputFromWindow(this.editText.getWindowToken(), 0);
+                }
+            });
+        }
     }
 
     public static String processMath(String currentValue) {
@@ -194,67 +331,9 @@ public class CurrencyKeyboard extends KeyboardView implements OnKeyboardActionLi
         return CurrencyExt.exchangeRateAsString(plusDouble);
     }
 
-    public void onKey(int primaryCode, int[] keyCodes) {
-        Editable editable = this.editText.getText();
-        int start = this.editText.getSelectionStart();
-        if (primaryCode == 70 /*'Hide/Done' key*/) {
-            hide();
-        } else if (primaryCode == 28 /*'C' key */) {
-            this.editText.setText("");
-        } else if (primaryCode == 67 /*'del' key*/) {
-            int end = this.editText.getSelectionEnd();
-            if (start > 0 || start != end) {
-                if (start == end) {
-                    editable.delete(start - 1, start);
-                } else {
-                    editable.delete(start, end);
-                }
-            }
-        } else if (primaryCode == 66 /*'Next' key*/) {
-            View v = this.editText.focusSearch(FOCUS_DOWN);
-            if (v != null) {
-                v.requestFocus();
-                ((EditText) v).setSelection(((EditText) v).getText().length());
-                if (!(((EditText) v).getInputType() == 8194)) { /*8194 = HEX2002 = numberDecimal type see https://developer.android.com/reference/android/widget/TextView.html#attr_android%3AinputType*/
-                    ((InputMethodManager) this.context.getSystemService(Context.INPUT_METHOD_SERVICE)).showSoftInput(v, 0);
-                }
-                return;
-            }
-            hide();
-        } else {
-            String val = this.keyValues.get(String.valueOf(primaryCode));
-            if (val != null) {
-                // Ignore operators (+, -, *, /) as they aren't supported by numberDecimal inputType
-                if (primaryCode != 81 && primaryCode != 76 && primaryCode != 17 && primaryCode != 69) {
-                    editable.insert(start, val);
-                }
-            }
-        }
-    }
-
+    @Override
     public boolean onKey(View v, int keyCode, KeyEvent event) {
         return false;
-    }
-
-    public void swipeUp() {
-    }
-
-    public void swipeRight() {
-    }
-
-    public void swipeLeft() {
-    }
-
-    public void swipeDown() {
-    }
-
-    public void onText(CharSequence text) {
-    }
-
-    public void onRelease(int primaryCode) {
-    }
-
-    public void onPress(int primaryCode) {
     }
 
     private static class MyScanner {

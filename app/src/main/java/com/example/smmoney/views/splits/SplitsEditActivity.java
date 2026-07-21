@@ -199,6 +199,12 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         finish();
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        getCells();
+    }
+
     public void onResume() {
         super.onResume();
         loadCells();
