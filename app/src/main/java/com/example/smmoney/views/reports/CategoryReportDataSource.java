@@ -13,8 +13,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class CategoryReportDataSource extends ReportDataSource {
-    public CategoryReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
-        super(theTrans, theFilter);
+    public CategoryReportDataSource(FilterClass theFilter) {
+        super(theFilter);
     }
 
     public String title() {
@@ -27,6 +27,8 @@ public class CategoryReportDataSource extends ReportDataSource {
         if (Locales.kLOC_FILTERS_UNFILED.equals(content)) {
             newFilter.setCategory(Locales.kLOC_FILTERS_UNFILED);
         } else {
+            // Use a wildcard to catch the category and all its subcategories
+            // This works regardless of the "Group Subcategories" setting for the drill-down
             newFilter.setCategory(content + "%");
         }
         return newFilter;

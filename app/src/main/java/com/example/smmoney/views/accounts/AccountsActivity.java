@@ -1555,29 +1555,28 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private void showReportsDialog() {
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, (dialog, which) -> {
             FilterClass f = new FilterClass();
-            ArrayList<TransactionClass> transactions = TransactionDB.queryWithFilter(f);
             Intent i;
             switch (which) {
                 case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
-                    AccountsReportDataSource ds = new AccountsReportDataSource(transactions, f);
+                    AccountsReportDataSource ds = new AccountsReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds;
                     AccountsActivity.this.startActivity(i);
                     return;
                 case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
-                    CategoryReportDataSource ds2 = new CategoryReportDataSource(transactions, f);
+                    CategoryReportDataSource ds2 = new CategoryReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds2;
                     AccountsActivity.this.startActivity(i);
                     return;
                 case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
-                    ClassReportDataSource ds3 = new ClassReportDataSource(transactions, f);
+                    ClassReportDataSource ds3 = new ClassReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds3;
                     AccountsActivity.this.startActivity(i);
                     return;
                 case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
-                    PayeeReportDataSource ds4 = new PayeeReportDataSource(transactions, f);
+                    PayeeReportDataSource ds4 = new PayeeReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds4;
                     AccountsActivity.this.startActivity(i);

@@ -220,9 +220,14 @@ public class TransactionDB {
             where = where.concat(" AND t.cleared = 0");
         }
         if (!filter.getCategory().isEmpty() && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
-            String inClause = getInClause("s.categoryID", filter.getCategory(), Locales.kLOC_FILTERS_UNFILED);
-            if (!inClause.isEmpty()) {
-                where = where.concat(" AND " + inClause);
+            String category = filter.getCategory();
+            if (category.contains("%")) {
+                where = where.concat(" AND s.categoryID LIKE " + Database.SQLFormat(category));
+            } else {
+                String inClause = getInClause("s.categoryID", category, Locales.kLOC_FILTERS_UNFILED);
+                if (!inClause.isEmpty()) {
+                    where = where.concat(" AND " + inClause);
+                }
             }
         }
         if (filter.getClassName().length() <= 0 || filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {

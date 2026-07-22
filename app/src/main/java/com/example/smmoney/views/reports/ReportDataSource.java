@@ -7,7 +7,6 @@ import com.example.smmoney.misc.ColorExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -16,8 +15,6 @@ import com.example.smmoney.views.charts.ChartViewDataSource;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.charts.items.ReportChartItem;
 import com.example.smmoney.views.charts.views.ChartView;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -51,14 +48,10 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
     private GregorianCalendar currentDate;
     private ReportsActivity delegate;
 
-    ReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
+    ReportDataSource(FilterClass theFilter) {
         this.filter = theFilter;
         this.currentPeriod = Prefs.getIntPref(Prefs.REPORTS_PERIOD);
-        if (theTrans == null || theTrans.size() <= 0) {
-            this.currentDate = new GregorianCalendar();
-        } else {
-            this.currentDate = theTrans.get(theTrans.size() - 1).getDate();
-        }
+        this.currentDate = new GregorianCalendar();
     }
 
     protected abstract void generateReport();
@@ -67,11 +60,9 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
 
     public abstract String title();
 
-    private ArrayList<ReportItem> calculatePercentagesAndColors(ArrayList<ReportItem> array) {
+    private void calculatePercentagesAndColors(ArrayList<ReportItem> array) {
         double negativeTotal = 0.0d;
         double positiveTotal = 0.0d;
-        double negativeMaxValue = 0.0d;
-        double positiveMaxValue = 0.0d;
         int index = 0;
         Iterator<ReportItem> it = array.iterator();
         while (it.hasNext()) {
@@ -82,8 +73,6 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
                 } else {
                     positiveTotal += item.amount;
                 }
-                negativeMaxValue = Math.min(negativeMaxValue, item.amount);
-                positiveMaxValue = Math.max(positiveMaxValue, item.amount);
             }
         }
         it = array.iterator();
@@ -99,7 +88,6 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
             }
             index++;
         }
-        return array;
     }
 
     public void reloadData() {
@@ -145,18 +133,17 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         if (!this.filter.allAccounts()) {
             account = AccountDB.recordFor(this.filter.getAccount());
         }
-        boolean mc = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
         return CurrencyExt.amountAsCurrency(expenseTotal(), account != null ? account.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
     }
 
     String rangeOfPeriodAsString() {
         return switch (this.currentPeriod) {
-            case PocketMoneyThemes.kThemeBlack /*0*/ ->
-                    CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod()); /*1*//*2*/
-            case SplitsActivity.RESULT_CHANGED, LookupsListActivity.ACCOUNT_ICON_LOOKUP,
-                 SplitsActivity.REQUEST_EDIT /*3*/ ->
+            case Enums.kReportPeriodOneMonth /*0*/ ->
+                    CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
+            case Enums.kReportPeriodTwoMonths, Enums.kReportPeriodThreeMonths,
+                 Enums.kReportPeriodSixMonths /*1, 2, 3*/ ->
                     CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
-            case LookupsListActivity.PAYEE_LOOKUP /*4*/ ->
+            case Enums.kReportPeriodOneYear /*4*/ ->
                     CalExt.descriptionWithYear(this.currentDate);
             default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
         };

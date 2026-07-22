@@ -14,8 +14,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class PayeeReportDataSource extends ReportDataSource {
-    public PayeeReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
-        super(theTrans, theFilter);
+    public PayeeReportDataSource(FilterClass theFilter) {
+        super(theFilter);
     }
 
     public String title() {

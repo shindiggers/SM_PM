@@ -819,25 +819,25 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 filterLauncher.launch(i);
                 return true;
             case MENU_REPORTS_ACCOUNT /*6*/:
-                AccountsReportDataSource ds = new AccountsReportDataSource(this.adapter.getElements(), this._filter);
+                AccountsReportDataSource ds = new AccountsReportDataSource(this._filter);
                 i = new Intent(this, ReportsActivity.class);
                 PMGlobal.datasource = ds;
                 startActivity(i);
                 break;
             case MENU_REPORTS_CATEGORY /*7*/:
-                CategoryReportDataSource ds2 = new CategoryReportDataSource(this.adapter.getElements(), this._filter);
+                CategoryReportDataSource ds2 = new CategoryReportDataSource(this._filter);
                 i = new Intent(this, ReportsActivity.class);
                 PMGlobal.datasource = ds2;
                 startActivity(i);
                 break;
             case MENU_REPORTS_CLASS /*8*/:
-                ClassReportDataSource ds3 = new ClassReportDataSource(this.adapter.getElements(), this._filter);
+                ClassReportDataSource ds3 = new ClassReportDataSource(this._filter);
                 i = new Intent(this, ReportsActivity.class);
                 PMGlobal.datasource = ds3;
                 startActivity(i);
                 break;
             case MENU_REPORTS_PAYEE /*9*/:
-                PayeeReportDataSource ds4 = new PayeeReportDataSource(this.adapter.getElements(), this._filter);
+                PayeeReportDataSource ds4 = new PayeeReportDataSource(this._filter);
                 i = new Intent(this, ReportsActivity.class);
                 PMGlobal.datasource = ds4;
                 startActivity(i);

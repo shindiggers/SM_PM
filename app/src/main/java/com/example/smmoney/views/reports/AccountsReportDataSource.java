@@ -13,8 +13,8 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class AccountsReportDataSource extends ReportDataSource {
-    public AccountsReportDataSource(ArrayList<TransactionClass> theTrans, FilterClass theFilter) {
-        super(theTrans, theFilter);
+    public AccountsReportDataSource(FilterClass theFilter) {
+        super(theFilter);
     }
 
     public String title() {
