@@ -2,10 +2,12 @@ package com.example.smmoney.views.budgets;
 
 import android.content.Context;
 import android.graphics.PorterDuff;
+import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.smmoney.R;
@@ -15,15 +17,29 @@ import com.example.smmoney.misc.Prefs;
 
 public class BudgetsListHeaderHolder extends ConstraintLayout {
     public String label;
-    private final TextView actualValueView;
-    private final TextView groupLabelView;
-    private final TextView sentenceView;
-    private final TextView targetLabelView;
-    private final TextView targetValueView;
-    private final ImageView iconView;
+    private TextView actualValueView;
+    private TextView groupLabelView;
+    private TextView sentenceView;
+    private TextView targetLabelView;
+    private TextView targetValueView;
+    private ImageView iconView;
 
     public BudgetsListHeaderHolder(Context context) {
         super(context);
+        init(context);
+    }
+
+    public BudgetsListHeaderHolder(Context context, @Nullable AttributeSet attrs) {
+        super(context, attrs);
+        init(context);
+    }
+
+    public BudgetsListHeaderHolder(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+        super(context, attrs, defStyleAttr);
+        init(context);
+    }
+
+    private void init(Context context) {
         LayoutInflater.from(context).inflate(R.layout.budget_header_row, this, true);
         
         this.actualValueView = findViewById(R.id.header_actual_value);
