@@ -481,16 +481,14 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
         for (int i = 0; i < propertyGroup.getChildCount(); i++) {
             View child = propertyGroup.getChildAt(i);
-            if (child instanceof RadioButton) {
-                RadioButton rb = (RadioButton) child;
+            if (child instanceof RadioButton rb) {
                 rb.setTextColor(textColor);
                 rb.setButtonTintList(tint);
             }
         }
         for (int i = 0; i < directionGroup.getChildCount(); i++) {
             View child = directionGroup.getChildAt(i);
-            if (child instanceof RadioButton) {
-                RadioButton rb = (RadioButton) child;
+            if (child instanceof RadioButton rb) {
                 rb.setTextColor(textColor);
                 rb.setButtonTintList(tint);
             }

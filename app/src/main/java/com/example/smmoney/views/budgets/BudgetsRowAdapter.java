@@ -128,8 +128,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         Object cat = getItem(position);
-        if (cat instanceof String) {
-            String label = (String) cat;
+        if (cat instanceof String label) {
             BudgetsListHeaderHolder header = new BudgetsListHeaderHolder(this.context);
             header.setOnClickListener(getHeaderClickListener());
             

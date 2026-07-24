@@ -150,13 +150,11 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
             }
 
             android.graphics.drawable.Drawable background = v.getBackground();
-            if (background instanceof android.graphics.drawable.RippleDrawable) {
-                android.graphics.drawable.RippleDrawable ripple = (android.graphics.drawable.RippleDrawable) background;
+            if (background instanceof android.graphics.drawable.RippleDrawable ripple) {
                 ripple.setColor(android.content.res.ColorStateList.valueOf(id == R.id.key_next ? 0x44FFFFFF : rippleColor));
                 
                 android.graphics.drawable.Drawable shape = ripple.getDrawable(0);
-                if (shape instanceof android.graphics.drawable.GradientDrawable) {
-                    android.graphics.drawable.GradientDrawable gd = (android.graphics.drawable.GradientDrawable) shape;
+                if (shape instanceof android.graphics.drawable.GradientDrawable gd) {
                     gd.setColor(bgColor);
                     gd.setStroke((int) (0.5f * getResources().getDisplayMetrics().density), gridLineColor);
                 }

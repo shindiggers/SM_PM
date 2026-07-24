@@ -218,17 +218,14 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         AccountListItem item = items.get(position);
-        if (holder instanceof HeaderViewHolder) {
-            HeaderViewHolder h = (HeaderViewHolder) holder;
+        if (holder instanceof HeaderViewHolder h) {
             String balance = balanceForSection(item.sectionIndex);
             h.headerView.setData(item.label, balance);
             h.headerView.setExpanded(getShowSection(item.sectionIndex));
             h.headerView.setOnClickListener(v -> setShowSection(item.sectionIndex, !getShowSection(item.sectionIndex)));
-        } else if (holder instanceof AccountViewHolder) {
-            AccountViewHolder h = (AccountViewHolder) holder;
+        } else if (holder instanceof AccountViewHolder h) {
             h.bind(item.account);
-        } else if (holder instanceof CustomViewHolder) {
-            CustomViewHolder h = (CustomViewHolder) holder;
+        } else if (holder instanceof CustomViewHolder h) {
             h.bind(item.label);
         }
     }
