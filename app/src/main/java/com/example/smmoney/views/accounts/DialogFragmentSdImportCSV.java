@@ -2,7 +2,6 @@ package com.example.smmoney.views.accounts;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;

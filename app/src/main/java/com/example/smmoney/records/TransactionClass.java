@@ -27,20 +27,7 @@ import org.xmlpull.v1.XmlSerializer;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.StringReader;
-import java.lang.reflect.Field;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 
-import javax.xml.parsers.SAXParserFactory;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -386,7 +373,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setAmountAtIndex(double amount, int index) {
-        getSplits().get(index).setAmount(amount);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setAmount(amount);
+        }
     }
 
     public double getAmount() {
@@ -406,7 +396,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setXrateAtIndex(double rate, int index) {
-        getSplits().get(index).setXrate(rate);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setXrate(rate);
+        }
     }
 
     public double getXrate() {
@@ -452,7 +445,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setCategoryAtIndex(String category, int index) {
-        getSplits().get(index).setCategory(category);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setCategory(category);
+        }
     }
 
     public String getCategory() {
@@ -472,7 +468,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setClassNameAtIndex(String classname, int index) {
-        getSplits().get(index).setClassName(classname);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setClassName(classname);
+        }
     }
 
     public String getClassName() {
@@ -492,7 +491,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setMemoAtIndex(String memo, int index) {
-        getSplits().get(index).setMemo(memo);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setMemo(memo);
+        }
     }
 
     public String getMemo() {
@@ -512,7 +514,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setTransferToAccountAtIndex(String anAccount, int index) {
-        getSplits().get(index).setTransferToAccount(anAccount);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setTransferToAccount(anAccount);
+        }
     }
 
     public String getTransferToAccount() {
@@ -532,7 +537,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public void setCurrencyCodeAtIndex(String code, int index) {
-        getSplits().get(index).setCurrencyCode(code);
+        ArrayList<SplitsClass> currentSplits = getSplits();
+        if (currentSplits != null && currentSplits.size() > index) {
+            currentSplits.get(index).setCurrencyCode(code);
+        }
     }
 
     public String getCurrencyCode() {

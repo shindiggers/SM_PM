@@ -3,7 +3,6 @@ package com.example.smmoney.views.reports;
 import android.os.Bundle;
 
 import androidx.preference.ListPreference;
-import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;

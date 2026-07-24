@@ -26,7 +26,6 @@ import com.example.smmoney.views.lookups.LookupsListActivity;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Objects;
 
 public class FilterEditActivity extends PocketMoneyActivity {
     private static final int MENU_SAVE = 1;

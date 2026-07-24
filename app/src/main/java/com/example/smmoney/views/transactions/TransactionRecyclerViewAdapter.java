@@ -1,6 +1,5 @@
 package com.example.smmoney.views.transactions;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -26,7 +25,6 @@ import com.example.smmoney.views.CheckBoxTint;
 
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
-import java.util.Objects;
 
 public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<TransactionRecyclerViewAdapter.TransactionViewHolder> {
     private ArrayList<TransactionClass> elements = new ArrayList<>();

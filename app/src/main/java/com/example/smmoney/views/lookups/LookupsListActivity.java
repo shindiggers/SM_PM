@@ -42,8 +42,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
 
 public class LookupsListActivity extends PocketMoneyActivity {
     public static final int ACCOUNT_ICON_LOOKUP = 2;
@@ -394,7 +392,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         }
         Intent i = new Intent();
         i.putExtra("selection", this.theStrings.get(position));
-        setResult(this.currentType, i);
+        setResult(RESULT_OK, i);
         finish();
     }
 
@@ -608,7 +606,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         
         Intent i = new Intent();
         i.putExtra("selection", result);
-        setResult(this.currentType, i);
+        setResult(RESULT_OK, i);
         finish();
     }
 
