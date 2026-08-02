@@ -125,15 +125,15 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         
         // Walk backwards from position to find the nearest header
         for (int i = position; i >= 0; i--) {
-            if (items.get(i).type == AccountListItem.TYPE_HEADER) {
-                return items.get(i).sectionIndex;
+            if (items.get(i).type() == AccountListItem.TYPE_HEADER) {
+                return items.get(i).sectionIndex();
             }
         }
         
         // If we didn't find one by walking backwards (rare), walk forwards
         for (int i = position; i < items.size(); i++) {
-            if (items.get(i).type == AccountListItem.TYPE_HEADER) {
-                return items.get(i).sectionIndex;
+            if (items.get(i).type() == AccountListItem.TYPE_HEADER) {
+                return items.get(i).sectionIndex();
             }
         }
         return -1;
@@ -196,7 +196,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     @Override
     public int getItemViewType(int position) {
-        return items.get(position).type;
+        return items.get(position).type();
     }
 
     @NonNull
@@ -219,14 +219,14 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         AccountListItem item = items.get(position);
         if (holder instanceof HeaderViewHolder h) {
-            String balance = balanceForSection(item.sectionIndex);
-            h.headerView.setData(item.label, balance);
-            h.headerView.setExpanded(getShowSection(item.sectionIndex));
-            h.headerView.setOnClickListener(v -> setShowSection(item.sectionIndex, !getShowSection(item.sectionIndex)));
+            String balance = balanceForSection(item.sectionIndex());
+            h.headerView.setData(item.label(), balance);
+            h.headerView.setExpanded(getShowSection(item.sectionIndex()));
+            h.headerView.setOnClickListener(v -> setShowSection(item.sectionIndex(), !getShowSection(item.sectionIndex())));
         } else if (holder instanceof AccountViewHolder h) {
-            h.bind(item.account);
+            h.bind(item.account());
         } else if (holder instanceof CustomViewHolder h) {
-            h.bind(item.label);
+            h.bind(item.label());
         }
     }
 
@@ -252,11 +252,11 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         // Persist the new order to the database
         int order = 0;
         for (AccountListItem item : items) {
-            if (item.type == AccountListItem.TYPE_ACCOUNT) {
-                item.account.hydrate();
+            if (item.type() == AccountListItem.TYPE_ACCOUNT) {
+                item.account().hydrate();
                 // Set the displayOrder based on the current position in the flattened list
-                item.account.setDisplayOrder(order++); 
-                item.account.saveToDatabase();
+                item.account().setDisplayOrder(order++); 
+                item.account().saveToDatabase();
             }
         }
         // No need to reload everything, but might need to update sectionedAccounts if grouped
@@ -270,7 +270,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     // Helper to check if a position is draggable
     public boolean canDrag(int position) {
         if (position < 0 || position >= items.size()) return false;
-        return items.get(position).type == AccountListItem.TYPE_ACCOUNT;
+        return items.get(position).type() == AccountListItem.TYPE_ACCOUNT;
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
