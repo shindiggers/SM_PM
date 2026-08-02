@@ -537,7 +537,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 .create();
 
         // Ensure keyboard and focus are handled when dialog is shown
-        dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        if (dialog.getWindow() != null) {
+            dialog.getWindow().setSoftInputMode(android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
         
         dialog.setOnShowListener(d -> {
             input.requestFocus();
