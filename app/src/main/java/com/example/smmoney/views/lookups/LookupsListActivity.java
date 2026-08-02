@@ -392,7 +392,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         }
         Intent i = new Intent();
         i.putExtra("selection", this.theStrings.get(position));
-        setResult(RESULT_OK, i);
+        setResult(this.currentType, i); // Return currentType to support FilterEditActivity
         finish();
     }
 
@@ -606,7 +606,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         
         Intent i = new Intent();
         i.putExtra("selection", result);
-        setResult(RESULT_OK, i);
+        setResult(this.currentType, i); // Return currentType to support FilterEditActivity
         finish();
     }
 
