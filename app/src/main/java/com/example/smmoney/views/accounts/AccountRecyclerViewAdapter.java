@@ -77,13 +77,6 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return this.elements;
     }
 
-    public AccountListItem getItemAt(int position) {
-        if (position >= 0 && position < items.size()) {
-            return items.get(position);
-        }
-        return null;
-    }
-
     private boolean isSectioned() {
         return Prefs.getBooleanPref(Prefs.GROUPBYACCOUNTTYPE);
     }
@@ -202,17 +195,16 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        switch (viewType) {
-            case AccountListItem.TYPE_HEADER:
+        return switch (viewType) {
+            case AccountListItem.TYPE_HEADER -> {
                 BudgetsHeaderHolder header = new BudgetsHeaderHolder(mContext, "", "");
-                return new HeaderViewHolder(header);
-            case AccountListItem.TYPE_CUSTOM:
-                View customView = mInflater.inflate(R.layout.simple_text_view, parent, false);
-                return new CustomViewHolder(customView);
-            default:
-                View accountView = mInflater.inflate(R.layout.accounts_row, parent, false);
-                return new AccountViewHolder(accountView);
-        }
+                yield new HeaderViewHolder(header);
+            }
+            case AccountListItem.TYPE_CUSTOM ->
+                    new CustomViewHolder(mInflater.inflate(R.layout.simple_text_view, parent, false));
+            default ->
+                    new AccountViewHolder(mInflater.inflate(R.layout.accounts_row, parent, false));
+        };
     }
 
     @Override
@@ -318,7 +310,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         ((AccountsActivity) mContext).reloadBalanceBar();
                         ((AccountsActivity) mContext).reloadCharts();
                     }
-                    notifyDataSetChanged();
+                    notifyItemChanged(getAdapterPosition());
                 }
             });
 
