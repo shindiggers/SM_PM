@@ -120,7 +120,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         DialogFragmentSdImportOFX.DialogSdImportOFXListener,
         DialogFragmentLocalStorageTransfers.DialogLocalStorageTransferListener {
     private static final int ACCOUNT_REQUEST_BUDGET = 2;
-    private static final int ACCOUNT_REQUEST_EMAIL = 3;
     private static final int ACCOUNT_REQUEST_FILTER = 1;
     private static final int PERMISSION_BACKUP_QIF = 107;
     private static final int PERMISSION_BACKUP_TDF = 108;
@@ -130,58 +129,36 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_RESTORE_TDF = 112;
     private static final int PERMISSION_RESTORE_QIF = 113;
     private static final int PERMISSION_RESTORE_OFX = 114;
-    //private static final String BASE64_PUBLIC_KEY = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAlZQhocxMouDNAC9NuSWdBSxRZi20xvuZMyG1YdvEXIA6gUgbF/JKLKqlbtapkMTk+ssYo3vOOXPbYEtVmBHMjQsohxQ8WORw1EVw/bhsAbvd4rcywqdPAZAKA0Iuv3JSYVzh82w/Wauv4WbhK2P7ALWWXY6enGsZp1CtkGeHhjM2bZpRuiD6JYj9+JHro0559mUkATtGGZlSbSNlnZOkkxfDqBrEyAteRxCx43xixAbScU3SyVAX5xh7QN/0wlVFA37fu9O/iQkffHR+UcOc3VDvTamKYr98wYe/pPLZMbxSEuxKSU5dsdTkTgI2EO67spggzAkKiu33gm86x/dBSwIDAQAB";
     public static final boolean DEBUG = false;
     public static final boolean IS_GOOGLE_MARKET = false;
     private static boolean initTaskRunning = false;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
-    private final int DIALOG_REPORTS = 10;
-    private final int EMAIL_CSV = 2;
-    private final int EMAIL_OFX = 3;
-    private final int EMAIL_QIF = 0;
-    private final int EMAIL_TDF = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int EMAIL_BACKUP = 4;
-    private final int IMPORT_PROGRESS_DIALOG = 9;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int LISCENSING = 8;
-    //private final int MENU_EMAILTRANSFERS = 3;
-    //private final int DIALOG_FILETRANSFERS = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MENU_FILETRANSFERS = 3;
-    private final int MENU_NEW = 1;
-    private final int MENU_PREFS = 2;
-    private final int MENU_QUIT = 6;
-    private final int MENU_REPEATING = 5;
-    //private final int MENU_SDCARDTRANSFER = 5;
-    //private final int MENU_SD_EXPORT = 7;
-    //private final int MENU_SD_IMPORT = 6;
-    //private final int MENU_SD_IMPORT_CSV = 11;
-    //private final int MENU_SD_IMPORT_OFX = 14;
-    //private final int MENU_SD_IMPORT_QIF = 13;
-    //private final int MENU_SD_IMPORT_TDF = 12;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MENU_TRANSFER = 3;
-    private final int MENU_VIEW = 4;
-    //private final int MENU_WIFITRANSFERS = 2;
-    //private final int MENU_WIFI_EXPORT = 4;
-    private final int PERMISSION_EMAIL_QIF = 100;
-    private final int PERMISSION_EMAIL_TDF = 101;
-    private final int PERMISSION_EMAIL_CSV = 102;
-    private final int PERMISSION_EMAIL_OFX = 103;
-    private final int PERMISSION_EMAIL_DB = 104;
-    private final int PERMISSION_BACKUP_DB = 105;
-    private final int PERMISSION_RESTORE_DB = 106;
-    //public final int REQUEST_EDIT = 2;
-    //public final int REQUEST_NEW = 1;
+
+    private static final int EMAIL_CSV = 2;
+    private static final int EMAIL_OFX = 3;
+    private static final int EMAIL_QIF = 0;
+    private static final int EMAIL_TDF = 1;
+    private static final int EMAIL_BACKUP = 4;
+    private static final int MENU_NEW = 1;
+    private static final int MENU_PREFS = 2;
+    private static final int MENU_QUIT = 6;
+    private static final int MENU_REPEATING = 5;
+    private static final int MENU_TRANSFER = 3;
+    private static final int MENU_VIEW = 4;
+    private static final int PERMISSION_EMAIL_QIF = 100;
+    private static final int PERMISSION_EMAIL_TDF = 101;
+    private static final int PERMISSION_EMAIL_CSV = 102;
+    private static final int PERMISSION_EMAIL_OFX = 103;
+    private static final int PERMISSION_EMAIL_DB = 104;
+    private static final int PERMISSION_BACKUP_DB = 105;
+    private static final int PERMISSION_RESTORE_DB = 106;
+
     private AccountRecyclerViewAdapter adapter;
+    private final Object adapterLock = new Object();
     private double availableCreditBalanceCache = 0.0d;
     private double availableFundsBalanceCache = 0.0d;
     private BalanceBar balanceBar;
     private BottomNavigationView bottomNav;
-    //private AsyncTask balanceBarTask;
     private ChartView cashFlowChartView;
     private double clearedBalanceCache = 0.0d;
     private Context context;
@@ -190,25 +167,19 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private ArrayList<Uri> fileNames;
     private double futureBalanceCache = 0.0d;
     private boolean graphButtonEnabled = true;
-    @SuppressWarnings("FieldCanBeLocal")
     private ImageView graphLeftArrow;
     private TextView graphNetworthTextView;
-    @SuppressWarnings("FieldCanBeLocal")
     private ImageView graphRightArrow;
     private ProgressBar graphSpinner;
     private java.util.concurrent.Future<?> graphFuture;
     private TextView graphTitleTextView;
-    //boolean launching = false;
-    //private LicenseChecker mChecker;
     private Handler mHandler = null;
-    //private LicenseCheckerCallback mLicenseCheckerCallback;
     private Button moreChartsButton;
     private int msgEmail = -1;
     private ChartView netWorthChartView;
     private boolean progUpdate = false;
     private PocketMoneyProgressDialog progressDialog = null;
     private boolean shouldEmail = false;
-    //double startTime = 0.0d;
     private ChartView theChartView;
     private FrameLayout theGraphLayout;
     private AlertDialog tipDialog;
@@ -223,7 +194,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
                     } else {
-                        //noinspection deprecation
                         filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
                     }
                     i.putExtra("Filter", filter);
@@ -234,9 +204,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     public final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                reloadData();
-            }
+            result -> reloadData()
     );
 
     private final ActivityResultLauncher<Intent> budgetLauncher = registerForActivityResult(
@@ -256,7 +224,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     for (Uri fileName : this.fileNames) {
                         File file = new File(Objects.requireNonNull(fileName.getPath()));
                         if (file.exists()) {
-                            file.delete();
+                            if (!file.delete()) {
+                                Log.w(TAG, "Failed to delete temporary export file: " + file.getAbsolutePath());
+                            }
                         }
                     }
                 }
@@ -330,12 +300,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
             this.graphFuture = executor.submit(() -> {
                 if (AccountsActivity.this.theChartView != null) {
-                    synchronized (AccountsActivity.this.adapter) {
+                    synchronized (AccountsActivity.this.adapterLock) {
                         //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
                     }
                 }
                 runOnUiThread(() -> {
-                    synchronized (AccountsActivity.this.adapter) {
+                    synchronized (AccountsActivity.this.adapterLock) {
                         AccountsActivity.this.graphReloadCallback();
                         if (AccountsActivity.this.theChartView != null) {
                             AccountsActivity.this.theChartView.reloadData(true);
@@ -394,11 +364,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             this.tipDialog.isShowing();
         }
     }
-
-//    TODO: Think this method can be deleted as now replaced titleTextView with SupportActionBar
-//    private void setTitle(String title) {
-//        this.titleTextView.setText(title);
-//    }
 
     private void checkLastUpgradeDialog() {
         long createdOn = Prefs.getLongPref(Prefs.CREATED_ON);
@@ -468,7 +433,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
                 runOnUiThread(() -> {
                     if (isFinishing()) return;
-                    synchronized (adapter) {
+                    synchronized (adapterLock) {
                         reloadData();
                         reloadBalanceBar();
                         reloadCharts();
@@ -539,10 +504,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.adapter.notifyDataSetChanged();
     }
 
-    @SuppressLint("HandlerLeak")
+
     private void createHandler() {
         this.mHandler = new Handler(Looper.getMainLooper()) {
-            public void handleMessage(Message msg) {
+            public void handleMessage(@NonNull Message msg) {
                 switch (msg.what) {
                     case HandlerActivity.MSG_ANIMATEBALANCEBAR /*3*/:
                         AccountsActivity.this.animateBalanceBarBack();
@@ -564,7 +529,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         }
                         if (AccountsActivity.this.shouldEmail) {
                             Intent emailIntent = new Intent("android.intent.action.SEND");
-                            AccountsActivity accountsActivity;
+                            AccountsActivity accountsActivity = AccountsActivity.this;
                             int i;
                             Object[] objArr;
                             switch (AccountsActivity.this.msgEmail) {
@@ -575,12 +540,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriQif = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedQifFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     objArr = new Object[1];
                                     objArr[0] = "QIF";
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
                                     Object[] objArrEmailText = new Object[2];
                                     objArrEmailText[0] = "QIF";
@@ -595,12 +558,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     Object[] objArrEmailSubjectTDF = new Object[1];
                                     objArrEmailSubjectTDF[0] = "TDF";
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArrEmailSubjectTDF));
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
                                     Object[] objArrEmailTextTDF = new Object[2];
                                     objArrEmailTextTDF[0] = "TDF";
@@ -615,12 +576,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     objArr = new Object[1];
                                     objArr[0] = "CSV";
                                     emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
                                     Object[] objArrEmailTextCSV = new Object[2];
                                     objArrEmailTextCSV[0] = "CSV";
@@ -645,12 +604,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     }
                                     emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
                                     objArr = new Object[1];
                                     objArr[0] = "OFX/QFX";
                                     emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    accountsActivity = AccountsActivity.this;
                                     i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
                                     Object[] objArrEmailTextOFX = new Object[2];
                                     objArrEmailTextOFX[0] = "OFX/QFX";
@@ -788,16 +745,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 balanceBar.balanceTypeTextView.setText(AccountDB.totalWorthLabel(finalPref));
                 balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
                 balanceBar.progressBar.setVisibility(View.GONE);
-                synchronized (adapter) {
+                synchronized (adapterLock) {
                     reloadData();
                 }
             });
         });
     }
-
-//    TODO: Figure out what this callback method is supposed to do and correct
-//    private void reloadBalanceBarCallBack(double totalWorth, int pref) {
-//    }
 
     private View.OnClickListener getBalanceBarClickListener() {
         return v -> {
@@ -877,7 +830,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private void showTypeChangeConfirmation(AccountClass account, int oldType, int newType) {
         String oldTypeName = getAccountTypeName(oldType);
         String newTypeName = getAccountTypeName(newType);
-        
+
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle("Change Account Type?")
                 .setMessage(String.format("Do you want to change the account type for '%s' from %s to %s?", account.getAccount(), oldTypeName, newTypeName))
@@ -932,7 +885,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 if (adapter.canDrag(fromPos)) {
                     // Perform the swap in the data
                     adapter.onItemMove(fromPos, toPos);
-                    
+
                     // NOW calculate the new targetType based on the item's NEW position in the list
                     // This ensures that if we moved ABOVE a header, we detect the section ABOVE it.
                     int sectionIndex = adapter.getSectionIndexForPosition(toPos);
@@ -960,7 +913,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 if (position == RecyclerView.NO_POSITION) return;
 
                 AccountClass account = ((AccountRecyclerViewAdapter.AccountViewHolder) viewHolder).account;
-                
+
                 if (direction == ItemTouchHelper.RIGHT) {
                     // Edit
                     Intent intent = new Intent(AccountsActivity.this, AccountsEditActivity.class);
@@ -977,12 +930,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
             @Override
             public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 super.clearView(recyclerView, viewHolder);
-                
+
                 if (targetType != -1 && initialType != -1 && targetType != initialType) {
                     AccountClass account = ((AccountRecyclerViewAdapter.AccountViewHolder) viewHolder).account;
                     showTypeChangeConfirmation(account, initialType, targetType);
                 }
-                
+
                 targetType = -1;
                 initialType = -1;
                 adapter.onDragFinished();
@@ -993,11 +946,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     View itemView = viewHolder.itemView;
                     Paint paint = new Paint();
-                    
+
                     if (dX > 0) { // Swipe Right (Edit)
                         paint.setColor(Color.parseColor("#4CAF50")); // Green
                         c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
-                        
+
                         Drawable icon = ContextCompat.getDrawable(AccountsActivity.this, R.drawable.ic_edit_white_24dp);
                         if (icon != null) {
                             int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
@@ -1008,7 +961,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
                             icon.draw(c);
                         }
-                        
+
                         paint.setColor(Color.WHITE);
                         paint.setTextSize(40);
                         paint.setAntiAlias(true);
@@ -1017,7 +970,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     } else if (dX < 0) { // Swipe Left (Delete)
                         paint.setColor(Color.parseColor("#F44336")); // Red
                         c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
-                        
+
                         Drawable icon = ContextCompat.getDrawable(AccountsActivity.this, R.drawable.ic_delete_white_24dp);
                         if (icon != null) {
                             int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
@@ -1041,7 +994,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         };
 
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
-        
+
         this.bottomNav = layout.findViewById(R.id.bottom_navigation);
         this.bottomNav.setSelectedItemId(R.id.nav_accounts);
         this.bottomNav.setBackgroundColor(PocketMoneyThemes.bottomNavBackgroundColor());
@@ -1087,7 +1040,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeNetWorth/*0*/);
                         break;
                 }
-                AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadCharts());
+                AccountsActivity.this.runOnUiThread(this::reloadCharts);
             }
         });
         this.graphRightArrow = layout.findViewById(R.id.graphrightarrow);
@@ -1104,7 +1057,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         Prefs.setPref(Prefs.SUMMARYCHARTS_CHARTTYPE, Enums.kSumamryChartTypeCashFlow /*1*/);
                         break;
                 }
-                AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadCharts());
+                AccountsActivity.this.runOnUiThread(this::reloadCharts);
             }
         });
         this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
@@ -1160,8 +1113,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             Log.e(TAG, "InterruptedException in importQIFFromSD", e);
                         }
                         importofx.importIntoDatabase();
-                        File importedFile = new File(importofx.path);
-                        AccountsActivity.this.runOnUiThread(() -> AccountsActivity.this.reloadData());
+                        AccountsActivity.this.runOnUiThread(this::reloadData);
                     }).start();
                 } else {
                     Toast.makeText(this.context, "File not found", Toast.LENGTH_LONG).show();
@@ -1242,7 +1194,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             public void run() {
                 String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
                 FilterClass filter = new FilterClass();
-                final ArrayList<Uri> fileNames = new ArrayList<>();
                 ArrayList<String> accNames = new ArrayList<>();
                 ArrayList<AccountClass> accounts = AccountsActivity.this.adapter.getElements();
                 for (AccountClass account : accounts) {
@@ -1257,7 +1208,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     filter.setAccount(item);
                     ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(filter);
                     String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
-                    fileNames.add(Uri.parse("file://" + filePath));
                     ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
                     exportofx.accountNameBeingImported = item;
                     exportofx.filter = filter;
@@ -1330,10 +1280,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
         final ArrayList<Uri> qifUris = new ArrayList<>();
         for (Uri file : fileNames) {
-            File fileToAdd = new File(file.getPath());
-            Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
-            qifUris.add(contentUriOfx);
-
+            String path = file.getPath();
+            if (path != null) {
+                File fileToAdd = new File(path);
+                Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
+                qifUris.add(contentUriOfx);
+            }
         }
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", qifUris);
@@ -1351,7 +1303,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void backupToSD() {
-        AlertDialog.Builder alert = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme());
+        AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
         alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
         alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
@@ -1376,9 +1328,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
         Prefs.exportDB(this);
         final ArrayList<Uri> ofxUris = new ArrayList<>();
         for (Uri file : fileNames) {
-            File fileToAdd = new File(file.getPath());
-            Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
-            ofxUris.add(contentUriOfx);
+            String path = file.getPath();
+            if (path != null) {
+                File fileToAdd = new File(path);
+                Uri contentUriOfx = getUriForFile(AccountsActivity.this, "com.example.fileprovider", fileToAdd);
+                ofxUris.add(contentUriOfx);
+            }
         }
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", ofxUris);
@@ -1454,11 +1409,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putExtra("android.intent.extra.STREAM", contentUri);
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney Backup File");
-        int i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+        int i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
         Object[] objArr = new Object[ACCOUNT_REQUEST_BUDGET];
         objArr[0] = Locales.kLOC_TOOLS_BACKUPFILES;
         objArr[ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0], objArr[1]));
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0]));
         startActivity(emailIntent);
     }
 
@@ -1487,7 +1442,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             case MENU_PREFS /*2*/:
                 startActivity(new Intent(this, MainPrefsActivity.class));
                 return true;
-            case MENU_FILETRANSFERS /*3*/:
+            case MENU_TRANSFER /*3*/:
                 FragmentManager fragmentManager = getSupportFragmentManager();
                 DialogFragmentFileTransfer dialogFragmentFileTransfer = new DialogFragmentFileTransfer();
                 dialogFragmentFileTransfer.show(fragmentManager, "fragment_dialog");
@@ -1582,23 +1537,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
         return false;
     }
-
-//    TODO: check if this method is needed. Delete if not
-//    public void displayError(String msg) {
-//        AlertDialog alert = new AlertDialog.Builder(this).create();
-//        alert.setTitle("Error");
-//        alert.setMessage(msg);
-//        alert.setCancelable(false);
-//        alert.setButton(-1, "OK", new OnClickListener() {
-//            public void onClick(DialogInterface dialog, int id) {
-//                dialog.dismiss();
-//            }
-//        });
-//        alert.show();
-//    }
 
     public Handler getHandler() {
         if (this.mHandler == null) {
@@ -1726,9 +1667,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        // If request is cancelled, the result arrays are empty.
+        // If request is canceled, the result arrays are empty.
         if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             // permission was granted
             switch (requestCode) {
@@ -1799,7 +1740,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
                 message = Html.fromHtml(getString(R.string.permissions_declined_permission_message), Html.FROM_HTML_MODE_LEGACY);
             } else {
-                //noinspection deprecation
                 message = Html.fromHtml(getString(R.string.permissions_declined_permission_message));
             }
             showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), message);
@@ -1916,40 +1856,32 @@ public class AccountsActivity extends PocketMoneyActivity implements
     @Override
     public void onFinishSdImportQIFDialog(String okCancel) {
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            //Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportQIFDialog just ran", Snackbar.LENGTH_LONG);
-            //snackbar.show();
+            // TODO: Test QIF import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_QIF);
-            //AccountsActivity.this.importQIFFromSD();
         }
     }
 
     @Override
     public void onFinishSdImportTDFDialog(String okCancel) {
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportTDFDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            // TODO: Test TDF import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_TDF);
-            //AccountsActivity.this.importTDFFromSD();
         }
     }
 
     @Override
     public void onFinishSdImportCVSDialog(String okCancel) {
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportCSVDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            // TODO: Test CSV import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_CSV);
-            //AccountsActivity.this.importCSVFromSD();
         }
     }
 
     @Override
     public void onFinishSdImportOFXDialog(String okCancel) {
         if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
-            Snackbar snackbar = Snackbar.make(this.balanceBar, "On FinishSdImportOFXDialog just ran", Snackbar.LENGTH_LONG);
-            snackbar.show();
+            // TODO: Test OFX import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_OFX);
-            //AccountsActivity.this.importOFXFromSD();
         }
     }
 }
