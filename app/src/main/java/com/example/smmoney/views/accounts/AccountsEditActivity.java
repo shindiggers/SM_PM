@@ -3,7 +3,6 @@ package com.example.smmoney.views.accounts;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +20,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
-import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
@@ -35,15 +33,11 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Locale;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
+    private static final String TAG = "AccountsEditActivity";
     private static final int MENU_SAVE = 1;
     public final int NOTE_EDIT_BUTTON = 3;
 
@@ -109,7 +103,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.account = getIntent().getSerializableExtra("Account", AccountClass.class);
         } else {
-            //noinspection deprecation
             this.account = (AccountClass) getIntent().getSerializableExtra("Account");
         }
         loadInfo();
@@ -174,7 +167,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             new AlertDialog.Builder(AccountsEditActivity.this, PocketMoneyThemes.dialogTheme()).setItems(currencyCodes, (dialog, item) -> {
                 AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
                 dialog.dismiss();
-                ((Runnable) () -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).run();
+                new Thread(() -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).start();
             }).show();
         });
 
@@ -322,7 +315,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             try {
                 this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this);
             } catch (Exception e) {
-                Log.e(com.example.smmoney.SMMoney.TAG, "Exception in save (setting icon)", e);
+                Log.e(TAG, "Exception in save (setting icon)", e);
             }
             this.account.setExpirationDate(this.expires.getText().toString());
             this.account.setAccountNumber(this.accountNumber.getText().toString());
@@ -366,6 +359,9 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 return;
             }
             Locale current = ConfigurationCompat.getLocales(getResources().getConfiguration()).get(0);
+            if (current == null) {
+                current = Locale.getDefault();
+            }
 
             AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
             AccountsEditActivity.this.exchangeRate.invalidate();
@@ -397,19 +393,5 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 default:
             }
         };
-    }
-
-    private void copyFile(File src, File dst) throws IOException {
-        try (FileChannel inChannel = new FileInputStream(src).getChannel(); FileChannel outChannel = new FileOutputStream(dst).getChannel()) {
-            inChannel.transferTo(0, inChannel.size(), outChannel);
-        }
-    }
-
-    private void copyDB() {
-        try {
-            copyFile(new File(Environment.getDataDirectory() + "/data/com.catamount.pocketmoney/databases/SMMoneyDB.sql"), new File(SMMoney.getExternalPocketMoneyDirectory(), "databasedata"));
-        } catch (IOException e) {
-            Log.e("com.catamount.pocketmon", "what the what the what the fuck - " + e.getMessage());
-        }
     }
 }
