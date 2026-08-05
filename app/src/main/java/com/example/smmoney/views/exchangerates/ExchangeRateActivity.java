@@ -33,19 +33,12 @@ import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.CurrencyKeyboard;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import org.json.JSONObject;
-
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class ExchangeRateActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {
-    private static final String TAG = "ExchangeRateActivity";
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     private enum CalculatedField { FOREIGN, RATE, ACCOUNT }
@@ -136,7 +129,6 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.transaction = b.getSerializable("transaction", TransactionClass.class);
         } else {
-            //noinspection deprecation
             this.transaction = (TransactionClass) b.get("transaction");
         }
         if (this.transaction != null) {
@@ -149,7 +141,6 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             s = b.getSerializable("split", SplitsClass.class);
         } else {
-            //noinspection deprecation
             s = (SplitsClass) b.get("split");
         }
         if (s != null) {
@@ -283,7 +274,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         switch (currentCalculatedField) {
             case FOREIGN -> { if (exchangeRate != 0) foreignAmount = round(accountAmount / exchangeRate); }
             case RATE -> { if (foreignAmount != 0) exchangeRate = accountAmount / foreignAmount; }
-            case ACCOUNT -> { accountAmount = round(foreignAmount * exchangeRate); }
+            case ACCOUNT -> accountAmount = round(foreignAmount * exchangeRate);
         }
         programaticUpdate = true;
         updateVisualFields(false);
@@ -337,44 +328,9 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     private void fetchHistoricalRate() {
         if (this.transaction == null || currentCalculatedField == CalculatedField.RATE) return;
         String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(this.transaction.getDate().getTime());
-        String from = this.foreignCurrency;
-        String to = this.accountCurrency;
-        this.statusTextView.setText(String.format("Fetching rate for %s...", dateStr));
-        executor.execute(() -> {
-            try {
-                if (from.equals(to)) {
-                    runOnUiThread(() -> {
-                        this.exchangeRate = 1.0;
-                        performCalculation();
-                        loadCells();
-                        updateInstructionalText();
-                    });
-                    return;
-                }
-                URL url = new URL("https://api.frankfurter.app/" + dateStr + "?from=" + from + "&to=" + to);
-                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-                conn.setRequestMethod("GET");
-                BufferedReader r = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                StringBuilder sb = new StringBuilder();
-                String line;
-                while ((line = r.readLine()) != null) sb.append(line);
-                r.close();
-                JSONObject json = new JSONObject(sb.toString());
-                double rate = json.getJSONObject("rates").getDouble(to);
-                runOnUiThread(() -> {
-                    this.exchangeRate = rate;
-                    performCalculation();
-                    loadCells();
-                    updateInstructionalText();
-                    Toast.makeText(this, "Rate updated", Toast.LENGTH_SHORT).show();
-                });
-            } catch (Exception e) {
-                runOnUiThread(() -> {
-                    this.statusTextView.setText("Failed to fetch rate.");
-                    Toast.makeText(this, "Fetch error", Toast.LENGTH_SHORT).show();
-                });
-            }
-        });
+        this.statusTextView.setText(String.format(Locales.kLOC_EXCHANGERATE_FETCHING_RATE, dateStr));
+        executor.execute(() -> new ExchangeRateClass(false, this)
+                .lookupExchangeRate(dateStr, this.foreignCurrency, this.accountCurrency, null));
     }
 
     @Override
@@ -388,7 +344,21 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         return true;
     }
 
-    @Override public void lookupExchangeRateCallback(ExchangeRateClass ex, double r, AccountClass a) {}
+    @Override
+    public void lookupExchangeRateCallback(ExchangeRateClass ex, double rate, AccountClass a) {
+        runOnUiThread(() -> {
+            if (rate > 0) {
+                this.exchangeRate = rate;
+                performCalculation();
+                loadCells();
+                updateInstructionalText();
+                Toast.makeText(this, Locales.kLOC_EXCHANGERATE_RATE_UPDATED, Toast.LENGTH_SHORT).show();
+            } else {
+                this.statusTextView.setText(Locales.kLOC_EXCHANGERATE_FETCH_FAILED);
+                Toast.makeText(this, Locales.kLOC_EXCHANGERATE_FETCH_ERROR, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {

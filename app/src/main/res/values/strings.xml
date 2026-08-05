@@ -481,6 +481,14 @@
     <string name="kLOC_THEME_COLOR_RUBY">Ruby</string>
     <string name="kLOC_GENERAL_RELAUNCH_APP">Restart Application</string>
     <string name="kLOC_GENERAL_RELAUNCH_APP_THEME">You must quit and restart PocketMoney for the theme change to take effect.</string>
+    <string name="kLOC_EXCHANGERATE_FETCHING_RATE">Fetching rate for %1$s…</string>
+    <string name="kLOC_EXCHANGERATE_FETCH_ERROR">Fetch error</string>
+    <string name="kLOC_EXCHANGERATE_FETCH_FAILED">Failed to fetch rate.</string>
+    <string name="kLOC_EXCHANGERATE_RATE_UPDATED">Rate updated</string>
+    <string name="kLOC_EXCHANGERATE_DEFAULT_RATE">1.000</string>
+    <string name="kLOC_EXCHANGERATE_DIALOG_MESSAGE">The current spot rate for %1$s is %2$s.\n\nThe account rate is %3$s.\n\nUpdate to market spot rate?</string>
+    <string name="kLOC_EXCHANGERATE_DIALOG_USE_SPOT">Use Spot</string>
+    <string name="kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT">Keep Current</string>
     <string name="kLOC_FILETRANSFERS_MODE">Transfer Mode</string>
     <string name="kLOC_FILETRANSFERS_SYNCDOCS">SyncDocs</string>
     <string name="kLOC_FILETRANSFERS_HTTP">Web Browser</string>

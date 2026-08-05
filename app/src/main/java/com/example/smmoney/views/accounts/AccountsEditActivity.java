@@ -352,19 +352,40 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.notes.setText("");
     }
 
+    @Override
     public void lookupExchangeRateCallback(ExchangeRateClass exchangeRateInstance, final double rate, AccountClass account) {
         runOnUiThread(() -> {
             if (rate == 0.0d) {
-                AccountsEditActivity.this.exchangeRate.setText("1");
+                AccountsEditActivity.this.exchangeRate.setText(Locales.kLOC_EXCHANGERATE_DEFAULT_RATE);
                 return;
             }
+
             Locale current = ConfigurationCompat.getLocales(getResources().getConfiguration()).get(0);
             if (current == null) {
                 current = Locale.getDefault();
             }
+            String formattedRate = String.format(current, "%.3f", rate);
 
-            AccountsEditActivity.this.exchangeRate.setText(String.format(current, "%.3f", rate));
-            AccountsEditActivity.this.exchangeRate.invalidate();
+            if (Prefs.getBooleanPref(Prefs.UPDATEEXCHANGERATES)) {
+                // Auto-update is ON: Just apply the rate
+                AccountsEditActivity.this.exchangeRate.setText(formattedRate);
+                AccountsEditActivity.this.exchangeRate.invalidate();
+            } else {
+                // Auto-update is OFF: Show the decision dialog
+                String currentRateStr = AccountsEditActivity.this.exchangeRate.getText().toString();
+                new AlertDialog.Builder(AccountsEditActivity.this, PocketMoneyThemes.dialogTheme())
+                        .setTitle(Locales.kLOC_GENERAL_EXCHANGERATE)
+                        .setMessage(String.format(Locales.kLOC_EXCHANGERATE_DIALOG_MESSAGE,
+                                AccountsEditActivity.this.currency.getText().toString(),
+                                formattedRate,
+                                currentRateStr))
+                        .setPositiveButton(Locales.kLOC_EXCHANGERATE_DIALOG_USE_SPOT, (dialog, which) -> {
+                            AccountsEditActivity.this.exchangeRate.setText(formattedRate);
+                            AccountsEditActivity.this.exchangeRate.invalidate();
+                        })
+                        .setNegativeButton(Locales.kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT, null)
+                        .show();
+            }
         });
     }
 

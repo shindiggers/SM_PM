@@ -5,14 +5,19 @@ import android.util.Log;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.records.AccountClass;
 
+import org.json.JSONObject;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URL;
 
+/**
+ * Handles fetching currency exchange rates from the Frankfurter API.
+ * Replaces the legacy Yahoo Finance implementation.
+ */
 public class ExchangeRateClass {
-    private int accountUpdateCount = 0;
     private final ExchangeRateCallbackInterface delegate;
-    private boolean inverseLookup;
     private final boolean justUpdateTheAccounts;
 
     public ExchangeRateClass(boolean justUpdate, ExchangeRateCallbackInterface delegate) {
@@ -20,66 +25,73 @@ public class ExchangeRateClass {
         this.delegate = delegate;
     }
 
+    /**
+     * Updates the exchange rate for a specific account based on its currency code
+     * relative to the user's home currency.
+     */
     public void updateExchangeRateForAccount(AccountClass account) {
-        lookupExchangeRate(account.getCurrencyCode(), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), account);
+        lookupExchangeRate("latest", account.getCurrencyCode(), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), account);
     }
 
+    /**
+     * Performs a network lookup for the latest exchange rate between two currencies.
+     */
     public void lookupExchangeRate(String from, String to, AccountClass account) {
-        double exchangeRate = 1.0d;
-        try {
-            String wtf = downloadText("http://download.finance.yahoo.com/d/quotes.csv?s=" + from + to + "=X&f=l1");
-            if (!wtf.equals("TIMEOUT")) {
-                exchangeRate = Double.parseDouble(wtf);
-                if (exchangeRate == 0.0d) {
-                    return;
-                }
-            }
-        } catch (NumberFormatException e) {
-            Log.e(SMMoney.TAG, "NumberFormatException in lookupExchangeRate", e);
+        lookupExchangeRate("latest", from, to, account);
+    }
+
+    /**
+     * Performs a network lookup for the exchange rate between two currencies for a specific date.
+     *
+     * @param date    The date for the rate lookup ("latest" or "YYYY-MM-DD")
+     * @param from    The source currency code (e.g., "USD")
+     * @param to      The target currency code (e.g., "GBP")
+     * @param account The account to update (can be null if only using the callback)
+     */
+    public void lookupExchangeRate(String date, String from, String to, AccountClass account) {
+        if (from == null || to == null || from.equals(to)) {
+            handleResult(1.0d, account);
+            return;
         }
-        if (exchangeRate >= 0.01d) {
-            if (!this.inverseLookup) {
-                exchangeRate = 1.0d / exchangeRate;
-            }
-            if (this.justUpdateTheAccounts) {
-                updateAccount(exchangeRate, account);
+
+        double rate = 0.0d;
+        try {
+            URL url = new URL("https://api.frankfurter.app/" + date + "?from=" + from + "&to=" + to);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setConnectTimeout(5000);
+            conn.setReadTimeout(5000);
+
+            if (conn.getResponseCode() == HttpURLConnection.HTTP_OK) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                    JSONObject json = new JSONObject(response.toString());
+                    rate = json.getJSONObject("rates").getDouble(to);
+                }
             } else {
-                this.delegate.lookupExchangeRateCallback(this, exchangeRate, account);
+                Log.e(SMMoney.TAG, "Exchange rate lookup failed with response code: " + conn.getResponseCode());
             }
-        } else if (!this.inverseLookup) {
-            this.inverseLookup = true;
-            lookupExchangeRate(to, from, account);
-        } else if (this.justUpdateTheAccounts) {
-            updateAccount(exchangeRate, account);
-        } else {
-            this.delegate.lookupExchangeRateCallback(this, exchangeRate, account);
+        } catch (Exception e) {
+            Log.e(SMMoney.TAG, "Error in lookupExchangeRate: " + e.getMessage());
+        }
+
+        handleResult(rate, account);
+    }
+
+    private void handleResult(double rate, AccountClass account) {
+        if (this.justUpdateTheAccounts && account != null && rate > 0.0d) {
+            updateAccount(rate, account);
+        } else if (this.delegate != null) {
+            this.delegate.lookupExchangeRateCallback(this, rate, account);
         }
     }
 
     private void updateAccount(double exchangeRate, AccountClass account) {
-        if (exchangeRate > 0.0d) {
-            account.setExchangeRate(exchangeRate);
-            account.saveToDatabase();
-        }
-    }
-
-    private String downloadText(String url) {
-        StringBuffer result = new StringBuffer();
-        try {
-            InputStreamReader isr = new InputStreamReader(new URL(url).openStream());
-            BufferedReader in = new BufferedReader(isr);
-            while (true) {
-                String inputLine = in.readLine();
-                if (inputLine == null) {
-                    break;
-                }
-                result.append(inputLine);
-            }
-            in.close();
-            isr.close();
-        } catch (Exception e) {
-            result = new StringBuffer("TIMEOUT");
-        }
-        return result.toString();
+        account.setExchangeRate(exchangeRate);
+        account.saveToDatabase();
     }
 }

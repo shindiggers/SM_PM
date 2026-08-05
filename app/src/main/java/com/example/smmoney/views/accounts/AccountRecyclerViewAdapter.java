@@ -177,14 +177,22 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private String balanceForSection(int sectionIndex) {
         int balanceType = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
         double total = 0.0;
+        boolean multi = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
+
         if (this.sectionedAccounts != null && sectionIndex < this.sectionedAccounts.size()) {
             for (AccountClass act : this.sectionedAccounts.get(sectionIndex)) {
                 if (act.getTotalWorth()) {
-                    total += act.balanceOfType(balanceType);
+                    double foreignBalance = act.balanceOfType(balanceType);
+                    double xrate = act.getExchangeRate();
+                    double homeBalance = foreignBalance;
+                    if (multi && xrate != 0 && xrate != 1.0d) {
+                        homeBalance = foreignBalance / xrate;
+                    }
+                    total += homeBalance;
                 }
             }
         }
-        return CurrencyExt.amountAsCurrency(total);
+        return CurrencyExt.amountAsCurrency(total, Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
     }
 
     @Override
@@ -344,12 +352,6 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             CheckBoxTint.colorCheckBox(selected);
             updateBalanceLabel();
             
-            boolean multi = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
-            exchangeRate.setVisibility((multi && account.getExchangeRate() != 1.0d) ? View.VISIBLE : View.GONE);
-            if (exchangeRate.getVisibility() == View.VISIBLE) {
-                exchangeRate.setText(CurrencyExt.exchangeRateAsString(account.getExchangeRate()));
-            }
-            exchangeRate.setTextColor(PocketMoneyThemes.alternateCellTextColor());
             newtransbutton.setVisibility(View.VISIBLE);
             newtransbutton.setColorFilter(PocketMoneyThemes.currentTintColor());
             
@@ -362,11 +364,34 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         private void updateBalanceLabel() {
             int balanceType = Prefs.getBooleanPref(Prefs.BALANCEBARUNIFIED) ? Prefs.getIntPref(Prefs.BALANCETYPE) : Prefs.getIntPref(Prefs.BALANCEBARREGISTER);
-            double balance = account.balanceOfType(balanceType);
-            totalworth.setText(account.formatAmountAsCurrency(balance));
+            double foreignBalance = account.balanceOfType(balanceType);
+            boolean multi = Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES);
+            double xrate = account.getExchangeRate();
+
+            // 1. Calculate Home Currency Equivalent
+            double homeBalance = foreignBalance;
+            if (multi && xrate != 0 && xrate != 1.0d) {
+                homeBalance = foreignBalance / xrate;
+            }
+
+            // 2. Set Main Balance (Home Currency)
+            totalworth.setText(CurrencyExt.amountAsCurrency(homeBalance, Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
+
+            // 3. Set Details Line (Foreign Amount + Rate)
+            if (multi && xrate != 1.0d) {
+                String foreignFormatted = account.formatAmountAsCurrency(foreignBalance);
+                String rateFormatted = CurrencyExt.exchangeRateAsString(xrate);
+                exchangeRate.setVisibility(View.VISIBLE);
+                exchangeRate.setText(String.format("%s  |  Rate: %s", foreignFormatted, rateFormatted));
+            } else {
+                exchangeRate.setVisibility(View.GONE);
+            }
+            exchangeRate.setTextColor(PocketMoneyThemes.alternateCellTextColor());
+
+            // 4. Color Coding (Based on the actual value relative to limits)
             if (account.balanceExceedsLimit()) {
                 totalworth.setTextColor(PocketMoneyThemes.redLabelColor());
-            } else if (balance < 0.0d) {
+            } else if (homeBalance < 0.0d) {
                 totalworth.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             } else {
                 totalworth.setTextColor(PocketMoneyThemes.greenDepositColor());
