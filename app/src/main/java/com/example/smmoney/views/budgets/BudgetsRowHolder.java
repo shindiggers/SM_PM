@@ -9,6 +9,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
+import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
@@ -37,10 +38,10 @@ public class BudgetsRowHolder {
         return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
     }
 
-    private void formatAmount(TextView view, double amount, boolean useBrackets) {
+    private void formatAmount(TextView view, double amount) {
         String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(amount)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(amount));
         if (amount < 0) {
-            view.setText(useBrackets ? "(" + text + ")" : text);
+            view.setText(String.format(Locales.kLOC_FORMAT_PARENTHESES, text));
         } else {
             view.setText(text);
         }
@@ -72,18 +73,17 @@ public class BudgetsRowHolder {
         }
         
         // 3. Update UI Text
-        formatAmount(this.spentTextView, spent, true);
+        formatAmount(this.spentTextView, spent);
         this.categoryTextView.setText(category.getCategory());
         this.categoryTextView.setTextColor(PocketMoneyThemes.headerTextColor());
-        formatAmount(this.budgetTextView, budget, true);
+        formatAmount(this.budgetTextView, budget);
         
         // 4. Update Variance Label
-        String statusPrefix = (variance >= 0) ? "• Ahead " : "• Behind ";
         String varText = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(variance)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(variance));
         if (variance < 0) {
-            this.varianceTextView.setText(statusPrefix + "(" + varText + ")");
+            this.varianceTextView.setText(String.format(Locales.kLOC_FORMAT_BEHIND, varText));
         } else {
-            this.varianceTextView.setText(statusPrefix + varText);
+            this.varianceTextView.setText(String.format(Locales.kLOC_FORMAT_AHEAD, varText));
         }
         this.varianceTextView.setTextColor(PocketMoneyThemes.headerTextColor());
 
@@ -92,7 +92,7 @@ public class BudgetsRowHolder {
 
     private void updateBars(double spent, double budget) {
         float ratio;
-        int backgroundRes = PocketMoneyThemes.budgetBarGreenColor();
+        int backgroundRes;
         int foregroundRes = PocketMoneyThemes.budgetBarYellowColor();
 
         if (spent == budget) {
@@ -102,7 +102,7 @@ public class BudgetsRowHolder {
         } else {
             if (this.category.getType() == Enums.kCategoryExpense) {
                 if (spent > budget) {
-                    ratio = (budget < 0.0d) ? 0.0f : (spent != 0.0d ? (float) (budget / spent) : 1.0f);
+                    ratio = (budget < 0.0d) ? 0.0f : (float) (budget / spent);
                     backgroundRes = PocketMoneyThemes.budgetBarRedColor();
                 } else {
                     ratio = (budget != 0.0d) ? (float) (spent / budget) : 1.0f;
@@ -110,7 +110,7 @@ public class BudgetsRowHolder {
                 }
             } else { // Income
                 if (spent >= budget) {
-                    ratio = spent != 0.0d ? (float) (budget / spent) : (budget > 0.0d ? 1.0f : 0.0f);
+                    ratio = (spent != 0.0d) ? (float) (budget / spent) : (budget > 0.0d ? 1.0f : 0.0f);
                     backgroundRes = PocketMoneyThemes.budgetBarGreenColor();
                 } else {
                     ratio = budget != 0.0d ? (float) (spent / budget) : 1.0f;

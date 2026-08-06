@@ -1,5 +1,6 @@
 package com.example.smmoney.views.budgets;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.content.Intent;
@@ -93,6 +94,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     private WakeLock wakeLock;
 
     @Override
+    @SuppressLint("InflateParams")
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "BudgetsActivity:DoNotDimScreen");
@@ -162,7 +164,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.theList = layout.findViewById(R.id.the_list);
         this.theList.setItemsCanFocus(true);
         this.theList.setVerticalScrollBarEnabled(false);
-        this.adapter = new BudgetsRowAdapter(this, this.theList);
+        this.adapter = new BudgetsRowAdapter(this);
         this.theList.setAdapter(this.adapter);
         this.theList.setFocusable(false);
         this.theList.setVisibility(View.INVISIBLE);
@@ -233,7 +235,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         int textColor = PocketMoneyThemes.headerTextColor();
         
         if (savings < 0.0d) {
-            this.balanceBar.balanceAmountTextView.setText("(" + text + ")");
+            this.balanceBar.balanceAmountTextView.setText(String.format("(%s)", text));
         } else {
             this.balanceBar.balanceAmountTextView.setText(text);
         }
@@ -400,11 +402,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 .setView(dialogView)
                 .setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
                     int selectedPropertyId = propertyGroup.getCheckedRadioButtonId();
-                    int newSort = Enums.kBudgetsSortTypeCategory;
-                    if (selectedPropertyId == R.id.sort_actual) newSort = Enums.kBudgetsSortTypeActual;
-                    else if (selectedPropertyId == R.id.sort_budget) newSort = Enums.kBudgetsSortTypeBudgeted;
-                    else if (selectedPropertyId == R.id.sort_percentage) newSort = Enums.kBudgetsSortTypePercentage;
-                    else if (selectedPropertyId == R.id.sort_variance) newSort = Enums.kBudgetsSortTypeVariance;
+                    int newSort = getSortTypeFromId(selectedPropertyId);
 
                     int selectedDirectionId = directionGroup.getCheckedRadioButtonId();
                     int newDir = (selectedDirectionId == R.id.sort_asc) ? Enums.kBudgetsSortOrderAscending : Enums.kBudgetsSortOrderDescending;
@@ -417,6 +415,14 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 .show();
     }
 
+    private int getSortTypeFromId(int selectedPropertyId) {
+        if (selectedPropertyId == R.id.sort_actual) return Enums.kBudgetsSortTypeActual;
+        if (selectedPropertyId == R.id.sort_budget) return Enums.kBudgetsSortTypeBudgeted;
+        if (selectedPropertyId == R.id.sort_percentage) return Enums.kBudgetsSortTypePercentage;
+        if (selectedPropertyId == R.id.sort_variance) return Enums.kBudgetsSortTypeVariance;
+        return Enums.kBudgetsSortTypeCategory;
+    }
+
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         BudgetsRowHolder aHolder = (BudgetsRowHolder) v.getTag();
@@ -427,7 +433,8 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
+        Intent intent = item.getIntent();
+        Bundle b = (intent != null) ? intent.getExtras() : null;
         switch (item.getItemId()) {
             case CMENU_EDIT -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
@@ -436,7 +443,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         category = b.getSerializable("Category", CategoryClass.class);
                     } else {
-                        //noinspection deprecation
                         category = (CategoryClass) b.get("Category");
                     }
                     anIntent.putExtra("Category", category);
@@ -450,7 +456,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         category = b.getSerializable("Category", CategoryClass.class);
                     } else {
-                        //noinspection deprecation
                         category = (CategoryClass) b.get("Category");
                     }
                     deleteBudget(category);

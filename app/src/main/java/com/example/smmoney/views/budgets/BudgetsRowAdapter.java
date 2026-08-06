@@ -50,7 +50,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return (category1, category2) -> {
             int sortOn = Prefs.getIntPref(Prefs.BUDGETS_SORTON);
             boolean isAsc = Prefs.getIntPref(Prefs.BUDGETS_SORT_ORDER_ASCENDING) == Enums.kBudgetsSortOrderAscending;
-            int result = 0;
+            int result;
 
             switch (sortOn) {
                 case Enums.kBudgetsSortTypeActual -> {
@@ -94,7 +94,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
     private final String showIncome = Prefs.COLLAPSE_INCOME;
     private final String showNonBudgeted = Prefs.COLLAPSE_UNBUDGETED;
 
-    BudgetsRowAdapter(Context aContext, ListView theList) {
+    BudgetsRowAdapter(Context aContext) {
         this.context = aContext;
         this.inflater = LayoutInflater.from(this.context);
         this.currentDate = new GregorianCalendar();
@@ -113,9 +113,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
         int incomeSize = (this.incomeCategories == null || !getShowSection(this.showIncome)) ? 0 : this.incomeCategories.size();
         int expenseSize = (this.expenseCategories == null || !getShowSection(this.showExpense)) ? 0 : this.expenseCategories.size();
         if (position == 0) return Locales.kLOC_BUDGETS_INCOME;
-        if (position < incomeSize + 1) return this.incomeCategories.get(position - 1);
+        if (this.incomeCategories != null && position < incomeSize + 1) return this.incomeCategories.get(position - 1);
         if (position == incomeSize + 1) return Locales.kLOC_BUDGETS_EXPENSES;
-        if (position < (incomeSize + expenseSize) + 2) return this.expenseCategories.get((position - incomeSize) - 2);
+        if (this.expenseCategories != null && position < (incomeSize + expenseSize) + 2) return this.expenseCategories.get((position - incomeSize) - 2);
         if (position == (incomeSize + expenseSize) + 2) return Locales.kLOC_BUDGETS_NONBUDGETED;
         int unbudgetedIndex = ((position - incomeSize) - expenseSize) - 3;
         if (this.nonBudgetedCategories != null && unbudgetedIndex >= 0 && unbudgetedIndex < this.nonBudgetedCategories.size()) {

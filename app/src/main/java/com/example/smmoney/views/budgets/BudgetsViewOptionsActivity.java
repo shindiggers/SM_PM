@@ -53,11 +53,7 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
 
     private void updateSummaries() {
         String date = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
-        if (date != null) {
-            this.startOnDate.setSummary(date);
-        } else {
-            this.startOnDate.setSummary(Locales.kLOC_GENERAL_DEFAULT);
-        }
+        this.startOnDate.setSummary(date);
         this.sortOnPref.setSummary(nameOfSortOnListPref(Prefs.getIntPref(Prefs.BUDGETS_SORTON)));
     }
 
@@ -83,7 +79,8 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
         });
         this.startOnDate.setOnPreferenceClickListener(preference -> {
             Intent anIntent = new Intent(BudgetsViewOptionsActivity.this, EndOnDateActivity.class);
-            anIntent.putExtra("Date", BudgetsViewOptionsActivity.this.startOnDate.getSummary().toString());
+            CharSequence summary = BudgetsViewOptionsActivity.this.startOnDate.getSummary();
+            anIntent.putExtra("Date", summary != null ? summary.toString() : "");
             anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
             datePickerLauncher.launch(anIntent);
             return true;

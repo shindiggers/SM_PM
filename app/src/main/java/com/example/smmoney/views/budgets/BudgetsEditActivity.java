@@ -1,5 +1,6 @@
 package com.example.smmoney.views.budgets;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
 import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
@@ -23,6 +24,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
+import androidx.annotation.NonNull;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
@@ -60,8 +62,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         }
     });
 
-    private final int DIALOG_BUDGET = 1;
-    private final int DIALOG_PICKDATE = 2;
     private View addBudgetCell;
     private View budgetCell;
     private EditText budgetEditText;
@@ -73,7 +73,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private ArrayList<CategoryBudgetClass> deletedCategoryBudgetItems;
     private Button enableVariableBudgetCell;
     private void setupButtons() {
-        ArrayList<View> theViews = new ArrayList<>();
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.outterView = findViewById(R.id.outter_layout);
         View aView = this.outterView.findViewById(R.id.categorybutton);
@@ -95,7 +94,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             i.putExtra("type", 19);
             lookupLauncher.launch(i);
         });
-        theViews.add(aView);
         this.budgetTypeTextView = findViewById(R.id.budgettexttextview);
         this.budgetTypeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -113,7 +111,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             i.putExtra("type", 20);
             lookupLauncher.launch(i);
         });
-        theViews.add(aView);
         this.periodTextView = findViewById(R.id.periodtextview);
         this.periodTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         aView.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
@@ -123,17 +120,14 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.currencyKeyboard = findViewById(R.id.keyboardView);
         this.currencyKeyboard.setEditText(this.budgetEditText, null);
         this.budgetCell = (View) this.budgetEditText.getParent();
-        theViews.add(this.budgetCell);
         this.budgetCell.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         ((TextView) this.outterView.findViewById(R.id.budgetlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.rolloverCheckBox = this.outterView.findViewById(R.id.rollovercheckbox);
         CheckBoxTint.colorCheckBox(this.rolloverCheckBox);
-        aView = (View) this.rolloverCheckBox.getParent();
         ((TextView) this.outterView.findViewById(R.id.rolloverlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.rolloverCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> BudgetsEditActivity.this.reloadData());
         this.includeSubcategoriesCheckBox = this.outterView.findViewById(R.id.includesubcategoriescheckbox);
         CheckBoxTint.colorCheckBox(this.includeSubcategoriesCheckBox);
-        this.includeSubcategoriesCell = (View) this.includeSubcategoriesCheckBox.getParent();
         ((TextView) this.outterView.findViewById(R.id.includesubcategorieslabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         ((TextView) findViewById(R.id.addnewbudgettextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.originalHistoryCell = findViewById(R.id.originalhistorycell);
@@ -214,17 +208,20 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private CheckBox rolloverCheckBox;
     private CategoryBudgetClass selectedBudgetItem;
     @SuppressWarnings("FieldCanBeLocal")
-    private View includeSubcategoriesCell;
+    
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            this.category = getIntent().getSerializableExtra("Category", CategoryClass.class);
+        this.category = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
+                ? getIntent().getSerializableExtra("Category", CategoryClass.class)
+                : (CategoryClass) getIntent().getSerializableExtra("Category");
+
+        if (this.category != null) {
+            this.oldCategory = this.category.getCategory();
         } else {
-            //noinspection deprecation
-            this.category = (CategoryClass) getIntent().getSerializableExtra("Category");
+            this.category = new CategoryClass();
+            this.oldCategory = "";
         }
-        this.oldCategory = this.category.getCategory();
         setContentView(R.layout.budget_edit);
         this.categoryBudgetItems = CategoryBudgetClass.budgetItemsForCategory(this.category.getCategory());
         this.deletedCategoryBudgetItems = new ArrayList<>();
@@ -285,7 +282,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         // Display all entries EXCEPT the oldest one (which is in the static footer)
         for (int index = 0; index < this.categoryBudgetItems.size() - 1; index++) {
             CategoryBudgetClass budgetItem = this.categoryBudgetItems.get(index);
-            View v = vi.inflate(R.layout.budgets_variable_row, null);
+            @SuppressLint("InflateParams") View v = vi.inflate(R.layout.budgets_variable_row, null);
             registerForContextMenu(v);
             v.setTag(budgetItem);
             
@@ -342,7 +339,6 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     private void saveAction() {
         getCells();
-        int categoryID = CategoryClass.idForCategory(this.category.getCategory());
         if (this.oldCategory == null || this.oldCategory.isEmpty()) {
             int catID = CategoryClass.idForCategory(this.category.getCategory());
             if (this.oldCategory == null || this.oldCategory.equalsIgnoreCase(this.category.getCategory())) {
@@ -445,19 +441,22 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         menu.add(0, CMENU_DELETE/*1*/, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
-        if (item.getItemId() == CMENU_DELETE) { /*1*/
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
+        Intent intent = item.getIntent();
+        Bundle b = (intent != null) ? intent.getExtras() : null;
+        if (item.getItemId() == CMENU_DELETE && b != null) {
             CategoryBudgetClass budgetItem;
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 budgetItem = b.getSerializable("BudgetItem", CategoryBudgetClass.class);
             } else {
-                //noinspection deprecation
                 budgetItem = (CategoryBudgetClass) b.get("BudgetItem");
             }
-            this.categoryBudgetItems.remove(budgetItem);
-            this.deletedCategoryBudgetItems.add(budgetItem);
-            reloadData();
+            if (budgetItem != null) {
+                this.categoryBudgetItems.remove(budgetItem);
+                this.deletedCategoryBudgetItems.add(budgetItem);
+                reloadData();
+            }
             return true;
         }
         return super.onContextItemSelected(item);

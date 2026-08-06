@@ -25,7 +25,6 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
 
         int currentPref = Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD);
         int initialSelection = switch (currentPref) {
-            case Enums.kBudgetPeriodDay -> 0;
             case Enums.kBudgetPeriodWeek -> 1;
             case Enums.kBudgetPeriodBiweekly -> 2;
             case Enums.kBudgetPeriod4Weeks -> 3;
@@ -34,14 +33,13 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
             case Enums.kBudgetPeriodQuarter -> 6;
             case Enums.kBudgetPeriodHalfYear -> 7;
             case Enums.kBudgetPeriodYear -> 8;
-            default -> 0;
+            default -> 0; // Enums.kBudgetPeriodDay
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, initialSelection, (dialog, which) -> {
                     int periodType = switch (which) {
-                        case 0 -> Enums.kBudgetPeriodDay;
                         case 1 -> Enums.kBudgetPeriodWeek;
                         case 2 -> Enums.kBudgetPeriodBiweekly;
                         case 3 -> Enums.kBudgetPeriod4Weeks;
@@ -50,7 +48,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
                         case 6 -> Enums.kBudgetPeriodQuarter;
                         case 7 -> Enums.kBudgetPeriodHalfYear;
                         case 8 -> Enums.kBudgetPeriodYear;
-                        default -> Enums.kBudgetPeriodDay;
+                        default -> Enums.kBudgetPeriodDay; // case 0
                     };
                     Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
                     budgetDialogListner.applyPeriodType2(periodType);
@@ -64,7 +62,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
 
         try {

@@ -638,4 +638,7 @@ public class Locales {
     public static final String kLOC_WEEK_ORDINALS = SMMoney.getAppContext().getString(R.string.kLOC_WEEK_ORDINALS);
     public static final String kLOC_CUSTOM_DATE_RANGE = SMMoney.getAppContext().getString(R.string.custom_date_range_title);
     public static final String kLOC_ANY_DATE = SMMoney.getAppContext().getString(R.string.any_date);
+    public static final String kLOC_FORMAT_PARENTHESES = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_PARENTHESES);
+    public static final String kLOC_FORMAT_AHEAD = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_AHEAD);
+    public static final String kLOC_FORMAT_BEHIND = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_BEHIND);
 }
