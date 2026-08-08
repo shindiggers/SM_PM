@@ -1,5 +1,6 @@
 package com.example.smmoney.views.lookups;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.ColorStateList;
 import android.view.LayoutInflater;
@@ -25,7 +26,6 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
 
     private List<String> items = new ArrayList<>();
     private final Set<Integer> checkedPositions = new HashSet<>();
-    private final Context context;
     private final LayoutInflater inflater;
     private final boolean isMultiSelect;
     private OnItemClickListener listener;
@@ -35,13 +35,14 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     public LookupRecyclerViewAdapter(Context context, boolean isMultiSelect) {
-        this.context = context;
         this.inflater = LayoutInflater.from(context);
         this.isMultiSelect = isMultiSelect;
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setItems(List<String> newItems) {
         this.items = newItems;
+        // Using notifyDataSetChanged because the entire list is replaced with new data
         notifyDataSetChanged();
     }
 

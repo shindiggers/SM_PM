@@ -641,4 +641,5 @@ public class Locales {
     public static final String kLOC_FORMAT_PARENTHESES = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_PARENTHESES);
     public static final String kLOC_FORMAT_AHEAD = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_AHEAD);
     public static final String kLOC_FORMAT_BEHIND = SMMoney.getAppContext().getString(R.string.kLOC_FORMAT_BEHIND);
+    public static final String kLOC_GENERAL_EMPTY_BRACKETS = SMMoney.getAppContext().getString(R.string.kLOC_GENERAL_EMPTY_BRACKETS);
 }

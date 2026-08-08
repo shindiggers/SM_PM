@@ -57,7 +57,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         if (this.payee.isEmpty()) {
             this.currentType = TYPE_ALL/*1*/;
             allButton.setChecked(true);
-            payeeButton.setText("<empty>");
+            payeeButton.setText(Locales.kLOC_GENERAL_EMPTY_BRACKETS);
         }
         group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
             if (isChecked && !CategoryLookupListActivity.this.progUpdate) {
@@ -85,7 +85,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         allButton.setTextColor(textTint);
         allButton.setStrokeColor(strokeTint);
 
-        ((View) group).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        group.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         this.listView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
 
@@ -116,6 +116,8 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
     public boolean onContextItemSelected(MenuItem item) {
         AdapterContextMenuInfo info = (AdapterContextMenuInfo) item.getMenuInfo();
+        if (info == null) return super.onContextItemSelected(item);
+
         final String originalString;
         AlertDialog.Builder alert;
         final EditText input;
