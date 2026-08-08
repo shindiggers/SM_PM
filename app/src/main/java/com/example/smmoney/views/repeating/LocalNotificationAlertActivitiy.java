@@ -79,7 +79,6 @@ public class LocalNotificationAlertActivitiy extends Activity {
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.date = (GregorianCalendar) extras.getSerializable("date", GregorianCalendar.class);
         } else {
-            //noinspection deprecation
             this.date = (GregorianCalendar) extras.get("date");
         }
         String amount = extras.getString("amount");

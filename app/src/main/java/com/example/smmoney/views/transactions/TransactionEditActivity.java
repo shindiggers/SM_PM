@@ -233,11 +233,14 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (result.getResultCode() == -1 && result.getData() != null) {
             this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
             this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
-            this.transaction.dirty = true;
-            this.transaction.hydrated = true;
-            this.repeatingTransaction.dirty = true;
-            if (this.repeatingTransaction.getTransaction() != null) {
-                this.repeatingTransaction.getTransaction().hydrated = false;
+            if (this.transaction != null && this.repeatingTransaction != null) {
+                this.transaction.isRepeatingTransaction = this.repeatingTransaction.isRepeating();
+                this.transaction.dirty = true;
+                this.transaction.hydrated = true;
+                this.repeatingTransaction.dirty = true;
+                if (this.repeatingTransaction.getTransaction() != null) {
+                    this.repeatingTransaction.getTransaction().hydrated = false;
+                }
             }
             reloadData();
         }
@@ -555,7 +558,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.xRateTextView = findViewById(R.id.amount_xrate_text_view);
         this.xRateTextView.setTextColor(primaryTextColor);
 
-        this.repeatingImageView.setColorFilter(fieldLabelColor, srcIn);
         ((ImageView) findViewById(R.id.account_drop_down)).setColorFilter(fieldLabelColor, srcIn);
         ((ImageView) findViewById(R.id.payee_drop_down)).setColorFilter(fieldLabelColor, srcIn);
         ((ImageView) findViewById(R.id.category_drop_down)).setColorFilter(fieldLabelColor, srcIn);
@@ -733,13 +735,18 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void saveAction() {
-        if (this.transaction.isRepeatingTransaction) {
+        // Always save the current transaction to the register first.
+        // This ensures the entry the user is currently editing actually appears in the list.
+        boolean originalRepeatingFlag = this.transaction.isRepeatingTransaction;
+        this.transaction.isRepeatingTransaction = false;
+        this.transaction.saveToDatabase();
+        
+        // Restore the flag so we know if we need to set up a repeating schedule
+        this.transaction.isRepeatingTransaction = originalRepeatingFlag;
+
+        // If repeating is active, handle the master template and schedule
+        if (this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID != 0) {
             saveRepeatingTransaction();
-        } else {
-            this.transaction.saveToDatabase();
-            if (this.repeatingTransaction.repeatingID != 0 && (this.repeatingChanged == 2 || this.dateChanged == 2)) {
-                saveRepeatingTransaction();
-            }
         }
         deleteDeletedImages();
         keepTheChangeUpdate();
@@ -753,8 +760,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.dateTextView.setText(CalExt.descriptionWithMediumDate(this.transaction.getDate()));
         if (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating()) {
             this.dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+            this.repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
         } else {
-            this.dateTextView.setTextColor(0xFF00FF00); // Green for repeating
+            int green = 0xFF00FF00;
+            this.dateTextView.setTextColor(green); // Green for repeating
+            this.repeatingImageView.setColorFilter(green, android.graphics.PorterDuff.Mode.SRC_IN);
         }
 
         if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
@@ -1075,36 +1085,39 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void saveRepeatingTransaction() {
         Log.d(TAG, "saveRepeatingTransaction() called");
-        boolean processRepeatingEvents = false;
-        if (this.repeatingTransaction.repeatingID == 0) {
-            if (this.transaction.isRepeatingTransaction) {
-                this.repeatingTransaction.setLastProcessedDate(CalExt.subtractDay(this.transaction.getDate()));
-            } else {
-                this.repeatingTransaction.setLastProcessedDate(this.transaction.getDate());
-            }
-            processRepeatingEvents = true;
+        boolean isNewSeries = (this.repeatingTransaction.repeatingID == 0);
+        
+        if (isNewSeries) {
+            // NEW SERIES: Mark today's date as processed so the engine starts in the future
+            this.repeatingTransaction.setLastProcessedDate(this.transaction.getDate());
         } else {
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(this.repeatingTransaction.repeatingID);
         }
+
         if (!this.repeatingTransaction.isRepeating()) {
+            // CANCEL SERIES
             if (this.repeatingTransaction.getTransaction() != null) {
                 this.repeatingTransaction.getTransaction().deleteFromDatabase();
             }
             this.repeatingTransaction.deleteFromDatabase();
         } else if (this.repeatingChanged != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating && this.dateChanged != Enums.DateChangeTypeSeparateTransactionFromRepeating) {
-            GregorianCalendar originalDate = (GregorianCalendar) this.repeatingTransaction.getTransaction().getDate().clone();
-            this.repeatingTransaction.getTransaction().deleteFromDatabase();
-            this.repeatingTransaction.setTransaction(null);
-            this.repeatingTransaction.setTransaction(this.transaction.copy());
-            this.repeatingTransaction.dirty = true;
-            if (Enums.DateChangeTypeSeparateTransactionFromRepeating == this.dateChanged || (!this.transaction.isRepeatingTransaction && this.dateChanged == Enums.DateChangeTypeNone)) {
-                this.repeatingTransaction.getTransaction().setDate(originalDate);
-            } else if (this.transaction.isRepeatingTransaction) {
-                this.repeatingTransaction.setLastProcessedDate(CalExt.subtractDay(this.repeatingTransaction.getTransaction().getDate()));
+            // UPDATE TEMPLATE
+            // We create a fresh template copy (Type 5) linked to the repeating metadata
+            TransactionClass template = this.transaction.copy();
+            template.isRepeatingTransaction = true;
+            
+            // If updating an existing series, delete the old template record first
+            if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
+                this.repeatingTransaction.getTransaction().deleteFromDatabase();
             }
+            
+            this.repeatingTransaction.setTransaction(null);
+            this.repeatingTransaction.setTransaction(template);
+            this.repeatingTransaction.dirty = true;
             this.repeatingTransaction.saveToDatabase();
             this.repeatingTransaction.setupNotification(getApplicationContext());
-            if (processRepeatingEvents) {
+            
+            if (isNewSeries) {
                 TransactionDB.addRepeatingTransactions();
             }
         }

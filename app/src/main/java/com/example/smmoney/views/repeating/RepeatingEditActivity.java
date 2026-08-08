@@ -103,16 +103,14 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             this.repeatingTransaction = getIntent().getSerializableExtra("RepeatingTransaction", RepeatingTransactionClass.class);
             this.transaction = getIntent().getSerializableExtra("Transaction", TransactionClass.class);
         } else {
-            //noinspection deprecation
             this.repeatingTransaction = (RepeatingTransactionClass) getIntent().getSerializableExtra("RepeatingTransaction");
-            //noinspection deprecation
             this.transaction = (TransactionClass) getIntent().getSerializableExtra("Transaction");
         }
         this.repeatingTransaction.hydrate();
         this.repeatingTransaction.hydrated = true;
         this.repeatingTransaction.getTransaction().hydrated = true;
         this.context = this;
-        setResult(0);
+        setResult(RESULT_CANCELED);
         loadViews();
         setupButtons();
         reloadData();
@@ -353,8 +351,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        int every; // not necessary to initialise this view here as it gets initialised later
-        int endon; // not necessary to initialise this view here as it gets initialised later
+        int every; // not necessary to initialize this view here as it gets initialized later
+        int endon; // not necessary to initialize this view here as it gets initialized later
         int sunday = View.GONE /*8*/;
         int monday = View.GONE /*8*/;
         int tuesday = View.GONE /*8*/;
@@ -363,7 +361,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         int friday = View.GONE /*8*/;
         int saturday = View.GONE /*8*/;
         int repeaton = View.GONE /*8*/;
-        int notify; // not necessary to initialise this view here as it gets initialised later
+        int notify; // not necessary to initialize this view here as it gets initialized later
         switch (this.repeatingTransaction.getType()) {
             case Enums.repeatDaily /*1*/:
             case Enums.repeatYearly /*4*/:
@@ -491,7 +489,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         Intent i = new Intent();
         i.putExtra("Transaction", this.transaction);
         i.putExtra("RepeatingTransaction", this.repeatingTransaction);
-        setResult(1, i);
+        setResult(RESULT_OK, i);
     }
 
     private View.OnClickListener getDayClickListener(final ImageView check) {
