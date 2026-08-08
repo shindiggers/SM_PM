@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 public class FiltersMainActivity extends PocketMoneyActivity {
-    public static final int FILTER_EDIT_NEW = 1;
-    public static final int FILTER_EDIT_OLD = 2;
 
     final ActivityResultLauncher<Intent> filterEditLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
@@ -43,11 +41,9 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     private final int CMENU_DELETE = 3;
     private final int CMENU_EDIT = 1;
     private final int MENU_NEW = 1;
-    private final int REQUEST_CURRENT_EDIT = 1;
     private FiltersMainActivity context;
     private FrameLayout currenctFilterView;
     private FilterClass filter;
-    private ArrayList<FilterClass> filterList;
     private FilterRowAdapter theAdapter;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -179,7 +175,8 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     }
 
     public boolean onContextItemSelected(MenuItem item) {
-        Bundle b = item.getIntent().getExtras();
+        Intent intentFromMenu = item.getIntent();
+        Bundle b = (intentFromMenu != null) ? intentFromMenu.getExtras() : null;
         switch (item.getItemId()) {
             case CMENU_EDIT /*1*/:
                 Intent intent = new Intent(this.context, FilterEditActivity.class);
@@ -188,7 +185,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         filter = b.getSerializable("Filter", FilterClass.class);
                     } else {
-                        //noinspection deprecation
                         filter = (FilterClass) b.get("Filter");
                     }
                     intent.putExtra("Filter", filter);
@@ -201,7 +197,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         filter = b.getSerializable("Filter", FilterClass.class);
                     } else {
-                        //noinspection deprecation
                         filter = (FilterClass) b.get("Filter");
                     }
                     if (filter != null) filter.deleteFromDatabase();

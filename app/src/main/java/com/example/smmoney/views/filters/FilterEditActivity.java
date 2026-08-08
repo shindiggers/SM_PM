@@ -106,7 +106,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 this.filter = extras.getSerializable("Filter", FilterClass.class);
             } else {
-                //noinspection deprecation
                 this.filter = (FilterClass) extras.get("Filter");
             }
         }
@@ -243,15 +242,15 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.idEditText.setText(this.filter.getCheckNumber());
         this.transactionTypeTextView.setText(this.filter.typeAsString());
         TextView textView = this.accountsTextView;
-        CharSequence account = (this.filter.getAccount() == null || this.filter.getAccount().length() <= 0) ? Locales.kLOC_FILTERS_ALL_ACCOUNTS : this.filter.getAccount();
+        CharSequence account = (this.filter.getAccount() == null || this.filter.getAccount().isEmpty()) ? Locales.kLOC_FILTERS_ALL_ACCOUNTS : this.filter.getAccount();
         textView.setText(account);
         this.datesTextView.setText(this.filter.isCustomDate() ? this.filter.customDateString() : this.filter.getDate());
         this.clearedTextView.setText(this.filter.clearedAsString());
         EditText editText = this.classesTextView;
-        account = (this.filter.getClassName() == null || this.filter.getClassName().length() <= 0) ? Locales.kLOC_FILTERS_ALL_CLASSES : this.filter.getClassName();
+        account = (this.filter.getClassName() == null || this.filter.getClassName().isEmpty()) ? Locales.kLOC_FILTERS_ALL_CLASSES : this.filter.getClassName();
         editText.setText(account);
         editText = this.categoriesTextView;
-        account = (this.filter.getCategory() == null || this.filter.getCategory().length() <= 0) ? Locales.kLOC_FILTERS_ALL_CATEGORIES : this.filter.getCategory();
+        account = (this.filter.getCategory() == null || this.filter.getCategory().isEmpty()) ? Locales.kLOC_FILTERS_ALL_CATEGORIES : this.filter.getCategory();
         editText.setText(account);
     }
 
@@ -282,7 +281,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
     private OnClickListener getLookupListClickListener() {
         return view -> {
-            int tag = ((Integer) view.getTag()).intValue();
+            int tag = (Integer) view.getTag();
             Intent i = new Intent(FilterEditActivity.this.currentActivity, LookupsListActivity.class);
             i.putExtra("type", tag);
             

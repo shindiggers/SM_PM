@@ -7,7 +7,6 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
-import android.widget.ListView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
@@ -22,7 +21,6 @@ class FilterRowAdapter extends BaseAdapter {
     private final FilterClass filter;
     private final ArrayList<FilterClass> filterList = new ArrayList<>();
     private final LayoutInflater inflater;
-    private ListView theList;
 
     FilterRowAdapter(FiltersMainActivity theDelegate, FilterClass aFilter) {
         this.filter = aFilter;
@@ -33,12 +31,9 @@ class FilterRowAdapter extends BaseAdapter {
 
     public void reloadData() {
         this.filterList.clear();
-        //new ArrayList();
         ArrayList<FilterClass> fList = FilterClass.query();
-        ArrayList<String> nameList = new ArrayList<>();
         for (FilterClass filter : fList) {
             if (!filter.getFilterName().isEmpty()) {
-                nameList.add(filter.getFilterName());
                 this.filterList.add(filter);
             }
         }
@@ -97,13 +92,9 @@ class FilterRowAdapter extends BaseAdapter {
     private OnClickListener getEditClickListener() {
         return v -> {
             FilterRowHolder vw = (FilterRowHolder) ((View) v.getParent()).getTag();
-            Intent intent = new Intent(FilterRowAdapter.this.delegate, FilterEditActivity.class);
+            Intent intent = new Intent(this.delegate, FilterEditActivity.class);
             intent.putExtra("Filter", vw.filter);
-            if (FilterRowAdapter.this.delegate instanceof FiltersMainActivity) {
-                FilterRowAdapter.this.delegate.filterEditLauncher.launch(intent);
-            } else {
-                FilterRowAdapter.this.delegate.startActivity(intent);
-            }
+            this.delegate.filterEditLauncher.launch(intent);
         };
     }
 }
