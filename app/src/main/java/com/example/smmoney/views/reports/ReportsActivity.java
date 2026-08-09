@@ -1,6 +1,5 @@
 package com.example.smmoney.views.reports;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -18,6 +17,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.smmoney.R;
@@ -44,11 +44,9 @@ import java.util.concurrent.Executors;
 
 public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate, ReportDialog.ReportDialogListner {
     public static boolean processData = false;
-    private final int MENU_VIEW = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MSG_PROGRESS_FINISH = 0;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MSG_PROGRESS_UPDATE = 1;
+    private static final int MENU_VIEW = 1;
+    private static final int MSG_PROGRESS_FINISH = 0;
+    private static final int MSG_PROGRESS_UPDATE = 1;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
     private ReportsRowAdapter adapter;
     private TextView balanceAmountView;
@@ -61,36 +59,27 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private ChartPieView pieChartView;
     private View previousPeriodView;
     private PocketMoneyProgressDialog progressDialog = null;
-    @SuppressLint("HandlerLeak")
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(Message msg) {
+        public void handleMessage(@NonNull Message msg) {
             switch (msg.what) {
-                case MSG_PROGRESS_FINISH /*0*/:
-                    if (ReportsActivity.this.progressDialog != null) {
-                        if (ReportsActivity.this.progressDialog.isShowing()) {
-                            ReportsActivity.this.progressDialog.dismiss();
-                        }
-                        return;
+                case MSG_PROGRESS_FINISH:
+                    if (progressDialog != null && progressDialog.isShowing()) {
+                        progressDialog.dismiss();
                     }
                     return;
-                case MSG_PROGRESS_UPDATE /*1*/:
-                    if (ReportsActivity.this.progressDialog == null || !ReportsActivity.this.progressDialog.isShowing()) {
-                        ReportsActivity.this.progressDialog = new PocketMoneyProgressDialog(ReportsActivity.this);
-                        ReportsActivity.this.progressDialog.setMessage("Generating Report.\nPlease wait...");
-                        ReportsActivity.this.progressDialog.setCancelable(true);
-                        ReportsActivity.this.progressDialog.show();
+                case MSG_PROGRESS_UPDATE:
+                    if (progressDialog == null || !progressDialog.isShowing()) {
+                        progressDialog = new PocketMoneyProgressDialog(ReportsActivity.this);
+                        progressDialog.setMessage("Generating Report.\nPlease wait...");
+                        progressDialog.setCancelable(true);
+                        progressDialog.show();
                     }
-                    if (ReportsActivity.this.progressDialog != null && ReportsActivity.this.progressDialog.isShowing()) {
-                        ReportsActivity.this.progressDialog.setProgress(msg.arg1);
-                        return;
-                    }
+                    progressDialog.setProgress(msg.arg1);
                     return;
                 default:
             }
         }
     };
-    @SuppressWarnings("unused")
-    private PocketMoneyProgressDialog progressSpinnerDialog;
     private ListView theList;
 
     private WakeLock wakeLock;
@@ -257,12 +246,12 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     }
 
     public void updateProgressBar(int progress) {
-        this.mHandler.sendMessage(Message.obtain(this.mHandler, 1, progress, 0));
+        mHandler.sendMessage(Message.obtain(mHandler, MSG_PROGRESS_UPDATE, progress, 0));
     }
 
     public void finishProgressBar() {
         processData = false;
-        this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 0, "Process to date Completed"), 500);
+        mHandler.sendMessageDelayed(Message.obtain(mHandler, MSG_PROGRESS_FINISH, "Process to date Completed"), 500);
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {

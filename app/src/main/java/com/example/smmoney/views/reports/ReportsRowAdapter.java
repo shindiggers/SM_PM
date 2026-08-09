@@ -1,9 +1,9 @@
 package com.example.smmoney.views.reports;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.ColorStateList;
-import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 class ReportsRowAdapter extends BaseAdapter {
     private ArrayList<ReportItem> elements = new ArrayList<>();
     private final Context mContext;
-    private final LayoutInflater mInflater; // = LayoutInflater.from(this.mContext); TODO Fix nullPointer exception which arises here!! UPDATE -> Moved the layout inflator to the constructor. seemed to fix the null pointer exception??
+    private final LayoutInflater mInflater;
 
     ReportsRowAdapter(Context aContext) {
         this.mContext = aContext;
@@ -55,20 +55,30 @@ class ReportsRowAdapter extends BaseAdapter {
 
     public View getView(int position, View convertView, ViewGroup parent) {
         ReportItem report = this.elements.get(position);
-        ReportsRowHolder holder = new ReportsRowHolder();
+        ReportsRowHolder holder;
         if (convertView == null) {
-            convertView = this.mInflater.inflate(R.layout.reports_row, null);
+            @SuppressLint("InflateParams")
+            View v = this.mInflater.inflate(R.layout.reports_row, null);
+            convertView = v;
+            holder = new ReportsRowHolder();
             holder.theRow = convertView.findViewById(R.id.therow);
             holder.theRow.setOnClickListener(getBtnClickListener());
             holder.checked = convertView.findViewById(R.id.checked);
             holder.checked.setOnCheckedChangeListener(getCheckListener());
             holder.expense = convertView.findViewById(R.id.expensetextview);
             holder.amount = convertView.findViewById(R.id.amounttextview);
-            holder.checked.setButtonDrawable(Resources.getSystem().getIdentifier("btn_check_material_anim", "drawable", "android"));
+            
+            // Note: btn_check_material_anim is a private internal resource.
+            // Using getIdentifier is the only way to access it without duplicating the drawable.
+            // We suppress the discouragement warning as this is an intentional architectural choice.
+            @SuppressLint("DiscouragedApi")
+            int drawableId = mContext.getResources().getIdentifier("btn_check_material_anim", "drawable", "android");
+            if (drawableId != 0) {
+                holder.checked.setButtonDrawable(drawableId);
+            }
+            
             int[][] states = new int[][]{
-                    /*new int[] {-android.R.attr.state_enabled},*/ // disabled
                     new int[]{-android.R.attr.state_checked}, // unchecked
-                    /*new int[] { android.R.attr.state_pressed},*/  // pressed
                     new int[]{android.R.attr.state_enabled} // enabled
             };
             int[] colors = new int[]{

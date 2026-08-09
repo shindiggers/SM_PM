@@ -789,4 +789,5 @@
     <string name="kLOC_FORMAT_AHEAD">&#8226; Ahead %1$s</string>
     <string name="kLOC_FORMAT_BEHIND">&#8226; Behind %1$s</string>
     <string name="kLOC_GENERAL_EMPTY_BRACKETS">&lt;empty&gt;</string>
+    <string name="kLOC_REPORT_AMOUNT_FORMAT">%1$s &#183; %2$s%% &#183; %3$d</string>
 </resources>
