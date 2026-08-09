@@ -16,13 +16,13 @@ import com.example.smmoney.records.CategoryClass;
 
 public class BudgetsRowHolder {
     public CategoryClass category;
-    public View therow;
-    public TextView spentTextView;
-    public TextView budgetTextView;
-    public TextView categoryTextView;
-    public TextView varianceTextView;
-    public View barBackground;
-    public View barForeground;
+    public final View therow;
+    public final TextView spentTextView;
+    public final TextView budgetTextView;
+    public final TextView categoryTextView;
+    public final TextView varianceTextView;
+    public final View barBackground;
+    public final View barForeground;
 
     public BudgetsRowHolder(View rowView) {
         this.therow = rowView;

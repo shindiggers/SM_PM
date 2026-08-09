@@ -336,11 +336,11 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
 
     private static class MyScanner {
         String amount = null;
-        int end;
+        final int end;
         int index = 0;
         char sign = '\u0000';
         StringBuilder strBuff;
-        char[] theChars;
+        final char[] theChars;
 
         MyScanner(String amount) {
             this.theChars = amount.toCharArray();

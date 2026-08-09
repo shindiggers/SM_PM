@@ -274,7 +274,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     static class HeaderViewHolder extends RecyclerView.ViewHolder {
-        BudgetsHeaderHolder headerView;
+        final BudgetsHeaderHolder headerView;
         HeaderViewHolder(BudgetsHeaderHolder view) {
             super(view);
             headerView = view;
@@ -283,13 +283,13 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
     class AccountViewHolder extends RecyclerView.ViewHolder {
         AccountClass account;
-        View therow;
-        TextView accountname;
-        TextView totalworth;
-        TextView exchangeRate;
-        ImageView icon_image;
-        ImageView newtransbutton;
-        AppCompatCheckBox selected;
+        final View therow;
+        final TextView accountname;
+        final TextView totalworth;
+        final TextView exchangeRate;
+        final ImageView icon_image;
+        final ImageView newtransbutton;
+        final AppCompatCheckBox selected;
 
         AccountViewHolder(View v) {
             super(v);
@@ -400,7 +400,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     }
 
     class CustomViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        final TextView textView;
         CustomViewHolder(View v) {
             super(v);
             textView = v.findViewById(R.id.text);

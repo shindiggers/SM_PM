@@ -37,11 +37,11 @@ import javax.xml.parsers.SAXParserFactory;
 public class RepeatingTransactionClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
     public static final String XML_RECORDTAG_REPEATINGTRANSACTION = "RPTTRANSCLASS";
-    private final String dayNameToken;                          // String placeholder for days of the week in dynamic strings. The token will be replaced with Monday, Tuesday etc as required
-    private final String dayOrdinalToken;                       // String placeholder for day ordinals (eg 'st', 'nd', 'rd', 'th' for 1st, 2nd, 3rd, 4th etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
-    private final String frequenceToken;                        // String placeholder for the different frequency types (eg daily, weekly, bi-weekly, monthly, bi-monthly, quarterly etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
-    private final String monthNameToken;                        // String placeholder for months of the year in dynamic strings. The token will be replaced with January, February etc as required
-    private final String weekOrdinalToken;                      // String placeholder for week of the month ordinals (eg 'st', 'nd', 'rd', 'th' or 'last' for 1st, 2nd, 3rd, 4th or last, say, Tuesday of the month etc). The token will be replaced dynamicall by the relevant ordinal depending what day of the month the code needs to handle
+    private final String dayNameToken;                          // String placeholder for days of the week in dynamic strings. The token will be replaced with Monday, Tuesday etc. as required
+    private final String dayOrdinalToken;                       // String placeholder for day ordinals (eg 'st', 'nd', 'rd', 'th' for 1st, 2nd, 3rd, 4th etc). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
+    private final String frequenceToken;                        // String placeholder for the different frequency types (e.g. daily, weekly, bi-weekly, monthly, bi-monthly, quarterly etc.). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
+    private final String monthNameToken;                        // String placeholder for months of the year in dynamic strings. The token will be replaced with January, February etc. as required
+    private final String weekOrdinalToken;                      // String placeholder for week of the month ordinals (eg 'st', 'nd', 'rd', 'th' or 'last' for 1st, 2nd, 3rd, 4th or last, say, Tuesday of the month etc.). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
     public boolean hydratedTransaction;                         // Flag to indicate if the repeating transaction object has been populated with data, either data read from databse or data from UI. 1/TRUE = Hydrated 0/FALSE = Not
     public int repeatingID;                                     // DATABASE FIELD unique ID for each repeating transaction. Primary key for repeating transactions database
     public String transactionServerID;                          // Not sure of the useage of this class member. //todo: establish what this is for
@@ -660,7 +660,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     /**
-     * Calculates if the weekday of @date (ie Sun, Mon, Tue etc) is the last Sun, Mon, Tue etc of the month
+     * Calculates if the weekday of @date (ie Sun, Mon, Tue etc.) is the last Sun, Mon, Tue etc. of the month
      *
      * @param date the date of the repeating transaction
      * @return true or false as appropriate
@@ -839,7 +839,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             this.timestamp = new GregorianCalendar();                                           // set the timestamp to current time/date
             int col2 = col + 1;                                                                 // col2 = 2
             this.timestamp.setTimeInMillis(((long) curs.getDouble(col)) * 1000);                // set timestamp = timestamp of the RT that has just been read from the database
-            GregorianCalendar cal = new GregorianCalendar();                                    // create new GC object called 'cal'. Initialise to current time/date (ie degault when new CG intantiated)
+            GregorianCalendar cal = new GregorianCalendar();                                    // create new GC object called 'cal'. Initialize to current time/date (ie degault when new CG intantiated)
             col = col2 + 1;                                                                     // col = 3
             cal.setTimeInMillis(((long) curs.getDouble(col2)) * 1000);                          // set 'cal' to the lastProcessedDate as just read from the database
             setLastProcessedDate(cal);                                                          // set the lastProcessedDate of the RT object to the value of 'cal' (ie the lastProcessedDate just read from the database

@@ -454,7 +454,7 @@ public class PocketMoneyThemes {
                 inactiveColor = 0x8AFFFFFF; // 54% white
                 break;
             default:
-                // For themed bars (Purple, Blue, etc), use white and dimmed white
+                // For themed bars (Purple, Blue, etc.), use white and dimmed white
                 activeColor = getColor(R.color.white);
                 inactiveColor = 0x8AFFFFFF;
                 break;

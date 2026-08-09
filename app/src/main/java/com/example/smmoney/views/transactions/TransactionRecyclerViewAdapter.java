@@ -76,14 +76,14 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
 
     class TransactionViewHolder extends RecyclerView.ViewHolder {
         TransactionClass transaction;
-        TextView date;
-        TextView payee;
-        TextView amount;
-        TextView checkNumber;
-        TextView category;
-        TextView runningTotal;
-        CheckBox selected;
-        View therow;
+        final TextView date;
+        final TextView payee;
+        final TextView amount;
+        final TextView checkNumber;
+        final TextView category;
+        final TextView runningTotal;
+        final CheckBox selected;
+        final View therow;
 
         TransactionViewHolder(View v) {
             super(v);

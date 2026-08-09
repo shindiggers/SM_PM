@@ -106,7 +106,7 @@ public class SplitsActivity extends PocketMoneyActivity {
                 this.transaction.hydrated = true;
                 this.transaction.dirty = true;
 
-                // Clean up auto-populated single empty split
+                // Clean up autopopulated single empty split
                 if (this.transaction.getSplits().size() == 1) {
                     SplitsClass first = this.transaction.getSplits().get(0);
                     if (first.getCategory().isEmpty() && (first.getMemo() == null || first.getMemo().isEmpty())) {

@@ -107,14 +107,14 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
     public class RepeatingViewHolder extends RecyclerView.ViewHolder {
         TransactionClass transaction;
         RepeatingTransactionClass repeatingTransaction;
-        TextView date;
-        TextView payee;
-        TextView amount;
-        TextView frequency;
-        TextView category;
-        TextView account;
-        MaterialButton postButton;
-        View therow;
+        final TextView date;
+        final TextView payee;
+        final TextView amount;
+        final TextView frequency;
+        final TextView category;
+        final TextView account;
+        final MaterialButton postButton;
+        final View therow;
 
         RepeatingViewHolder(View v) {
             super(v);

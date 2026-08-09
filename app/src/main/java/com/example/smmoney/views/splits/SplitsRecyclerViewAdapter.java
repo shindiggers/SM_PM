@@ -100,10 +100,10 @@ public class SplitsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class SplitViewHolder extends RecyclerView.ViewHolder {
-        TextView category;
-        TextView amount;
-        TextView memo;
-        TextView theClass;
+        final TextView category;
+        final TextView amount;
+        final TextView memo;
+        final TextView theClass;
         SplitsClass split;
 
         SplitViewHolder(View v) {
@@ -156,8 +156,8 @@ public class SplitsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class AddViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
-        boolean isRemainder;
+        final TextView textView;
+        final boolean isRemainder;
 
         AddViewHolder(View v, boolean isRemainder) {
             super(v);

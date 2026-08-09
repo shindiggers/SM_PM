@@ -104,7 +104,7 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class SingleViewHolder extends RecyclerView.ViewHolder {
-        TextView textView;
+        final TextView textView;
 
         SingleViewHolder(View v) {
             super(v);
@@ -128,7 +128,7 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
     }
 
     class MultiViewHolder extends RecyclerView.ViewHolder {
-        CheckedTextView checkedTextView;
+        final CheckedTextView checkedTextView;
 
         MultiViewHolder(View v) {
             super(v);
