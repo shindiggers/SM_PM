@@ -1,6 +1,5 @@
 package com.example.smmoney.views.repeating;
 
-import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.graphics.Canvas;
@@ -9,9 +8,6 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.Log;
@@ -46,7 +42,6 @@ import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.transactions.TransactionEditActivity;
 
@@ -56,66 +51,17 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class RepeatingActivity extends PocketMoneyActivity {
-    private final int MENU_NEW = 1;
-    private final int MENU_PROCESS = 2;
+    private static final int MENU_NEW = 1;
+    private static final int MENU_PROCESS = 2;
     private RepeatingRecyclerViewAdapter adapter;
     private BalanceBar balanceBar;
-    private FilterClass filter;
+    private final FilterClass filter = new FilterClass();
     private boolean isProcessingToDate = false;
-    private RecyclerView recyclerView;
 
-    final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
+    private final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                reloadData();
-            }
+            result -> reloadData()
     );
-
-    private PocketMoneyProgressDialog progressDialog = null;
-    @SuppressLint("HandlerLeak")
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-        public void handleMessage(Message msg) {
-            final int MSG_PROGRESS_FINISH = 0;
-            final int MSG_PROGRESS_UPDATE = 1;
-            switch (msg.what) {
-                case MSG_PROGRESS_FINISH /*0*/:
-                    if (msg.obj.getClass().equals(String.class)) {
-                        Toast.makeText(RepeatingActivity.this, (String) msg.obj, Toast.LENGTH_LONG).show();
-                    }
-                    try {
-                        RepeatingActivity.this.wakeLock.release();
-                    } catch (Exception e) {
-                        Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity handleMessage (wakeLock.release)", e);
-                    }
-                    if (RepeatingActivity.this.progressDialog != null) {
-                        if (RepeatingActivity.this.progressDialog.isShowing()) {
-                            RepeatingActivity.this.progressDialog.dismiss();
-                        }
-                    }
-                    RepeatingActivity.this.reloadData();
-                    return;
-                case MSG_PROGRESS_UPDATE /*1*/:
-                    if (RepeatingActivity.this.progressDialog == null || !RepeatingActivity.this.progressDialog.isShowing()) {
-                        RepeatingActivity.this.progressDialog = new PocketMoneyProgressDialog(RepeatingActivity.this);
-                        RepeatingActivity.this.progressDialog.setMessage("Processing...\n\nWarning: This may take several minutes");
-                        RepeatingActivity.this.progressDialog.setCancelable(false);
-                        RepeatingActivity.this.progressDialog.show();
-                        try {
-                            RepeatingActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
-                        } catch (Exception e2) {
-                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity handleMessage (wakeLock.acquire)", e2);
-                        }
-                    }
-                    if (RepeatingActivity.this.progressDialog != null && RepeatingActivity.this.progressDialog.isShowing()) {
-                        RepeatingActivity.this.progressDialog.setProgress(msg.arg1);
-                        return;
-                    }
-                    return;
-                default:
-            }
-        }
-    };
-    private WakeLock wakeLock;
 
     private final ActivityResultLauncher<String> notificationPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
         if (!isGranted) {
@@ -123,11 +69,12 @@ public class RepeatingActivity extends PocketMoneyActivity {
         }
     });
 
+    private WakeLock wakeLock;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "RepeatingActivity:DoNotDimScreen");
-        this.filter = new FilterClass();
+        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, "RepeatingActivity:DoNotDimScreen");
         this.filter.setType(Enums.kTransactionTypeRepeating/*5*/); // 5 = repeating in 'transactions' DB table
         setContentView(R.layout.repeating);
         setupView();
@@ -152,12 +99,12 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     private void setupView() {
-        this.recyclerView = findViewById(R.id.thelist);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerView = findViewById(R.id.thelist);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.adapter = new RepeatingRecyclerViewAdapter(this);
-        this.recyclerView.setAdapter(this.adapter);
-        this.recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) this.recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        recyclerView.setAdapter(this.adapter);
+        recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((View) recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -235,7 +182,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         };
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         this.balanceBar = findViewById(R.id.balancebar);
         this.balanceBar.setSecondBalanceEnabled(true);
@@ -316,6 +263,10 @@ public class RepeatingActivity extends PocketMoneyActivity {
         this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
+    public void launchEdit(Intent intent) {
+        editLauncher.launch(intent);
+    }
+
     public void reloadData() {
         this.adapter.setElements(TransactionDB.queryWithFilter(this.filter));
         reloadBalanceBar();
@@ -379,21 +330,18 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     public void run() {
                         TransactionDB.addRepeatingEventsThroughDate(newCal, RepeatingActivity.this);
                         RepeatingActivity.this.runOnUiThread(() -> {
+                            try {
+                                RepeatingActivity.this.wakeLock.release();
+                            } catch (Exception e) {
+                                Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity runOnUiThread (wakeLock.release)", e);
+                            }
                             RepeatingActivity.this.reloadData();
-                            RepeatingActivity.this.finishProgressBar();
+                            Toast.makeText(RepeatingActivity.this, "Process to date Completed", Toast.LENGTH_LONG).show();
+                            RepeatingActivity.this.isProcessingToDate = false;
                         });
                     }
                 }.start();
             }
         }, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
-    }
-
-    public void updateProgressBar(int progress) {
-        this.mHandler.sendMessage(Message.obtain(this.mHandler, 1, progress, 0));
-    }
-
-    public void finishProgressBar() {
-        this.mHandler.sendMessageDelayed(Message.obtain(this.mHandler, 0, "Process to date Completed"), 500);
-        this.isProcessingToDate = false;
     }
 }

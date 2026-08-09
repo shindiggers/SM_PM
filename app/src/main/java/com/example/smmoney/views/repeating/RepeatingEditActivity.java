@@ -1,13 +1,11 @@
 package com.example.smmoney.views.repeating;
 
 import android.app.AlertDialog.Builder;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
@@ -18,6 +16,7 @@ import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.smmoney.R;
@@ -40,7 +39,6 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class RepeatingEditActivity extends PocketMoneyActivity {
-    private final int REQUEST_ENDON = 1;
 
     private final ActivityResultLauncher<Intent> frequencyLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
@@ -64,15 +62,12 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         }
     });
 
-    private Context context;
     private String[] daysOfWeek;
     private TextView endOnTextView;
     private EditText everyTextView;
     private TextView frequencyTextView;
     private ImageView fridayCheck;
     private TextView fridayTextView;
-    @SuppressWarnings("FieldCanBeLocal")
-    private String monday;
     private ImageView mondayCheck;
     private TextView mondayTextView;
     private CheckBox notifyCheckBox;
@@ -83,8 +78,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private TextView saturdayTextView;
     private String suffix = "";
     private TextView suffixTextView;
-    @SuppressWarnings("FieldCanBeLocal")
-    private String sunday;
     private ImageView sundayCheck;
     private TextView sundayTextView;
     private ImageView thursdayCheck;
@@ -98,7 +91,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(LayoutInflater.from(this).inflate(R.layout.repeating_edit, null));
+        setContentView(R.layout.repeating_edit);
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this.repeatingTransaction = getIntent().getSerializableExtra("RepeatingTransaction", RepeatingTransactionClass.class);
             this.transaction = getIntent().getSerializableExtra("Transaction", TransactionClass.class);
@@ -109,7 +102,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.repeatingTransaction.hydrate();
         this.repeatingTransaction.hydrated = true;
         this.repeatingTransaction.getTransaction().hydrated = true;
-        this.context = this;
         setResult(RESULT_CANCELED);
         loadViews();
         setupButtons();
@@ -134,8 +126,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         }
     }
 
-    private void setTitle(String title) {
-    }
+    
 
     private void loadViews() {
         this.daysOfWeek = new DateFormatSymbols().getWeekdays();
@@ -154,8 +145,6 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.notifyDaysInAdvanceTextView = findViewById(R.id.daysinadvancetextview);
         this.notifyCheckBox = findViewById(R.id.notifycheckbox);
         CheckBoxTint.colorCheckBox(this.notifyCheckBox);
-        this.sunday = this.daysOfWeek[Calendar.SUNDAY /*1*/];
-        this.monday = this.daysOfWeek[Calendar.MONDAY /*2*/];
         this.tuesdayTextView.setText(this.daysOfWeek[Calendar.TUESDAY /*3*/]);
         this.wednesdayTextView.setText(this.daysOfWeek[Calendar.WEDNESDAY /*4*/]);
         this.thursdayTextView.setText(this.daysOfWeek[Calendar.THURSDAY /*5*/]);
@@ -180,20 +169,20 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
 
     private void setupButtons() {
         ((View) this.frequencyTextView.getParent()).setOnClickListener(v -> {
-            Intent i = new Intent(RepeatingEditActivity.this.context, LookupsListActivity.class);
+            Intent i = new Intent(this, LookupsListActivity.class);
             i.putExtra("type", 16);
             frequencyLauncher.launch(i);
         });
         ((View) this.endOnTextView.getParent()).setOnClickListener(v -> {
-            Intent i = new Intent(RepeatingEditActivity.this.context, EndOnDateActivity.class);
-            i.putExtra("Date", RepeatingEditActivity.this.endOnTextView.getText().toString());
+            Intent i = new Intent(this, EndOnDateActivity.class);
+            i.putExtra("Date", this.endOnTextView.getText().toString());
             endOnLauncher.launch(i);
         });
         this.everyTextView.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
-                RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString().replace(RepeatingEditActivity.this.suffix, ""));
+                this.everyTextView.setText(this.everyTextView.getText().toString().replace(this.suffix, ""));
             } else {
-                RepeatingEditActivity.this.everyTextView.setText(RepeatingEditActivity.this.everyTextView.getText().toString() + RepeatingEditActivity.this.suffix);
+                this.everyTextView.setText(String.format("%s%s", this.everyTextView.getText().toString(), this.suffix));
             }
         });
         this.notifyCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> ((View) RepeatingEditActivity.this.notifyDaysInAdvanceTextView.getParent()).setVisibility(isChecked ? View.VISIBLE : View.GONE));
@@ -440,7 +429,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.repeatingTransaction.setTypeFromString(this.frequencyTextView.getText().toString());
         try {
             RepeatingTransactionClass repeatingTransactionClass = this.repeatingTransaction;
-            int parseInt = (!this.everyTextView.getText().toString().contains(this.suffix) || this.suffix.equals("")) ? Integer.parseInt(this.everyTextView.getText().toString()) : Integer.parseInt(this.everyTextView.getText().toString().replace(this.suffix, ""));
+            int parseInt = (!this.everyTextView.getText().toString().contains(this.suffix) || this.suffix.isEmpty()) ? Integer.parseInt(this.everyTextView.getText().toString()) : Integer.parseInt(this.everyTextView.getText().toString().replace(this.suffix, ""));
             repeatingTransactionClass.setFrequency(parseInt);
         } catch (Exception e) {
             this.repeatingTransaction.setFrequency(1);
@@ -557,7 +546,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
      * clicked, it calls the 'save()' method and finishes the current activity.
      */
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         return super.onOptionsItemSelected(item); // Call the default implementation if the selected menu item is not the back button arrow
     }
 

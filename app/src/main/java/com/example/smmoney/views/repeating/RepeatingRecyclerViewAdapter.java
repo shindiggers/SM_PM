@@ -1,5 +1,6 @@
 package com.example.smmoney.views.repeating;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -44,7 +45,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
                     
                     Toast.makeText(mContext, "Transaction posted", Toast.LENGTH_LONG).show();
 
-                    // Refresh the whole screen (balances, list re-ordering etc)
+                    // Refresh the whole screen (balances, list re-ordering etc.)
                     if (mContext instanceof RepeatingActivity) {
                         ((RepeatingActivity) mContext).reloadData();
                     }
@@ -58,13 +59,26 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
         this.mInflater = LayoutInflater.from(mContext);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setElements(ArrayList<TransactionClass> aList) {
         this.elements = aList;
+        // Sort by the calculated next occurrence date instead of the template's internal date
         Collections.sort(this.elements, (object1, object2) -> {
-            if (object1.getDate().before(object2.getDate())) return -1;
-            if (object1.getDate().after(object2.getDate())) return 1;
-            return 0;
+            RepeatingTransactionClass rt1 = new RepeatingTransactionClass(object1);
+            rt1.hydrate();
+            GregorianCalendar next1 = rt1.getNextTransactionDateAfter(rt1.lastProcessedDate);
+
+            RepeatingTransactionClass rt2 = new RepeatingTransactionClass(object2);
+            rt2.hydrate();
+            GregorianCalendar next2 = rt2.getNextTransactionDateAfter(rt2.lastProcessedDate);
+
+            if (next1 == null && next2 == null) return 0;
+            if (next1 == null) return 1;
+            if (next2 == null) return -1;
+
+            return next1.compareTo(next2);
         });
+        // Full refresh is intentional as the entire dataset has changed/been re-sorted
         notifyDataSetChanged();
     }
 
@@ -90,7 +104,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
         return elements.size();
     }
 
-    class RepeatingViewHolder extends RecyclerView.ViewHolder {
+    public class RepeatingViewHolder extends RecyclerView.ViewHolder {
         TransactionClass transaction;
         RepeatingTransactionClass repeatingTransaction;
         TextView date;
@@ -117,7 +131,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
                 Intent i = new Intent(mContext, TransactionEditActivity.class);
                 i.putExtra("Transaction", transaction);
                 if (mContext instanceof RepeatingActivity) {
-                    ((RepeatingActivity) mContext).editLauncher.launch(i);
+                    ((RepeatingActivity) mContext).launchEdit(i);
                 } else {
                     mContext.startActivity(i);
                 }
@@ -140,10 +154,10 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
                 // Due today or before: Muted Red
                 this.postButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(androidx.core.content.ContextCompat.getColor(mContext, R.color.theme_red_bar_color)));
             } else if (!dateOfNextRepeat.after(cutoff7Days)) {
-                // Due in the next 7 days: Orange
+                // If due in the next 7 days: Orange
                 this.postButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(androidx.core.content.ContextCompat.getColor(mContext, R.color.theme_orange_label_color)));
             } else {
-                // Due more than 7 days away: Gray
+                // If due more than 7 days away: Gray
                 this.postButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(androidx.core.content.ContextCompat.getColor(mContext, R.color.common_action_bar_splitter)));
             }
 
