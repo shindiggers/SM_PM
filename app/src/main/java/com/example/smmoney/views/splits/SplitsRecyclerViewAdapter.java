@@ -1,5 +1,6 @@
 package com.example.smmoney.views.splits;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -35,8 +36,10 @@ public class SplitsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         this.items = transaction.getSplits();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setItems(List<SplitsClass> newItems) {
         this.items = newItems;
+        // Full refresh is appropriate as the entire list of splits is replaced
         notifyDataSetChanged();
     }
 

@@ -1,6 +1,6 @@
 package com.example.smmoney.views.splits;
 
-import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -53,7 +53,6 @@ public class SplitsActivity extends PocketMoneyActivity {
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         split = data.getSerializableExtra("Split", SplitsClass.class);
                     } else {
-                        //noinspection deprecation
                         split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
                     }
                     int index = data.getIntExtra("SplitIndex", -1);
@@ -67,39 +66,21 @@ public class SplitsActivity extends PocketMoneyActivity {
                 }
             }
     );
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MENU_ADJUST = 3;
-    private final int MENU_CLEAR = 4;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MENU_NEW = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int MENU_REMAINDER = 2;
-    private final int REQUEST_NEW = 1;
-    private final int REQUEST_REMAINDER = 2;
     private SplitsRecyclerViewAdapter adapter;
-    private RecyclerView recyclerView;
-    @SuppressWarnings("FieldCanBeLocal")
-    private Context context;
+    private final int MENU_NEW = 1;
     private double originalSubtotal = 0.0d;
     private TextView remainderTextView;
-    private TextView remainderTitleTextView;
     private TextView splitsTotalTextView;
-    private TextView splitsTotalTitleTextView;
     private TextView totalTextView;
-    private TextView totalTitleTextView;
     private TransactionClass transaction;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.context = this;
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 this.transaction = intent.getSerializableExtra("Transaction", TransactionClass.class);
             } else {
-                //noinspection deprecation
                 this.transaction = (TransactionClass) intent.getExtras().get("Transaction");
             }
             if (this.transaction != null) {
@@ -124,9 +105,8 @@ public class SplitsActivity extends PocketMoneyActivity {
         this.splitsTotalTextView = findViewById(R.id.splitssplitstotal);
         this.remainderTextView = findViewById(R.id.splitsremainder);
         this.totalTextView = findViewById(R.id.splitstotal);
-        this.splitsTotalTitleTextView = findViewById(R.id.splitssplitstotaltitle);
-        this.splitsTotalTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        this.totalTitleTextView = findViewById(R.id.splitstotaltitle);
+        TextView splitsTotalTitleTextView = findViewById(R.id.splitssplitstotaltitle);
+        splitsTotalTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
         // Theme headers and card for high contrast
         findViewById(R.id.status_card).setBackgroundColor(0xFF1A1A1A); // Force Dark Gray
@@ -140,24 +120,24 @@ public class SplitsActivity extends PocketMoneyActivity {
         ((TextView) findViewById(R.id.splitssplitstotaltitle)).setTextColor(headerTitleColor);
         this.splitsTotalTextView.setTextColor(headerValueColor);
         
-        this.remainderTitleTextView = findViewById(R.id.splitsremaindertitle);
-        this.remainderTitleTextView.setTextColor(headerTitleColor);
+        TextView remainderTitleTextView = findViewById(R.id.splitsremaindertitle);
+        remainderTitleTextView.setTextColor(headerTitleColor);
         this.remainderTextView.setTextColor(headerValueColor);
         
         TextView editBtn = findViewById(R.id.edit_total_button);
         editBtn.setTextColor(PocketMoneyThemes.currentTintColor());
         editBtn.setOnClickListener(v -> showEditTotalDialog());
 
-        this.recyclerView = findViewById(R.id.the_list);
-        this.recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView recyclerView = findViewById(R.id.the_list);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
         this.adapter = new SplitsRecyclerViewAdapter(this, this.transaction);
-        this.recyclerView.setAdapter(this.adapter);
-        this.recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) this.recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        recyclerView.setAdapter(this.adapter);
+        recyclerView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((View) recyclerView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
 
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
-            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+            public boolean onMove(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 return false;
             }
 
@@ -174,15 +154,15 @@ public class SplitsActivity extends PocketMoneyActivity {
             }
 
             @Override
-            public int getSwipeDirs(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+            public int getSwipeDirs(@NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder viewHolder) {
                 if (viewHolder instanceof SplitsRecyclerViewAdapter.SplitViewHolder) {
-                    return super.getSwipeDirs(recyclerView, viewHolder);
+                    return super.getSwipeDirs(rv, viewHolder);
                 }
                 return 0;
             }
 
             @Override
-            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+            public void onChildDraw(@NonNull Canvas c, @NonNull RecyclerView rv, @NonNull RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
                 if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
                     View itemView = viewHolder.itemView;
                     Paint paint = new Paint();
@@ -200,10 +180,10 @@ public class SplitsActivity extends PocketMoneyActivity {
                         icon.draw(c);
                     }
                 }
-                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+                super.onChildDraw(c, rv, viewHolder, dX, dY, actionState, isCurrentlyActive);
             }
         };
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.recyclerView);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
 
         setResult(RESULT_NO_CHANGE);
 
@@ -336,11 +316,13 @@ public class SplitsActivity extends PocketMoneyActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
     }
 
-    public boolean onContextItemSelected(MenuItem item) {
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
         return super.onContextItemSelected(item);
     }
 
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             setTransactionAsResult();
             finish();
