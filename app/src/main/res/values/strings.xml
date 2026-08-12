@@ -751,6 +751,11 @@
     <string name="row_runningtotal">runningTotal</string>
     <string name="elipses">&#8230;</string>
     <string name="contentDescription_image_for_account">Image for account</string>
+    <string name="content_description_lock_foreign">Lock foreign amount</string>
+    <string name="content_description_lock_rate">Lock exchange rate</string>
+    <string name="content_description_fetch_rate">Fetch online exchange rate</string>
+    <string name="content_description_lock_account">Lock account amount</string>
+    <string name="content_description_swap">Swap currencies and amounts</string>
     <string name="hint_add_a_note">Add a note</string>
     <string name="content_description_choose_between_actual_budgeted_and_available">Choose between actual, budgeted and available</string>
     <string name="usd">USD</string>

@@ -45,6 +45,7 @@
                     android:id="@+id/lock_foreign"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:contentDescription="@string/content_description_lock_foreign"
                     android:padding="4dp"
                     android:src="@drawable/ic_lock_open"
                     app:tint="@color/blue_theme_field_label_color" />
@@ -81,6 +82,7 @@
                     android:id="@+id/currency_picker_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_arrow_drop_down_circle" />
             </LinearLayout>
 
@@ -120,6 +122,7 @@
                     android:id="@+id/lock_rate"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:contentDescription="@string/content_description_lock_rate"
                     android:padding="4dp"
                     android:src="@drawable/ic_lock_open"
                     app:tint="@color/blue_theme_field_label_color" />
@@ -149,6 +152,7 @@
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:layout_marginEnd="4dp"
+                    android:contentDescription="@string/content_description_fetch_rate"
                     android:background="?attr/selectableItemBackgroundBorderless"
                     android:padding="6dp"
                     android:src="@drawable/ic_globe"
@@ -191,6 +195,7 @@
                     android:id="@+id/lock_account"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
+                    android:contentDescription="@string/content_description_lock_account"
                     android:padding="4dp"
                     android:src="@drawable/ic_lock"
                     app:tint="@color/blue_theme_field_label_color" />
@@ -227,6 +232,7 @@
                     android:id="@+id/account_currency_picker_arrow"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:contentDescription="@null"
                     android:src="@drawable/ic_arrow_drop_down_circle"
                     android:visibility="gone" />
             </LinearLayout>
@@ -262,6 +268,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="40dp"
                 android:layout_marginStart="8dp"
+                android:contentDescription="@string/content_description_swap"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:padding="8dp"
                 android:src="@drawable/ic_swap_vert"

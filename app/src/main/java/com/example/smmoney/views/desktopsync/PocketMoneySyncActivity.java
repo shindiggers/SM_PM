@@ -452,7 +452,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             case Enums.kDesktopSyncStatePhotoHeaderReceived /*34*/:
             case Enums.kDesktopSyncStateReceivingPhoto /*35*/:
             case Enums.kDesktopSyncStatePhotoReceived /*36*/:
-            case TransactionEditActivity.REQUEST_PHOTO_OPTION /*37*/:
+            case Enums.kDesktopSyncStatePhotoProcessed /*37*/:
                 status = Locales.kLOC_INPPURCHASES_PHOTOTITLE + " : " + this.photoCount;
                 break;
             case Enums.kDesktopSyncStateSendingRecentChanges /*46*/:

@@ -18,6 +18,7 @@
             android:id="@+id/start_date_icon"
             android:layout_width="24dp"
             android:layout_height="24dp"
+            android:contentDescription="@null"
             android:src="@drawable/ic_calendar"
             android:paddingTop="6dp"
             app:layout_constraintStart_toStartOf="parent"

@@ -207,8 +207,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     private TextView periodTextView;
     private CheckBox rolloverCheckBox;
     private CategoryBudgetClass selectedBudgetItem;
-    @SuppressWarnings("FieldCanBeLocal")
-    
+
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
