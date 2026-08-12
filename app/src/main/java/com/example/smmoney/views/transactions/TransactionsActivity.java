@@ -77,7 +77,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.filters.FiltersMainActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.reports.AccountsReportDataSource;
 import com.example.smmoney.views.reports.CategoryReportDataSource;
 import com.example.smmoney.views.reports.ClassReportDataSource;
@@ -92,64 +91,21 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 
 public class TransactionsActivity extends PocketMoneyActivity implements HandlerActivity {
-    @SuppressWarnings("unused")
-    public final int REQUEST_EDIT = 2;
-    @SuppressWarnings("unused")
-    public final int REQUEST_NEW = 1;
-    public final int TRANSACTION_REQUEST_EMAIL = 2;
-    public final int TRANSACTION_REQUEST_FILTER = 1;
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
-    private final int DATE_DIALOG_ID = 8;
     private final int EMAIL_CSV = 2;
     private final int EMAIL_QIF = 0;
     private final int EMAIL_TDF = 1;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final int IMPORT_PROGRESS_DIALOG = 9;
-    private final int MENU_EMAILTRANSFERS = 3;
-    private final int MENU_FILETRANSFERS = 1;
     private final int MENU_FILTER = 4;
     private final int MENU_NEW = 1;
-    @SuppressWarnings("unused")
-    private final int MENU_REPORTS = 5;
     private final int MENU_REPORTS_ACCOUNT = 6;
     private final int MENU_REPORTS_CATEGORY = 7;
     private final int MENU_REPORTS_CLASS = 8;
     private final int MENU_REPORTS_PAYEE = 9;
-    @SuppressWarnings("unused")
-    private final int MENU_SDCARDTRANSFER = 5;
-    private final int MENU_SD_EXPORT = 7;
-    @SuppressWarnings("unused")
-    private final int MENU_SD_IMPORT = 6;
     private final int MENU_SEARCH = 24;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS = 3;
     private final int MENU_TOOLS_ADJUSTBALANCE = 13;
     private final int MENU_TOOLS_FILETRANSFERS = 10;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EMAIL = 17;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EMAIL_CSV = 23;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EMAIL_QIF = 21;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EMAIL_TDF = 22;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EXPORT = 16;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EXPORT_CSV = 20;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EXPORT_QIF = 18;
-    @SuppressWarnings("unused")
-    private final int MENU_TOOLS_FILETRANSFERS_EXPORT_TDF = 19;
     private final int MENU_TOOLS_GOTODATE = 11;
     private final int MENU_TOOLS_MARKASCLEAR = 14;
     private final int MENU_TOOLS_ROLLUP = 15;
-    private final int MENU_VIEW = 2;
-    @SuppressWarnings("unused")
-    private final int MENU_WIFITRANSFERS = 2;
-    @SuppressWarnings("unused")
-    private final int MENU_WIFI_EXPORT = 4;
     private final int MENU_SORT = 25;
     private FilterClass _filter;
     private TransactionRecyclerViewAdapter adapter;
@@ -182,26 +138,17 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         }
     };
     private BalanceBar balanceBar;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private MaterialButton allButton;
     private Context context;
     private String emailFileLocation;
     private ArrayList<String> fileNames;
     private boolean firstOpenOfView;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private MaterialButton clearedButton;
-    @SuppressWarnings("FieldCanBeLocal")
     private RecyclerView recyclerView;
     private Handler mHandler = null;
     private int msgEmail = -1;
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private MaterialButton pendingButton;
     private PocketMoneyProgressDialog progressDialog = null;
     private EditText searchEditText;
     private LinearLayout searchView;
     private boolean shouldEmail = false;
-    @SuppressWarnings("unused")
-    private TextView titleTextView;
     private WakeLock wakeLock;
 
     final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
@@ -219,19 +166,20 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         this._filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
                     } else {
-                        //noinspection deprecation
                         this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
                     }
                     if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                         this._filter.setAccount(currentAccount);
                     }
                     
-                    String title = this._filter.customFilter() ?
-                            (this._filter.getFilterName().isEmpty() ? Locales.kLOC_TOOLS_FILTER : this._filter.getFilterName()) :
-                            (this._filter.getAccount().isEmpty() ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
-                    
-                    Objects.requireNonNull(getSupportActionBar()).setTitle(title);
-                    reloadData();
+                    if (this._filter != null) {
+                        String title = this._filter.customFilter() ?
+                                (this._filter.getFilterName().isEmpty() ? Locales.kLOC_TOOLS_FILTER : this._filter.getFilterName()) :
+                                (this._filter.getAccount().isEmpty() ? Locales.kLOC_ALL_TRANSACTIONS : this._filter.getAccount());
+
+                        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+                        reloadData();
+                    }
                 }
             }
     );
@@ -241,7 +189,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             result -> {
                 if (this.fileNames != null) {
                     for (String fileName : this.fileNames) {
-                        new File(fileName).delete();
+                        File file = new File(fileName);
+                        if (file.exists() && !file.delete()) {
+                            Log.w("TransactionsActivity", "Failed to delete temporary export file: " + fileName);
+                        }
                     }
                 }
             }
@@ -255,9 +206,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this._filter = Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter", FilterClass.class);
         } else {
-            //noinspection deprecation
             this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
         }
+        // Suppress InflateParams: null is acceptable here as the layout is inflated for setContentView() 
+        // and doesn't need to resolve layout parameters against a parent container yet.
+        @SuppressLint("InflateParams")
         LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.transactions, null);
         setupView(layout);
         setContentView(layout);
@@ -301,11 +254,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     public boolean onSupportNavigateUp() {
         getOnBackPressedDispatcher().onBackPressed();
         return true;
-    }
-
-    @SuppressWarnings("unused")
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
     }
 
     private void setupView(LinearLayout layout) {
@@ -400,8 +348,10 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.searchEditText = layout.findViewById(R.id.searcheditext);
         this.searchEditText.addTextChangedListener(new TextWatcher() {
             public void afterTextChanged(Editable s) {
-                TransactionsActivity.this._filter.setSpotlight(TransactionsActivity.this.searchEditText.getText().toString());
-                TransactionsActivity.this.reloadData();
+                if (TransactionsActivity.this._filter != null) {
+                    TransactionsActivity.this._filter.setSpotlight(TransactionsActivity.this.searchEditText.getText().toString());
+                    TransactionsActivity.this.reloadData();
+                }
             }
 
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -411,9 +361,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
         });
         View aView = layout.findViewById(R.id.radiogroup);
-        this.pendingButton = aView.findViewById(R.id.pendingbutton);
-        this.clearedButton = aView.findViewById(R.id.clearedbutton);
-        this.allButton = aView.findViewById(R.id.allbutton);
+        MaterialButton pendingButton = aView.findViewById(R.id.pendingbutton);
+        MaterialButton clearedButton = aView.findViewById(R.id.clearedbutton);
+        MaterialButton allButton = aView.findViewById(R.id.allbutton);
         
         MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) aView;
         group.addOnButtonCheckedListener(getRadioChangedListener());
@@ -423,17 +373,17 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
         android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
         
-        this.pendingButton.setBackgroundTintList(bgTint);
-        this.pendingButton.setTextColor(textTint);
-        this.pendingButton.setStrokeColor(strokeTint);
+        pendingButton.setBackgroundTintList(bgTint);
+        pendingButton.setTextColor(textTint);
+        pendingButton.setStrokeColor(strokeTint);
         
-        this.clearedButton.setBackgroundTintList(bgTint);
-        this.clearedButton.setTextColor(textTint);
-        this.clearedButton.setStrokeColor(strokeTint);
+        clearedButton.setBackgroundTintList(bgTint);
+        clearedButton.setTextColor(textTint);
+        clearedButton.setStrokeColor(strokeTint);
         
-        this.allButton.setBackgroundTintList(bgTint);
-        this.allButton.setTextColor(textTint);
-        this.allButton.setStrokeColor(strokeTint);
+        allButton.setBackgroundTintList(bgTint);
+        allButton.setTextColor(textTint);
+        allButton.setStrokeColor(strokeTint);
         
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
@@ -448,8 +398,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         this.searchView.invalidate();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void reloadData() {
         this.adapter.setElements(TransactionDB.queryWithFilter(this._filter));
+        // notifyDataSetChanged is appropriate here as queryWithFilter typically replaces 
+        // the entire dataset when filters, account selections, or sort orders change.
         this.adapter.notifyDataSetChanged();
     }
 
@@ -515,13 +468,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 .setTitle(Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON)
                 .setView(dialogView)
                 .setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
-                    int selectedPropertyId = propertyGroup.getCheckedRadioButtonId();
-                    String newSort = Locales.kLOC_GENERAL_DATE;
-                    if (selectedPropertyId == R.id.sort_amount) newSort = Locales.kLOC_GENERAL_AMOUNT;
-                    else if (selectedPropertyId == R.id.sort_payee) newSort = Locales.kLOC_GENERAL_PAYEE;
-                    else if (selectedPropertyId == R.id.sort_class) newSort = Locales.kLOC_GENERAL_CLASS;
-                    else if (selectedPropertyId == R.id.sort_category) newSort = Locales.kLOC_GENERAL_CATEGORY;
-                    else if (selectedPropertyId == R.id.sort_date_amount) newSort = Locales.kLOC_TRANSACTION_SORTDATEAMOUNT;
+                    String newSort = getSortTypeFromId(propertyGroup.getCheckedRadioButtonId());
 
                     int selectedDirectionId = directionGroup.getCheckedRadioButtonId();
                     String newDir = (selectedDirectionId == R.id.sort_asc) ? Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING : Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING;
@@ -532,6 +479,15 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 })
                 .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
                 .show();
+    }
+
+    private String getSortTypeFromId(int selectedPropertyId) {
+        if (selectedPropertyId == R.id.sort_amount) return Locales.kLOC_GENERAL_AMOUNT;
+        if (selectedPropertyId == R.id.sort_payee) return Locales.kLOC_GENERAL_PAYEE;
+        if (selectedPropertyId == R.id.sort_class) return Locales.kLOC_GENERAL_CLASS;
+        if (selectedPropertyId == R.id.sort_category) return Locales.kLOC_GENERAL_CATEGORY;
+        if (selectedPropertyId == R.id.sort_date_amount) return Locales.kLOC_TRANSACTION_SORTDATEAMOUNT;
+        return Locales.kLOC_GENERAL_DATE;
     }
 
     private void markAsClear() {
@@ -676,16 +632,12 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         } else if (act != null) {
             balance = act.balanceOfType(balanceType);
         }
-        if (Enums.kBalanceTypeFiltered /*5*/ == this._filter.getType() || act == null || !act.balanceExceedsLimit()) {
+        if (Enums.kBalanceTypeFiltered == this._filter.getType() || act == null || !act.balanceExceedsLimit()) {
             this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         } else {
             this.balanceBar.balanceAmountTextView.setTextColor(PocketMoneyThemes.redLabelColor());
         }
-        if (this._filter.getAccount() == null || this._filter.allAccounts()) {
-            this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(balance));
-        } else {
-            this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(balance));
-        }
+        this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(balance));
         String label = AccountDB.totalWorthLabel(balanceType);
         if (balanceType == Enums.kBalanceTypeFiltered) {
             String subtitle = getIntent().getStringExtra("subtitle");
@@ -753,7 +705,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         new Thread() {
             public void run() {
                 String pmExternalPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath();
-                FilterClass filter = new FilterClass();
                 final ArrayList<String> fileNames = new ArrayList<>();
                 ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(TransactionsActivity.this._filter);
                 String fileName = pmExternalPath + "/PocketMoneyBackup/" + (TransactionsActivity.this._filter.allAccounts() ? "SMMoney" : TransactionsActivity.this._filter.getAccount()) + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
@@ -934,32 +885,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 }).show();
     }
 
-    private void showLookupFileTransfersDialog() {
-        CharSequence[] items4 = new CharSequence[]{"QIF", "TDF", "CSV"};
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_TOOLS_FILETRANSFERS)
-                .setItems(items4, (dialog, item) -> {
-                    switch (item) {
-                        case EMAIL_QIF /*0*/:
-                            ImportExportQIF exportqif = new ImportExportQIF(TransactionsActivity.this);
-                            exportqif.setFilter(TransactionsActivity.this._filter);
-                            exportqif.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                            return;
-                        case SplitsActivity.RESULT_CHANGED /*1*/:
-                            ImportExportTDF exporttdf = new ImportExportTDF(TransactionsActivity.this);
-                            exporttdf.setFilter(TransactionsActivity.this._filter);
-                            exporttdf.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                            return;
-                        case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/:
-                            ImportExportCSV exportcsv = new ImportExportCSV(TransactionsActivity.this);
-                            exportcsv.setFilter(TransactionsActivity.this._filter);
-                            exportcsv.exportRecords(TransactionDB.queryWithFilter(TransactionsActivity.this._filter));
-                            return;
-                        default:
-                    }
-                }).show();
-    }
-
     private void showSdExportDialog() {
         CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
@@ -1015,20 +940,11 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         new DatePickerDialog(this, PocketMoneyThemes.datePickerTheme(), this.mDateSetListener, theDate.get(Calendar.YEAR), theDate.get(Calendar.MONTH), theDate.get(Calendar.DAY_OF_MONTH)).show();
     }
 
-    @SuppressWarnings("unused")
-    public void displayError(String msg) {
-        AlertDialog alert = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme()).create();
-        alert.setTitle("Error");
-        alert.setMessage(msg);
-        alert.setCancelable(false);
-        alert.setButton(-1, "OK", (dialog, id) -> dialog.dismiss());
-        alert.show();
+    public void onCreateContextMenu(@NonNull ContextMenu menu, @NonNull View v, ContextMenuInfo menuInfo) {
     }
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
+    @Override
+    public boolean onContextItemSelected(@NonNull MenuItem item) {
         return super.onContextItemSelected(item);
     }
 
@@ -1039,7 +955,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return this.mHandler;
     }
 
-    @SuppressLint("HandlerLeak")
     private void createHandler() {
         this.mHandler = new Handler(Looper.getMainLooper()) {
             public void handleMessage(@NonNull Message msg) {

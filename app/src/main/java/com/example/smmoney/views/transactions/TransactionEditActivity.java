@@ -9,11 +9,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Message;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
@@ -77,18 +72,15 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
-import java.util.Objects;
+import java.util.Locale;
 
 public class TransactionEditActivity extends PocketMoneyActivity {
-    public static final int REQUEST_PHOTO_OPTION = 37;
     public static final String TAG = "TRANS_EDIT_ACTIVITY";
-    private final int EDITTEXT_AMOUNT = 3;
     private final int EDITTEXT_CATEGORY = 2;
     private final int EDITTEXT_CLASS = 5;
     private final int EDITTEXT_ID = 4;
     private final int EDITTEXT_PAYEE = 1;
     private final int MENU_SAVE = 6;
-    private final int MSG_CLEARDROPDOWNS = 1;
 
     private TextView accountTextView;
     private EditText amountEditText;
@@ -101,31 +93,20 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private AutoCompleteTextView classEditText;
     private TextView classTextView;
     private CheckBox clearedCheckBox;
-    private CurrencyKeyboard currencyKeyboard;
-    private int dateChanged;
     private TextView dateTextView;
-    private final ArrayList<String> deletedImages = new ArrayList<>();
     private MaterialButton depositButton;
     private AutoCompleteTextView idEditText;
-    private boolean isIReceipt = false;
-    private boolean isLocalNotification = false;
-    private final ArrayList<String> newlyAddedImages = new ArrayList<>();
     private EditText memoEditText;
-    private TextView keepTheChangeButton;
     private AutoCompleteTextView payeeEditText;
-    private TextView payeeLabelTextView;
     private boolean programaticUpdate;
-    private int repeatingChanged;
     private ImageView repeatingImageView;
     private RepeatingTransactionClass repeatingTransaction;
-    private FrameLayout keyboardToolBar;
-    private File tempPhotoPath;
     private TextView timeTextView;
     private ScrollView scrollView;
     private TransactionClass transaction;
     private MaterialButton transferButton;
     private MaterialButton withdrawalButton;
-    private WakeLock wakeLock;
+    private String imageToReplace = null;
 
     private final OnTimeSetListener mTimeSetListener = (view, hourOfDay, minute) -> {
         GregorianCalendar date = transaction.getDate();
@@ -134,15 +115,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         transaction.setDate(date);
         timeTextView.setText(CalExt.descriptionWithShortTime(date));
         transaction.dirty = true;
-    };
-
-    private final Handler mHandler = new Handler(Looper.getMainLooper()) {
-        @Override
-        public void handleMessage(@NonNull Message msg) {
-            if (msg.what == MSG_CLEARDROPDOWNS) {
-                clearDropDowns();
-            }
-        }
     };
 
     public final ActivityResultLauncher<Intent> photoOptionLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
@@ -157,10 +129,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     reloadData();
                 }
             } else if (result.getResultCode() == PhotoReceiptOptionsActivity.RESULT_REPLACE) {
-                // DON'T delete yet. Just open the picker.
-                // We will handle the deletion inside the camera/gallery success callbacks
-                // to ensure we only remove the old photo if a new one is actually provided.
-                showCameraDialog(fileName); // Pass the old filename so we know what to replace
+                showCameraDialog(fileName); 
             }
         }
     });
@@ -215,10 +184,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     });
 
     private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == -1 && result.getData() != null) {
+        if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
             TransactionClass updatedTrans = (TransactionClass) result.getData().getExtras().get("Transaction");
             if (updatedTrans != null) {
-                // Important: Copy the splits over to our active transaction object
                 this.transaction.setSplits(updatedTrans.getSplits());
                 this.transaction.setSubTotal(updatedTrans.getSubTotal());
                 this.transaction.setAmount(updatedTrans.getAmount());
@@ -230,7 +198,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     });
 
     private final ActivityResultLauncher<Intent> repeatingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-        if (result.getResultCode() == -1 && result.getData() != null) {
+        if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
             this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
             this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
             if (this.transaction != null && this.repeatingTransaction != null) {
@@ -278,20 +246,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     });
 
-    private final ActivityResultLauncher<String> cameraPermissionLauncher = registerForActivityResult(new ActivityResultContracts.RequestPermission(), isGranted -> {
-        if (isGranted) {
-            showCameraDialog();
-        } else {
-            Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
-        }
-    });
-
-    private String imageToReplace = null;
-
     private final ActivityResultLauncher<Uri> cameraLauncher = registerForActivityResult(new ActivityResultContracts.TakePicture(), result -> {
         if (result) {
             try {
-                // If replacing, remove the old one first
                 if (imageToReplace != null) {
                     ArrayList<String> images = this.transaction.imageFileNames();
                     images.remove(imageToReplace);
@@ -300,10 +257,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 }
 
                 File photoDir = new File(getFilesDir(), "photos");
-                if (!photoDir.exists()) photoDir.mkdirs();
+                if (!photoDir.exists() && !photoDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create photo directory");
+                }
                 String fileName = "photo_" + System.currentTimeMillis() + ".jpg";
                 File destFile = new File(photoDir, fileName);
                 
+                File tempPhotoPath = new File(getExternalCacheDir(), "temp.jpg");
                 try (FileInputStream in = new FileInputStream(tempPhotoPath);
                      FileOutputStream out = new FileOutputStream(destFile)) {
                     byte[] buffer = new byte[1024];
@@ -316,7 +276,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 ArrayList<String> images = this.transaction.imageFileNames();
                 images.add(fileName);
                 this.transaction.setImageLocation(this.transaction.imageLocationFromNames(images));
-                this.newlyAddedImages.add(fileName);
                 this.transaction.dirty = true;
                 reloadData();
             } catch (Exception e) {
@@ -328,7 +287,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private final ActivityResultLauncher<String> galleryLauncher = registerForActivityResult(new ActivityResultContracts.GetContent(), result -> {
         if (result != null) {
             try {
-                // If replacing, remove the old one first
                 if (imageToReplace != null) {
                     ArrayList<String> images = this.transaction.imageFileNames();
                     images.remove(imageToReplace);
@@ -337,7 +295,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 }
 
                 File photoDir = new File(getFilesDir(), "photos");
-                if (!photoDir.exists()) photoDir.mkdirs();
+                if (!photoDir.exists() && !photoDir.mkdirs()) {
+                    Log.e(TAG, "Failed to create photo directory");
+                }
                 String fileName = "gallery_" + System.currentTimeMillis() + ".jpg";
                 File destFile = new File(photoDir, fileName);
 
@@ -356,7 +316,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 ArrayList<String> images = this.transaction.imageFileNames();
                 images.add(fileName);
                 this.transaction.setImageLocation(this.transaction.imageLocationFromNames(images));
-                this.newlyAddedImages.add(fileName);
                 this.transaction.dirty = true;
                 reloadData();
             } catch (Exception e) {
@@ -368,12 +327,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(PowerManager.SCREEN_BRIGHT_WAKE_LOCK, "TransactionEditActivity:WakeLock");
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             this.transaction = (TransactionClass) extras.getSerializable("Transaction");
-            this.isIReceipt = extras.getBoolean("isIReceipt", false);
-            this.isLocalNotification = extras.getBoolean("isLocalNotification", false);
         }
         
         if (this.transaction == null) {
@@ -422,7 +379,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.depositButton = findViewById(R.id.depositbutton);
         this.transferButton = findViewById(R.id.transferbutton);
         this.balanceBar = findViewById(R.id.balancebar);
-        this.payeeLabelTextView = findViewById(R.id.payeelabeltextview);
         
         MaterialButtonToggleGroup group = findViewById(R.id.radiogroup);
         group.addOnButtonCheckedListener(getRadioChangedListener());
@@ -510,7 +466,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 intent.putExtra("imageName", images.get(0));
                 photoOptionLauncher.launch(intent);
             } else {
-                showCameraDialog();
+                showCameraDialog(null);
             }
         });
         findViewById(R.id.duplicate_button).setOnClickListener(v -> showDuplicateDialog());
@@ -582,8 +538,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.categoryEditText.addTextChangedListener(dirtyWatcher);
         this.classEditText.addTextChangedListener(dirtyWatcher);
 
-        this.currencyKeyboard = findViewById(R.id.keyboardView);
-        this.currencyKeyboard.setEditText(this.amountEditText, () -> {
+        CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
+        currencyKeyboard.setEditText(this.amountEditText, () -> {
             if (amountEditText.hasFocus()) {
                 clearKeepTheChange();
                 AccountClass act = AccountDB.recordFor(transaction.getAccount());
@@ -595,11 +551,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             loadAmountXrateValues();
         });
 
-        this.keyboardToolBar = findViewById(R.id.keyboard_toolbar);
-        this.keyboardToolBar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        this.currencyKeyboard.setToolbarView(this.keyboardToolBar);
-        this.keepTheChangeButton = findViewById(R.id.keep_the_change_toolbar_button);
-        this.keepTheChangeButton.setOnClickListener(v -> keepTheChange());
+        FrameLayout keyboardToolBar = findViewById(R.id.keyboard_toolbar);
+        keyboardToolBar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
+        currencyKeyboard.setToolbarView(keyboardToolBar);
+        TextView keepTheChangeButton = findViewById(R.id.keep_the_change_toolbar_button);
+        keepTheChangeButton.setOnClickListener(v -> keepTheChange());
         
         findViewById(R.id.subcategory_toolbar_button).setOnClickListener(v -> {
             Intent i = new Intent(this, CategoryLookupListActivity.class);
@@ -685,7 +641,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void amountAction() {
-        this.currencyKeyboard.show();
+        CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
+        currencyKeyboard.show();
     }
 
     private void currencyAction() {
@@ -748,7 +705,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID != 0) {
             saveRepeatingTransaction();
         }
-        deleteDeletedImages();
         keepTheChangeUpdate();
     }
 
@@ -901,7 +857,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         } else if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             double xRate = this.transaction.getXrate();
             String currencyCode = this.transaction.getCurrencyCode();
-            String tempFxString = String.format("1 %s = %.3f %s", Prefs.getStringPref(Prefs.HOMECURRENCYCODE), xRate, currencyCode);
+            String tempFxString = String.format(Locale.getDefault(), "1 %s = %.3f %s", Prefs.getStringPref(Prefs.HOMECURRENCYCODE), xRate, currencyCode);
 
             this.amountEditText.setText(CurrencyExt.amountAsCurrency(Math.abs(this.transaction.getSubTotal()), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
             this.foreignAmountTextView.setVisibility(View.VISIBLE);
@@ -997,10 +953,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 .setPositiveButton(Locales.kLOC_GENERAL_OK, null).show();
     }
 
-    private void showCameraDialog() {
-        showCameraDialog(null);
-    }
-
     private void showCameraDialog(String replaceTarget) {
         this.imageToReplace = replaceTarget;
         new Builder(this, PocketMoneyThemes.dialogTheme())
@@ -1008,7 +960,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 .setItems(new String[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
                     if (which == 0) {
                         try {
-                            tempPhotoPath = new File(getExternalCacheDir(), "temp.jpg");
+                            File tempPhotoPath = new File(getExternalCacheDir(), "temp.jpg");
                             Uri photoUri = FileProvider.getUriForFile(this, "com.example.fileprovider", tempPhotoPath);
                             cameraLauncher.launch(photoUri);
                         } catch (Exception e) {
@@ -1050,6 +1002,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, @NonNull android.view.KeyEvent event) {
+        CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
+        if (keyCode == 4 && currencyKeyboard.hide()) {
+            return false;
+        }
+        return super.onKeyDown(keyCode, event);
     }
 
     private void editTransactionDelete() {
@@ -1100,25 +1061,32 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 this.repeatingTransaction.getTransaction().deleteFromDatabase();
             }
             this.repeatingTransaction.deleteFromDatabase();
-        } else if (this.repeatingChanged != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating && this.dateChanged != Enums.DateChangeTypeSeparateTransactionFromRepeating) {
-            // UPDATE TEMPLATE
-            // We create a fresh template copy (Type 5) linked to the repeating metadata
-            TransactionClass template = this.transaction.copy();
-            template.isRepeatingTransaction = true;
-            
-            // If updating an existing series, delete the old template record first
-            if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
-                this.repeatingTransaction.getTransaction().deleteFromDatabase();
-            }
-            
-            this.repeatingTransaction.setTransaction(null);
-            this.repeatingTransaction.setTransaction(template);
-            this.repeatingTransaction.dirty = true;
-            this.repeatingTransaction.saveToDatabase();
-            this.repeatingTransaction.setupNotification(getApplicationContext());
-            
-            if (isNewSeries) {
-                TransactionDB.addRepeatingTransactions();
+        } else {
+            // Future logic: Set these values via a dialog to separate a transaction from its series
+            int repeatingChangedLocal = 0; 
+            int dateChangedLocal = 0;
+
+            if (repeatingChangedLocal != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating && 
+                dateChangedLocal != Enums.DateChangeTypeSeparateTransactionFromRepeating) {
+                // UPDATE TEMPLATE
+                // We create a fresh template copy (Type 5) linked to the repeating metadata
+                TransactionClass template = this.transaction.copy();
+                template.isRepeatingTransaction = true;
+                
+                // If updating an existing series, delete the old template record first
+                if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
+                    this.repeatingTransaction.getTransaction().deleteFromDatabase();
+                }
+                
+                this.repeatingTransaction.setTransaction(null);
+                this.repeatingTransaction.setTransaction(template);
+                this.repeatingTransaction.dirty = true;
+                this.repeatingTransaction.saveToDatabase();
+                this.repeatingTransaction.setupNotification(getApplicationContext());
+                
+                if (isNewSeries) {
+                    TransactionDB.addRepeatingTransactions();
+                }
             }
         }
     }
@@ -1142,24 +1110,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private void keepTheChangeUpdate() {
         if (this.changeKept != 0.0d) {
             AccountClass account = AccountDB.recordFor(this.transaction.getAccount());
+            if (account == null) return;
             AccountClass ktcAccount = AccountDB.recordFor(account.getKeepTheChangeAccount());
-            TransactionClass keepTheChangeRecord = new TransactionClass();
-            keepTheChangeRecord.setAccount(this.transaction.getAccount());
-            if (ktcAccount != null) {
-                keepTheChangeRecord.setTransferToAccount(account.getKeepTheChangeAccount());
-            } else {
-                keepTheChangeRecord.setPayee(account.getKeepTheChangeAccount());
-            }
-            GregorianCalendar greg = new GregorianCalendar();
-            greg.setTimeInMillis(this.transaction.getDate().getTimeInMillis() + 1000);
-            keepTheChangeRecord.setDate(greg);
-            keepTheChangeRecord.setSubTotal(this.changeKept * -1.0d);
-            keepTheChangeRecord.setAmount(this.changeKept * -1.0d);
-            keepTheChangeRecord.setCurrencyCode(account.getCurrencyCode());
-            keepTheChangeRecord.setCategory(Locales.kLOC_GENERAL_KEEP_CHANGE);
-            keepTheChangeRecord.setType(Enums.kTransactionTypeTransferFrom);
-            keepTheChangeRecord.setClassName(this.transaction.getClassName());
-            keepTheChangeRecord.initType();
+            TransactionClass keepTheChangeRecord = createKeepTheChangeRecord(account, ktcAccount);
             keepTheChangeRecord.saveToDatabase();
             if (ktcAccount != null) {
                 saveUpdateTransferFromOriginalRecord(new TransactionClass(0), keepTheChangeRecord);
@@ -1172,6 +1125,27 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
+    private TransactionClass createKeepTheChangeRecord(AccountClass account, AccountClass ktcAccount) {
+        TransactionClass record = new TransactionClass();
+        record.setAccount(this.transaction.getAccount());
+        if (ktcAccount != null) {
+            record.setTransferToAccount(account.getKeepTheChangeAccount());
+        } else {
+            record.setPayee(account.getKeepTheChangeAccount());
+        }
+        GregorianCalendar greg = new GregorianCalendar();
+        greg.setTimeInMillis(this.transaction.getDate().getTimeInMillis() + 1000);
+        record.setDate(greg);
+        record.setSubTotal(this.changeKept * -1.0d);
+        record.setAmount(this.changeKept * -1.0d);
+        record.setCurrencyCode(account.getCurrencyCode());
+        record.setCategory(Locales.kLOC_GENERAL_KEEP_CHANGE);
+        record.setType(Enums.kTransactionTypeTransferFrom);
+        record.setClassName(this.transaction.getClassName());
+        record.initType();
+        return record;
+    }
+
     private void saveUpdateTransferFromOriginalRecord(TransactionClass oldRecP, TransactionClass modRecP) {
         double d;
         double newRate;
@@ -1180,7 +1154,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         while (i < oldRecP.getNumberOfSplits()) {
             if (oldRecP.getTransferToAccountAtIndex(i) != null && !oldRecP.getTransferToAccountAtIndex(i).isEmpty()) {
                 String str;
-                boolean regularTransfer = oldRecP.getCurrencyCodeAtIndex(i).equals(AccountDB.recordFor(oldRecP.getTransferToAccountAtIndex(i)).getCurrencyCode());
+                AccountClass transferToAccount = AccountDB.recordFor(oldRecP.getTransferToAccountAtIndex(i));
+                if (transferToAccount == null) {
+                    i++;
+                    continue;
+                }
+                boolean regularTransfer = oldRecP.getCurrencyCodeAtIndex(i).equals(transferToAccount.getCurrencyCode());
                 TransactionTransferRetVals ret = new TransactionTransferRetVals();
                 double amountAtIndex = regularTransfer ? -1.0d * (oldRecP.getAmountAtIndex(i) / oldRecP.getXrateAtIndex(i)) : -1.0d * oldRecP.getAmountAtIndex(i);
                 str = regularTransfer ? null : oldRecP.getCurrencyCodeAtIndex(i);
@@ -1203,7 +1182,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         transactionClass.setCurrencyCodeAtIndex(modRecP.getCurrencyCode(), ret.transferSplitItem);
                         if (modRecP.getNumberOfSplits() == 1) {
                             double xrate = xrateFromAccountToAccount(modRecP.getTransferToAccountAtIndex(i), modRecP.getAccount());
-                            if (modRecP.getCurrencyCodeAtIndex(i).equals(AccountDB.recordFor(modRecP.getTransferToAccountAtIndex(i)).getCurrencyCode())) {
+                            AccountClass modTransferToAccount = AccountDB.recordFor(modRecP.getTransferToAccountAtIndex(i));
+                            if (modTransferToAccount != null && modRecP.getCurrencyCodeAtIndex(i).equals(modTransferToAccount.getCurrencyCode())) {
                                 d = xrate;
                             } else {
                                 d = 1.0d;
@@ -1226,7 +1206,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private double xrateFromAccountToAccount(String account1, String account2) {
-        return AccountDB.recordFor(account1).getExchangeRate() / AccountDB.recordFor(account2).getExchangeRate();
+        AccountClass a1 = AccountDB.recordFor(account1);
+        AccountClass a2 = AccountDB.recordFor(account2);
+        if (a1 == null || a2 == null) return 1.0d;
+        return a1.getExchangeRate() / a2.getExchangeRate();
     }
 
     private void splitsAction() {
@@ -1236,14 +1219,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         splitsLauncher.launch(i);
     }
 
-    private void deleteDeletedImages() {
-        File photoDir = new File(getFilesDir(), "photos");
-        for (String img : deletedImages) {
-            new File(photoDir, img).delete();
-        }
-    }
-
     private void editTextDidFinishChanging(int code) {
+        int EDITTEXT_AMOUNT = 3;
         if (code == EDITTEXT_AMOUNT) {
             saveAmountXrates();
             loadAmountXrateValues();
@@ -1272,12 +1249,5 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void reloadData() {
         loadCells();
-    }
-
-    private void clearDropDowns() {
-        this.categoryEditText.dismissDropDown();
-        this.payeeEditText.dismissDropDown();
-        this.idEditText.dismissDropDown();
-        this.classEditText.dismissDropDown();
     }
 }

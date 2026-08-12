@@ -1,5 +1,6 @@
 package com.example.smmoney.views.transactions;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -36,8 +37,10 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         this.mInflater = LayoutInflater.from(mContext);
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setElements(ArrayList<TransactionClass> aList) {
         this.elements = aList;
+        // Full refresh is appropriate as the entire list is replaced
         notifyDataSetChanged();
     }
 
@@ -74,7 +77,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         return elements.size();
     }
 
-    class TransactionViewHolder extends RecyclerView.ViewHolder {
+    public class TransactionViewHolder extends RecyclerView.ViewHolder {
         TransactionClass transaction;
         final TextView date;
         final TextView payee;
@@ -131,10 +134,10 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             if (this.transaction.getType() != Enums.kTransactionTypeTransferFrom && this.transaction.getType() != Enums.kTransactionTypeTransferTo) {
                 this.payee.setText(this.transaction.getPayee());
             } else if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_TRANSTOANDTO_FIELD)) {
-                CharSequence payeeText = !this.transaction.getPayee().isEmpty() ? this.transaction.getPayee() : (this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().length() <= 0) ? "" : "<" + this.transaction.getTransferToAccount() + ">";
+                CharSequence payeeText = !this.transaction.getPayee().isEmpty() ? this.transaction.getPayee() : (this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().isEmpty()) ? "" : mContext.getString(R.string.splits_transfer_to_account, this.transaction.getTransferToAccount());
                 this.payee.setText(payeeText);
             } else if (!(this.transaction.getTransferToAccount() == null || this.transaction.getTransferToAccount().isEmpty())) {
-                this.payee.setText("<" + this.transaction.getTransferToAccount() + ">");
+                this.payee.setText(mContext.getString(R.string.splits_transfer_to_account, this.transaction.getTransferToAccount()));
             }
 
             if (this.transaction.getDate().after(CalExt.endOfDay(new GregorianCalendar()))) {
@@ -171,13 +174,13 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
 
             if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_CLASS_FIELD)) {
                 StringBuilder stringBuilder = new StringBuilder(String.valueOf(categoryNotesString));
-                String str = (categoryNotesString.length() <= 0 || this.transaction.getClassName() == null || this.transaction.getClassName().length() <= 0) ? "" : "/";
+                String str = (categoryNotesString.isEmpty() || this.transaction.getClassName() == null || this.transaction.getClassName().isEmpty()) ? "" : "/";
                 categoryNotesString = stringBuilder.append(str).append(this.transaction.getClassName()).toString();
             }
 
             if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_NOTES_FIELD)) {
                 StringBuilder stringBuilder = new StringBuilder(String.valueOf(categoryNotesString));
-                String str = (categoryNotesString.length() <= 0 || this.transaction.getMemo() == null || this.transaction.getMemo().length() <= 0) ? "" : " \ufffd ";
+                String str = (categoryNotesString.isEmpty() || this.transaction.getMemo() == null || this.transaction.getMemo().isEmpty()) ? "" : " \ufffd ";
                 categoryNotesString = stringBuilder.append(str).append(this.transaction.getMemo()).toString();
             }
             this.category.setText(categoryNotesString);
