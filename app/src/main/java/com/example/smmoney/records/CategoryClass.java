@@ -426,7 +426,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         String startTime = Long.toString(CalExt.beginningOfDay(startDate).getTimeInMillis() / 1000);
         String endTime = Long.toString(CalExt.endOfDay(endDate).getTimeInMillis() / 1000);
         String str = includeSubcategories ? "%" : "";
-        @SuppressWarnings({"UnnecessaryLocalVariable", "unused"}) String plainCategoryString = category;
+        @SuppressWarnings({"unused"}) String plainCategoryString = category;
         String[] bindArgs = new String[]{category + str, startTime, endTime};
         if (query_spent_stmt == null || ((Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) && currentViewType != 0) || currentViewType != Prefs.getIntPref(Prefs.VIEWACCOUNTS))) {
             String exchangeRateLookup = "";

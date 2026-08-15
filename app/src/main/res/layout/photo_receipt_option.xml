@@ -13,53 +13,45 @@
         android:layout_weight="1.0"
         android:contentDescription="@string/receipt_image" />
 
-    <FrameLayout
+    <LinearLayout
         android:id="@+id/bottom_tool_bar"
         android:layout_width="match_parent"
         android:layout_height="48dp"
-        android:background="#000">
+        android:background="#000"
+        android:gravity="center"
+        android:orientation="horizontal">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/replace"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="center"
-            android:orientation="horizontal">
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="6dp"
+            android:text="Replace"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/replace"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginEnd="24dp"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingStart="16dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="6dp"
-                android:text="Replace"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="normal" />
+        <TextView
+            android:id="@+id/delete"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:attr/selectableItemBackground"
+            android:clickable="true"
+            android:focusable="true"
+            android:paddingStart="16dp"
+            android:paddingTop="6dp"
+            android:paddingEnd="16dp"
+            android:paddingBottom="6dp"
+            android:text="@string/kLOC_GENERAL_DELETE"
+            android:textAppearance="?android:textAppearanceMedium"
+            android:textStyle="normal" />
 
-            <TextView
-                android:id="@+id/delete"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:background="?android:attr/selectableItemBackground"
-                android:clickable="true"
-                android:focusable="true"
-                android:paddingStart="16dp"
-                android:paddingTop="6dp"
-                android:paddingEnd="16dp"
-                android:paddingBottom="6dp"
-                android:text="@string/kLOC_GENERAL_DELETE"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textStyle="normal" />
-
-        </LinearLayout>
-
-    </FrameLayout>
+    </LinearLayout>
 
 </LinearLayout>

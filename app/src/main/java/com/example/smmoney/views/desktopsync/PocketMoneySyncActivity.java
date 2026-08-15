@@ -43,13 +43,10 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private final int DIALOG_FIRST_UDID_CLIENT = 2;
     private final int DIALOG_FIRST_UDID_SERVER = 3;
     private final int DIALOG_NO_HOST = 1;
-    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_OPEN_CONNECTION = 4;
-    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_PURCHASE = 6;
     private final int DIALOG_REPEATINGWARNING = 7;
     private final int DIALOG_RESTORE = 5;
-    @SuppressWarnings("FieldCanBeLocal")
     private final int DIALOG_UPGRADE = 8;
     private final int DIALOG_WIFI = 9;
     @SuppressWarnings("unused")

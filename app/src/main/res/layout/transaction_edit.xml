@@ -325,7 +325,7 @@
                     android:layout_height="wrap_content"
                     android:singleLine="true"
                     android:text="@string/transaction_edit_x_xrate"
-                    android:textSize="10sp" />
+                    android:textSize="11sp" />
             </LinearLayout>
 
             <ImageButton
@@ -500,7 +500,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:background="@null"
+                android:importantForAutofill="no"
                 android:gravity="top|start"
+                android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
                 android:hint="@string/kLOC_GENERAL_NOTE"
                 android:minHeight="58dp"
                 app:layout_constraintEnd_toStartOf="@+id/camera_button"
@@ -586,77 +588,71 @@
             android:layout_width="match_parent"
             android:layout_height="50dp" />
 
-        <FrameLayout
+        <LinearLayout
             android:id="@+id/keyboard_toolbar"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_below="@+id/balancebar"
             android:background="#000000"
+            android:orientation="horizontal"
             android:visibility="gone"
             tools:visibility="visible">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal">
+            <TextView
+                android:id="@+id/keep_the_change_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:padding="3dp"
+                android:text="@string/kLOC_GENERAL_KEEP_CHANGE"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold"
+                tools:textColor="@color/black_theme_text" />
 
-                <TextView
-                    android:id="@+id/keep_the_change_toolbar_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:padding="3dp"
-                    android:text="@string/kLOC_GENERAL_KEEP_CHANGE"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textStyle="bold"
-                    tools:textColor="@color/black_theme_text" />
+            <TextView
+                android:id="@+id/contacts_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:padding="3dp"
+                android:text="@string/kLOC_GENERAL_CONTACTS"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:textColor="@color/black_theme_text"
+                tools:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/contacts_toolbar_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:padding="3dp"
-                    android:text="@string/kLOC_GENERAL_CONTACTS"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:textColor="@color/black_theme_text"
-                    tools:visibility="visible" />
+            <TextView
+                android:id="@+id/next_check_number_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:padding="3dp"
+                android:text="@string/kLOC_CHECKNUMBER_NEXT"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:textColor="@color/black_theme_text"
+                tools:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/next_check_number_toolbar_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:padding="3dp"
-                    android:text="@string/kLOC_CHECKNUMBER_NEXT"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:textColor="@color/black_theme_text"
-                    tools:visibility="visible" />
+            <TextView
+                android:id="@+id/subcategory_toolbar_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="15dp"
+                android:padding="3dp"
+                android:text="@string/elipses"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textStyle="bold"
+                android:visibility="gone"
+                tools:textColor="@color/black_theme_text"
+                tools:visibility="visible" />
 
-                <TextView
-                    android:id="@+id/subcategory_toolbar_button"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginStart="15dp"
-                    android:padding="3dp"
-                    android:text="@string/elipses"
-                    android:textAppearance="?android:textAppearanceMedium"
-                    android:textStyle="bold"
-                    android:visibility="gone"
-                    tools:textColor="@color/black_theme_text"
-                    tools:visibility="visible" />
-
-            </LinearLayout>
-
-        </FrameLayout>
+        </LinearLayout>
 
         <com.example.smmoney.views.CurrencyKeyboard
             android:id="@+id/keyboardView"

@@ -70,7 +70,15 @@
 
             <!-- Row 6: Account Number -->
             <TextView android:id="@+id/account_number_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_ACCOUNT_NUMBER_LABEL" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/divider1" />
-            <EditText android:id="@+id/accountnumber" android:layout_width="0dp" android:layout_height="58dp" android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical" android:hint="@string/kLOC_ACCOUNT_NUMBER_LABEL" android:importantForAutofill="no" android:inputType="textNoSuggestions" app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@id/label_barrier" app:layout_constraintTop_toTopOf="@id/account_number_label" />
+            <!-- Suppress TextFields: Account numbers must remain 'text' to preserve leading zeros
+                 and support international alphanumeric formats like IBAN. -->
+            <EditText android:id="@+id/accountnumber" android:layout_width="0dp" android:layout_height="58dp"
+                xmlns:tools="http://schemas.android.com/tools"
+                tools:ignore="TextFields"
+                android:layout_marginStart="10dp" android:layout_marginEnd="4dp" android:gravity="start|center_vertical"
+                android:hint="@string/kLOC_ACCOUNT_NUMBER_LABEL" android:importantForAutofill="no" android:inputType="textNoSuggestions"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@id/label_barrier"
+                app:layout_constraintTop_toTopOf="@id/account_number_label" />
 
             <!-- Row 7: Routing Number -->
             <TextView android:id="@+id/routing_number_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_ROUTING_NUMBER_LABEL" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@id/account_number_label" />

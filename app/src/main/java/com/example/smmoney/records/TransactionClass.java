@@ -1185,7 +1185,6 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             case "filename":
                 if (this.data != null) {
                     try {
-                        //noinspection ResultOfMethodCallIgnored
                         File photoDir = new File(SMMoney.getAppContext().getFilesDir(), "photos");
                         photoDir.mkdirs();
                         FileOutputStream fos = new FileOutputStream(new File(photoDir, this.currentElementValue));

@@ -20,9 +20,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
 import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -551,7 +551,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             loadAmountXrateValues();
         });
 
-        FrameLayout keyboardToolBar = findViewById(R.id.keyboard_toolbar);
+        LinearLayout keyboardToolBar = findViewById(R.id.keyboard_toolbar);
         keyboardToolBar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         currencyKeyboard.setToolbarView(keyboardToolBar);
         TextView keepTheChangeButton = findViewById(R.id.keep_the_change_toolbar_button);

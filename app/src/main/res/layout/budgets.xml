@@ -32,7 +32,7 @@
             android:layout_marginStart="8dp"
             android:text="@string/kLOC_BUDGET_STARTDATE"
             android:paddingTop="6dp"
-            android:textSize="10sp"
+            android:textSize="11sp"
             android:textStyle="bold"
             app:layout_constraintStart_toEndOf="@+id/start_date_icon"
             app:layout_constraintTop_toTopOf="@id/start_date_icon"
