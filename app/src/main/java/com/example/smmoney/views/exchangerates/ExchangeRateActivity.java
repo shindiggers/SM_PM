@@ -261,9 +261,9 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         String rateLabel = Locales.kLOC_GENERAL_EXCHANGERATE;
         String accountLabel = Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT;
         String instruction = switch (currentCalculatedField) {
-            case FOREIGN -> "Enter " + rateLabel + " and " + accountLabel + " to calculate " + foreignLabel + ".";
-            case RATE -> "Enter " + foreignLabel + " and " + accountLabel + " to calculate " + rateLabel + ".";
-            case ACCOUNT -> "Enter " + foreignLabel + " and " + rateLabel + " to calculate " + accountLabel + ".";
+            case FOREIGN -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, rateLabel, accountLabel, foreignLabel);
+            case RATE -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, foreignLabel, accountLabel, rateLabel);
+            case ACCOUNT -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, foreignLabel, rateLabel, accountLabel);
         };
         this.statusTextView.setText(instruction);
     }

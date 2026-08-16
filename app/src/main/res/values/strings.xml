@@ -61,6 +61,8 @@
     <string name="kLOC_GENERAL_EDIT">Edit</string>
     <string name="kLOC_GENERAL_DONE">Done</string>
     <string name="kLOC_GENERAL_SAVE">Save</string>
+    <string name="kLOC_GENERAL_REPLACE">Replace</string>
+    <string name="kLOC_GENERAL_PROCESSING">Processing &#8230;</string>
     <string name="kLOC_GENERAL_TOOLS">Tools</string>
     <string name="kLOC_GENERAL_DATE">Date</string>
     <string name="kLOC_GENERAL_TIME">Time</string>
@@ -77,6 +79,7 @@
     <string name="kLOC_GENERAL_AMOUNT_TITLE">Amounts</string>
     <string name="kLOC_GENERAL_CLASS">Class</string>
     <string name="kLOC_GENERAL_CLASSES">Classes</string>
+    <string name="kLOC_GENERAL_SPLITS_TITLE">Splits</string>
     <string name="kLOC_GENERAL_NOTE">Memo</string>
     <string name="kLOC_GENERAL_CLEARED">Cleared</string>
     <string name="kLOC_GENERAL_SPLITS">&lt;&#8213;splits&#8213;&gt;</string>
@@ -275,7 +278,9 @@
     <string name="kLOC_EDIT_SPLIT_TITLE">Edit Split</string>
     <string name="kLOC_EDIT_SPLITS_SPLITOTAL">Split total</string>
     <string name="kLOC_EDIT_SPLITS_REMAINDER">Remainder</string>
-    <string name="kLOC_EDIT_SPLITS_TOTAL">Total</string>
+    <string name="kLOC_EDIT_SPLITS_TOTAL">Total Transaction Value</string>
+    <string name="kLOC_EDIT_SPLITS_ALLOCATED">Allocated</string>
+    <string name="kLOC_EDIT_SPLITS_LEFT_TO_ALLOCATE">Left to allocate</string>
     <string name="kLOC_EDIT_SPLITS_ADJUST">Adjust</string>
     <string name="kLOC_EDIT_SPLITS_CLEAR">Clear</string>
     <string name="kLOC_EDIT_REPEATING_TITLE">Edit Repeating</string>
@@ -349,7 +354,7 @@
     <string name="kLOC_FILTER_DATES_FROM">From Date</string>
     <string name="kLOC_FILTER_DATES_TO">To Date</string>
     <string name="kLOC_LOOKUPS_CHANGEBODY">Change in the popup lists only, or change everywhere?</string>
-    <string name="kLOC_LOOKUPS_POPUPLIST">Popup List</string>
+    <string name="kLOC_LOOKUPS_POPUPLIST">Popup List Only</string>
     <string name="kLOC_LOOKUPS_EVERYWHERE">Everywhere</string>
     <string name="kLOC_TOOLS_FILTER_EDIT">Edit Filter</string>
     <string name="kLOC_TOOLS_FILTERS">Filters</string>
@@ -425,8 +430,8 @@
     <string name="kLOC_PASSWORDDELAY4HOURS">4 hours</string>
     <string name="kLOC_PASSWORDDELAY8HOURS">8 hours</string>
     <string name="kLOC_PASSWORDDELAY24HOURS">24 hours</string>
-    <string name="kLOC_TRANSACTIONS_OPTIONS_SORTON">Sort on</string>
-    <string name="kLOC_TRANSACTIONS_OPTIONS_SORTORDER">Sort order</string>
+    <string name="kLOC_TRANSACTIONS_OPTIONS_SORTON">Sort by</string>
+    <string name="kLOC_TRANSACTIONS_OPTIONS_SORTORDER">Order</string>
     <string name="kLOC_ROUTING_NUMBER_LABEL">Bank ID</string>
     <string name="kLOC_TIP_REDBADGE_TITLE">Red Badge</string>
     <string name="kLOC_TIP_REDBADGE">When an account exceeds/drops below the Limit set in Account Info, then the balance will display in red and a red badge will appear on the PocketMoney icon on your Home screen showing the number of accounts below/above their limits.</string>
@@ -489,6 +494,7 @@
     <string name="kLOC_EXCHANGERATE_DIALOG_MESSAGE">The current spot rate for %1$s is %2$s.\n\nThe account rate is %3$s.\n\nUpdate to market spot rate?</string>
     <string name="kLOC_EXCHANGERATE_DIALOG_USE_SPOT">Use Spot</string>
     <string name="kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT">Keep Current</string>
+    <string name="kLOC_EXCHANGERATE_INSTRUCTION">Enter %1$s and %2$s to calculate %3$s.</string>
     <string name="kLOC_FILETRANSFERS_MODE">Transfer Mode</string>
     <string name="kLOC_FILETRANSFERS_SYNCDOCS">SyncDocs</string>
     <string name="kLOC_FILETRANSFERS_HTTP">Web Browser</string>
@@ -688,6 +694,12 @@
     <string name="content_description_menu_accounts_edit">Menu</string>
     <string name="content_description_open_payee_pick_list">Open payee pick list</string>
     <string name="content_description_open_account_pick_list">Open account pick list</string>
+    <string name="exhcangerate_amount_hint">0.00</string>
+    <string name="exchangerate_EUR">EUR</string>
+    <string name="exchangerate_GBP">GBP</string>
+    <string name="exchangerate_x">x</string>
+    <string name="exchangerate_fx_hint">1.0000</string>
+    <string name="exchangerate_equals">=</string>
     <string name="transaction_edit_the_account">The Account</string>
     <string name="transaction_edit_the_time">The Time</string>
     <string name="transaction_edit_the_date">The Date</string>
@@ -750,6 +762,7 @@
     <string name="row_88_88_88">88/88/88</string>
     <string name="row_runningtotal">runningTotal</string>
     <string name="elipses">&#8230;</string>
+    <string name="decimal_separator">.</string>
     <string name="contentDescription_image_for_account">Image for account</string>
     <string name="content_description_lock_foreign">Lock foreign amount</string>
     <string name="content_description_lock_rate">Lock exchange rate</string>
@@ -761,6 +774,7 @@
     <string name="usd">USD</string>
     <string name="content_description_select_currency">Select currency</string>
     <string name="content_desctiption_select_filter">Select filter</string>
+    <string name="content_description_camera_image">Image of a camera</string>
     <string name="asterisk">*</string>
     <string name="triple_x">xxx</string>
     <string name="iap_button">IAP Button</string>

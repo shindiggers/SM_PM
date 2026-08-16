@@ -14,7 +14,7 @@
             android:id="@+id/sort_by_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Sort By"
+            android:text="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON"
             android:textAllCaps="true"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -77,7 +77,7 @@
             android:id="@+id/order_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Order"
+            android:text="@string/kLOC_TRANSACTIONS_OPTIONS_SORTORDER"
             android:textAllCaps="true"
             android:textSize="12sp"
             android:textStyle="bold" />

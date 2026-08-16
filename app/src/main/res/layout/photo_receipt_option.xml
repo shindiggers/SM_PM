@@ -33,7 +33,7 @@
             android:paddingTop="6dp"
             android:paddingEnd="16dp"
             android:paddingBottom="6dp"
-            android:text="Replace"
+            android:text="@string/kLOC_GENERAL_REPLACE"
             android:textAppearance="?android:textAppearanceMedium"
             android:textStyle="normal" />
 

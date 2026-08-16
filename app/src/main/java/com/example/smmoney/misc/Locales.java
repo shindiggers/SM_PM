@@ -245,6 +245,7 @@ public class Locales {
     public static final String kLOC_EXCHANGERATE_DIALOG_MESSAGE = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_DIALOG_MESSAGE);
     public static final String kLOC_EXCHANGERATE_DIALOG_USE_SPOT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_DIALOG_USE_SPOT);
     public static final String kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT);
+    public static final String kLOC_EXCHANGERATE_INSTRUCTION = SMMoney.getAppContext().getString(R.string.kLOC_EXCHANGERATE_INSTRUCTION);
     public static final String kLOC_FEE_CATEGORY = SMMoney.getAppContext().getString(R.string.kLOC_FEE_CATEGORY);
     public static final String kLOC_FEE_INCLUDE_LABEL = SMMoney.getAppContext().getString(R.string.kLOC_FEE_INCLUDE_LABEL);
     public static final String kLOC_FEE_MISSING_ALERT = SMMoney.getAppContext().getString(R.string.kLOC_FEE_MISSING_ALERT);

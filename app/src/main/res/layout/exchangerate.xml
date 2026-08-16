@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -65,7 +66,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:importantForAutofill="no"
-                    android:hint="0.00"
+                    android:hint="@string/exhcangerate_amount_hint"
                     android:inputType="numberDecimal"
                     android:padding="8dp"
                     android:textColor="#000000"
@@ -77,7 +78,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="EUR"
+                    android:text="@string/exchangerate_EUR"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -85,7 +86,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:contentDescription="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle" />
+                    android:src="@drawable/ic_outline_arrow_drop_down_circle_24" />
             </LinearLayout>
 
             <!-- Vertical Link 1 -->
@@ -102,7 +103,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="×"
+                android:text="@string/exchangerate_x"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@id/link1"
                 app:layout_constraintStart_toEndOf="@id/link1"
@@ -145,7 +146,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:importantForAutofill="no"
-                    android:hint="1.0000"
+                    android:hint="@string/exchangerate_fx_hint"
                     android:inputType="numberDecimal"
                     android:padding="8dp"
                     android:textColor="#000000"
@@ -177,7 +178,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="12dp"
-                android:text="="
+                android:text="@string/exchangerate_equals"
                 android:textSize="20sp"
                 app:layout_constraintBottom_toBottomOf="@id/link2"
                 app:layout_constraintStart_toEndOf="@id/link2"
@@ -220,7 +221,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:importantForAutofill="no"
-                    android:hint="0.00"
+                    android:hint="@string/exhcangerate_amount_hint"
                     android:inputType="numberDecimal"
                     android:padding="8dp"
                     android:textColor="#000000"
@@ -232,7 +233,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="GBP"
+                    android:text="@string/exchangerate_GBP"
                     android:textStyle="bold" />
 
                 <ImageView
@@ -292,10 +293,10 @@
                 android:layout_marginTop="32dp"
                 android:gravity="center"
                 android:padding="16dp"
-                android:text="Instructional text will appear here."
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:textColor="#888888"
-                app:layout_constraintTop_toBottomOf="@id/account_row" />
+                app:layout_constraintTop_toBottomOf="@id/account_row"
+                tools:text="Instructional text will appear here." />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>

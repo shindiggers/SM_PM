@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Popup List Only"
+                android:text="@string/kLOC_LOOKUPS_POPUPLIST"
                 android:checked="true" />
 
             <RadioButton
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="Everywhere" />
+                android:text="@string/kLOC_LOOKUPS_EVERYWHERE" />
         </RadioGroup>
 
         <TextView

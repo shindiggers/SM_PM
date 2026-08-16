@@ -248,7 +248,7 @@
                 android:layout_width="48dp"
                 android:layout_height="58dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Splits"
+                android:contentDescription="@string/kLOC_EDIT_SPLITS_TITLE"
                 android:padding="12dp"
                 android:src="@drawable/ic_call_split_white_24dp"
                 app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
@@ -307,6 +307,7 @@
                 android:layout_height="58dp"
                 android:gravity="end|center_vertical"
                 android:orientation="vertical"
+                android:paddingStart="8dp"
                 android:paddingEnd="8dp"
                 app:layout_constraintEnd_toStartOf="@+id/amount_currency_button"
                 app:layout_constraintTop_toTopOf="@id/amount_label">
@@ -515,7 +516,7 @@
                 android:layout_height="58dp"
                 android:layout_marginEnd="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="Camera"
+                android:contentDescription="@string/content_description_camera_image"
                 android:padding="12dp"
                 android:src="@drawable/ic_photo_camera_white_24dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -545,7 +546,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Duplicate"
+                    android:text="@string/kLOC_GENERAL_DUPLICATE"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -553,7 +554,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Fee"
+                    android:text="@string/kLOC_ACCOUNT_FEE_LABEL"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
