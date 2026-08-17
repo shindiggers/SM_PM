@@ -289,7 +289,7 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         char savedSign = '\u0000';
         double plusDouble = 0.0d;
         s.firstNumber();
-        if (s.amount == null || s.amount.length() <= 0) {
+        if (s.amount == null || s.amount.isEmpty()) {
             savedDouble = CurrencyExt.amountFromString(currentValue);
         } else {
             savedDouble = CurrencyExt.amountFromString(s.amount);

@@ -34,10 +34,6 @@ public class PocketMoneyProgressDialog {
         progressBar.setProgress(progress);
     }
 
-    public void setIndeterminate(boolean indeterminate) {
-        progressBar.setIndeterminate(indeterminate);
-    }
-
     public void setCancelable(boolean cancelable) {
         dialog.setCancelable(cancelable);
     }
@@ -52,9 +48,5 @@ public class PocketMoneyProgressDialog {
 
     public boolean isShowing() {
         return dialog.isShowing();
-    }
-
-    public void setMax(int max) {
-        progressBar.setMax(max);
     }
 }

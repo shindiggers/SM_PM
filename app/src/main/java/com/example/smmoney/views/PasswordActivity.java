@@ -56,12 +56,10 @@ public class PasswordActivity extends AppCompatActivity {
     }
 
     private void checkPassword(String text) {
-        if (text != null) {
-            if (this.thePass == null || this.thePass.equals(text)) {
-                Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
-                setResult(PASSWORD_CORRECT);
-                finish();
-            }
+        if (text != null && text.equals(this.thePass)) {
+            Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
+            setResult(PASSWORD_CORRECT);
+            finish();
         }
     }
 
@@ -71,7 +69,7 @@ public class PasswordActivity extends AppCompatActivity {
         this.thePass = Prefs.getStringPref(Prefs.PASSWORD);
 
         // If no password is set, just skip
-        if (this.thePass == null || this.thePass.isEmpty()) {
+        if (this.thePass.isEmpty()) {
             Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
             setResult(PASSWORD_CORRECT);
             finish();

@@ -16,13 +16,15 @@ import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
+import com.google.android.material.button.MaterialButton;
+
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class FromToDateActivity extends PocketMoneyActivity {
     private static final int FROMTODATE_RESULT_SELECTED = 1;
-    private Button fromDateButton;
-    private Button toDateButton;
+    private MaterialButton fromDateButton;
+    private MaterialButton toDateButton;
     private TextView errorMessage;
 
     @Override
@@ -49,39 +51,45 @@ public class FromToDateActivity extends PocketMoneyActivity {
         this.toDateButton = findViewById(R.id.fromtodatetodate);
         this.errorMessage = findViewById(R.id.error_message);
 
-        Button fromToday = findViewById(R.id.fromtodatelefttoday);
-        Button fromNone = findViewById(R.id.fromtodateleftnone);
-        Button toToday = findViewById(R.id.fromtodaterighttoday);
-        Button toNone = findViewById(R.id.fromtodaterightnone);
+        com.google.android.material.button.MaterialButton fromToday = findViewById(R.id.fromtodatelefttoday);
+        com.google.android.material.button.MaterialButton fromNone = findViewById(R.id.fromtodateleftnone);
+        com.google.android.material.button.MaterialButton toToday = findViewById(R.id.fromtodaterighttoday);
+        com.google.android.material.button.MaterialButton toNone = findViewById(R.id.fromtodaterightnone);
 
         // Styling
         int themeLabelColor = PocketMoneyThemes.fieldLabelColor();
         int themeActionColor = PocketMoneyThemes.currentTintColor();
         int themeTextColor = PocketMoneyThemes.primaryCellTextColor();
-        int rowBackground = PocketMoneyThemes.alternatingRowSelector();
 
         ((TextView) findViewById(R.id.from_date_label)).setTextColor(themeLabelColor);
         ((TextView) findViewById(R.id.to_date_label)).setTextColor(themeLabelColor);
 
-        // Main Date Buttons
+        // Main Date Material Buttons
         this.fromDateButton.setTextColor(themeTextColor);
-        this.fromDateButton.setBackgroundResource(rowBackground);
+        this.fromDateButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(PocketMoneyThemes.alternatingRowColor()));
+        this.fromDateButton.setIconTint(android.content.res.ColorStateList.valueOf(themeLabelColor));
+
         this.toDateButton.setTextColor(themeTextColor);
-        this.toDateButton.setBackgroundResource(rowBackground);
+        this.toDateButton.setBackgroundTintList(android.content.res.ColorStateList.valueOf(PocketMoneyThemes.alternatingRowColor()));
+        this.toDateButton.setIconTint(android.content.res.ColorStateList.valueOf(themeLabelColor));
 
-        // Tint the calendar icons to match theme
-        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.fromDateButton, android.content.res.ColorStateList.valueOf(themeLabelColor));
-        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.toDateButton, android.content.res.ColorStateList.valueOf(themeLabelColor));
+        // Helper Material Outlined Buttons
+        android.content.res.ColorStateList actionTintList = android.content.res.ColorStateList.valueOf(themeActionColor);
+        fromToday.setTextColor(actionTintList);
+        fromToday.setStrokeColor(actionTintList);
+        fromToday.setRippleColor(actionTintList.withAlpha(50));
 
-        // Helper Buttons
-        fromToday.setTextColor(themeTextColor);
-        fromToday.setBackgroundResource(rowBackground);
-        fromNone.setTextColor(themeTextColor);
-        fromNone.setBackgroundResource(rowBackground);
-        toToday.setTextColor(themeTextColor);
-        toToday.setBackgroundResource(rowBackground);
-        toNone.setTextColor(themeTextColor);
-        toNone.setBackgroundResource(rowBackground);
+        fromNone.setTextColor(actionTintList);
+        fromNone.setStrokeColor(actionTintList);
+        fromNone.setRippleColor(actionTintList.withAlpha(50));
+
+        toToday.setTextColor(actionTintList);
+        toToday.setStrokeColor(actionTintList);
+        toToday.setRippleColor(actionTintList.withAlpha(50));
+
+        toNone.setTextColor(actionTintList);
+        toNone.setStrokeColor(actionTintList);
+        toNone.setRippleColor(actionTintList.withAlpha(50));
 
         this.errorMessage.setTextColor(PocketMoneyThemes.redLabelColor());
         findViewById(R.id.parent_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());

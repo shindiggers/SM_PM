@@ -7,7 +7,6 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -38,7 +37,7 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(LayoutInflater.from(this).inflate(R.layout.endondate, null));
+        setContentView(R.layout.endondate);
         setupView();
         String previousDate = Objects.requireNonNull(getIntent().getExtras()).getString("Date");
         Log.d("ENDONDATEACTIVITY", "String previous date = " + previousDate);

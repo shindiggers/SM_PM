@@ -18,21 +18,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/fromtodatefromdate"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
         android:gravity="start|center_vertical"
-        android:padding="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="@string/asterisk"
         android:textAppearance="?android:textAppearanceMedium"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_date_range"
+        app:iconGravity="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/from_date_label"
-        app:drawableEndCompat="@drawable/ic_date_range" />
+        app:layout_constraintTop_toBottomOf="@id/from_date_label" />
 
     <LinearLayout
         android:id="@+id/from_helpers"
@@ -43,20 +45,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fromtodatefromdate">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/fromtodatelefttoday"
-            style="@style/Widget.AppCompat.Button.Small"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_FILTER_DATES_TODAY" />
+            android:text="@string/kLOC_FILTER_DATES_TODAY"
+            app:cornerRadius="8dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/fromtodateleftnone"
-            style="@style/Widget.AppCompat.Button.Small"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/any_date" />
+            android:text="@string/any_date"
+            app:cornerRadius="8dp" />
     </LinearLayout>
 
     <!-- TO DATE SECTION -->
@@ -71,21 +75,23 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/from_helpers" />
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/fromtodatetodate"
-        style="@style/Widget.AppCompat.Button.Borderless"
+        style="@style/Widget.MaterialComponents.Button.UnelevatedButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
+        android:layout_height="56dp"
         android:layout_marginTop="8dp"
-        android:background="?android:attr/selectableItemBackground"
         android:gravity="start|center_vertical"
-        android:padding="12dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:text="@string/asterisk"
         android:textAppearance="?android:textAppearanceMedium"
+        app:cornerRadius="8dp"
+        app:icon="@drawable/ic_date_range"
+        app:iconGravity="end"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/to_date_label"
-        app:drawableEndCompat="@drawable/ic_date_range" />
+        app:layout_constraintTop_toBottomOf="@id/to_date_label" />
 
     <LinearLayout
         android:id="@+id/to_helpers"
@@ -96,20 +102,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/fromtodatetodate">
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/fromtodaterighttoday"
-            style="@style/Widget.AppCompat.Button.Small"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_FILTER_DATES_TODAY" />
+            android:text="@string/kLOC_FILTER_DATES_TODAY"
+            app:cornerRadius="8dp" />
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/fromtodaterightnone"
-            style="@style/Widget.AppCompat.Button.Small"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/any_date" />
+            android:text="@string/any_date"
+            app:cornerRadius="8dp" />
     </LinearLayout>
 
     <TextView
