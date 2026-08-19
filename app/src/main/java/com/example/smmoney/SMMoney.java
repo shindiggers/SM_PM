@@ -1,23 +1,21 @@
 package com.example.smmoney;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Environment;
-import android.provider.Settings;
 import android.util.Log;
 
 import com.example.smmoney.misc.Prefs;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.Locale;
 
 public class SMMoney extends Application {
     public static final String TAG = "com.catamount.pocketmon";
+
+    // Application context reference is safe from memory leaks as it matches the process lifecycle.
+    @SuppressLint("StaticFieldLeak")
     private static Context context;
 
     public void onCreate() {
@@ -34,83 +32,31 @@ public class SMMoney extends Application {
     }
 
     public static String getID() {
-        String udid = Settings.Secure.getString(getAppContext().getContentResolver(), Settings.Secure.ANDROID_ID);
-
-        if (udid == null || Prefs.getBooleanPref(Prefs.USINGUUID)) {
-            udid = Prefs.getUUID();
-            Prefs.setPref(Prefs.USINGUUID, true);
-        }
-        Log.i(TAG, "uuid=" + udid);
-        return udid;
-    }
-
-    public static boolean hasCamera() {
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_ANY);
-    }
-
-    public static String getTempPocketMoneyDirectory() {
-        File cacheDir = context.getExternalCacheDir();
-        if (cacheDir == null) {
-            context.getCacheDir();
-        }
-        return cacheDir.getAbsolutePath();
+        String uuid = Prefs.getUUID();
+        Log.i(TAG, "uuid=" + uuid);
+        return uuid;
     }
 
     public static String getExternalPocketMoneyDirectory() {
         File downloadsDir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         File pocketMoneyDir = new File(downloadsDir, "PocketMoneyBackup");
-        if (!pocketMoneyDir.exists()) {
-            pocketMoneyDir.mkdirs();
+        if (!pocketMoneyDir.exists() && !pocketMoneyDir.mkdirs()) {
+            Log.w(TAG, "Failed to create directory: " + pocketMoneyDir.getAbsolutePath());
         }
         return pocketMoneyDir.getAbsolutePath() + "/";
     }
 
-    public static String[] getExternalMounts() {
-        try {
-            ArrayList<String> out = new ArrayList<>();
-            String reg = "(?i).*vold.*(vfat|ntfs|exfat|fat32|ext3|ext4).*rw.*";
-            StringBuilder s = new StringBuilder();
-            try {
-                Process process = new ProcessBuilder().command("mount").redirectErrorStream(true).start();
-                process.waitFor();
-                InputStream is = process.getInputStream();
-                byte[] buffer = new byte[1024];
-                while (is.read(buffer) != -1) {
-                    s.append(new String(buffer));
-                }
-                is.close();
-            } catch (Exception e) {
-                Log.e(TAG, "Exception in getExternalMounts", e);
-            }
-            for (String line : s.toString().split("\n")) {
-                if (!line.toLowerCase(Locale.US).contains("asec") && line.matches(reg)) {
-                    for (String part : line.split(" ")) {
-                        if (part.startsWith("/") && !part.toLowerCase(Locale.US).contains("vold")) {
-                            out.add(part);
-                        }
-                    }
-                }
-            }
-            String[] ret = new String[out.size()];
-            Iterator<String> it = out.iterator();
-            int i = 0;
-            while (it.hasNext()) {
-                int i2 = i + 1;
-                ret[i] = it.next();
-                i = i2;
-            }
-            return ret;
-        } catch (Exception e2) {
-            return new String[]{Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getAbsolutePath()};
-        }
-    }
-
     public static String getTempFile() {
-        String dir;
-        dir = Environment.getDataDirectory() + "/data/" + getAppContext().getPackageName() + "/";
-        new File(dir).mkdirs();
+        String dir = Environment.getDataDirectory() + "/data/" + getAppContext().getPackageName() + "/";
+        File dirFile = new File(dir);
+        if (!dirFile.exists() && !dirFile.mkdirs()) {
+            Log.w(TAG, "Failed to create temp directory: " + dir);
+        }
         try {
-            new File(dir + "temp.data").createNewFile();
+            File tempFile = new File(dir + "temp.data");
+            if (!tempFile.exists() && !tempFile.createNewFile()) {
+                Log.w(TAG, "Failed to create temp file: " + tempFile.getAbsolutePath());
+            }
         } catch (IOException e) {
             Log.e(TAG, "IOException in getTempFile", e);
         }
