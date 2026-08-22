@@ -1,5 +1,6 @@
 package com.example.smmoney.records;
 
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.res.Resources;
@@ -29,10 +30,10 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.GregorianCalendar;
+import java.util.Objects;
 
 import javax.xml.parsers.SAXParserFactory;
 
@@ -272,11 +273,17 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return "." + fullFileName[1];
     }
 
+    // Dynamic resource lookup is required to map persisted SQLite icon filenames to drawable resource IDs.
+    @SuppressLint("DiscouragedApi")
     public int getIconFileNameResourceIDUsingContext(Context aContext) {
-        String modifiedFileName = getIconFileName().replace(".png", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase();
-        String modifiedFileName2 = modifiedFileName.replace(".xml", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase();
-        return aContext.getResources().getIdentifier(modifiedFileName2, "drawable", aContext.getPackageName());
-        //return aContext.getResources().getIdentifier(getIconFileName().replace("([^\\s]+(\\.(?i)(.xml|.png))$)", "").replace("&", "").replace("-", "").replace(" ", "").toLowerCase(), "drawable", aContext.getPackageName());
+        String modifiedFileName = getIconFileName()
+                .replace(".png", "")
+                .replace(".xml", "")
+                .replace("&", "")
+                .replace("-", "")
+                .replace(" ", "")
+                .toLowerCase();
+        return aContext.getResources().getIdentifier(modifiedFileName, "drawable", aContext.getPackageName());
     }
 
     public void setUrl(String aString) {
@@ -357,7 +364,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public void setLimitFromString(String str) {
         setLimit(numberFromString(str));
-        setNoLimit(str == null || str.length() <= 0);
+        setNoLimit(str == null || str.isEmpty());
     }
 
     public String limitAsString() {
@@ -528,7 +535,8 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         this.noLimit = true;
         this.type = 0;
         this.totalWorth = true;
-        this.currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE) == null ? "USD" : Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        String homeCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        this.currencyCode = homeCurrency.isEmpty() ? "USD" : homeCurrency;
         this.lastSyncTime = 0.0d;
         this.displayOrder = 0;
         this.overdraftAccount = "";
@@ -649,11 +657,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         if (curs.getCount() != 0) {
             curs.moveToFirst();
             String act = curs.getString(0);
-            if (act != null) {
-                this.account = act;
-            } else {
-                this.account = "";
-            }
+            this.account = Objects.requireNonNullElse(act, "");
         } else {
             this.account = "*accountID " + pk + "  has no account name*";
             this.exchangeRate = 1.0d;
@@ -686,76 +690,36 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 setDisplayOrder(curs.getInt(col2));
                 col2 = col + 1;
                 String str = curs.getString(col);
-                if (str == null) {
-                    setAccount("");
-                } else {
-                    setAccount(str);
-                }
+                setAccount(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 setType(curs.getInt(col2));
                 col2 = col + 1;
                 str = curs.getString(col);
-                if (str == null) {
-                    setAccountNumber("");
-                } else {
-                    setAccountNumber(str);
-                }
+                setAccountNumber(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 str = curs.getString(col2);
-                if (str == null) {
-                    setRoutingNumber("");
-                } else {
-                    setRoutingNumber(str);
-                }
+                setRoutingNumber(Objects.requireNonNullElse(str, ""));
                 col2 = col + 1;
                 str = curs.getString(col);
-                if (str == null) {
-                    setInstitution("");
-                } else {
-                    setInstitution(str);
-                }
+                setInstitution(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 str = curs.getString(col2);
-                if (str == null) {
-                    setPhone("");
-                } else {
-                    setPhone(str);
-                }
+                setPhone(Objects.requireNonNullElse(str, ""));
                 col2 = col + 1;
                 str = curs.getString(col);
-                if (str == null) {
-                    setExpirationDate("");
-                } else {
-                    setExpirationDate(str);
-                }
+                setExpirationDate(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 str = curs.getString(col2);
-                if (str == null) {
-                    setCheckNumber("");
-                } else {
-                    setCheckNumber(str);
-                }
+                setCheckNumber(Objects.requireNonNullElse(str, ""));
                 col2 = col + 1;
                 str = curs.getString(col);
-                if (str == null) {
-                    setNotes("");
-                } else {
-                    setNotes(str);
-                }
+                setNotes(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 str = curs.getString(col2);
-                if (str == null) {
-                    setIconFileName("");
-                } else {
-                    setIconFileName(str);
-                }
+                setIconFileName(Objects.requireNonNullElse(str, ""));
                 col2 = col + 1;
                 str = curs.getString(col);
-                if (str == null) {
-                    setUrl("");
-                } else {
-                    setUrl(str);
-                }
+                setUrl(Objects.requireNonNullElse(str, ""));
                 col = col2 + 1;
                 setFee(curs.getDouble(col2));
                 col2 = col + 1;
@@ -774,11 +738,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 setExchangeRate(xrate);
                 col = col2 + 1;
                 str = curs.getString(col2);
-                if (str == null) {
-                    setCurrencyCode("");
-                } else {
-                    setCurrencyCode(str);
-                }
+                setCurrencyCode(Objects.requireNonNullElse(str, ""));
                 col2 = col + 1;
                 setLastSyncTime(curs.getDouble(col));
                 col = col2 + 1;
@@ -1114,8 +1074,6 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             setFixedPercent(Integer.parseInt(this.currentElementValue));
         } else if (localName.equals("limitAmount")) {
             setLimit(Double.parseDouble(this.currentElementValue));
-        } else if (localName.equals("keepChangeRoundTo")) {
-            setKeepChangeRoundTo(Double.parseDouble(this.currentElementValue));
         } else if (localName.equals("noLimit")) {
             if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
                 z = true;
@@ -1160,7 +1118,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 case "overdraftAccount":
                     Class<?> c = getClass();
                     try {
-                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                        // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                        //noinspection CharsetObjectCanBeUsed
+                        c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, "UTF-8"));
                     } catch (Exception e2) {
                         Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml [" + localName + "]");
                     }
@@ -1197,6 +1157,8 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }

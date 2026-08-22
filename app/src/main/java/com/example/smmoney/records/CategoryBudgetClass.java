@@ -2,7 +2,6 @@ package com.example.smmoney.records;
 
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
@@ -33,8 +32,6 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     public int categoryBudgetID;
     private String categoryName;
     private String currentElementValue;
-    @SuppressWarnings("unused")
-    private SQLiteDatabase database;
     private GregorianCalendar date;
     private boolean resetRollover;
 
@@ -102,6 +99,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         }
     }
 
+    // Invoked via reflection in PocketMoneySyncClass
     @SuppressWarnings("unused")
     public static CategoryBudgetClass recordWithServerID(String serverID) {
         CategoryBudgetClass record = null;
@@ -253,20 +251,6 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         return cal;
     }
 
-    @SuppressWarnings("unused")
-    public static List<CategoryBudgetClass> budgetItemsWithRolloverForCategory(String category, GregorianCalendar startDate, GregorianCalendar endDate) {
-        Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND resetRollover=1 AND date >= " + startDate.getTimeInMillis() + " AND date <= " + endDate.getTimeInMillis() + " AND categoryName LIKE " + Database.SQLFormat(category) + " ORDER BY date", null);
-        int count = curs.getCount();
-        curs.moveToFirst();
-        ArrayList<CategoryBudgetClass> budgets = new ArrayList<>(count);
-        for (int i = 0; i < count; i++) {
-            budgets.add(new CategoryBudgetClass(curs.getInt(0)));
-            curs.moveToNext();
-        }
-        curs.close();
-        return budgets;
-    }
-
     static List<CategoryBudgetClass> budgetItems(String forCategory, GregorianCalendar startDate, GregorianCalendar endDate) {
         Cursor curs = Database.rawQuery("SELECT categoryBudgetID FROM categoryBudgets WHERE deleted=0 AND date >= " + startDate.getTimeInMillis() / 1000 + " AND date <= " + endDate.getTimeInMillis() / 1000 + " AND categoryName LIKE " + Database.SQLFormat(forCategory) + " ORDER BY date", null);
         int count = curs.getCount();
@@ -321,7 +305,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     public void endDocument() {
     }
 
-    public void startElement(@SuppressWarnings("unused") String uri, @SuppressWarnings("unused") String localName, @SuppressWarnings("unused") String qName, @SuppressWarnings("unused") Attributes attributes) {
+    @SuppressWarnings("unused")
+    public void startElement(String uri, String localName, String qName, Attributes attributes) {
         this.currentElementValue = null;
     }
 
@@ -377,11 +362,6 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
         body.text(text);
     }
 
-    @SuppressWarnings("unused")
-    private void addTextWithEncoding(XmlSerializer body, String text) throws IOException {
-        body.text(text == null ? "" : encode(text));
-    }
-
     public String XMLString() {
         OutputStream output = new OutputStream() {
             private final StringBuilder string = new StringBuilder();
@@ -390,6 +370,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }

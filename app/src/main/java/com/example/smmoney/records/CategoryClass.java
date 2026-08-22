@@ -24,7 +24,6 @@ import java.io.OutputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -36,8 +35,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     public static final String XML_LISTTAG_CATEGORIES = "CATEGORIES";
     public static final String XML_RECORDTAG_CATEGORY = "CATEGORYCLASS";
     private static String catpayee_statement = null;
-    @SuppressWarnings("FieldCanBeLocal")
-    private static int currentViewType;
     private static String query_spent_stmt = null;
     public double budget;
     private double budgetLimit;
@@ -45,13 +42,12 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     private String category;
     public int categoryID;
     private String currentElementValue;
-    @SuppressWarnings("unused")
-    private boolean hydratedSpent;
     private boolean includeSubcategories;
     private boolean rollover;
     public double spent;
     private int type;
 
+    // Invoked via reflection in PocketMoneySyncClass
     @SuppressWarnings("unused")
     public static CategoryClass recordWithServerID(String serverID) {
         CategoryClass record = null;
@@ -79,12 +75,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         Cursor curs = Database.query(qb, new String[]{"category"}, "categoryID=" + pk, null, null, null, null);
         if (curs.getCount() != 0) {
             curs.moveToFirst();
-            String cat = curs.getString(0);
-            if (cat != null) {
-                this.category = cat;
-            } else {
-                this.category = "";
-            }
+            this.category = java.util.Objects.requireNonNullElse(curs.getString(0), "");
         } else {
             this.category = "";
         }
@@ -295,14 +286,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return categoryID;
     }
 
-    @SuppressWarnings("unused")
-    public static String categoryForID(int pk) {
-        if (pk == 0) {
-            return null;
-        }
-        return new CategoryClass(pk).category;
-    }
-
     public static ArrayList<String> allCategoryNamesInDatabase() {
         ArrayList<String> array = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -329,24 +312,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             return null;
         }
         return new CategoryClass(pk);
-    }
-
-    @SuppressWarnings("unused")
-    public static void renameFromToInDatabase(String fromText, String toText) {
-        if (fromText == null) {
-            fromText = "";
-        }
-        if (toText == null) {
-            toText = "";
-        }
-        ContentValues content = new ContentValues();
-        content.put("category", toText);
-        content.put("timestamp", System.currentTimeMillis() / 1000);
-        try {
-            Database.update(Database.CATEGORIES_TABLE_NAME, content, "category LIKE " + Database.SQLFormat(fromText), null);
-        } catch (Exception e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
-        }
     }
 
     public static ArrayList<String> allCategoryNamesInDatabaseForPayee(String payee) {
@@ -422,23 +387,17 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     public static double querySpentInCategory(String category, boolean includeSubcategories, GregorianCalendar startDate, GregorianCalendar endDate) {
-        currentViewType = Enums.kViewAccountsAll /*0*/;
         String startTime = Long.toString(CalExt.beginningOfDay(startDate).getTimeInMillis() / 1000);
         String endTime = Long.toString(CalExt.endOfDay(endDate).getTimeInMillis() / 1000);
         String str = includeSubcategories ? "%" : "";
-        @SuppressWarnings({"unused"}) String plainCategoryString = category;
         String[] bindArgs = new String[]{category + str, startTime, endTime};
-        if (query_spent_stmt == null || ((Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) && currentViewType != 0) || currentViewType != Prefs.getIntPref(Prefs.VIEWACCOUNTS))) {
+        int currentViewType = Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) ? Enums.kViewAccountsAll /*0*/ : Prefs.getIntPref(Prefs.VIEWACCOUNTS);
+        if (query_spent_stmt == null) {
             String exchangeRateLookup = "";
             if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
                 exchangeRateLookup = " / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = (SELECT accountID FROM transactions WHERE transactionID = splits.transactionID))";
             }
-            String transactionsLookup;
-            currentViewType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
-            if (Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS)) {
-                currentViewType = Enums.kViewAccountsAll /*0*/;
-            }
-            transactionsLookup = switch (currentViewType) {
+            String transactionsLookup = switch (currentViewType) {
                 case Enums.kViewAccountsNonZero /*1*/ ->
                         "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
                 case Enums.kViewAccountsTotalWorth /*2*/ ->
@@ -597,8 +556,8 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     }
 
     private BudgetPeriodInfo endOfBudgetPeriod(int aPeriod, GregorianCalendar atDate) {
-        GregorianCalendar endDate = null;
-        GregorianCalendar startDate = null;
+        GregorianCalendar endDate;
+        GregorianCalendar startDate;
         switch (aPeriod) {
             case Enums.kBudgetPeriodDay /*0*/:
                 startDate = CalExt.beginningOfDay(atDate);
@@ -640,6 +599,10 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             case Enums.kBudgetPeriod4Weeks /*8*/:
                 startDate = CalExt.beginningOfWeek(atDate);
                 endDate = CalExt.addWeeks(CalExt.endOfWeek(atDate), 3);
+                break;
+            default:
+                startDate = CalExt.beginningOfDay(atDate);
+                endDate = CalExt.endOfDay(atDate);
                 break;
         }
         return new BudgetPeriodInfo(CalExt.daysBetween(CalExt.subtractSecond(atDate), endDate), CalExt.daysBetween(CalExt.subtractSecond(startDate), endDate), endDate);
@@ -738,7 +701,9 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             case "category":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -920,6 +885,8 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }
@@ -939,11 +906,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             addText(body, getDeleted() ? "Y" : "N");
             body.endTag(null, "deleted");
             body.startTag(null, "timestamp");
-            if (this.timestamp == null) {
-                descriptionWithISO861Date = CalExt.descriptionWithISO861Date(new GregorianCalendar());
-            } else {
-                descriptionWithISO861Date = CalExt.descriptionWithISO861Date(this.timestamp);
-            }
+            descriptionWithISO861Date = CalExt.descriptionWithISO861Date(this.timestamp == null ? new GregorianCalendar() : this.timestamp);
             addText(body, descriptionWithISO861Date);
             body.endTag(null, "timestamp");
             body.startTag(null, "category");

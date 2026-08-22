@@ -37,11 +37,6 @@ import javax.xml.parsers.SAXParserFactory;
 public class RepeatingTransactionClass extends PocketMoneyRecordClass implements Serializable {
     public static final String XML_LISTTAG_REPEATINGTRANSACTIONS = "REPEATINGTRANSACTIONS";
     public static final String XML_RECORDTAG_REPEATINGTRANSACTION = "RPTTRANSCLASS";
-    private final String dayNameToken;                          // String placeholder for days of the week in dynamic strings. The token will be replaced with Monday, Tuesday etc. as required
-    private final String dayOrdinalToken;                       // String placeholder for day ordinals (eg 'st', 'nd', 'rd', 'th' for 1st, 2nd, 3rd, 4th etc). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
-    private final String frequenceToken;                        // String placeholder for the different frequency types (e.g. daily, weekly, bi-weekly, monthly, bi-monthly, quarterly etc.). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
-    private final String monthNameToken;                        // String placeholder for months of the year in dynamic strings. The token will be replaced with January, February etc. as required
-    private final String weekOrdinalToken;                      // String placeholder for week of the month ordinals (eg 'st', 'nd', 'rd', 'th' or 'last' for 1st, 2nd, 3rd, 4th or last, say, Tuesday of the month etc.). The token will be replaced dynamicall by the relevant ordinal depending on what day of the month the code needs to handle
     public boolean hydratedTransaction;                         // Flag to indicate if the repeating transaction object has been populated with data, either data read from databse or data from UI. 1/TRUE = Hydrated 0/FALSE = Not
     public int repeatingID;                                     // DATABASE FIELD unique ID for each repeating transaction. Primary key for repeating transactions database
     public String transactionServerID;                          // Not sure of the useage of this class member. //todo: establish what this is for
@@ -58,11 +53,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     private int type;                                           // DATABASE FIELD records the repeating transaction type 0=none, 1=daily, 2=weekly, 3=monthly, 4=yearly, 5=once
 
     public RepeatingTransactionClass() {
-        this.frequenceToken = "^f";
-        this.dayOrdinalToken = "^x";
-        this.weekOrdinalToken = "^w";
-        this.monthNameToken = "^m";
-        this.dayNameToken = "^d";
         this.hydrated = true;
         this.transactionID = 0;
         this.repeatingID = 0;
@@ -81,11 +71,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
      * @param pk the primary key value to associate with this instance of the class
      */
     public RepeatingTransactionClass(int pk) {
-        this.frequenceToken = "^f"; // Initialize instance variables with default values
-        this.dayOrdinalToken = "^x";
-        this.weekOrdinalToken = "^w";
-        this.monthNameToken = "^m";
-        this.dayNameToken = "^d";
         this.repeatingID = pk; // Set the repeatingID instance variable to the specified primary key value
 
         // Query the database for the lastProcessedDate associated with this primary key
@@ -113,11 +98,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
 
     public RepeatingTransactionClass(int transactionID, @SuppressWarnings("unused") boolean usesTransID) {
-        this.frequenceToken = "^f";
-        this.dayOrdinalToken = "^x";
-        this.weekOrdinalToken = "^w";
-        this.monthNameToken = "^m";
-        this.dayNameToken = "^d";
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
         Cursor curs = Database.query(qb, new String[]{"repeatingID"}, "transactionID=" + transactionID, null, null, null, null);
@@ -133,11 +113,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public RepeatingTransactionClass(TransactionClass aTransaction, @SuppressWarnings("unused") boolean skipCheck) {
-        this.frequenceToken = "^f";
-        this.dayOrdinalToken = "^x";
-        this.weekOrdinalToken = "^w";
-        this.monthNameToken = "^m";
-        this.dayNameToken = "^d";
         this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction);
         if (this.transactionID != 0) {
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
@@ -156,11 +131,6 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public RepeatingTransactionClass(TransactionClass aTransaction) {
-        this.frequenceToken = "^f";
-        this.dayOrdinalToken = "^x";
-        this.weekOrdinalToken = "^w";
-        this.monthNameToken = "^m";
-        this.dayNameToken = "^d";
         if (aTransaction.transactionID != 0) {
             this.transactionID = aTransaction.transactionID;
         } else {
@@ -354,21 +324,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                             returnDate = (GregorianCalendar) futureDate.clone();
                             returnDate.set(Calendar.MONTH, returnDate.get(Calendar.MONTH) + (getFrequency()));
                             returnDate.set(Calendar.DAY_OF_MONTH, 1);
-                            int newWeekDay = returnDate.get(Calendar.DAY_OF_WEEK);
-                            dow = futureDate.get(Calendar.DAY_OF_WEEK);
-                            int day = futureDate.get(Calendar.DAY_OF_MONTH);
-                            int week = day / 7;
-                            if (day % 7 > 0) {
-                                week++;
-                            }
-                            int newDay = 0;
-                            if (newWeekDay == dow) {
-                                newDay = ((week - 1) * 7) + 1;
-                            } else if (newWeekDay < dow) {
-                                newDay = (((week - 1) * 7) + 1) + (dow - newWeekDay);
-                            } else if (newWeekDay > dow) {
-                                newDay = ((((week - 1) * 7) + 1) + (7 - newWeekDay)) + dow;
-                            }
+                            int newDay = calculateMonthlyDayOfMonth(futureDate, returnDate);
                             returnDate.set(Calendar.DAY_OF_MONTH, newDay);
                             return returnDate;
                         case Enums.monthlyDateInMonth /*1*/:
@@ -424,6 +380,23 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             }
         }
         return null;
+    }
+
+    private static int calculateMonthlyDayOfMonth(GregorianCalendar futureDate, GregorianCalendar returnDate) {
+        int newWeekDay = returnDate.get(Calendar.DAY_OF_WEEK);
+        int dow = futureDate.get(Calendar.DAY_OF_WEEK);
+        int day = futureDate.get(Calendar.DAY_OF_MONTH);
+        int week = day / 7;
+        if (day % 7 > 0) {
+            week++;
+        }
+        if (newWeekDay == dow) {
+            return ((week - 1) * 7) + 1;
+        } else if (newWeekDay < dow) {
+            return (((week - 1) * 7) + 1) + (dow - newWeekDay);
+        } else {
+            return ((((week - 1) * 7) + 1) + (7 - newWeekDay)) + dow;
+        }
     }
 
     public void setEndDate(GregorianCalendar cal) {
@@ -523,6 +496,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         return this.transaction;
     }
 
+    // Paired with setupNotification for alarm/notification lifecycle
+    @SuppressWarnings("unused")
     public void deleteNotification(Context context) {
         Intent intent = new Intent(context, LocalNotificationRepeatingReciever.class);
         ((NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE)).cancel(this.repeatingID);
@@ -971,47 +946,52 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (this.currentElementValue == null) {
             this.currentElementValue = "";
         }
-        if (!localName.equals("filterID")) {
-            if (localName.equals("timestamp")) {
+        switch (localName) {
+            case "timestamp":
                 this.timestamp = CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue);
-            } else if (localName.equals("deleted")) {
+                break;
+            case "deleted":
                 if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
                     z = true;
                 }
                 setDeleted(z);
-            } else if (localName.equals("lastProcessedDate")) {
+                break;
+            case "lastProcessedDate":
                 setLastProcessedDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
-            } else if (localName.equals("type")) {
+                break;
+            case "type":
                 setType(Integer.parseInt(this.currentElementValue));
-            } else if (localName.equals("endDate")) {
+                break;
+            case "endDate":
                 setEndDate(CalExt.dateFromDescriptionWithISO861Date(this.currentElementValue));
-            } else if (localName.equals("frequency")) {
+                break;
+            case "frequency":
                 setFrequency(Integer.parseInt(this.currentElementValue));
-            } else if (localName.equals("repeatOn")) {
+                break;
+            case "repeatOn":
                 setRepeatOn(Integer.parseInt(this.currentElementValue));
-            } else if (localName.equals("startOfWeek")) {
+                break;
+            case "startOfWeek":
                 setStartOfWeek(Integer.parseInt(this.currentElementValue));
-            } else if (localName.equals("transactionServerID")) {
+                break;
+            case "transactionServerID":
                 this.transactionServerID = this.currentElementValue;
-            } else if (localName.equals("transactionID")) {
+                break;
+            case "transactionID":
                 this.transactionID = Integer.parseInt(this.currentElementValue);
-            } else if (localName.equals("serverID")) {
+                break;
+            case "serverID":
                 setServerID(this.currentElementValue);
-            } else if (localName.equals("sendLocalNotifications")) {
+                break;
+            case "sendLocalNotifications":
                 if (this.currentElementValue.equals("Y") || this.currentElementValue.equals("1")) {
                     z = true;
                 }
                 setSendLocalNotifications(z);
-            } else if (localName.equals("notifyDaysInAdvance")) {
+                break;
+            case "notifyDaysInAdvance":
                 setNotifyDaysInAdvance(Integer.parseInt(this.currentElementValue));
-            } else if (localName.equals("transactionServerID")) {
-                Class<?> c = getClass();
-                try {
-                    c.getDeclaredField(localName).set(this, this.currentElementValue);
-                } catch (Exception e) {
-                    Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
-                }
-            }
+                break;
         }
         this.currentElementValue = null;
     }
@@ -1039,6 +1019,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }

@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -54,12 +53,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         Cursor curs = Database.query(qb, new String[]{"class"}, "classID=" + pk, null, null, null, null);
         if (curs.getCount() != 0) {
             curs.moveToFirst();
-            String cat = curs.getString(0);
-            if (cat != null) {
-                this.className = cat;
-            } else {
-                this.className = "";
-            }
+            this.className = java.util.Objects.requireNonNullElse(curs.getString(0), "");
         } else {
             this.className = "";
         }
@@ -168,7 +162,7 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         try {
             Database.update(Database.CLASSES_TABLE_NAME, content, "class LIKE " + Database.SQLFormat(fromText), null);
         } catch (Exception e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
+            Log.e(SMMoney.TAG, "Error renaming class in database", e);
         }
     }
 
@@ -314,7 +308,9 @@ public class ClassNameClass extends PocketMoneyRecordClass {
                 break;
             case "class":
                 try {
-                    setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    setClassName(URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     Log.e(SMMoney.TAG, "Error decoding XML", e);
                 }
@@ -353,6 +349,8 @@ public class ClassNameClass extends PocketMoneyRecordClass {
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }

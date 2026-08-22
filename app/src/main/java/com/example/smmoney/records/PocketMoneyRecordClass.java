@@ -54,7 +54,9 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
     }
 
     String encode(String aString) throws UnsupportedEncodingException {
-        return URLEncoder.encode(aString, java.nio.charset.StandardCharsets.UTF_8.toString()).replace("+", "%20");
+        // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLEncoder(String, Charset) requires API 33+)
+        //noinspection CharsetObjectCanBeUsed
+        return URLEncoder.encode(aString, "UTF-8").replace("+", "%20");
     }
 
     void dehydrateAndUpdateTimeStamp(boolean updateTimeStamp) {

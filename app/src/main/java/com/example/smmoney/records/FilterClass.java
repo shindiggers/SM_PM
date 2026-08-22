@@ -27,7 +27,6 @@ import java.io.Serializable;
 import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -114,23 +113,6 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         this.dirty = false;
     }
 
-    @SuppressWarnings("unused")
-    public static int idForFilter(String filter) {
-        if (filter == null || filter.isEmpty()) {
-            return 0;
-        }
-        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        qb.setTables(Database.FILTERS_TABLE_NAME);
-        Cursor curs = Database.query(qb, new String[]{"filterID"}, "deleted=0 AND filter LIKE " + Database.SQLFormat(filter), null, null, null, null);
-        int filterID = 0;
-        if (curs.getCount() != 0) {
-            curs.moveToFirst();
-            filterID = curs.getInt(0);
-        }
-        curs.close();
-        return filterID;
-    }
-
     public void setClearedFromString(String aString) {
         if (aString.equals(Locales.kLOC_GENERAL_CLEARED)) {
             setCleared(Enums.kClearedCleared /*1*/);
@@ -175,6 +157,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         this.customFilter = aBool;
     }
 
+    // Invoked via reflection in PocketMoneySyncClass
     @SuppressWarnings("unused")
     public static FilterClass recordWithServerID(String serverID) {
         FilterClass record = null;
@@ -404,11 +387,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     public void setCategory(String aString) {
         if (this.category != null || aString != null) {
             if (this.category == null || !this.category.equals(aString)) {
-                if (aString == null) {
-                    this.category = "";
-                } else {
-                    this.category = aString;
-                }
+                this.category = java.util.Objects.requireNonNullElse(aString, "");
                 this.dirty = true;
                 if (!this.category.isEmpty() && !this.category.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
                     this.customFilter = true;
@@ -491,11 +470,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     public void setCheckNumber(String aString) {
         if (this.checkNumber != null || aString != null) {
             if (this.checkNumber == null || !this.checkNumber.equals(aString)) {
-                if (aString == null) {
-                    this.checkNumber = "";
-                } else {
-                    this.checkNumber = aString;
-                }
+                this.checkNumber = java.util.Objects.requireNonNullElse(aString, "");
                 this.dirty = true;
                 if (!this.checkNumber.isEmpty()) {
                     this.customFilter = true;
@@ -609,11 +584,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     public void setClassName(String aString) {
         if (this.className != null || aString != null) {
             if (this.className == null || !this.className.equals(aString)) {
-                if (aString == null) {
-                    this.className = "";
-                } else {
-                    this.className = aString;
-                }
+                this.className = java.util.Objects.requireNonNullElse(aString, "");
                 this.dirty = true;
                 if (!this.className.isEmpty() && !this.className.equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
                     this.customFilter = true;
@@ -713,10 +684,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (isFromDate) {
             cal = CalExt.beginningOfToday();
             cal.setLenient(true);
-            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_ALL)) {
-                //noinspection ConstantConditions
-                retDate = 0;
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
+            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
                 retDate = cal.getTimeInMillis();
             } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_YESTERDAY)) {
                 cal.add(Calendar.DAY_OF_YEAR, -1);
@@ -764,10 +732,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         } else {
             cal = CalExt.endOfToday();
             cal.setLenient(true);
-            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_ALL)) {
-                //noinspection ConstantConditions
-                retDate = 0;
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
+            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
                 cal.add(Calendar.DAY_OF_YEAR, 1);
                 retDate = cal.getTimeInMillis();
             } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_YESTERDAY)) {
@@ -812,57 +777,6 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             }
         }
         return retDate / 1000;
-    }
-
-    @SuppressWarnings("unused")
-    public boolean validTransaction(TransactionClass transaction) {
-        if (!allAccounts()) {
-            boolean match = false;
-            String[] accts = getAccount().split(";");
-            for (String a : accts) {
-                if (a.equalsIgnoreCase(transaction.getAccount())) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) return false;
-        }
-        if (getCleared() != 2) {
-            if ((this.cleared == 1) != transaction.getCleared()) {
-                return false;
-            }
-        }
-        if (!getPayee().isEmpty()) {
-            boolean match = false;
-            String[] payees = getPayee().split(";");
-            for (String p : payees) {
-                if (p.equalsIgnoreCase(transaction.getPayee())) {
-                    match = true;
-                    break;
-                }
-            }
-            if (!match) return false;
-        }
-        if (!getCategory().isEmpty() && !getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
-            if (getCategory().equals(Locales.kLOC_FILTERS_UNFILED)) {
-                if (transaction.getCategory() != null && !transaction.getCategory().isEmpty()) return false;
-            } else {
-                boolean match = false;
-                String[] cats = getCategory().split(";");
-                for (String c : cats) {
-                    if (c.equals(Locales.kLOC_FILTERS_UNFILED)) {
-                         if (transaction.getCategory() == null || transaction.getCategory().isEmpty()) {
-                             match = true; break;
-                         }
-                    } else if (c.equalsIgnoreCase(transaction.getCategory())) {
-                        match = true;
-                        break;
-                    }
-                }
-                if (!match) return false;
-            }
-        }
-        return true;
     }
 
     private static int getMaxDayForMonth(GregorianCalendar cal) {
@@ -957,21 +871,27 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 break;
             case "account":
                 try {
-                    setAccount(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    setAccount(URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     Log.e(SMMoney.TAG, "Error decoding XML", e);
                 }
                 break;
             case "categoryID":
                 try {
-                    setCategory(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    setCategory(URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     Log.e(SMMoney.TAG, "Error decoding XML", e);
                 }
                 break;
             case "classID":
                 try {
-                    setClassName(URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    setClassName(URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (UnsupportedEncodingException e) {
                     Log.e(SMMoney.TAG, "Error decoding XML", e);
                 }
@@ -986,7 +906,9 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             case "filterName":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -1022,6 +944,8 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }
@@ -1041,11 +965,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             addText(body, getDeleted() ? "Y" : "N");
             body.endTag(null, "deleted");
             body.startTag(null, "timestamp");
-            if (this.timestamp == null) {
-                descriptionWithISO861Date = CalExt.descriptionWithISO861Date(new GregorianCalendar());
-            } else {
-                descriptionWithISO861Date = CalExt.descriptionWithISO861Date(this.timestamp);
-            }
+            descriptionWithISO861Date = CalExt.descriptionWithISO861Date(this.timestamp == null ? new GregorianCalendar() : this.timestamp);
             addText(body, descriptionWithISO861Date);
             body.endTag(null, "timestamp");
             body.startTag(null, "filterName");

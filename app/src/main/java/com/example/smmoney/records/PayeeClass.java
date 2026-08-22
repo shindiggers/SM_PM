@@ -19,7 +19,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
@@ -54,12 +53,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         Cursor curs = Database.query(qb, new String[]{"payee"}, "payeeID=" + pk, null, null, null, null);
         if (curs.getCount() != 0) {
             curs.moveToFirst();
-            String cat = curs.getString(0);
-            if (cat != null) {
-                this.payee = cat;
-            } else {
-                this.payee = "";
-            }
+            this.payee = java.util.Objects.requireNonNullElse(curs.getString(0), "");
         } else {
             this.payee = "";
         }
@@ -169,7 +163,7 @@ public class PayeeClass extends PocketMoneyRecordClass {
         try {
             Database.update(Database.PAYEES_TABLE_NAME, content, "payee LIKE " + Database.SQLFormat(fromText), null);
         } catch (Exception e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage());
+            Log.e(SMMoney.TAG, "Error renaming payee in database", e);
         }
     }
 
@@ -322,7 +316,9 @@ public class PayeeClass extends PocketMoneyRecordClass {
             case "payee":
                 Class<?> c = getClass();
                 try {
-                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, StandardCharsets.UTF_8.name()));
+                    // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
+                    //noinspection CharsetObjectCanBeUsed
+                    c.getDeclaredField(localName).set(this, URLDecoder.decode(this.currentElementValue, "UTF-8"));
                 } catch (Exception e) {
                     Log.i(SMMoney.TAG, "Invalid tag parsing " + c.getName() + " xml[" + localName + "]");
                 }
@@ -358,6 +354,8 @@ public class PayeeClass extends PocketMoneyRecordClass {
                 this.string.append((char) b);
             }
 
+            @androidx.annotation.NonNull
+            @Override
             public String toString() {
                 return this.string.toString();
             }
