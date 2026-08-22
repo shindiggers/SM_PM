@@ -145,7 +145,7 @@ public class SplitsActivity extends PocketMoneyActivity {
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
                 int position = viewHolder.getAdapterPosition();
                 if (position != RecyclerView.NO_POSITION && position < transaction.getSplits().size()) {
-                    transaction.getSplits().remove(position);
+                    transaction.deleteSplitAtIndex(position);
                     adapter.notifyItemRemoved(position);
                     reloadData();
                 } else {
