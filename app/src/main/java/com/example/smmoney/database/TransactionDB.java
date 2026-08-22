@@ -25,6 +25,7 @@ import java.util.Enumeration;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Objects;
 import java.util.TimeZone;
 
 public class TransactionDB {
@@ -124,7 +125,7 @@ public class TransactionDB {
                 sb.append(id);
             }
         }
-        return sb.length() > 0 ? " t.accountID IN (" + sb.toString() + ")" : "";
+        return sb.length() > 0 ? " t.accountID IN (" + sb + ")" : "";
     }
 
     private static String getInClause(String field, String values, String unfiledLabel) {
@@ -133,7 +134,7 @@ public class TransactionDB {
         StringBuilder sb = new StringBuilder();
         boolean hasUnfiled = false;
         for (String part : parts) {
-            if (unfiledLabel != null && part.equals(unfiledLabel)) {
+            if (Objects.equals(part, unfiledLabel)) {
                 hasUnfiled = true;
                 continue;
             }
@@ -143,7 +144,7 @@ public class TransactionDB {
         
         String inClause = "";
         if (sb.length() > 0) {
-            inClause = field + " IN (" + sb.toString() + ")";
+            inClause = field + " IN (" + sb + ")";
         }
         
         if (hasUnfiled) {
@@ -179,7 +180,7 @@ public class TransactionDB {
         } else if (Enums.kViewAccountsNonZero/*1*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             where = where.concat(" AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))");
         }
-        if (!(filter.getDate() == null || filter.getDate().length() <= 0 || filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL))) {
+        if (!(filter.getDate() == null || filter.getDate().isEmpty() || filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL))) {
             if (filter.getDate().equals(Locales.kLOC_FILTER_DATES_RECENTLYCHANGED)) {
                 filter.allAccounts();
             } else if (filter.getDate().equals(Locales.kLOC_FILTER_DATES_MODIFIEDTODAY)) {
@@ -230,7 +231,7 @@ public class TransactionDB {
                 }
             }
         }
-        if (filter.getClassName().length() <= 0 || filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
+        if (filter.getClassName().isEmpty() || filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
             return where;
         }
         String inClause = getInClause("s.classID", filter.getClassName(), Locales.kLOC_FILTERS_UNFILED);
@@ -255,23 +256,53 @@ public class TransactionDB {
         }
         if (spotlight.contains("...")) {
             int index = spotlight.indexOf("...");
-            double from = CurrencyExt.amountFromString(spotlight.substring(0, index));
-            double to = CurrencyExt.amountFromString(spotlight.substring(index + 3));
-            if (from > to) {
-                double swap = to;
-                to = from;
-                //todo: think need to add "from = swap" so that the ... works regarless of entering highest number first. Test this out
+            String fromStr = spotlight.substring(0, index).trim();
+            String toStr = spotlight.substring(index + 3).trim();
+
+            boolean hasNegative = fromStr.startsWith("-") || toStr.startsWith("-");
+            boolean hasExplicitPositive = fromStr.startsWith("+") || toStr.startsWith("+");
+
+            double from = CurrencyExt.amountFromString(fromStr);
+            double to = CurrencyExt.amountFromString(toStr);
+
+            double min = Math.min(from, to);
+            double max = Math.max(from, to);
+
+            if (hasNegative && !hasExplicitPositive && max <= 0.0d) {
+                // Explicit negative range (e.g. -20...-100 or -100...-20) -> withdrawals only
+                return "s.amount >= " + min + " AND s.amount <= " + max;
+            } else if (hasExplicitPositive && !hasNegative && min >= 0.0d) {
+                // Explicit positive range (e.g. +20...+100 or +100...+20) -> deposits only
+                return "s.amount >= " + min + " AND s.amount <= " + max;
+            } else if (!hasNegative && !hasExplicitPositive && min >= 0.0d) {
+                // Unsigned range (e.g. 20...100 or 100...20) -> match both deposits and withdrawals in range
+                return "((s.amount >= " + min + " AND s.amount <= " + max + ") OR (s.amount >= " + (-max) + " AND s.amount <= " + (-min) + "))";
+            } else {
+                // Cross-zero range (e.g. -20...100)
+                return "s.amount >= " + min + " AND s.amount <= " + max;
             }
-            return "s.amount >= " + from + " AND s.amount <= " + to;
         }
-        // This code below searches for positive and negative numbers and filters BOTH of this. Is that what we want the app to do? Could have separate filtering for positive and negative?
-        double aNum = CurrencyExt.amountFromString(spotlight);
+
+        String amountWhere = getSingleAmountWhereClause(spotlight);
+
+        return "t.checkNumber LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "t.payee LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.memo LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.categoryID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.classID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.currencyCode LIKE " + Database.SQLFormat("%" + spotlight + "%") + " " + amountWhere;
+    }
+
+    private static String getSingleAmountWhereClause(String spotlight) {
+        String trimmed = spotlight.trim();
+        double aNum = CurrencyExt.amountFromString(trimmed);
         String amountWhere = "";
-        if (aNum > 0.0d) {
+        if (trimmed.startsWith("-") && aNum < 0.0d) {
+            // Explicit negative single amount (e.g. -50) -> withdrawal only
+            amountWhere = "OR s.amount = " + aNum;
+        } else if (trimmed.startsWith("+") && aNum > 0.0d) {
+            // Explicit positive single amount (e.g. +50) -> deposit only
+            amountWhere = "OR s.amount = " + aNum;
+        } else if (aNum > 0.0d) {
+            // Unsigned single amount (e.g. 50) -> match both deposit (+50) and withdrawal (-50)
             amountWhere = "OR s.amount = " + aNum + " OR s.amount = " + (-1.0d * aNum);
         }
-        // Line below searches all other Transaction object fields with leading and trailing wildcards (ie if the spotlight search is contained anywhere in the Transaction object
-        return "t.checkNumber LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "t.payee LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.memo LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.categoryID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.classID LIKE " + Database.SQLFormat("%" + spotlight + "%") + " OR " + "s.currencyCode LIKE " + Database.SQLFormat("%" + spotlight + "%") + " " + amountWhere;
+        return amountWhere;
     }
 
     public static ArrayList<TransactionClass> queryWithFilter(FilterClass filter) {
@@ -282,8 +313,6 @@ public class TransactionDB {
         qb.setDistinct(true);
         qb.setTables("transactions t INNER JOIN splits s ON t.transactionID=s.transactionID");
         String where = queryWithFilterWhereClause(filter) + " AND (" + queryWithFilterSpotlightClause(filter.getSpotlight()) + ")";
-        where.replaceAll("s.", "splits.");
-        where.replaceAll("t.", "transactions.");
         Cursor curs = Database.query(qb, projection, where, null, null, null, queryWithFilterOrderByClause());
         if (curs.getCount() == 0) {
             curs.close();
@@ -327,8 +356,6 @@ public class TransactionDB {
         qb.setDistinct(true);
         qb.setTables("transactions t INNER JOIN splits s ON t.transactionID=s.transactionID");
         String where = queryWithFilterWhereClause(filter) + " AND (" + queryWithFilterSpotlightClause(filter.getSpotlight()) + ")";
-        where.replaceAll("s.", "splits.");
-        where.replaceAll("t.", "transactions.");
         Cursor curs = Database.query(qb, projection, where, null, null, null, queryWithFilterOrderByClause());
         int cursCount = curs.getCount();
         if (cursCount == 0) {
@@ -361,8 +388,6 @@ public class TransactionDB {
         qb.setDistinct(true);
         qb.setTables("transactions t INNER JOIN splits s ON t.transactionID=s.transactionID");
         String where = queryWithFilterWhereClause(filter) + " AND (" + queryWithFilterSpotlightClause(filter.getSpotlight()) + ")";
-        where.replaceAll("s.", "splits.");
-        where.replaceAll("t.", "transactions.");
         Cursor curs = Database.query(qb, projection, where, null, null, null, "t.accountID ASC");
         if (curs.getCount() == 0) {
             curs.close();
@@ -431,13 +456,7 @@ public class TransactionDB {
     public static double cashFlowBalanceWith(int type, GregorianCalendar fromDate, GregorianCalendar toDate) {
         double amount = 0.0d;
         int viewAccountType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
-        String sql = "";
-        String accountsWhere = "";
-        if (Enums.kViewAccountsTotalWorth/*2*/ == viewAccountType) {
-            accountsWhere = " AND t.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1)  AND (NOT s.transferToAccountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
-        } else if (Enums.kViewAccountsNonZero/*1*/ == viewAccountType) {
-            accountsWhere = " AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))";
-        }
+        String accountsWhere = getAccountsWhere(viewAccountType);
         StringBuilder append = new StringBuilder("SELECT  sum(s.amount / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = t.accountID )) FROM transactions t INNER JOIN splits s ON t.transactionID=s.transactionID WHERE deleted=0 AND type<>5 AND ").append(type == 0 ? -1.0d : 1.0d).append(" * s.amount > 0 AND t.date>=");
         if (fromDate == null) {
             fromDate = CalExt.distantPast();
@@ -455,10 +474,19 @@ public class TransactionDB {
         return amount;
     }
 
+    private static String getAccountsWhere(int viewAccountType) {
+        String accountsWhere = "";
+        if (Enums.kViewAccountsTotalWorth/*2*/ == viewAccountType) {
+            accountsWhere = " AND t.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1)  AND (NOT s.transferToAccountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
+        } else if (Enums.kViewAccountsNonZero/*1*/ == viewAccountType) {
+            accountsWhere = " AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))";
+        }
+        return accountsWhere;
+    }
+
     public static void rollupTransactionsInFilter(ArrayList<TransactionClass> transactions, FilterClass filter) {
         Hashtable<String, Hashtable<String, Hashtable<String, Double>>> accountListings = new Hashtable<>();
         GregorianCalendar lastDate = null;
-        String com = SMMoney.getAppContext().getPackageName();
         Iterator<TransactionClass> it = transactions.iterator();
         while (it.hasNext()) {
             TransactionClass transaction = it.next();
@@ -469,10 +497,15 @@ public class TransactionDB {
             }
             for (SplitsClass splitsClass : transaction.getSplits()) {
                 Double amount;
-                Hashtable<String, Double> categoryRollup = accountRollup.get(splitsClass.getCategory());
+                if (splitsClass.getCategory() == null) {
+                    continue;
+                }
+                Hashtable<String, Double> categoryRollup = accountRollup != null ? accountRollup.get(splitsClass.getCategory()) : null;
                 if (categoryRollup == null) {
-                    accountRollup.put(splitsClass.getCategory(), new Hashtable<>());
-                    categoryRollup = accountRollup.get(splitsClass.getCategory());
+                    categoryRollup = new Hashtable<>();
+                    if (accountRollup != null) {
+                        accountRollup.put(splitsClass.getCategory(), categoryRollup);
+                    }
                 }
                 if (transaction.getCleared()) {
                     amount = categoryRollup.get("cleared");
@@ -503,11 +536,15 @@ public class TransactionDB {
         while (e.hasMoreElements()) {
             String accountNameKey = e.nextElement();
             Hashtable<String, Hashtable<String, Double>> accountRollup = accountListings.get(accountNameKey);
-            String accountCurrencyCode = AccountDB.recordFor(accountNameKey).getCurrencyCode();
+            if (accountRollup == null) {
+                continue;
+            }
+            AccountClass accountRecord = AccountDB.recordFor(accountNameKey);
+            String accountCurrencyCode = accountRecord != null ? accountRecord.getCurrencyCode() : null;
             TransactionClass transaction = new TransactionClass();
             transaction.setAccount(accountNameKey);
             transaction.setDate(lastDate);
-            if (filter.getPayee() == null || filter.getPayee().length() <= 0) {
+            if (filter.getPayee() == null || filter.getPayee().isEmpty()) {
                 transaction.setPayee(Locales.kLOC_TOOLS_ROLLUP);
             } else {
                 transaction.setPayee(filter.getPayee());
@@ -516,7 +553,7 @@ public class TransactionDB {
             TransactionClass clearedTransaction = new TransactionClass();
             clearedTransaction.setAccount(accountNameKey);
             clearedTransaction.setDate(lastDate);
-            if (filter.getPayee() == null || filter.getPayee().length() <= 0) {
+            if (filter.getPayee() == null || filter.getPayee().isEmpty()) {
                 clearedTransaction.setPayee(Locales.kLOC_TOOLS_ROLLUP);
             } else {
                 clearedTransaction.setPayee(filter.getPayee());
@@ -526,6 +563,9 @@ public class TransactionDB {
             while (en.hasMoreElements()) {
                 String categoryKey = en.nextElement();
                 Hashtable<String, Double> categoryRollup = accountRollup.get(categoryKey);
+                if (categoryRollup == null) {
+                    continue;
+                }
                 Double amount = categoryRollup.get("uncleared");
                 if (!(amount == null || amount == 0.0d)) {
                     SplitsClass split = new SplitsClass();
@@ -565,13 +605,14 @@ public class TransactionDB {
     private static void disconnectionTransfersForTransaction(TransactionClass transaction) {
         for (SplitsClass split : transaction.getSplits()) {
             if (split.getTransferToAccount() != null && !split.getTransferToAccount().isEmpty()) {
-                if (AccountDB.recordFor(split.getTransferToAccount()) == null) {
+                AccountClass transferToAccountRecord = AccountDB.recordFor(split.getTransferToAccount());
+                if (transferToAccountRecord == null) {
                     split.setCategory(split.getTransferToAccount());
                     split.setTransferToAccount("");
                 } else {
                     double amount;
                     String str;
-                    boolean regularTransfer = split.getCurrencyCode().equals(AccountDB.recordFor(split.getTransferToAccount()).getCurrencyCode());
+                    boolean regularTransfer = Objects.equals(split.getCurrencyCode(), transferToAccountRecord.getCurrencyCode());
                     TransactionTransferRetVals ret = new TransactionTransferRetVals();
                     String transferToAccount = split.getTransferToAccount();
                     String account = transaction.getAccount();
@@ -590,19 +631,23 @@ public class TransactionDB {
                     int transferRecID = ret.transferRecID;
                     int transferSplitItem = ret.transferSplitItem;
                     if (transferRecID != 0) {
-                        TransactionClass transferRec = new TransactionClass(transferRecID);
-                        if (transferRec.getPayee() == null || transferRec.getPayee().isEmpty()) {
-                            transferRec.setPayee(transferRec.getTransferToAccountAtIndex(transferSplitItem));
-                        } else if (transferRec.getCategoryAtIndex(transferSplitItem) == null || transferRec.getCategoryAtIndex(transferSplitItem).isEmpty()) {
-                            transferRec.setCategoryAtIndex(transferRec.getTransferToAccountAtIndex(transferSplitItem), transferSplitItem);
-                        }
-                        transferRec.setTransferToAccountAtIndex(null, transferSplitItem);
-                        transferRec.initType();
-                        transferRec.saveToDatabase();
+                        disconnectTransferRecord(transferRecID, transferSplitItem);
                     }
                 }
             }
         }
+    }
+
+    private static void disconnectTransferRecord(int transferRecID, int transferSplitItem) {
+        TransactionClass transferRec = new TransactionClass(transferRecID);
+        if (transferRec.getPayee() == null || transferRec.getPayee().isEmpty()) {
+            transferRec.setPayee(transferRec.getTransferToAccountAtIndex(transferSplitItem));
+        } else if (transferRec.getCategoryAtIndex(transferSplitItem) == null || transferRec.getCategoryAtIndex(transferSplitItem).isEmpty()) {
+            transferRec.setCategoryAtIndex(transferRec.getTransferToAccountAtIndex(transferSplitItem), transferSplitItem);
+        }
+        transferRec.setTransferToAccountAtIndex(null, transferSplitItem);
+        transferRec.initType();
+        transferRec.saveToDatabase();
     }
 
     public static void transactionGetTransfer(String transToAccount, String transFromAccount, GregorianCalendar transDate, double transAmount, String tToCurrencyCode, TransactionTransferRetVals ret) {
@@ -702,6 +747,14 @@ public class TransactionDB {
         return i;
     }
 
+    /**
+     * Reschedules notifications/alarms for all repeating transactions that have notifications enabled.
+     * Retained for future lifecycle management, including:
+     * - Rescheduling alarms after device reboot (BOOT_COMPLETED broadcast receiver).
+     * - Resyncing alarms when global notification settings or permissions are toggled.
+     * - Restoring notifications following database import/restore.
+     */
+    @SuppressWarnings("unused")
     public static void setupNotifications() {
         for (RepeatingTransactionClass repeatingTrans : queryAllRepeatingTransactions()) {
             if (repeatingTrans.getSendLocalNotifications()) {
@@ -710,34 +763,31 @@ public class TransactionDB {
         }
     }
 
-    public static boolean addRepeatingTransactions() {
+    public static void addRepeatingTransactions() {
         Log.d("NOTIFY", "addRepeatingTransactions() called. RECURPOSTINGENABLED=" + Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED));
         if (!Prefs.getBooleanPref(Prefs.RECURPOSTINGENABLED)) {
-            return false;
+            return;
         }
         GregorianCalendar processRepeatingEventsThrough = new GregorianCalendar();
         processRepeatingEventsThrough.add(Calendar.DAY_OF_YEAR, Prefs.getIntPref(Prefs.RECURRDAYSINADVANCE));
-        return addRepeatingEventsThroughDate(processRepeatingEventsThrough, SMMoney.getAppContext(), true);
+        addRepeatingEventsThroughDate(processRepeatingEventsThrough, SMMoney.getAppContext(), true);
     }
 
-    public static boolean addRepeatingEventsThroughDate(GregorianCalendar checkDate, RepeatingActivity repeating) {
-        return addRepeatingEventsThroughDate(checkDate, repeating, false);
+    public static void addRepeatingEventsThroughDate(GregorianCalendar checkDate, RepeatingActivity repeating) {
+        addRepeatingEventsThroughDate(checkDate, repeating, false);
     }
 
-    private static boolean addRepeatingEventsThroughDate(GregorianCalendar checkDate, Context context, boolean ignoreRepeating) {
-        boolean repeatingTransactionAdded = false;
+    private static void addRepeatingEventsThroughDate(GregorianCalendar checkDate, Context context, boolean ignoreRepeating) {
         checkDate = CalExt.beginningOfDay(checkDate);
         for (RepeatingTransactionClass repeatingTransaction : queryAllRepeatingTransactions()) {
             if (repeatingTransaction.getTransaction() != null && repeatingTransaction.getTransaction().getDate() != null) {
-                GregorianCalendar lastDate = CalExt.beginningOfDay(repeatingTransaction.getLastProcessedDate());
                 repeatingTransaction.hydrate();
                 if (repeatingTransaction.getSendLocalNotifications() && ignoreRepeating) {
                     repeatingTransaction.setupNotification(context);
                 } else {
                     while (!CalExt.beginningOfDay(repeatingTransaction.getTransaction().getDate()).after(checkDate)) {
                         postTransactionOnDate(repeatingTransaction, repeatingTransaction.getTransaction().getDate());
-                        lastDate = repeatingTransaction.getTransaction().getDate();
-                        repeatingTransactionAdded = true;
+                        GregorianCalendar lastDate = repeatingTransaction.getTransaction().getDate();
                         if (repeatingTransaction.getType() == 5 || repeatingTransaction.getTransaction().getDate().after(repeatingTransaction.getEndDate())) {
                             repeatingTransaction.getTransaction().deleteFromDatabase();
                             repeatingTransaction.deleteFromDatabase();
@@ -762,7 +812,6 @@ public class TransactionDB {
                 }
             }
         }
-        return repeatingTransactionAdded;
     }
 
     public static void fixRepeatingTransactionsThatDontRepeatOnDate() {
@@ -840,7 +889,6 @@ public class TransactionDB {
         transaction.isRepeatingTransaction = false;
         transaction.setImageLocation("");
         transaction.setCleared(false);
-        int sign = (int) (transaction.getSubTotal() / Math.abs(transaction.getSubTotal()));
         transaction.setSubTotal(subtotal);
         transaction.setDate(date);
         transaction.saveToDatabase();
@@ -866,6 +914,13 @@ public class TransactionDB {
         }
     }
 
+    /**
+     * Skips one or more occurrences of a repeating transaction up to the specified date
+     * without posting any transaction to the ledger.
+     * Retained for future UI and notification actions (e.g., a "Skip" button on repeating
+     * transaction lists or an interactive "Skip" action on notification reminders).
+     */
+    @SuppressWarnings("unused")
     public static void skipTransactionToDate(RepeatingTransactionClass repeatingTransaction, GregorianCalendar date) {
         repeatingTransaction.advanceTransactionDateToNextPostDateAfterDate(date);
         if (CalExt.beginningOfDay(repeatingTransaction.getLastProcessedDate()).before(date)) {
