@@ -19,7 +19,6 @@ import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     private EditTextPreference confirmPref;
-    private ListPreference delayListPref;
     private EditTextPreference passwordPref;
     private String storedPassword;
 
@@ -38,12 +37,17 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void checkPassword() {
-        if (this.passwordPref.getText() == null || this.confirmPref.getText() == null || this.passwordPref.getText().equals(this.confirmPref.getText())) {
+        if (this.passwordPref != null && this.confirmPref != null) {
+            if (this.passwordPref.getText() == null || this.confirmPref.getText() == null || this.passwordPref.getText().equals(this.confirmPref.getText())) {
+                clearToPrefs();
+                return;
+            }
+            this.passwordPref.setText(this.storedPassword);
+            this.confirmPref.setText(this.storedPassword);
+        } else {
             clearToPrefs();
             return;
         }
-        this.passwordPref.setText(this.storedPassword);
-        this.confirmPref.setText(this.storedPassword);
         Builder alt_bld = new Builder(this, PocketMoneyThemes.dialogTheme());
         alt_bld.setMessage(Locales.kLOC_PREFERENCES_PASSWORD_NOTMATCH).setCancelable(false).setNegativeButton(Locales.kLOC_GENERAL_OK, (dialog, id) -> {
             SecurityPrefsActivity.this.clearToPrefs();
@@ -63,18 +67,22 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
         String[] delays = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_PASSWORDDELAY1MIN, Locales.kLOC_PASSWORDDELAY5MINS, Locales.kLOC_PASSWORDDELAY10MINS, Locales.kLOC_PASSWORDDELAY15MINS, Locales.kLOC_PASSWORDDELAY30MINS, Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_PASSWORDDELAY24HOURS};
-        this.delayListPref = fragment.findPreference(Prefs.PASSWORD_DELAY);
-        this.delayListPref.setEntries(delays);
-        this.delayListPref.setEntryValues(delays);
-        if (this.delayListPref.getValue() == null) {
-            this.delayListPref.setDefaultValue(delays[0]);
+        ListPreference delayListPref = fragment.findPreference(Prefs.PASSWORD_DELAY);
+        if (delayListPref != null) {
+            delayListPref.setEntries(delays);
+            delayListPref.setEntryValues(delays);
+            if (delayListPref.getValue() == null) {
+                delayListPref.setDefaultValue(delays[0]);
+            }
+            delayListPref.setOnPreferenceChangeListener(getOnChangeListener());
+            delayListPref.setSummary(delayListPref.getEntry());
         }
-        this.delayListPref.setOnPreferenceChangeListener(getOnChangeListener());
-        this.delayListPref.setSummary(this.delayListPref.getEntry());
 
         this.passwordPref = fragment.findPreference(Prefs.PASSWORD);
         this.confirmPref = fragment.findPreference("prefssecurityconfirm");
-        this.storedPassword = this.passwordPref.getText();
+        if (this.passwordPref != null) {
+            this.storedPassword = this.passwordPref.getText();
+        }
     }
 
     @Override

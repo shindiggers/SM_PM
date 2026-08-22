@@ -44,7 +44,9 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
         ArrayList<String> codeNameList = new ArrayList<>();
         this.listPref = fragment.findPreference(Prefs.HOMECURRENCYCODE);
         this.multipleCurrencyPref = fragment.findPreference(Prefs.MULTIPLECURRENCIES);
-        this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
+        if (this.multipleCurrencyPref != null) {
+            this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
+        }
         for (String loc : codeList) {
             try {
                 nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
@@ -53,10 +55,12 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
                 Log.e(com.example.smmoney.SMMoney.TAG, "IllegalArgumentException in setupPrefs for loc: " + loc, e);
             }
         }
-        this.listPref.setEntries(nameList.toArray(new String[1]));
-        this.listPref.setEntryValues(codeNameList.toArray(new String[1]));
-        this.listPref.setOnPreferenceChangeListener(getChangeListener());
-        this.listPref.setSummary(this.listPref.getValue());
+        if (this.listPref != null) {
+            this.listPref.setEntries(nameList.toArray(new String[1]));
+            this.listPref.setEntryValues(codeNameList.toArray(new String[1]));
+            this.listPref.setOnPreferenceChangeListener(getChangeListener());
+            this.listPref.setSummary(this.listPref.getValue());
+        }
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {

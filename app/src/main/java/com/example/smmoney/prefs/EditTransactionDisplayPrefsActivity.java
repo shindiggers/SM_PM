@@ -13,7 +13,6 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceActivity {
-    private ListPreference startEditingListPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +29,14 @@ public class EditTransactionDisplayPrefsActivity extends PocketMoneyPreferenceAc
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        this.startEditingListPref = fragment.findPreference(Prefs.EDITTRANSACTION_STARTING_FIELD);
-        String[] startPositions = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_AMOUNT};
-        this.startEditingListPref.setEntries(startPositions);
-        this.startEditingListPref.setEntryValues(startPositions);
-        this.startEditingListPref.setOnPreferenceChangeListener(getChangeListener());
-        this.startEditingListPref.setSummary(this.startEditingListPref.getValue());
+        ListPreference startEditingListPref = fragment.findPreference(Prefs.EDITTRANSACTION_STARTING_FIELD);
+        if (startEditingListPref != null) {
+            String[] startPositions = new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_AMOUNT};
+            startEditingListPref.setEntries(startPositions);
+            startEditingListPref.setEntryValues(startPositions);
+            startEditingListPref.setOnPreferenceChangeListener(getChangeListener());
+            startEditingListPref.setSummary(startEditingListPref.getValue());
+        }
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {

@@ -14,9 +14,6 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
 public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity {
-    private ListPreference dateFormatListPref;
-    private ListPreference dateSeparatorListPref;
-    private ListPreference numberFormatListPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,22 +30,30 @@ public class QIFDataTransferPrefsActivity extends PocketMoneyPreferenceActivity 
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        this.dateFormatListPref = fragment.findPreference(Prefs.QIF_DATEFORMAT);
-        this.dateSeparatorListPref = fragment.findPreference(Prefs.QIF_DATESEPARATOR);
-        this.numberFormatListPref = fragment.findPreference(Prefs.QIF_NUMBERFORMAT);
-        this.dateFormatListPref.setEntries(ImportExportQIF.dateFormats());
-        this.dateFormatListPref.setEntryValues(ImportExportQIF.dateFormats());
-        this.dateSeparatorListPref.setEntries(ImportExportQIF.dateSeparators());
-        this.dateSeparatorListPref.setEntryValues(ImportExportQIF.dateSeparators());
-        this.numberFormatListPref.setEntries(ImportExportQIF.numberFormats());
-        this.numberFormatListPref.setEntryValues(ImportExportQIF.numberFormats());
-        this.dateFormatListPref.setOnPreferenceChangeListener(getChangeListener());
-        this.dateSeparatorListPref.setOnPreferenceChangeListener(getChangeListener());
-        this.numberFormatListPref.setOnPreferenceChangeListener(getChangeListener());
+        ListPreference dateFormatListPref = fragment.findPreference(Prefs.QIF_DATEFORMAT);
+        ListPreference dateSeparatorListPref = fragment.findPreference(Prefs.QIF_DATESEPARATOR);
+        ListPreference numberFormatListPref = fragment.findPreference(Prefs.QIF_NUMBERFORMAT);
 
-        this.dateFormatListPref.setSummary(this.dateFormatListPref.getValue());
-        this.dateSeparatorListPref.setSummary(this.dateSeparatorListPref.getValue());
-        this.numberFormatListPref.setSummary(this.numberFormatListPref.getValue());
+        if (dateFormatListPref != null) {
+            dateFormatListPref.setEntries(ImportExportQIF.dateFormats());
+            dateFormatListPref.setEntryValues(ImportExportQIF.dateFormats());
+            dateFormatListPref.setOnPreferenceChangeListener(getChangeListener());
+            dateFormatListPref.setSummary(dateFormatListPref.getValue());
+        }
+
+        if (dateSeparatorListPref != null) {
+            dateSeparatorListPref.setEntries(ImportExportQIF.dateSeparators());
+            dateSeparatorListPref.setEntryValues(ImportExportQIF.dateSeparators());
+            dateSeparatorListPref.setOnPreferenceChangeListener(getChangeListener());
+            dateSeparatorListPref.setSummary(dateSeparatorListPref.getValue());
+        }
+
+        if (numberFormatListPref != null) {
+            numberFormatListPref.setEntries(ImportExportQIF.numberFormats());
+            numberFormatListPref.setEntryValues(ImportExportQIF.numberFormats());
+            numberFormatListPref.setOnPreferenceChangeListener(getChangeListener());
+            numberFormatListPref.setSummary(numberFormatListPref.getValue());
+        }
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {

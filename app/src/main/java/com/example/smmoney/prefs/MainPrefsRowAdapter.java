@@ -55,7 +55,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
         PackageInfo pInfo = null;
         String version = "SMMoney ";
         String translations = Locales.kLOC_PREFERENCES_ABOUT_TRANSLATION;
-        String text = "\n \u00a9 2016, Catamount Software\nhttp://www.catamount.com";
+        String text = "\n © 2016, Catamount Software\nhttp://www.catamount.com";
         try {
             pInfo = this.context.getPackageManager().getPackageInfo(this.context.getPackageName(), PackageManager.GET_META_DATA);
         } catch (NameNotFoundException e) {

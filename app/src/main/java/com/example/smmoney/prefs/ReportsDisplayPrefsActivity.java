@@ -22,6 +22,9 @@ public class ReportsDisplayPrefsActivity extends PocketMoneyPreferenceActivity {
 
     @Override
     public void onPreferencesCreated(PreferenceFragmentCompat fragment) {
-        fragment.findPreference(Prefs.SHOWSUMMARYCHARTS).setEnabled(true);
+        androidx.preference.Preference showSummaryChartsPref = fragment.findPreference(Prefs.SHOWSUMMARYCHARTS);
+        if (showSummaryChartsPref != null) {
+            showSummaryChartsPref.setEnabled(true);
+        }
     }
 }

@@ -32,32 +32,54 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        fragment.findPreference("AccountDisplayPrefs").setOnPreferenceClickListener(preference -> {
-            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, AccountDisplayPrefsActivity.class));
-            return true;
-        });
-        fragment.findPreference("TransactionRegisterDisplayPrefs").setOnPreferenceClickListener(preference -> {
-            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, TransactionRegisterDisplayPrefsActivity.class));
-            return true;
-        });
-        fragment.findPreference("BudgetsPrefs").setOnPreferenceClickListener(preference -> {
-            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, BudgetsDisplayPrefsActivity.class));
-            return true;
-        });
-        fragment.findPreference("EditTransactionPrefs").setOnPreferenceClickListener(preference -> {
-            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, EditTransactionDisplayPrefsActivity.class));
-            return true;
-        });
-        fragment.findPreference("ReportsPrefs").setOnPreferenceClickListener(preference -> {
-            DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, ReportsDisplayPrefsActivity.class));
-            return true;
-        });
+        Preference accountDisplayPrefs = fragment.findPreference("AccountDisplayPrefs");
+        if (accountDisplayPrefs != null) {
+            accountDisplayPrefs.setOnPreferenceClickListener(preference -> {
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, AccountDisplayPrefsActivity.class));
+                return true;
+            });
+        }
+
+        Preference transactionRegisterDisplayPrefs = fragment.findPreference("TransactionRegisterDisplayPrefs");
+        if (transactionRegisterDisplayPrefs != null) {
+            transactionRegisterDisplayPrefs.setOnPreferenceClickListener(preference -> {
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, TransactionRegisterDisplayPrefsActivity.class));
+                return true;
+            });
+        }
+
+        Preference budgetsPrefs = fragment.findPreference("BudgetsPrefs");
+        if (budgetsPrefs != null) {
+            budgetsPrefs.setOnPreferenceClickListener(preference -> {
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, BudgetsDisplayPrefsActivity.class));
+                return true;
+            });
+        }
+
+        Preference editTransactionPrefs = fragment.findPreference("EditTransactionPrefs");
+        if (editTransactionPrefs != null) {
+            editTransactionPrefs.setOnPreferenceClickListener(preference -> {
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, EditTransactionDisplayPrefsActivity.class));
+                return true;
+            });
+        }
+
+        Preference reportsPrefs = fragment.findPreference("ReportsPrefs");
+        if (reportsPrefs != null) {
+            reportsPrefs.setOnPreferenceClickListener(preference -> {
+                DisplayOptionsPrefsActivity.this.startActivity(new Intent(DisplayOptionsPrefsActivity.this, ReportsDisplayPrefsActivity.class));
+                return true;
+            });
+        }
+
         ListPreference themes = fragment.findPreference(Prefs.THEME_COLOR);
-        String[] colors = new String[]{"Black", "Blue", Locales.kLOC_THEME_COLOR_GREEN, Locales.kLOC_THEME_COLOR_PURPLE, Locales.kLOC_THEME_COLOR_GRAY, Locales.kLOC_THEME_COLOR_COFFEE};
-        themes.setEntries(colors);
-        themes.setEntryValues(colors);
-        themes.setOnPreferenceChangeListener(getChangeListener());
-        themes.setSummary(Prefs.getStringPref(Prefs.THEME_COLOR));
+        if (themes != null) {
+            String[] colors = new String[]{"Black", "Blue", Locales.kLOC_THEME_COLOR_GREEN, Locales.kLOC_THEME_COLOR_PURPLE, Locales.kLOC_THEME_COLOR_GRAY, Locales.kLOC_THEME_COLOR_COFFEE};
+            themes.setEntries(colors);
+            themes.setEntryValues(colors);
+            themes.setOnPreferenceChangeListener(getChangeListener());
+            themes.setSummary(Prefs.getStringPref(Prefs.THEME_COLOR));
+        }
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {

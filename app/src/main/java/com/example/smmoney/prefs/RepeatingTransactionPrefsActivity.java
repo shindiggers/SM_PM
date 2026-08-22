@@ -3,7 +3,6 @@ package com.example.smmoney.prefs;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
@@ -25,7 +24,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(LayoutInflater.from(this).inflate(R.layout.prefs_repeating, null));
+        setContentView(R.layout.prefs_repeating);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));

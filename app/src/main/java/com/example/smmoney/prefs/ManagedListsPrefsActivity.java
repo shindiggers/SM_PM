@@ -29,10 +29,25 @@ public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        fragment.findPreference("PayeeManagedListsPref").setOnPreferenceClickListener(getListenerForID(4));
-        fragment.findPreference("CategoryManagedListsPref").setOnPreferenceClickListener(getListenerForID(5));
-        fragment.findPreference("ClassManagedListsPref").setOnPreferenceClickListener(getListenerForID(6));
-        fragment.findPreference("IDManagedListsPref").setOnPreferenceClickListener(getListenerForID(7));
+        Preference payeePref = fragment.findPreference("PayeeManagedListsPref");
+        if (payeePref != null) {
+            payeePref.setOnPreferenceClickListener(getListenerForID(4));
+        }
+
+        Preference categoryPref = fragment.findPreference("CategoryManagedListsPref");
+        if (categoryPref != null) {
+            categoryPref.setOnPreferenceClickListener(getListenerForID(5));
+        }
+
+        Preference classPref = fragment.findPreference("ClassManagedListsPref");
+        if (classPref != null) {
+            classPref.setOnPreferenceClickListener(getListenerForID(6));
+        }
+
+        Preference idPref = fragment.findPreference("IDManagedListsPref");
+        if (idPref != null) {
+            idPref.setOnPreferenceClickListener(getListenerForID(7));
+        }
     }
 
     private Preference.OnPreferenceClickListener getListenerForID(int id) {
