@@ -337,7 +337,7 @@ public class Prefs {
 
     public static void initialize() {
         if (!getBooleanPref(APP_FIRST_RUN)) {
-            Database.populateDatabaseDefaults(SMMoney.getAppContext());
+            Database.populateDatabaseDefaults();
             setPref(QIF_DATEFORMAT, Locales.kLOC_GENERAL_DEFAULT);
             setPref(QIF_DATESEPARATOR, Locales.kLOC_GENERAL_DEFAULT);
             String code = "USD";

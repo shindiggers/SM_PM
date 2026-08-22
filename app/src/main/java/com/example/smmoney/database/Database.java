@@ -23,11 +23,15 @@ import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.UUID;
 
+// Suppress "resource" warnings because SQLiteDatabase instances managed via currentDB()
+// are shared singletons intended to remain open across the application lifecycle.
+@SuppressWarnings("resource")
 public class Database {
     public static final String ACCOUNTS_TABLE_NAME = "accounts";
     public static final String CATEGORIES_TABLE_NAME = "categories";
@@ -69,14 +73,16 @@ public class Database {
     private static final int DATABASE_VERSION_7 = 7;
     private static final int DATABASE_VERSION_8 = 8;
     private static final int DATABASE_VERSION_9 = 9;
-    private static final int DATABASE_VERSION_CURRENT = 34;
+    private static final int DATABASE_VERSION_CURRENT = DATABASE_VERSION_34;
     public static final String EXCHANGERATES_TABLE_NAME = "exchangeRates";
     public static final String FILTERS_TABLE_NAME = "filters";
     public static final String IDS_TABLE_NAME = "ids";
     public static final String PAYEES_TABLE_NAME = "payees";
     private static final int PMSYNC_VERSION_1 = 1;
     public static final int PMSYNC_VERSION_2 = 2;
-    public static final int PMSYNC_VERSION_CURRENT = 2;
+    // Current PocketMoney Desktop Sync protocol version constant
+    @SuppressWarnings("unused")
+    public static final int PMSYNC_VERSION_CURRENT = PMSYNC_VERSION_2;
     public static final String PREFS_TABLE_NAME = "preferences";
     public static final String REPEATINGTRANSACTIONS_TABLE_NAME = "repeatingTransactions";
     public static final String SPLITS_TABLE_NAME = "splits";
@@ -90,8 +96,7 @@ public class Database {
     private static class DatabaseHelper extends SQLiteOpenHelper {
         DatabaseHelper(Context context) {
             super(context, Database.DATABASE_NAME, null, Database.DATABASE_VERSION_CURRENT);
-            SQLiteDatabase writableDatabase = getWritableDatabase();
-            writableDatabase = getReadableDatabase();
+            getWritableDatabase();
         }
 
         public void onCreate(SQLiteDatabase db) {
@@ -161,7 +166,7 @@ public class Database {
                 db.execSQL(statement);
             }
         } catch (SQLiteException e) {
-            Log.i(SMMoney.TAG, e.getLocalizedMessage());
+            Log.i(SMMoney.TAG, "execSqlWithCatch failed: " + statement, e);
         }
     }
 
@@ -260,7 +265,7 @@ public class Database {
         if (databaseVersion == DATABASE_VERSION_18) {
             execSqlWithCatch("DROP TABLE databaseSyncList");
             execSqlWithCatch("CREATE TABLE databaseSyncList ('databaseID' TEXT, 'lastSyncTime' INTEGER)");
-            if (((long) databaseID) == 2238011096L) {
+            if (((long) databaseID & 0xFFFFFFFFL) == 2238011096L) {
                 databaseID = new Random().nextInt();
             }
             databaseVersion = DATABASE_VERSION_19;
@@ -299,7 +304,7 @@ public class Database {
             execSqlWithCatch("DELETE FROM categorypayee WHERE payeeID ISNULL");
             execSqlWithCatch("DROP TABLE databaseSyncList");
             execSqlWithCatch("CREATE TABLE databaseSyncList ('databaseID' TEXT PRIMARY KEY, 'lastSyncTime' INTEGER)");
-            if (((long) databaseID) == 2238011096L) {
+            if (((long) databaseID & 0xFFFFFFFFL) == 2238011096L) {
                 databaseID = new Random().nextInt();
             }
             databaseVersion = DATABASE_VERSION_20;
@@ -457,8 +462,8 @@ public class Database {
             setMultipleCurrencies(Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES));
             execSqlWithCatch("ALTER TABLE preferences ADD homeCurrency TEXT");
             String currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
-            if (currencyCode != null && !currencyCode.isEmpty()) {
-                setHomeCurrency(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
+            if (!currencyCode.isEmpty()) {
+                setHomeCurrency(currencyCode);
             }
             databaseVersion = DATABASE_VERSION_CURRENT;
             updateVersion(databaseVersion);
@@ -542,7 +547,7 @@ public class Database {
     }
 
     public static void loadDatabasePreferences() {
-        Cursor c = rawQuery("SELECT databaseVersion, databaseID FROM preferences WHERE rowid=1", null);
+        Cursor c = rawQuery("SELECT databaseVersion, databaseID FROM " + PREFS_TABLE_NAME + " WHERE rowid=1", null);
         if (c.getCount() > 0) {
             c.moveToFirst();
             databaseVersion = c.getInt(0);
@@ -557,13 +562,8 @@ public class Database {
         updateDatabase();
     }
 
-    public static void pullPrefsOutOfDatabase() {
-        Prefs.setPref(Prefs.MULTIPLECURRENCIES, getMultipleCurrencies());
-        Prefs.setPref(Prefs.HOMECURRENCYCODE, getHomeCurrency());
-    }
-
     private static void updateVersion(int version) {
-        execSQL("UPDATE preferences SET databaseVersion=" + version + " WHERE rowid=1", null);
+        execSQL("UPDATE " + PREFS_TABLE_NAME + " SET databaseVersion=" + version + " WHERE rowid=1", null);
     }
 
     public static SQLiteDatabase currentDB() {
@@ -574,17 +574,6 @@ public class Database {
             db = dbh.getWritableDatabase();
         }
         return db;
-    }
-
-    @SuppressWarnings("EmptyMethod")
-    public static void unlockDB() {
-    }
-
-    public static void closeDB() {
-        if (dbh != null) {
-            dbh.close();
-            db = null;
-        }
     }
 
     public static void closeDBAndNullify() {
@@ -599,30 +588,30 @@ public class Database {
         }
         for (SplitsClass split : transaction.getSplits()) {
             if (!split.isTransfer()) {
-                if (ClassNameClass.idForClass(split.getClassName()) == 0 && split.getClassName() != null && split.getClassName().length() > 0) {
+                if (split.getClassName() != null && !split.getClassName().isEmpty() && ClassNameClass.idForClass(split.getClassName()) == 0) {
                     ClassNameClass.insertIntoDatabase(split.getClassName());
                 }
-                int categoryID = CategoryClass.idForCategory(split.getCategory());
-                if (categoryID == 0 && split.getCategory() != null && !split.getCategory().isEmpty()) {
-                    categoryID = CategoryClass.insertIntoDatabase(split.getCategory());
-                }
-                CategoryClass categoryRecord = new CategoryClass(categoryID);
-                if (split.getCategory() != null && !split.getCategory().isEmpty() && split.getCategory().contains(":")) {
-                    String cat = split.getCategory();
-                    int index = cat.lastIndexOf(":");
-                    while (index != -1) {
-                        cat = cat.substring(0, index);
-                        if (CategoryClass.idForCategory(cat) == 0 && cat != null && !cat.isEmpty()) {
-                            categoryID = CategoryClass.insertIntoDatabase(cat);
+                if (split.getCategory() != null && !split.getCategory().isEmpty()) {
+                    if (CategoryClass.idForCategory(split.getCategory()) == 0) {
+                        CategoryClass.insertIntoDatabase(split.getCategory());
+                    }
+                    if (split.getCategory().contains(":")) {
+                        String cat = split.getCategory();
+                        int index = cat.lastIndexOf(":");
+                        while (index != -1) {
+                            cat = cat.substring(0, index);
+                            if (!cat.isEmpty() && CategoryClass.idForCategory(cat) == 0) {
+                                CategoryClass.insertIntoDatabase(cat);
+                            }
+                            index = cat.lastIndexOf(":");
                         }
-                        index = cat.lastIndexOf(":");
                     }
                 }
             }
         }
     }
 
-    public static void populateDatabaseDefaults(Context context) {
+    public static void populateDatabaseDefaults() {
         int i = 0;
         String[] defaultCategories = new String[20];
         defaultCategories[0] = Locales.kLOC_DEFAULTCATEGORIES1;
@@ -705,18 +694,19 @@ public class Database {
     }
 
     public static void wipeDatabase() {
-        execSQL("DELETE FROM transactions");
-        execSQL("DELETE FROM splits");
-        execSQL("DELETE FROM accounts");
-        execSQL("DELETE FROM filters");
-        execSQL("DELETE FROM categories");
-        execSQL("DELETE FROM payees");
-        execSQL("DELETE FROM categorypayee");
-        execSQL("DELETE FROM classes");
-        execSQL("DELETE FROM ids");
-        execSQL("DELETE FROM repeatingTransactions");
+        execSQL("DELETE FROM " + TRANSACTIONS_TABLE_NAME);
+        execSQL("DELETE FROM " + SPLITS_TABLE_NAME);
+        execSQL("DELETE FROM " + ACCOUNTS_TABLE_NAME);
+        execSQL("DELETE FROM " + FILTERS_TABLE_NAME);
+        execSQL("DELETE FROM " + CATEGORIES_TABLE_NAME);
+        execSQL("DELETE FROM " + PAYEES_TABLE_NAME);
+        execSQL("DELETE FROM " + CATEGORYPAYEES_TABLE_NAME);
+        execSQL("DELETE FROM " + CLASSES_TABLE_NAME);
+        execSQL("DELETE FROM " + IDS_TABLE_NAME);
+        execSQL("DELETE FROM " + REPEATINGTRANSACTIONS_TABLE_NAME);
         execSQL("DELETE FROM categoryBudgets");
-        execSQL("DELETE FROM databaseSyncList");
+        execSQL("DELETE FROM " + DATABASESYNCLIST_TABLE_NAME);
+        execSQL("DELETE FROM " + EXCHANGERATES_TABLE_NAME);
         execSQL("DELETE FROM sqlite_sequence");
     }
 
@@ -725,85 +715,79 @@ public class Database {
     }
 
     public static PocketMoneyRecordClass[] queryServerSyncTableWithPKandClassAndTime(String table, String primaryKey, Class<? extends PocketMoneyRecordClass> aClass, long lastSyncTime) {
-        Cursor c;
         ArrayList<PocketMoneyRecordClass> foundRecords = new ArrayList<>();
-        if (lastSyncTime > 0) {
-            c = rawQuery("SELECT " + primaryKey + " FROM " + table + " WHERE timestamp >= " + lastSyncTime, null);
-        } else {
-            c = rawQuery("SELECT " + primaryKey + " FROM " + table, null);
-        }
-        Constructor<? extends PocketMoneyRecordClass> constructor = null;
-        PocketMoneyRecordClass pm = null;
+        String sql = (lastSyncTime > 0)
+                ? "SELECT " + primaryKey + " FROM " + table + " WHERE timestamp >= " + lastSyncTime
+                : "SELECT " + primaryKey + " FROM " + table;
+
+        Constructor<? extends PocketMoneyRecordClass> constructor;
         try {
-            Class[] clsArr = new Class[PMSYNC_VERSION_1];
-            clsArr[0] = Integer.TYPE;
+            Class<?>[] clsArr = new Class<?>[]{Integer.TYPE};
             constructor = aClass.getConstructor(clsArr);
         } catch (SecurityException | NoSuchMethodException e) {
-            if (e.getLocalizedMessage() != null) {
-                Log.e(SMMoney.TAG, e.getLocalizedMessage(), e);
-            }
+            Log.e(SMMoney.TAG, "Unable to get constructor for " + aClass.getName(), e);
+            return null;
         }
-        while (c.moveToNext()) {
-            try {
-                Object[] objArr = new Object[PMSYNC_VERSION_1];
-                objArr[0] = c.getInt(0);
-                pm = constructor.newInstance(objArr);
-            } catch (Exception e3) {
-                if (e3.getLocalizedMessage() != null) {
-                    Log.e(SMMoney.TAG, e3.getLocalizedMessage(), e3);
+
+        try (Cursor c = rawQuery(sql, null)) {
+            while (c.moveToNext()) {
+                try {
+                    int pk = c.getInt(0);
+                    PocketMoneyRecordClass pm = constructor.newInstance(pk);
+                    foundRecords.add(pm);
+                } catch (ReflectiveOperationException e3) {
+                    Log.e(SMMoney.TAG, "Error instantiating record: " + e3.getLocalizedMessage(), e3);
                 }
             }
-            foundRecords.add(pm);
         }
+
         if (!foundRecords.isEmpty()) {
             PocketMoneyRecordClass[] returnRecords = new PocketMoneyRecordClass[foundRecords.size()];
             int i = 0;
             for (PocketMoneyRecordClass foundRecord : foundRecords) {
-                int i2 = i + 1;
-                returnRecords[i] = foundRecord;
-                i = i2;
+                returnRecords[i++] = foundRecord;
             }
-            c.close();
             return returnRecords;
         }
-        c.close();
         return null;
     }
 
-    public static boolean queryAndWriteServerSyncTableWithPKandClassAndTime(BufferedWriter out, String table, String primaryKey, Class<? extends PocketMoneyRecordClass> aClass, long lastSyncTime) {
-        Cursor c;
-        if (lastSyncTime > 0) {
-            c = rawQuery("SELECT " + primaryKey + " FROM " + table + " WHERE timestamp >= " + lastSyncTime, null);
-        } else {
-            c = rawQuery("SELECT " + primaryKey + " FROM " + table, null);
-        }
-        Constructor<? extends PocketMoneyRecordClass> constructor = null;
+    public static void queryAndWriteServerSyncTableWithPKandClassAndTime(BufferedWriter out, String table, String primaryKey, Class<? extends PocketMoneyRecordClass> aClass, long lastSyncTime) {
+        String sql = (lastSyncTime > 0)
+                ? "SELECT " + primaryKey + " FROM " + table + " WHERE timestamp >= " + lastSyncTime
+                : "SELECT " + primaryKey + " FROM " + table;
+
+        Constructor<? extends PocketMoneyRecordClass> constructor;
         try {
-            Class[] clsArr = new Class[PMSYNC_VERSION_1];
-            clsArr[0] = Integer.TYPE;
+            Class<?>[] clsArr = new Class<?>[]{Integer.TYPE};
             constructor = aClass.getConstructor(clsArr);
         } catch (SecurityException | NoSuchMethodException e) {
-            Log.e(SMMoney.TAG, e.getLocalizedMessage() != null ? e.getLocalizedMessage() : "SecurityException/NoSuchMethodException in queryAndWriteServerSyncTableWithPKandClassAndTime", e);
+            Log.e(SMMoney.TAG, "Unable to get constructor for " + aClass.getName(), e);
+            return;
         }
-        while (c.moveToNext()) {
-            try {
-                Object[] objArr = new Object[PMSYNC_VERSION_1];
-                objArr[0] = c.getInt(0);
-                out.write(constructor.newInstance(objArr).XMLString() + "\n");
-            } catch (Exception e3) {
-                Log.e(SMMoney.TAG, e3.getLocalizedMessage() != null ? e3.getLocalizedMessage() : "Exception in queryAndWriteServerSyncTableWithPKandClassAndTime", e3);
+
+        try (Cursor c = rawQuery(sql, null)) {
+            while (c.moveToNext()) {
+                try {
+                    int pk = c.getInt(0);
+                    PocketMoneyRecordClass pm = constructor.newInstance(pk);
+                    out.write(pm.XMLString() + "\n");
+                } catch (ReflectiveOperationException | IOException e3) {
+                    Log.e(SMMoney.TAG, "Error writing record: " + e3.getLocalizedMessage(), e3);
+                }
             }
+        } catch (Exception e) {
+            Log.e(SMMoney.TAG, "Error reading sync table data: " + e.getLocalizedMessage(), e);
         }
-        return true;
     }
 
     public static long lastSyncTimeForUDID(String udid) {
         Cursor c;
         long lastSyncTime = 0;
         try {
-            c = rawQuery("SELECT lastSyncTime FROM databaseSyncList WHERE databaseID LIKE '" + udid + "'", null);
+            c = rawQuery("SELECT lastSyncTime FROM " + DATABASESYNCLIST_TABLE_NAME + " WHERE databaseID LIKE '" + udid + "'", null);
         } catch (Exception e) {
-            c = rawQuery("SELECT lastSyncTime FROM databaseSyncList WHERE databaseID LIKE " + SQLFormat(udid), null);
+            c = rawQuery("SELECT lastSyncTime FROM " + DATABASESYNCLIST_TABLE_NAME + " WHERE databaseID LIKE " + SQLFormat(udid), null);
         }
         if (c.getCount() > 0) {
             c.moveToFirst();
@@ -815,39 +799,17 @@ public class Database {
 
     public static void setLastSyncTime(long lastSyncTime, String udid) {
         try {
-            execSQL("INSERT OR REPLACE INTO databaseSyncList (databaseID,lastSyncTime) VALUES ('" + udid + "'," + lastSyncTime + ")");
+            execSQL("INSERT OR REPLACE INTO " + DATABASESYNCLIST_TABLE_NAME + " (databaseID,lastSyncTime) VALUES ('" + udid + "'," + lastSyncTime + ")");
         } catch (Exception e) {
-            execSQL("INSERT OR REPLACE INTO databaseSyncList (databaseID,lastSyncTime) VALUES (" + SQLFormat(udid) + "," + lastSyncTime + ")");
+            execSQL("INSERT OR REPLACE INTO " + DATABASESYNCLIST_TABLE_NAME + " (databaseID,lastSyncTime) VALUES (" + SQLFormat(udid) + "," + lastSyncTime + ")");
         }
-    }
-
-    private static boolean getMultipleCurrencies() {
-        boolean mc = false;
-        Cursor c = rawQuery("SELECT multipleCurrencies FROM preferences WHERE rowid=1", null);
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            mc = c.getInt(0) == PMSYNC_VERSION_1;
-        }
-        c.close();
-        return mc;
     }
 
     public static void setMultipleCurrencies(boolean mc) {
-        execSqlWithCatch("UPDATE preferences SET multipleCurrencies=" + (mc ? PMSYNC_VERSION_1 : 0) + " WHERE rowid=1");
-    }
-
-    private static String getHomeCurrency() {
-        String currency = "";
-        Cursor c = rawQuery("SELECT homeCurrency FROM preferences WHERE rowid=1", null);
-        if (c.getCount() > 0) {
-            c.moveToFirst();
-            currency = c.getString(0);
-        }
-        c.close();
-        return currency;
+        execSqlWithCatch("UPDATE " + PREFS_TABLE_NAME + " SET multipleCurrencies=" + (mc ? PMSYNC_VERSION_1 : 0) + " WHERE rowid=1");
     }
 
     public static void setHomeCurrency(String currency) {
-        execSqlWithCatch("UPDATE preferences SET homeCurrency=" + SQLFormat(currency) + " WHERE rowid=1");
+        execSqlWithCatch("UPDATE " + PREFS_TABLE_NAME + " SET homeCurrency=" + SQLFormat(currency) + " WHERE rowid=1");
     }
 }
