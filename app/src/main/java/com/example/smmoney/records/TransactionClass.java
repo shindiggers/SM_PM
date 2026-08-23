@@ -3,6 +3,7 @@ package com.example.smmoney.records;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
+import android.util.Base64;
 import android.util.Log;
 import android.util.Xml;
 
@@ -12,8 +13,6 @@ import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
-import com.example.smmoney.iAP.util.Base64;
-import com.example.smmoney.iAP.util.Base64DecoderException;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
@@ -255,7 +254,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                             totalRead += read;
                         }
                     }
-                    imgdata = imgdata + Base64.encode(data) + "</imagedata>";
+                    imgdata = imgdata + Base64.encodeToString(data, Base64.NO_WRAP) + "</imagedata>";
                     sb.append(imgdata);
                 }
             } catch (Exception e) {
@@ -316,7 +315,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                         }
                     }
                     body.startTag(null, "imagedata");
-                    String hmmm = Base64.encode(data);
+                    String hmmm = Base64.encodeToString(data, Base64.NO_WRAP);
                     PocketMoneySyncClass.printToFile(hmmm, "image.out");
                     body.text(hmmm);
                     body.endTag(null, "imagedata");
@@ -1140,9 +1139,9 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
                 break;
             case "imagedata":
                 try {
-                    this.data = Base64.decode(this.currentElementValue);
-                } catch (Base64DecoderException e) {
-                    Log.e(SMMoney.TAG, "Base64DecoderException in endElement", e);
+                    this.data = Base64.decode(this.currentElementValue, Base64.DEFAULT);
+                } catch (IllegalArgumentException e) {
+                    Log.e(SMMoney.TAG, "IllegalArgumentException decoding base64 in endElement", e);
                 }
                 break;
             case "filename":

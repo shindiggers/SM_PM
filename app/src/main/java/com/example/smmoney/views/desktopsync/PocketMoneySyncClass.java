@@ -1,10 +1,10 @@
 package com.example.smmoney.views.desktopsync;
 
+import android.util.Base64;
 import android.util.Log;
 
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
-import com.example.smmoney.iAP.util.Base64;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -608,7 +608,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                     e.printStackTrace();
                 }
             }
-            byte[] b64Data = Base64.encode(outData, 0, read, Base64.ALPHABET, Integer.MAX_VALUE);
+            byte[] b64Data = Base64.encode(outData, 0, read, Base64.NO_WRAP);
             int totalMessageSize = (startData.length + b64Data.length) + endData.length;
             byte[] retData = new byte[totalMessageSize];
             for (int i = 0; i < totalMessageSize; i++) {
