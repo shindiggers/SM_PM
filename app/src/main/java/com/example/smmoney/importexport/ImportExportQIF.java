@@ -1,6 +1,5 @@
 package com.example.smmoney.importexport;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Handler;
@@ -53,8 +52,6 @@ public class ImportExportQIF {
     private FilterClass filter;
     private boolean importFileExists = false;
     private boolean invalidQIF;
-    @SuppressWarnings("FieldCanBeLocal")
-    private HandlerActivity act;
     private int numberOfLines;
     private int oldNumber = -1;
     private Boolean qifOld = Boolean.FALSE;
@@ -69,36 +66,26 @@ public class ImportExportQIF {
         this.context = context;
         this.QIFPath = filePath;
         String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-        BufferedReader QIFReader = null;
-        try {
-            QIFReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(filePath)), encodingStr));
-        } catch (FileNotFoundException e) {
-            displayError("Error reading QIF file: " + e, false);
-            Log.v("FileReader", "File Not Found - 01: " + filePath);
-        } catch (UnsupportedEncodingException e2) {
-            Log.e(SMMoney.TAG, "ImportExportQIF: import encoding " + encodingStr + " not supported", e2);
-        }
-        try {
-            String readLine = "";
-            while (true) {
-                if (QIFReader != null) {
-                    readLine = QIFReader.readLine();
-                }
-                if (readLine == null) {
-                    break;
-                }
+        try (BufferedReader QIFReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(filePath)), encodingStr))) {
+            String readLine;
+            while ((readLine = QIFReader.readLine()) != null) {
                 this.lines.add(readLine);
             }
             this.numberOfLines = this.lines.size();
             if (this.numberOfLines == 0) {
-                displayError("Error reading QIF file: File is Empty", false);
+                displayError("Error reading QIF file: File is Empty");
                 Log.v("FileReader", "Empty File");
                 return;
             }
             this.currentLine = 0;
             this.importFileExists = true;
+        } catch (FileNotFoundException e) {
+            displayError("Error reading QIF file: " + e);
+            Log.v("FileReader", "File Not Found - 01: " + filePath);
+        } catch (UnsupportedEncodingException e2) {
+            Log.e(SMMoney.TAG, "ImportExportQIF: import encoding " + encodingStr + " not supported", e2);
         } catch (IOException e3) {
-            displayError("Error reading QIF file: " + e3, false);
+            displayError("Error reading QIF file: " + e3);
             Log.e(SMMoney.TAG, "ImportExportQIF: IOException in constructor", e3);
         }
     }
@@ -136,12 +123,16 @@ public class ImportExportQIF {
         }
     }
 
+    @SuppressWarnings("resource")
     public void importIntoDatabase(HandlerActivity act) {
-        this.act = act;
         this.oldNumber = -1;
+        if (this.lines.isEmpty()) {
+            return;
+        }
+        
         try {
             String line = this.lines.get(this.currentLine);
-            while (line.isEmpty()) {
+            while (line.isEmpty() && this.currentLine < this.numberOfLines - 1) {
                 this.currentLine++;
                 line = this.lines.get(this.currentLine);
             }
@@ -149,56 +140,47 @@ public class ImportExportQIF {
                 this.qifOld = Boolean.TRUE;
                 this.invalidQIF = false;
             }
+            
+            // Suppress resource warning: SQLiteDatabase is an app-wide singleton managed by Database helper and should not be closed here
+            @SuppressWarnings("resource")
             SQLiteDatabase db = Database.currentDB();
             db.beginTransaction();
-            this.accountNameBeingImported = filename();
-            while (this.currentLine < this.numberOfLines) {
-                updateProgressBar();
-                line = this.lines.get(this.currentLine);
-                if (line.startsWith("!Account")) {
-                    this.invalidQIF = false;
-                    processAccounts();
-                } else if (line.startsWith("!Type:Cat")) {
-                    this.invalidQIF = false;
-                    processCategories();
-                } else if (!line.startsWith("!Type:Budget")) {
-                    if (line.startsWith("!Type:Class") || line.startsWith("!Type:Tag")) {
+            try {
+                this.accountNameBeingImported = filename();
+                while (this.currentLine < this.numberOfLines) {
+                    updateProgressBar();
+                    line = this.lines.get(this.currentLine);
+                    if (line.startsWith("!Account")) {
                         this.invalidQIF = false;
-                        processClasses();
-                    } else if (line.startsWith("!Type:Cash")) {
+                        processAccounts();
+                    } else if (line.startsWith("!Type:Cat")) {
                         this.invalidQIF = false;
-                        processTransactions();
-                    } else if (line.startsWith("!Type:CCard")) {
-                        this.invalidQIF = false;
-                        processTransactions();
-                    } else if (line.startsWith("!Type:Bank")) {
-                        this.invalidQIF = false;
-                        processTransactions();
-                    } else if (line.startsWith("!Type:Oth A")) {
-                        this.invalidQIF = false;
-                        processTransactions();
-                    } else if (line.startsWith("!Type:Oth L")) {
-                        this.invalidQIF = false;
-                        processTransactions();
-                    } else if (line.startsWith("!Type:Invst")) {
-                        this.invalidQIF = false;
-                        processTransactions();
+                        processCategories();
+                    } else if (!line.startsWith("!Type:Budget")) {
+                        if (line.startsWith("!Type:Class") || line.startsWith("!Type:Tag")) {
+                            this.invalidQIF = false;
+                            processClasses();
+                        } else if (line.startsWith("!Type:Cash") || line.startsWith("!Type:CCard") || line.startsWith("!Type:Bank") || line.startsWith("!Type:Oth A") || line.startsWith("!Type:Oth L") || line.startsWith("!Type:Invst")) {
+                            this.invalidQIF = false;
+                            processTransactions();
+                        }
                     }
+                    this.currentLine++;
                 }
-                this.currentLine++;
+                db.setTransactionSuccessful();
+            } finally {
+                db.endTransaction();
             }
-            db.setTransactionSuccessful();
-            db.endTransaction();
             act.getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "Import Complete"));
             if (this.invalidQIF) {
-                displayError(Locales.kLOC_QIF_TYPEENCODINGERROR, true);
+                displayError(Locales.kLOC_QIF_TYPEENCODINGERROR);
             } else if (this.qifOld) {
                 AccountDB.setLastExportTimestampForAccount(this.accountNameBeingImported);
             } else {
                 AccountDB.setLastExportTimestampForAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
             }
         } catch (Exception e) {
-            displayError(Locales.kLOC_QIF_TYPEENCODINGERROR + "\n\n" + e.getMessage(), true);
+            displayError(Locales.kLOC_QIF_TYPEENCODINGERROR + "\n\n" + e.getMessage());
         }
     }
 
@@ -213,18 +195,16 @@ public class ImportExportQIF {
             String line = this.lines.get(this.currentLine);
             if (line != null) {
                 if (line.startsWith("^")) {
-                    if (AccountClass.idForAccount(this.accountNameBeingImported) == 0) {
-                        String nullCheck = "";
-                        ContentValues content = new ContentValues();
-                        content.put("timestamp", System.currentTimeMillis() / 1000);
-                        content.put("account", this.accountNameBeingImported);
-                        content.put("type", accountType);
-                        content.put("notes", notes);
-                        content.put("limitAmount", limit);
-                        content.put("noLimit", noLimit);
-                        content.put("totalWorth", Boolean.TRUE);
-                        content.put("displayOrder", 0);
-                        Database.currentDB().insert(Database.ACCOUNTS_TABLE_NAME, nullCheck, content);
+                    int accId = AccountClass.idForAccountElseAddIfMissing(this.accountNameBeingImported, true);
+                    if (accId != 0) {
+                        AccountClass account = new AccountClass(accId);
+                        account.setAccount(this.accountNameBeingImported);
+                        account.setType(accountType);
+                        account.setNotes(notes);
+                        account.setLimit(limit);
+                        account.setNoLimit(noLimit);
+                        account.setTotalWorth(true);
+                        account.saveToDatabase();
                     }
                     notes = "";
                     limit = 0.0d;
@@ -307,15 +287,9 @@ public class ImportExportQIF {
     }
 
     private void processTransactions() {
-        StringBuilder splitFlags = new StringBuilder();
         TransactionClass transaction = new TransactionClass();
-        if (AccountClass.idForAccount(this.accountNameBeingImported) == 0) {
-            AccountClass account = new AccountClass();
-            int accountID = AccountClass.idForAccountElseAddIfMissing(this.accountNameBeingImported, true);
-            account.setTotalWorth(true);
-            account.setNoLimit(true);
-            account.saveToDatabase();
-        }
+        ensureAccountExists(this.accountNameBeingImported);
+
         this.currentLine++;
         while (this.currentLine < this.numberOfLines) {
             updateProgressBar();
@@ -333,9 +307,21 @@ public class ImportExportQIF {
                             Database.autoAddLookupItemsFromTransaction(transaction);
                         }
                         transaction.saveToDatabase();
+                        
+                        // Handle transfer counterpart
+                        if (transaction.getTransferToAccount() != null && !transaction.getTransferToAccount().isEmpty()) {
+                            ensureAccountExists(transaction.getTransferToAccount());
+                            handleTransferCounterpart(transaction, this.accountNameBeingImported, transaction.getTransferToAccount());
+                        } else if (transaction.getNumberOfSplits() > 1) {
+                            for (SplitsClass split : transaction.getSplits()) {
+                                if (split.getTransferToAccount() != null && !split.getTransferToAccount().isEmpty()) {
+                                    ensureAccountExists(split.getTransferToAccount());
+                                    // Need to adapt handleTransferCounterpart for splits or ignore for now as per legacy behavior
+                                }
+                            }
+                        }
                     }
                     transaction = new TransactionClass();
-                    splitFlags = new StringBuilder();
                 } else if (line.startsWith("D")) {
                     transaction.setDate(dateFromQIFDate(line.substring(1)));
                 } else if (line.startsWith("C")) {
@@ -344,7 +330,7 @@ public class ImportExportQIF {
                     transaction.setCheckNumber(line.substring(1));
                 } else if (line.startsWith("P")) {
                     transaction.setPayee(line.substring(1));
-                } else if (line.startsWith("T")) {
+                } else if (line.startsWith("T") || line.startsWith("U")) {
                     transaction.setSubTotal(amountFromQIF(line.substring(1)));
                     transaction.setAmount(amountFromQIF(line.substring(1)));
                 } else if (line.startsWith("M")) {
@@ -363,21 +349,15 @@ public class ImportExportQIF {
                         transaction.setCategory(tempBuff);
                     } else if (tempBuff.contains("]")) {
                         transaction.setTransferToAccount(tempBuff.substring(1, tempBuff.indexOf("]")));
+                        transaction.setCategory("");
                     }
                 } else if (line.startsWith("S")) {
-                    if (splitFlags.toString().contains("S")) {
-                        splitFlags = new StringBuilder("S");
-                        SplitsClass newSplit = new SplitsClass();
-                        newSplit.setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
-                        ArrayList<SplitsClass> splits = transaction.getSplits();
-                        splits.add(newSplit);
-                        transaction.setSplits(splits);
-                    } else {
-                        splitFlags.append("S");
-                    }
+                    SplitsClass newSplit = new SplitsClass();
+                    newSplit.setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
+                    
                     String tempBuff = line.substring(1);
                     if (tempBuff.contains("/")) {
-                        transaction.setClassNameAtIndex(tempBuff.substring(tempBuff.indexOf("/") + 1), transaction.getNumberOfSplits() - 1);
+                        newSplit.setClassName(tempBuff.substring(tempBuff.indexOf("/") + 1));
                         if (tempBuff.indexOf("/") == 0) {
                             tempBuff = "";
                         } else {
@@ -385,34 +365,22 @@ public class ImportExportQIF {
                         }
                     }
                     if (!tempBuff.startsWith("[")) {
-                        transaction.setCategoryAtIndex(tempBuff, transaction.getNumberOfSplits() - 1);
+                        newSplit.setCategory(tempBuff);
                     } else if (tempBuff.contains("]")) {
-                        transaction.setTransferToAccountAtIndex(tempBuff.substring(1, tempBuff.indexOf("]")), transaction.getNumberOfSplits() - 1);
+                        newSplit.setTransferToAccount(tempBuff.substring(1, tempBuff.indexOf("]")));
                     }
+                    
+                    ArrayList<SplitsClass> splits = transaction.getSplits();
+                    splits.add(newSplit);
+                    transaction.setSplits(splits);
                 } else if (line.startsWith("E")) {
-                    if (splitFlags.toString().contains("E")) {
-                        splitFlags = new StringBuilder("E");
-                        SplitsClass newSplit = new SplitsClass();
-                        newSplit.setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
-                        ArrayList<SplitsClass> splits = transaction.getSplits();
-                        splits.add(newSplit);
-                        transaction.setSplits(splits);
-                    } else {
-                        splitFlags.append("E");
+                    if (transaction.getNumberOfSplits() > 0) {
+                        transaction.setMemoAtIndex(line.substring(1), transaction.getNumberOfSplits() - 1);
                     }
-                    transaction.setMemoAtIndex(line.substring(1), transaction.getNumberOfSplits() - 1);
                 } else if (line.startsWith("$")) {
-                    if (splitFlags.toString().contains("$")) {
-                        splitFlags = new StringBuilder("$");
-                        SplitsClass newSplit = new SplitsClass();
-                        newSplit.setCurrencyCode(Prefs.getStringPref(Prefs.HOMECURRENCYCODE));
-                        ArrayList<SplitsClass> splits = transaction.getSplits();
-                        splits.add(newSplit);
-                        transaction.setSplits(splits);
-                    } else {
-                        splitFlags.append("$");
+                    if (transaction.getNumberOfSplits() > 0) {
+                        transaction.setAmountAtIndex(amountFromQIF(line.substring(1)), transaction.getNumberOfSplits() - 1);
                     }
-                    transaction.setAmountAtIndex(amountFromQIF(line.substring(1)), transaction.getNumberOfSplits() - 1);
                 } else if (line.startsWith("!")) {
                     this.currentLine--;
                     return;
@@ -422,32 +390,72 @@ public class ImportExportQIF {
         }
     }
 
-    private int QIFTypeToAccountType(String type) {
-        if (type.equals("Bank")) {
-            return 0;
+    private void ensureAccountExists(String accountName) {
+        if (accountName == null || accountName.isEmpty()) {
+            return;
         }
-        if (type.equals("Cash")) {
-            return 1;
+        int accountId = AccountClass.idForAccount(accountName);
+        if (accountId == 0) {
+            accountId = AccountClass.idForAccountElseAddIfMissing(accountName, true);
+            if (accountId != 0) {
+                AccountClass account = new AccountClass(accountId);
+                account.setAccount(accountName);
+                account.setTotalWorth(true);
+                account.setNoLimit(true);
+                account.saveToDatabase();
+            }
         }
-        if (type.equals("CCard")) {
-            return 2;
-        }
-        if (type.equals("Oth A")) {
-            return 3;
-        }
-        if (type.equals("Oth L")) {
-            return 4;
-        }
-        if (type.equals("Invst") || type.equals("Port")) {
-            return 9;
-        }
-        return 1;
     }
 
-    private double amountFromQIF(String text) {
+    private void handleTransferCounterpart(TransactionClass sourceTransaction, String fromAccount, String toAccount) {
+        AccountClass toAct = AccountDB.recordFor(toAccount);
+        boolean regularTransfer = toAct != null && sourceTransaction.getCurrencyCode().equals(toAct.getCurrencyCode());
+        double counterpartAmount = regularTransfer
+                ? (-1.0d * sourceTransaction.getAmount()) / sourceTransaction.getXrate()
+                : -1.0d * sourceTransaction.getAmount();
+        String counterpartCurrency = regularTransfer ? null : sourceTransaction.getCurrencyCode();
+
+        com.example.smmoney.misc.TransactionTransferRetVals ret = new com.example.smmoney.misc.TransactionTransferRetVals();
+        TransactionDB.transactionGetTransfer(toAccount, fromAccount, sourceTransaction.getDate(), counterpartAmount, counterpartCurrency, ret);
+
+        if (ret.transferRecID == 0) {
+            TransactionClass counterpart = new TransactionClass();
+            counterpart.setAccount(toAccount);
+            counterpart.setTransferToAccount(fromAccount);
+            counterpart.setDate((java.util.GregorianCalendar) sourceTransaction.getDate().clone());
+            counterpart.setCheckNumber(sourceTransaction.getCheckNumber());
+            counterpart.setCategory(sourceTransaction.getCategory());
+            counterpart.setClassName(sourceTransaction.getClassName());
+            counterpart.setMemo(sourceTransaction.getMemo());
+            counterpart.setSubTotal(counterpartAmount);
+            counterpart.setAmount(counterpartAmount);
+            counterpart.setCleared(sourceTransaction.getCleared());
+            if (toAct != null && toAct.getCurrencyCode() != null) {
+                counterpart.setCurrencyCode(toAct.getCurrencyCode());
+            } else {
+                counterpart.setCurrencyCode(sourceTransaction.getCurrencyCode());
+            }
+            counterpart.setXrate(sourceTransaction.getXrate());
+            counterpart.initType();
+            counterpart.saveToDatabase();
+        }
+    }
+
+    private int QIFTypeToAccountType(String type) {
+        return switch (type) {
+            case "Cash" -> 1;
+            case "CCard" -> 2;
+            case "Oth A" -> 3;
+            case "Oth L" -> 4;
+            case "Invst", "Port" -> 9;
+            default -> 0; // Default is Bank (Checking/Savings)
+        };
+    }
+
+    private DecimalFormat getNumberFormatter() {
         String numberFormat = Prefs.getStringPref(Prefs.QIF_NUMBERFORMAT);
-        if (text == null) {
-            return 0.0d;
+        if (numberFormat.isEmpty() || numberFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+            numberFormat = "1,000.00";
         }
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
         switch (numberFormat) {
@@ -472,177 +480,217 @@ public class ImportExportQIF {
                 formatSymbols.setGroupingSeparator(' ');
                 break;
         }
-        DecimalFormat numberFormatter = new DecimalFormat("#,##0.00#", formatSymbols);
+        return new DecimalFormat("#,##0.00#", formatSymbols);
+    }
+
+    private double amountFromQIF(String text) {
+        if (text == null || text.trim().isEmpty()) {
+            return 0.0d;
+        }
+        String cleaned = text.trim();
+        DecimalFormat numberFormatter = getNumberFormatter();
         Number number = null;
         try {
-            number = numberFormatter.parse(text);
+            number = numberFormatter.parse(cleaned);
         } catch (ParseException e) {
-            Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF: " + text, e);
+            Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF: " + cleaned, e);
         }
-        if (number == null && text.startsWith("-")) {
+        if (number == null && cleaned.startsWith("-")) {
             try {
-                number = numberFormatter.parse(text.substring(1));
+                number = numberFormatter.parse(cleaned.substring(1).trim());
+                if (number != null) {
+                    return number.doubleValue() * -1.0d;
+                }
             } catch (ParseException e2) {
-                Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF (negative): " + text, e2);
+                Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF (negative): " + cleaned, e2);
             }
         }
-        if (number != null) {
-            return number.doubleValue();
-        } else {
-            return 0D;
+        if (number == null && cleaned.startsWith("(") && cleaned.endsWith(")")) {
+            try {
+                number = numberFormatter.parse(cleaned.substring(1, cleaned.length() - 1).trim());
+                if (number != null) {
+                    return number.doubleValue() * -1.0d;
+                }
+            } catch (ParseException e22) {
+                Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in amountFromQIF (parentheses): " + cleaned, e22);
+            }
         }
+        if (number == null) {
+            try {
+                return Double.parseDouble(cleaned.replace(",", ""));
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return number == null ? 0.0d : number.doubleValue();
+    }
+
+    private ArrayList<String> getPossibleDateFormats(boolean dayFirst) {
+        ArrayList<String> possibleFormats = new ArrayList<>();
+        if (dayFirst) {
+            possibleFormats.add("dd/MM''yy");
+            possibleFormats.add("dd/MM''yyyy");
+            possibleFormats.add("dd.MM''yy");
+            possibleFormats.add("dd.MM''yyyy");
+            possibleFormats.add("dd/MM/yy");
+            possibleFormats.add("dd/MM/yyyy");
+            possibleFormats.add("dd.MM.yy");
+            possibleFormats.add("dd.MM.yyyy");
+            possibleFormats.add("dd-MM-yy");
+            possibleFormats.add("dd-MM-yyyy");
+            possibleFormats.add("MM/dd''yy");
+            possibleFormats.add("MM/dd''yyyy");
+            possibleFormats.add("MM.dd''yy");
+            possibleFormats.add("MM.dd''yyyy");
+            possibleFormats.add("MM/dd/yy");
+            possibleFormats.add("MM/dd/yyyy");
+            possibleFormats.add("MM.dd.yy");
+            possibleFormats.add("MM.dd.yyyy");
+            possibleFormats.add("MM-dd-yy");
+            possibleFormats.add("MM-dd-yyyy");
+            possibleFormats.add("yyyy/MM/dd");
+            possibleFormats.add("yyyy-MM-dd");
+        } else {
+            possibleFormats.add("MM/dd''yy");
+            possibleFormats.add("MM/dd''yyyy");
+            possibleFormats.add("MM.dd''yy");
+            possibleFormats.add("MM.dd''yyyy");
+            possibleFormats.add("MM/dd/yy");
+            possibleFormats.add("MM/dd/yyyy");
+            possibleFormats.add("MM.dd.yy");
+            possibleFormats.add("MM.dd.yyyy");
+            possibleFormats.add("MM-dd-yy");
+            possibleFormats.add("MM-dd-yyyy");
+            possibleFormats.add("dd/MM''yy");
+            possibleFormats.add("dd/MM''yyyy");
+            possibleFormats.add("dd.MM''yy");
+            possibleFormats.add("dd.MM''yyyy");
+            possibleFormats.add("dd/MM/yy");
+            possibleFormats.add("dd/MM/yyyy");
+            possibleFormats.add("dd.MM.yy");
+            possibleFormats.add("dd.MM.yyyy");
+            possibleFormats.add("dd-MM-yy");
+            possibleFormats.add("dd-MM-yyyy");
+            possibleFormats.add("yyyy/MM/dd");
+            possibleFormats.add("yyyy-MM-dd");
+        }
+        return possibleFormats;
     }
 
     private GregorianCalendar dateFromQIFDate(String dateString) {
+        if (dateString == null || dateString.trim().isEmpty()) {
+            return new GregorianCalendar();
+        }
+        String cleaned = dateString.trim();
+
+        // 1. Try ISO 8601
+        GregorianCalendar cal = CalExt.dateFromDescriptionWithISO861Date(cleaned);
+        if (cal != null) {
+            return cal;
+        }
+
+        // 2. Try User Preference Format
         Date theDate = null;
         String dateFormat = Prefs.getStringPref(Prefs.QIF_DATEFORMAT);
         String dateSeparator = Prefs.getStringPref(Prefs.QIF_DATESEPARATOR);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat();
-        if (dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
-            Matcher matcher = Pattern.compile("[^\\w]").matcher(new SimpleDateFormat().toPattern());
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("", java.util.Locale.getDefault());
+        
+        if (dateSeparator.isEmpty() || dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+            Matcher matcher = Pattern.compile("\\W").matcher(new SimpleDateFormat("", java.util.Locale.getDefault()).toPattern());
             dateSeparator = matcher.find() ? matcher.group(0) : "/";
         }
-        if (!dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
-            final String pattern = dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''");
+        if (dateSeparator == null) {
+            dateSeparator = "/";
+        }
+        
+        if (!dateFormat.isEmpty() && !dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+            final String pattern = dateFormat.replace("/", dateSeparator).replace("mm", "MM").replace("'", "''");
             if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
                 dateFormatter.applyPattern(pattern);
             } else if (dateFormat.equals("dd/mm'yy") || dateFormat.equals("dd/mm'yyyy")) {
                 dateFormatter.applyPattern(pattern);
             } else {
-                dateFormatter.applyPattern(dateFormat.replaceAll("mm", "MM").replaceAll("/", dateSeparator));
+                dateFormatter.applyPattern(dateFormat.replace("mm", "MM").replace("/", dateSeparator));
+            }
+            try {
+                theDate = dateFormatter.parse(cleaned);
+            } catch (ParseException e) {
+                Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in dateFromQIFDate: " + cleaned, e);
             }
         }
-        try {
-            theDate = dateFormatter.parse(dateString);
-        } catch (ParseException e) {
-            Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in dateFromQIFDate: " + dateString, e);
-        }
+        
         if (theDate == null) {
             boolean dayFirst = Prefs.getStringPref(Prefs.QIF_DATEFORMAT).startsWith("dd");
-            ArrayList<String> possibleFormats = new ArrayList<>();
-            if (dayFirst) {
-                possibleFormats.add("dd/MM''yy");
-                possibleFormats.add("dd/MM''yyyy");
-                possibleFormats.add("dd.MM''yy");
-                possibleFormats.add("dd.MM''yyyy");
-                possibleFormats.add("dd/MM/yy");
-                possibleFormats.add("dd/MM/yyyy");
-                possibleFormats.add("dd.MM.yy");
-                possibleFormats.add("dd.MM.yyyy");
-                possibleFormats.add("dd-MM-yy");
-                possibleFormats.add("dd-MM-yyyy");
-                possibleFormats.add("MM/dd''yy");
-                possibleFormats.add("MM/dd''yyyy");
-                possibleFormats.add("MM.dd''yy");
-                possibleFormats.add("MM.dd''yyyy");
-                possibleFormats.add("MM/dd/yy");
-                possibleFormats.add("MM/dd/yyyy");
-                possibleFormats.add("MM.dd.yy");
-                possibleFormats.add("MM.dd.yyyy");
-                possibleFormats.add("MM-dd-yy");
-                possibleFormats.add("MM-dd-yyyy");
-                possibleFormats.add("yyyy/MM/dd");
-                possibleFormats.add("yyyy-MM-dd");
-            } else {
-                possibleFormats.add("MM/dd''yy");
-                possibleFormats.add("MM/dd''yyyy");
-                possibleFormats.add("MM.dd''yy");
-                possibleFormats.add("MM.dd''yyyy");
-                possibleFormats.add("MM/dd/yy");
-                possibleFormats.add("MM/dd/yyyy");
-                possibleFormats.add("MM.dd.yy");
-                possibleFormats.add("MM.dd.yyyy");
-                possibleFormats.add("MM-dd-yy");
-                possibleFormats.add("MM-dd-yyyy");
-                possibleFormats.add("dd/MM''yy");
-                possibleFormats.add("dd/MM''yyyy");
-                possibleFormats.add("dd.MM''yy");
-                possibleFormats.add("dd.MM''yyyy");
-                possibleFormats.add("dd/MM/yy");
-                possibleFormats.add("dd/MM/yyyy");
-                possibleFormats.add("dd.MM.yy");
-                possibleFormats.add("dd.MM.yyyy");
-                possibleFormats.add("dd-MM-yy");
-                possibleFormats.add("dd-MM-yyyy");
-                possibleFormats.add("yyyy/MM/dd");
-                possibleFormats.add("yyyy-MM-dd");
-            }
+            ArrayList<String> possibleFormats = getPossibleDateFormats(dayFirst);
             for (String possibleFormat : possibleFormats) {
                 dateFormatter.applyPattern(possibleFormat);
                 try {
-                    theDate = dateFormatter.parse(dateString);
+                    theDate = dateFormatter.parse(cleaned);
                     if (theDate != null) {
                         break;
                     }
                 } catch (ParseException e2) {
-                    Log.e(SMMoney.TAG, "ImportExportQIF: ParseException in dateFromQIFDate retry: " + dateString + " format: " + possibleFormat, e2);
+                    // Ignore, try next format
                 }
             }
         }
+        
+        // 3. Fallback to standard system parsers
         if (theDate == null) {
-            return null;
+            try {
+                theDate = android.text.format.DateFormat.getMediumDateFormat(SMMoney.getAppContext()).parse(cleaned);
+            } catch (Exception ignored) {
+            }
+        }
+        if (theDate == null) {
+            try {
+                theDate = android.text.format.DateFormat.getDateFormat(SMMoney.getAppContext()).parse(cleaned);
+            } catch (Exception ignored) {
+            }
+        }
+
+        if (theDate == null) {
+            return new GregorianCalendar();
         }
         GregorianCalendar returnCal = new GregorianCalendar();
         returnCal.setTime(theDate);
         return returnCal;
     }
 
-    private void displayError(String msg, boolean fromBackgroundThread) {
+    private void displayError(String msg) {
+        // Suppress resource warning: SQLiteDatabase is an app-wide singleton managed by Database helper and should not be closed here
+        @SuppressWarnings("resource")
+        SQLiteDatabase db = Database.currentDB();
         try {
-            Database.currentDB().endTransaction();
+            db.endTransaction();
         } catch (IllegalStateException e) {
             Log.e(SMMoney.TAG, "ImportExportQIF: IllegalStateException in displayError", e);
         }
         ((HandlerActivity) this.context).getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 6, msg));
     }
 
+    // Suppress warning: Boolean return value might be useful for unit tests or downstream consumers in the future
+    @SuppressWarnings("UnusedReturnValue")
     public boolean exportRecords(String fileName) {
         String QIFData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        try {
-            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = pmExternalPath + fileName;
-            BufferedWriter QIFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
-            try {
-                QIFWriter.write(QIFData);
-                QIFWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileName + "' placed in Download/PocketMoneyBackup"), 500);
-                return true;
-            } catch (IOException e) {
-                Log.v("Export writing error", e.toString());
-                displayError(e.toString(), false);
-                return false;
-            }
+        String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
+        String filePath = pmExternalPath + fileName;
+        
+        try (BufferedWriter QIFWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr))) {
+            QIFWriter.write(QIFData);
+            ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileName + "' placed in Download/PocketMoneyBackup"), 500);
+            return true;
         } catch (IOException e) {
             Log.v("Export writing error", e.toString());
-            displayError(e.toString(), false);
+            displayError(e.toString());
             return false;
         }
     }
 
+    // Suppress warning: Boolean return value might be useful for unit tests or downstream consumers in the future
+    @SuppressWarnings("UnusedReturnValue")
     public boolean exportRecords() {
-        String QIFData = generateData();
-        String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        String fileName = "SMMoney.qif";
-        try {
-            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String filePath = pmExternalPath + fileName;
-            BufferedWriter qifWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
-            try {
-                qifWriter.write(QIFData);
-                qifWriter.close();
-                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + fileName + "' placed in Download/PocketMoneyBackup"), 500);
-                return true;
-            } catch (IOException e) {
-                Log.v("Export writing error", e.toString());
-                displayError(e.toString(), false);
-                return false;
-            }
-        } catch (IOException e) {
-            Log.v("Export writing error", e.toString());
-            displayError(e.toString(), false);
-            return false;
-        }
+        return exportRecords("SMMoney.qif");
     }
 
     private String generateData() {
@@ -667,35 +715,25 @@ public class ImportExportQIF {
         return QIFData + formatTransactions(transactions);
     }
 
+    // Suppress warning: Boolean return value might be useful for unit tests or downstream consumers in the future
+    @SuppressWarnings("UnusedReturnValue")
     public boolean exportRecords(ArrayList<TransactionClass> transactions) {
         Log.i("** IO-QIF", "IO-QIF");
         String QIFData = generateData(transactions);
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        try {
-            String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-            String fileName = "SMMoney" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
-            String filePath = this.QIFPath == null ? pmExternalPath + fileName : this.QIFPath;
-            Log.i("** Made it here - 1", "1");
-            FileOutputStream fos = new FileOutputStream(filePath);
-            Log.i("** Made it here - 2", "2");
-            OutputStreamWriter out = new OutputStreamWriter(fos, encodingStr);
-            Log.i("** Made it here - 3", "3");
-            BufferedWriter qifWriter = new BufferedWriter(out);
-            try {
-                qifWriter.write(QIFData);
-                qifWriter.close();
-                if (!Prefs.getBooleanPref(Prefs.QIF_EXPORT_SEPERATELY)) {
-                    ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + (this.QIFPath == null ? fileName : filePath) + "' placed in Download/PocketMoneyBackup"), 500);
-                }
-                return true;
-            } catch (IOException e) {
-                Log.i("Export writing error", e.toString());
-                displayError(e.toString(), false);
-                return false;
+        String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
+        String fileName = "SMMoney" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qif";
+        String filePath = this.QIFPath == null ? pmExternalPath + fileName : this.QIFPath;
+        
+        try (BufferedWriter qifWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr))) {
+            qifWriter.write(QIFData);
+            if (!Prefs.getBooleanPref(Prefs.QIF_EXPORT_SEPERATELY)) {
+                ((HandlerActivity) this.context).getHandler().sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "File '" + (this.QIFPath == null ? fileName : filePath) + "' placed in Download/PocketMoneyBackup"), 500);
             }
+            return true;
         } catch (IOException e) {
             Log.i("Export writing error", e.toString());
-            displayError(e.toString(), false);
+            displayError(e.toString());
             return false;
         }
     }
@@ -733,14 +771,17 @@ public class ImportExportQIF {
     }
 
     private String formatAccount(AccountClass account) {
-        String creditLimit;
-        String accountStr = "";
-        if (2 != account.getType() || account.getNoLimit()) {
-            creditLimit = "";
-        } else {
+        String creditLimit = "";
+        if (2 == account.getType() && !account.getNoLimit()) {
             creditLimit = qifFormatAmount(account.getLimit());
         }
-        return accountStr + "N" + account.getAccount() + "\nD\nT" + accountTypeToQIFType(account.getType()) + creditLimit + "\n^\n";
+        
+        String notes = account.getNotes();
+        return "N" + account.getAccount() + "\n"
+                + "D" + (notes != null ? notes : "") + "\n"
+                + "T" + accountTypeToQIFType(account.getType()) + "\n"
+                + (creditLimit.isEmpty() ? "" : "L" + creditLimit + "\n")
+                + "^\n";
     }
 
     private String formatCategories(ArrayList<CategoryClass> categories) {
@@ -793,7 +834,8 @@ public class ImportExportQIF {
             transaction.hydrate();
             try {
                 if (!lastAccount.equals(transaction.getAccount())) {
-                    String accountQIFType = accountTypeToQIFType(AccountDB.recordFor(transaction.getAccount()).getType());
+                    AccountClass accRecord = AccountDB.recordFor(transaction.getAccount());
+                    String accountQIFType = accountTypeToQIFType(accRecord != null ? accRecord.getType() : 0);
                     if (!this.qifOld) {
                         String accountName = transaction.getAccount();
                         AccountClass account = new AccountClass(AccountClass.idForAccount(accountName));
@@ -844,7 +886,7 @@ public class ImportExportQIF {
                             addToStringBuffer(buffBuff, "/", split.getClassName());
                         }
                         addToStringBuffer(splitBuff, "S", buffBuff.toString(), "\n");
-                        if (transaction.getMemo() != null && !transaction.getMemo().isEmpty()) {
+                        if (split.getMemo() != null && !split.getMemo().isEmpty()) {
                             addToStringBuffer(splitBuff, "E", split.getMemo().replace("\n", "<br>"), "\n");
                         }
                         addToStringBuffer(splitBuff, "$", qifFormatAmount(split.getAmount()), "\n");
@@ -865,51 +907,30 @@ public class ImportExportQIF {
         Date date = new Date(dateCalendar.getTimeInMillis());
         String dateFormat = Prefs.getStringPref(Prefs.QIF_DATEFORMAT);
         String dateSeparator = Prefs.getStringPref(Prefs.QIF_DATESEPARATOR);
-        SimpleDateFormat dateFormatter = new SimpleDateFormat();
-        if (dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        SimpleDateFormat dateFormatter = new SimpleDateFormat("", java.util.Locale.getDefault());
+        
+        if (dateSeparator.isEmpty() || dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
             dateSeparator = "/";
         }
+        
         if (dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
-            dateSeparator = "/";
             dateFormatter.applyPattern("MM/dd/yy");
         } else {
-            final String pattern = dateFormat.replaceAll("/", dateSeparator).replaceAll("mm", "MM").replaceAll("'", "''");
+            final String pattern = dateFormat.replace("/", dateSeparator).replace("mm", "MM").replace("'", "''");
             if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
                 dateFormatter.applyPattern(pattern);
             } else if (dateFormat.equals("dd/mm'yy") || dateFormat.equals("dd/mm'yyyy")) {
                 dateFormatter.applyPattern(pattern);
             } else {
-                dateFormatter.applyPattern(dateFormat.replaceAll("mm", "MM").replaceAll("/", dateSeparator));
+                dateFormatter.applyPattern(dateFormat.replace("mm", "MM").replace("/", dateSeparator));
             }
         }
-        String testStr = dateFormatter.format(date);
         return dateFormatter.format(date);
     }
 
     private String qifFormatAmount(double amount) {
-        String numberFormat = Prefs.getStringPref(Prefs.QIF_NUMBERFORMAT);
-        DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
-        if (!numberFormat.equals("1,000.00")) {
-            switch (numberFormat) {
-                case "1.000,00":
-                    formatSymbols.setDecimalSeparator(',');
-                    formatSymbols.setGroupingSeparator('.');
-                    break;
-                case "1'000.00":
-                    formatSymbols.setDecimalSeparator('.');
-                    formatSymbols.setGroupingSeparator('\'');
-                    break;
-                case "1'000,00":
-                    formatSymbols.setDecimalSeparator(',');
-                    formatSymbols.setGroupingSeparator('\'');
-                    break;
-                case "1 000,00":
-                    formatSymbols.setDecimalSeparator(',');
-                    formatSymbols.setGroupingSeparator(' ');
-                    break;
-            }
-        }
-        return new DecimalFormat("#,##0.00#", formatSymbols).format(amount);
+        DecimalFormat numberFormatter = getNumberFormatter();
+        return numberFormatter.format(amount);
     }
 
     private String accountTypeToQIFType(int type) {
