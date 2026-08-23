@@ -3,7 +3,6 @@ package com.example.smmoney.importexport.ofx;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.os.Message;
-import android.text.format.DateFormat;
 import android.util.Log;
 
 import com.example.smmoney.SMMoney;
@@ -28,107 +27,20 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
-import java.text.NumberFormat;
-import java.util.ArrayList;
 import java.util.List;
 
+// The app's architecture uses a managed singleton database instance via Database.currentDB() that remains open across the app lifecycle.
+@SuppressWarnings({"resource"})
 public class ImportExportOFX {
     public String accountNameBeingImported;
     private final Context context;
-    @SuppressWarnings("unused")
-    int currentLine;
-    @SuppressWarnings({"unused", "rawtypes"})
-    List data;
-    @SuppressWarnings({"unused", "rawtypes"})
-    List lines;
-    @SuppressWarnings("unused")
-    int numberOfLines;
-    @SuppressWarnings("unused")
-    private final DateFormat dateFormatter;
     public FilterClass filter;
-    @SuppressWarnings("unused")
-    private final String defaultCurrencyCode;
-    @SuppressWarnings("unused")
-    private HandlerActivity act;
-    @SuppressWarnings("unused")
-    private final NumberFormat numberFormatter;
     private OFXClass ofxData;
     public String path;
-
-    @SuppressWarnings("unused")
-    public ImportExportOFX(Context context, FilterClass filter) {
-        this.context = context;
-        this.filter = filter;
-        this.defaultCurrencyCode = Prefs.getStringPref("prefscurrencyhomecurrency");
-        this.dateFormatter = null;
-        this.numberFormatter = null;
-    }
 
     public ImportExportOFX(Context context, String path) {
         this.context = context;
         this.path = path;
-        this.defaultCurrencyCode = Prefs.getStringPref("prefscurrencyhomecurrency");
-        this.dateFormatter = null;
-        this.numberFormatter = null;
-    }
-
-    @SuppressWarnings("unused")
-    public ImportExportOFX(Context context, String urlPath, boolean notUsed) {
-        this.context = context;
-        boolean isURL = true;
-        this.path = urlPath;
-        this.defaultCurrencyCode = Prefs.getStringPref("prefscurrencyhomecurrency");
-        this.dateFormatter = null;
-        this.numberFormatter = null;
-    }
-
-    @SuppressWarnings("unused")
-    public static List<String> dateFormats() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_GENERAL_DEFAULT);
-        list.add("mm/dd'yy");
-        list.add("mm/dd'yyyy");
-        list.add("mm/dd/yy");
-        list.add("mm/dd/yyyy");
-        list.add("dd/mm'yy");
-        list.add("dd/mm'yyyy");
-        list.add("dd/mm/yy");
-        list.add("dd/mm/yyyy");
-        list.add("yyyy/mm/dd");
-        return list;
-    }
-
-    @SuppressWarnings("unused")
-    public static List<String> dateSeparators() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_GENERAL_DEFAULT);
-        list.add("/");
-        list.add(".");
-        list.add("-");
-        return list;
-    }
-
-    @SuppressWarnings("unused")
-    public static List<String> numberFormats() {
-        ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_GENERAL_DEFAULT);
-        list.add("1,000.00");
-        list.add("1.000,00");
-        list.add("1'000.00");
-        list.add("1'000,00");
-        list.add("1 000,00");
-        return list;
-    }
-
-    @SuppressWarnings("unused")
-    private int OFXTypeToAccountType(String type) {
-        return switch (type) {
-            case "Bank" -> 0;
-            case "CCard" -> 2;
-            case "Oth A" -> 3;
-            case "Oth L" -> 4;
-            default -> 1;
-        };
     }
 
     private void displayError(String error) {
@@ -138,37 +50,23 @@ public class ImportExportOFX {
         builder.create().show();
     }
 
-    @SuppressWarnings("unused")
-    private String fileName() {
-        if (this.path.endsWith("/")) {
-            this.path = this.path.substring(0, -1 + this.path.length());
-        }
-
-        return this.path.substring(this.path.lastIndexOf("/") + 1);
-    }
-
     private void processAccounts() {
+        if (this.ofxData == null || this.ofxData.statement == null || this.ofxData.statement.account == null) {
+            return;
+        }
         int accountID = AccountClass.idForAccountNumber(this.ofxData.statement.account.accountID, this.ofxData.statement.account.bankID);
         if (accountID != 0) {
             this.accountNameBeingImported = new AccountClass(accountID).getAccount();
         } else {
-            String bankID;
-            if (this.ofxData.statement.account.bankID != null && !this.ofxData.statement.account.bankID.isEmpty()) {
-                bankID = this.ofxData.statement.account.bankID;
-            } else {
-                bankID = "";
-            }
+            String bankID = (this.ofxData.statement.account.bankID != null && !this.ofxData.statement.account.bankID.isEmpty())
+                    ? this.ofxData.statement.account.bankID
+                    : "";
 
-            StringBuilder bankIdPlusAccountId = new StringBuilder(bankID);
-            String separator;
-            if (this.ofxData.statement.account.bankID == null || this.ofxData.statement.account.bankID.length() <= 0) {
-                separator = "";
-            } else {
-                separator = "-";
-            }
+            String separator = bankID.isEmpty() ? "" : "-";
+            String accountNum = this.ofxData.statement.account.accountID != null ? this.ofxData.statement.account.accountID : "OFXAccount";
+            this.accountNameBeingImported = bankID + separator + accountNum;
 
-            this.accountNameBeingImported = bankIdPlusAccountId.append(separator).append(this.ofxData.statement.account.accountID).toString();
-            AccountClass account = new AccountClass(accountID);
+            AccountClass account = new AccountClass();
             account.setAccount(this.accountNameBeingImported);
             account.setTotalWorth(true);
             account.setNoLimit(true);
@@ -176,24 +74,36 @@ public class ImportExportOFX {
             account.setType(this.ofxData.statement.account.ofxAccountTypeAsSMMoneyAccountType());
             account.setAccountNumber(this.ofxData.statement.account.accountID);
             account.setRoutingNumber(this.ofxData.statement.account.bankID);
-            account.setCurrencyCode(this.ofxData.statement.defaultCurrency);
+            String currency = this.ofxData.statement.defaultCurrency;
+            if (currency == null || currency.isEmpty()) {
+                currency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+            }
+            account.setCurrencyCode(currency);
             account.saveToDatabase();
         }
     }
 
     private void processTransactions() {
-        // $FF: Couldn't be decompiled
-        TransactionClass transaction;
+        if (this.ofxData == null || this.ofxData.statement == null || this.ofxData.statement.ofxtransactions == null) {
+            return;
+        }
+
         for (OFX_TransactionClass record : this.ofxData.statement.ofxtransactions) {
             int transactionID = TransactionDB.transactionIDForOFXID(record.fitID);
             if (transactionID == 0) {
-                try {
-                    Integer.parseInt(record.checknum);
-                    transactionID = TransactionDB.transactionIDForCheckNumber(record.checknum, record.amount, record.dtuser != null ? record.dtuser : record.dtposted, this.accountNameBeingImported);
-                } catch (NumberFormatException e) {
+                if (record.checknum != null && !record.checknum.isEmpty()) {
+                    try {
+                        Integer.parseInt(record.checknum);
+                        transactionID = TransactionDB.transactionIDForCheckNumber(record.checknum, record.amount, record.dtuser != null ? record.dtuser : record.dtposted, this.accountNameBeingImported);
+                    } catch (NumberFormatException ignored) {
+                        transactionID = TransactionDB.transactionIDForAmount(record.amount, record.dtuser != null ? record.dtuser : record.dtposted, this.accountNameBeingImported);
+                    }
+                } else {
                     transactionID = TransactionDB.transactionIDForAmount(record.amount, record.dtuser != null ? record.dtuser : record.dtposted, this.accountNameBeingImported);
                 }
             }
+
+            TransactionClass transaction;
             if (transactionID != 0) {
                 transaction = new TransactionClass(transactionID);
                 transaction.hydrate();
@@ -204,8 +114,14 @@ public class ImportExportOFX {
                 transaction.setAmount(record.amount);
                 transaction.setDate(record.dtuser != null ? record.dtuser : record.dtposted);
             }
+
             transaction.setOfxID(record.fitID);
-            transaction.setCurrencyCode(this.ofxData.statement.defaultCurrency);
+            String currency = this.ofxData.statement.defaultCurrency;
+            if (currency == null || currency.isEmpty()) {
+                currency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+            }
+            transaction.setCurrencyCode(currency);
+
             if (transaction.getPayee() == null || transaction.getPayee().isEmpty()) {
                 transaction.setPayee(record.name);
             }
@@ -213,10 +129,11 @@ public class ImportExportOFX {
                 transaction.setMemo(record.memo);
             }
             if (transaction.getCheckNumber() == null || transaction.getCheckNumber().isEmpty()) {
-                transaction.setCheckNumber((record.checknum == null || record.checknum.length() <= 0) ? record.transactionTypeAsString() : record.checknum);
+                transaction.setCheckNumber((record.checknum == null || record.checknum.isEmpty()) ? record.transactionTypeAsString() : record.checknum);
             }
             transaction.setCleared(true);
             transaction.initType();
+
             if (transaction.transactionID == 0 && transaction.getPayee() != null && !transaction.getPayee().isEmpty()) {
                 TransactionClass foundMatchingTransaction = TransactionDB.closestTransactionMatchFor(transaction.getPayee(), transaction.getAccount());
                 if (foundMatchingTransaction != null) {
@@ -228,36 +145,36 @@ public class ImportExportOFX {
         }
     }
 
+    // Suppress warning: keeping boolean return value for interface consistency across exporters and caller error checking
+    @SuppressWarnings("UnusedReturnValue")
     public boolean exportRecords(List<TransactionClass> transactions) {
-        String ofxData = this.generateData(transactions);
+        String data = this.generateData(transactions);
         String fileDir = this.path;
-        BufferedWriter bufferedWriter;
         try {
             String ofxEncoding = Prefs.getStringPref("prefsdatatransfersfileencoding");
-            // Ensure the directory exists
+            if (ofxEncoding.isEmpty()) {
+                ofxEncoding = "US-ASCII";
+            }
             File file = new File(fileDir);
             File parentDir = file.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
+                //noinspection ResultOfMethodCallIgnored
                 parentDir.mkdirs();
             }
 
-            bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(fileDir), ofxEncoding));
-            try {
-                bufferedWriter.write(ofxData);
-                bufferedWriter.close();
-                String fileName = file.getName();
-                ((HandlerActivity) this.context).getHandler().
-                        sendMessageDelayed(Message.obtain(((HandlerActivity) this.context).
-                                        getHandler(),
-                                5,
+            try (BufferedWriter bufferedWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), ofxEncoding))) {
+                bufferedWriter.write(data);
+            }
+
+            String fileName = file.getName();
+            if (this.context instanceof HandlerActivity handlerActivity) {
+                handlerActivity.getHandler().
+                        sendMessageDelayed(Message.obtain(handlerActivity.getHandler(),
+                                        5,
                                         "File '" + fileName + "' placed in Download/PocketMoneyBackup"),
                                 500);
-                return true;
-            } catch (IOException e) {
-                Log.v("Export writing error", e.toString());
-                displayError(e.toString());
-                return false;
             }
+            return true;
         } catch (IOException e) {
             Log.v("Export writing error", e.toString());
             displayError(e.toString());
@@ -266,57 +183,59 @@ public class ImportExportOFX {
     }
 
     private String generateData(List<TransactionClass> transactions) {
-        if (!transactions.isEmpty()) {
-            OFXClass ofxClass = new OFXClass();
-            ofxClass.transactions = transactions;
-            int accountID = AccountClass.idForAccount((transactions.get(0)).getAccount());
+        if (transactions != null && !transactions.isEmpty()) {
+            OFXClass exportOfx = new OFXClass();
+            exportOfx.transactions = transactions;
+            int accountID = AccountClass.idForAccount(transactions.get(0).getAccount());
             if (accountID != 0) {
-                ofxClass.account = new AccountClass(accountID);
-                ofxClass.account.hydrate();
-                return ofxClass.toString();
+                exportOfx.account = new AccountClass(accountID);
+                exportOfx.account.hydrate();
+                return exportOfx.toString();
             }
         }
         return "";
     }
 
     public void importIntoDatabase() {
-        // $FF: Couldn't be decompiled
         Database.currentDB().beginTransaction();
         String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
-        BufferedReader QIFReader = null;
-        try {
-            QIFReader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(this.path)), encodingStr));
+        if (encodingStr.isEmpty()) {
+            encodingStr = "UTF-8";
+        }
+        StringBuilder strBuff = new StringBuilder(10000);
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new BufferedInputStream(new FileInputStream(this.path)), encodingStr))) {
+            String readLine;
+            while ((readLine = reader.readLine()) != null) {
+                strBuff.append(readLine).append("\n");
+            }
         } catch (FileNotFoundException e) {
-            displayError("Error reading QIF file: " + e);
-            Log.v("FileReader", "File Not Found");
+            displayError("Error reading OFX file: " + e);
+            Log.v("FileReader", "File Not Found: " + this.path);
+            Database.currentDB().endTransaction();
             return;
         } catch (UnsupportedEncodingException e2) {
             Log.e(SMMoney.TAG, "ImportExportOFX: import encoding " + encodingStr + " not supported", e2);
+        } catch (IOException e3) {
+            displayError("Error reading OFX file: " + e3);
+            Log.e(SMMoney.TAG, "ImportExportOFX: IOException in importIntoDatabase", e3);
         }
-        StringBuilder strBuff = new StringBuilder(10000);
-        while (true) {
-            try {
-                String readLine = null;
-                if (QIFReader != null) {
-                    readLine = QIFReader.readLine();
-                }
-                if (readLine == null) {
-                    break;
-                }
-                strBuff.append(readLine);
-                strBuff.append("\n");
-            } catch (IOException e3) {
-                displayError("Error reading QIF file: " + e3);
-                Log.e(SMMoney.TAG, "ImportExportOFX: IOException in importIntoDatabase", e3);
-            }
-        }
+
         if (strBuff.length() == 0) {
             displayError("Empty file : " + this.path);
+            Database.currentDB().endTransaction();
+            return;
         }
-        this.ofxData = new OFXClass(strBuff.toString());
-        processAccounts();
-        processTransactions();
-        Database.currentDB().setTransactionSuccessful();
-        Database.currentDB().endTransaction();
+
+        try {
+            this.ofxData = new OFXClass(strBuff.toString());
+            processAccounts();
+            processTransactions();
+            Database.currentDB().setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(SMMoney.TAG, "ImportExportOFX: Error parsing/importing OFX data", e);
+            displayError("Error importing OFX file: " + e.getMessage());
+        } finally {
+            Database.currentDB().endTransaction();
+        }
     }
 }

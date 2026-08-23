@@ -250,7 +250,7 @@ public class Prefs {
     }
 
     public static String getStringPref(String thePref) {
-        return getSharedPrefs().getString(thePref, "Blue");
+        return getSharedPrefs().getString(thePref, "");
     }
 
     public static Long getLongPref(String thePref) {

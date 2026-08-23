@@ -16,17 +16,24 @@ public class OFX_CreditCardStatement extends OFX_Statement {
         super(transactions, tags);
     }
 
-    protected String bankAccountMessage() {
-        String accountID = this.account.accountID;
+    @Override
+    String bankAccountMessage() {
+        if (this.account == null) {
+            return "";
+        }
+        String accountID = this.account.accountID != null ? this.account.accountID : "";
         return "\t\t\t\t" + this.tags.creditCardAccountBegin + "\n"
                 + "\t\t\t\t\t" + this.tags.accountIDBegin + accountID + this.tags.accountIDEnd + "\n"
                 + "\t\t\t\t" + this.tags.creditCardAccountEnd + "\n";
     }
 
-    public void parse(String text) {
+    @Override
+    void parse(String text) {
         super.parse(text);
-        this.account = new OFX_AccountClass(OFXClass.stringBetween(text, this.tags.creditCardAccountBegin, this.tags.creditCardAccountEnd, this.tags.lineEnding), this.tags);
-        this.account.accountType = OFX_AccountType.OFX_CREDITCARD;
+        if (text != null && !text.isEmpty() && this.tags != null) {
+            this.account = new OFX_AccountClass(OFXClass.stringBetween(text, this.tags.creditCardAccountBegin, this.tags.creditCardAccountEnd, this.tags.lineEnding), this.tags);
+            this.account.accountType = OFX_AccountType.OFX_CREDITCARD;
+        }
     }
 
     @Override
@@ -36,7 +43,7 @@ public class OFX_CreditCardStatement extends OFX_Statement {
                 "\t\t\t<TRNUID>PMA - " + OFXClass.dateAsString(new GregorianCalendar()) + "\n"
                 + this.statusMessage("OK", "0", "INFO")
                 + "\t\t\t" + this.tags.creditCardStatementTransmissionBegin + "\n"
-                + "\t\t\t\t" + this.tags.currencyBegin + "USD" + this.tags.currencyEnd + "\n"
+                + "\t\t\t\t" + this.tags.currencyBegin + (this.defaultCurrency != null && !this.defaultCurrency.isEmpty() ? this.defaultCurrency : "USD") + this.tags.currencyEnd + "\n"
                 + this.bankAccountMessage()
                 + this.bankTransactionListMessage()
                 + this.ledgerBalanceMessage()

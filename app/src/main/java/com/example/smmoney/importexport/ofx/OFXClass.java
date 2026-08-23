@@ -37,60 +37,61 @@ class OFXClass {
     }
 
     static String amountAsOFXAmount(double amt) {
-        NumberFormat format = NumberFormat.getInstance();
+        NumberFormat format = NumberFormat.getInstance(Locale.US);
         format.setMinimumFractionDigits(2);
+        format.setGroupingUsed(false);
         return format.format(amt).replace(" ", "").replace(",", ".");
     }
 
     static double amountFromOFXAmount(String text) {
-        if (text != null) {
+        if (text != null && !text.trim().isEmpty()) {
             try {
-                if (text.isEmpty()) {
-                    return 0.0D;
-                }
-
                 return Double.parseDouble(text.trim().replace(",", "."));
             } catch (NumberFormatException e) {
                 Log.e(SMMoney.TAG, "OFXClass: NumberFormatException in amountFromOFXAmount: " + text, e);
             }
         }
-
         return 0.0D;
     }
 
     static String dateAsString(GregorianCalendar date) {
+        if (date == null) {
+            return dateFormatterForOFXDateTime().format(new Date());
+        }
         return dateFormatterForOFXDateTime().format(date.getTime());
     }
 
     static GregorianCalendar dateFromString(String dateString) {
-        SimpleDateFormat format = dateFormatterForOFXDateTime();
-        if (dateString == null) {
-            Log.i(SMMoney.TAG, "nullString (OFXClass[dateFromString])");
+        if (dateString == null || dateString.trim().isEmpty()) {
             return null;
-        } else {
-            int dateStringLength = dateString.length();
-            int simpleDateTimeLength = "yyyyMMddHHmmss".length();
-            Date date = null;
-            if (dateStringLength >= simpleDateTimeLength) {
-                try {
-                    date = format.parse(dateString.substring(0, "yyyyMMddHHmmss".length()));
-                } catch (ParseException e) {
-                    Log.e(SMMoney.TAG, "OFXClass: ParseException in dateFromString (1): " + dateString, e);
-                    date = null;
-                }
-            }
-            if (date == null) {
-                try {
-                    date = dateFormatterForOFXDate().parse(dateString);
-                } catch (ParseException e) {
-                    Log.e(SMMoney.TAG, "OFXClass: failed to parse dateString : " + dateString, e);
-                    return null;
-                }
-            }
-            GregorianCalendar gregorianCalendar = new GregorianCalendar();
-            gregorianCalendar.setTimeInMillis(date.getTime());
-            return gregorianCalendar;
         }
+        String cleanDateString = dateString.trim();
+        SimpleDateFormat dateTimeFormat = dateFormatterForOFXDateTime();
+        SimpleDateFormat dateFormat = dateFormatterForOFXDate();
+        Date date = null;
+
+        if (cleanDateString.length() >= 14) {
+            try {
+                date = dateTimeFormat.parse(cleanDateString.substring(0, 14));
+            } catch (ParseException ignored) {
+            }
+        }
+
+        if (date == null && cleanDateString.length() >= 8) {
+            try {
+                date = dateFormat.parse(cleanDateString.substring(0, 8));
+            } catch (ParseException ignored) {
+            }
+        }
+
+        if (date == null) {
+            Log.e(SMMoney.TAG, "OFXClass: failed to parse dateString : " + cleanDateString);
+            return null;
+        }
+
+        GregorianCalendar gregorianCalendar = new GregorianCalendar();
+        gregorianCalendar.setTimeInMillis(date.getTime());
+        return gregorianCalendar;
     }
 
     private static SimpleDateFormat dateFormatterForOFXDate() {
@@ -102,7 +103,9 @@ class OFXClass {
     }
 
     static String stringBetween(String text, String begin, String end, String lineEnding) {
-        // $FF: Couldn't be decompiled
+        if (text == null || begin == null || begin.isEmpty()) {
+            return "";
+        }
         try {
             int startIndex = text.indexOf(begin);
             if (startIndex == -1) {
@@ -110,12 +113,10 @@ class OFXClass {
             }
             startIndex += begin.length();
             int endIndex = text.indexOf(TAGofEOL(end, lineEnding), startIndex);
-            if (startIndex != -1 && endIndex == -1) {
+            if (endIndex == -1) {
                 endIndex = text.length();
             }
-            //noinspection UnnecessaryLocalVariable
-            final String trim = text.substring(startIndex, endIndex).trim();
-            return trim;
+            return text.substring(startIndex, endIndex).trim();
         } catch (IndexOutOfBoundsException e) {
             return "";
         }
@@ -123,14 +124,16 @@ class OFXClass {
 
     private String bankMessage() {
         if (this.account != null && this.account.getType() == 0) {
-            OFX_Statement ofx_statement = new OFX_Statement(this.transactions, this.tags);
-            return "\t<BANKMSGSRSV1>\n" + ofx_statement + "\t</BANKMSGSRSV1>\n";
+            OFX_Statement ofxStatement = new OFX_Statement(this.transactions, this.tags);
+            return "\t<BANKMSGSRSV1>\n" + ofxStatement + "\t</BANKMSGSRSV1>\n";
         } else {
-            OFX_CreditCardStatement ofx_creditCardStatement = new OFX_CreditCardStatement(this.transactions, this.tags);
-            return "\t<CREDITCARDMSGSRSV1>\n" + ofx_creditCardStatement + "\t</CREDITCARDMSGSRSV1>\n";
+            OFX_CreditCardStatement ofxCreditCardStatement = new OFX_CreditCardStatement(this.transactions, this.tags);
+            return "\t<CREDITCARDMSGSRSV1>\n" + ofxCreditCardStatement + "\t</CREDITCARDMSGSRSV1>\n";
         }
     }
 
+    // Retain explicit string concatenation with \n rather than text blocks to guarantee exact line endings for OFX protocol headers
+    @SuppressWarnings("TextBlockMigration")
     private String header() {
         return "OFXHEADER:100\n" +
                 "DATA:OFXSGML\n" +
@@ -144,31 +147,33 @@ class OFXClass {
     }
 
     private void parse(String text) {
-        if (!text.contains("</CODE>")) {
-            this.format = OFX_DataFormatType.OFX_DataFormatSGML;
-        } else {
+        if (text == null || text.isEmpty()) {
+            return;
+        }
+
+        if (text.contains("</CODE>")) {
             this.format = OFX_DataFormatType.OFX_DataFormatXML10;
-        }
-
-        String lineEnding;
-        if (!text.contains("\r")) {
-            lineEnding = "\n";
         } else {
-            lineEnding = "\r";
+            this.format = OFX_DataFormatType.OFX_DataFormatSGML;
         }
 
+        String lineEnding = text.contains("\r") ? "\r" : "\n";
         this.tags = new OFX_Tags(this.format, lineEnding);
+
         String replaceBlock = lineEnding + "<";
-        text = text.replace(replaceBlock, "<").replace("<", replaceBlock);
-        String statement = stringBetween(text, this.tags.bankStatementTransmissionBegin, this.tags.bankStatementTransmissionEnd, lineEnding);
-        if (!statement.isEmpty()) {
-            this.statement = new OFX_Statement(statement, this.tags);
+        String normalizedText = text.replace(replaceBlock, "<").replace("<", replaceBlock);
+
+        String statementBlock = stringBetween(normalizedText, this.tags.bankStatementTransmissionBegin, this.tags.bankStatementTransmissionEnd, lineEnding);
+        if (!statementBlock.isEmpty()) {
+            this.statement = new OFX_Statement(statementBlock, this.tags);
         }
 
-        if (statement.isEmpty() || this.statement == null || this.statement.ofxtransactions.isEmpty()) {
-            this.statement = new OFX_CreditCardStatement(stringBetween(text, this.tags.creditCardStatementTransmissionBegin, this.tags.creditCardStatementTransmissionEnd, lineEnding), this.tags);
+        if (this.statement == null || this.statement.ofxtransactions == null || this.statement.ofxtransactions.isEmpty()) {
+            String ccStatementBlock = stringBetween(normalizedText, this.tags.creditCardStatementTransmissionBegin, this.tags.creditCardStatementTransmissionEnd, lineEnding);
+            if (!ccStatementBlock.isEmpty()) {
+                this.statement = new OFX_CreditCardStatement(ccStatementBlock, this.tags);
+            }
         }
-
     }
 
     private String signOnMessage() {

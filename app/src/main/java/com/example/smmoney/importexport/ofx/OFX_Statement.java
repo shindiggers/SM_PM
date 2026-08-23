@@ -36,7 +36,6 @@ class OFX_Statement {
                 this.account = new OFX_AccountClass(accountClassRecord);
             }
         }
-
     }
 
     String availableBalanceMessage() {
@@ -44,9 +43,12 @@ class OFX_Statement {
     }
 
     String bankAccountMessage() {
-        String bankID = this.account.bankID;
-        String accountID = this.account.accountID;
-        String accountTypeAsString = this.account.accountTypeAsString();
+        if (this.account == null) {
+            return "";
+        }
+        String bankID = this.account.bankID != null ? this.account.bankID : "";
+        String accountID = this.account.accountID != null ? this.account.accountID : "";
+        String accountTypeAsString = this.account.accountTypeAsString() != null ? this.account.accountTypeAsString() : "CHECKING";
         return "\t\t\t\t" + this.tags.accountBegin + "\n"
                 + "\t\t\t\t\t" + this.tags.bankIDBegin + bankID + this.tags.bankIDEnd + "\n"
                 + "\t\t\t\t\t" + this.tags.accountIDBegin + accountID + this.tags.accountIDEnd + "\n"
@@ -58,8 +60,10 @@ class OFX_Statement {
         String dateAsOf = OFXClass.dateAsString(new GregorianCalendar());
         StringBuilder str = new StringBuilder(10000);
 
-        for (TransactionClass transaction : this.transactions) {
-            str.append((new OFX_TransactionClass(transaction, this.tags)));
+        if (this.transactions != null) {
+            for (TransactionClass transaction : this.transactions) {
+                str.append(new OFX_TransactionClass(transaction, this.tags));
+            }
         }
 
         return "\t\t\t\t" + this.tags.bankTransListBegin + "\n"
@@ -75,7 +79,8 @@ class OFX_Statement {
     }
 
     String ledgerBalanceMessage() {
-        String balAmt = OFXClass.amountAsOFXAmount(this.account.ledgerBalance);
+        double bal = this.account != null ? this.account.ledgerBalance : 0.0D;
+        String balAmt = OFXClass.amountAsOFXAmount(bal);
         String dateAsOfEnd = OFXClass.dateAsString(new GregorianCalendar());
         return "\t\t\t\t" + this.tags.ledgerBalanceBegin + "\n"
                 + "\t\t\t\t\t" + this.tags.balanceAmountBegin + balAmt + this.tags.balanceAmountEnd + "\n"
@@ -84,14 +89,19 @@ class OFX_Statement {
     }
 
     void parse(String text) {
+        if (text == null || text.isEmpty() || this.tags == null) {
+            this.ofxtransactions = new ArrayList<>();
+            return;
+        }
+
         this.account = new OFX_AccountClass(OFXClass.stringBetween(text, this.tags.accountBegin, this.tags.accountEnd, this.tags.lineEnding), this.tags);
         this.defaultCurrency = OFXClass.stringBetween(text, this.tags.currencyBegin, this.tags.currencyEnd, this.tags.lineEnding);
         this.dateStart = OFXClass.dateFromString(OFXClass.stringBetween(text, this.tags.dateStartBegin, this.tags.dateStartEnd, this.tags.lineEnding));
         this.dateEnd = OFXClass.dateFromString(OFXClass.stringBetween(text, this.tags.dateEndBegin, this.tags.dateEndEnd, this.tags.lineEnding));
         this.ledgerBalance = new OFX_BalanceClass(OFXClass.stringBetween(text, this.tags.ledgerBalanceBegin, this.tags.ledgerBalanceEnd, this.tags.lineEnding), this.tags);
         this.availableBalance = new OFX_BalanceClass(OFXClass.stringBetween(text, this.tags.availableBalanceBegin, this.tags.availableBalanceEnd, this.tags.lineEnding), this.tags);
-        this.ofxtransactions = null;
         this.ofxtransactions = new ArrayList<>(50);
+
         String bankTransList = OFXClass.stringBetween(text, this.tags.bankTransListBegin, this.tags.bankTransListEnd, this.tags.lineEnding);
         int currentEndTagIndex = 0;
 
@@ -103,16 +113,21 @@ class OFX_Statement {
 
             int currentStartTagIndex2 = currentStartTagIndex + this.tags.transactionBegin.length();
             int currentEndTagIndex2 = bankTransList.indexOf(this.tags.transactionEnd, currentStartTagIndex2);
-            String transactionString = bankTransList.substring(currentStartTagIndex2, currentEndTagIndex2);
-            currentEndTagIndex = currentEndTagIndex2 + this.tags.transactionEnd.length();
-            if (transactionString == null || transactionString.length() <= 0) {
-                break;
+            if (currentEndTagIndex2 == -1) {
+                // If closing tag </STMTTRN> is omitted in SGML, look for the next <STMTTRN> or end of block
+                int nextStart = bankTransList.indexOf(this.tags.transactionBegin, currentStartTagIndex2);
+                currentEndTagIndex2 = (nextStart != -1) ? nextStart : bankTransList.length();
+                currentEndTagIndex = currentEndTagIndex2;
+            } else {
+                currentEndTagIndex = currentEndTagIndex2 + this.tags.transactionEnd.length();
             }
 
-            OFX_TransactionClass ofxTransactionToAdd = new OFX_TransactionClass(transactionString, this.tags);
-            this.ofxtransactions.add(ofxTransactionToAdd);
+            String transactionString = bankTransList.substring(currentStartTagIndex2, currentEndTagIndex2).trim();
+            if (!transactionString.isEmpty()) {
+                OFX_TransactionClass ofxTransactionToAdd = new OFX_TransactionClass(transactionString, this.tags);
+                this.ofxtransactions.add(ofxTransactionToAdd);
+            }
         }
-
     }
 
     String statusMessage(@SuppressWarnings("SameParameterValue") String msg,
@@ -132,7 +147,7 @@ class OFX_Statement {
                 "\t\t\t<TRNUID>PMA - " + OFXClass.dateAsString(new GregorianCalendar()) + "\n"
                 + this.statusMessage("OK", "0", "INFO")
                 + "\t\t\t" + this.tags.bankStatementTransmissionBegin + "\n"
-                + "\t\t\t\t" + this.tags.currencyBegin + "USD" + this.tags.currencyEnd + "\n"
+                + "\t\t\t\t" + this.tags.currencyBegin + (this.defaultCurrency != null && !this.defaultCurrency.isEmpty() ? this.defaultCurrency : "USD") + this.tags.currencyEnd + "\n"
                 + this.bankAccountMessage()
                 + this.bankTransactionListMessage()
                 + this.ledgerBalanceMessage()
