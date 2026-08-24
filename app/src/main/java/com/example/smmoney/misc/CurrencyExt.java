@@ -20,43 +20,45 @@ public class CurrencyExt {
         return amountAsCurrencyWithoutCents(amount, null);
     }
 
-    private static String amountAsCurrencyWithoutCents(double amount, String currencyCode) {
-        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
-            currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+    public static String amountAsCurrencyWithoutCents(double amount, String currencyCode) {
+        String code = currencyCode;
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || code == null || code.trim().isEmpty() || code.isEmpty()) {
+            code = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
-        if (currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
-            currencyCode = "USD";
+        if (code.trim().isEmpty() || code.isEmpty()) {
+            code = "USD";
         }
-        currencyCode = currencyCode.trim();
+        code = code.trim();
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
         try {
-            currencyFormatter.setCurrency(Currency.getInstance(currencyCode));
+            currencyFormatter.setCurrency(Currency.getInstance(code));
             currencyFormatter.setMaximumFractionDigits(0);
             return currencyFormatter.format(amount);
         } catch (IllegalArgumentException e) {
             NumberFormat numberFormatter = NumberFormat.getNumberInstance();
             numberFormatter.setMaximumFractionDigits(0);
-            return currencyCode + numberFormatter.format(amount);
+            return code + numberFormatter.format(amount);
         }
     }
 
     public static String amountAsCurrency(double amount, String currencyCode) {
-        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
-            currencyCode = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+        String code = currencyCode;
+        if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES) || code == null || code.trim().isEmpty() || "Blue".equals(code)) {
+            code = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
-        if (currencyCode == null || currencyCode.trim().isEmpty() || currencyCode.equals("Blue")) {
-            currencyCode = "USD";
+        if (code.trim().isEmpty() || "Blue".equals(code)) {
+            code = "USD";
         }
-        currencyCode = currencyCode.trim();
+        code = code.trim();
         NumberFormat currencyFormatter = NumberFormat.getCurrencyInstance();
         try {
-            currencyFormatter.setCurrency(Currency.getInstance(currencyCode));
+            currencyFormatter.setCurrency(Currency.getInstance(code));
             return currencyFormatter.format(amount);
         } catch (IllegalArgumentException e) {
             NumberFormat numberFormatter = NumberFormat.getNumberInstance();
             numberFormatter.setMinimumFractionDigits(2);
             numberFormatter.setMaximumFractionDigits(2);
-            return currencyCode + numberFormatter.format(amount);
+            return code + numberFormatter.format(amount);
         }
     }
 
@@ -91,7 +93,7 @@ public class CurrencyExt {
                 }
             }
         }
-        return aNum.doubleValue();
+        return aNum != null ? aNum.doubleValue() : 0.0d;
     }
 
     public static double amountFromStringWithCurrency(String amount, String currency) {
@@ -124,7 +126,7 @@ public class CurrencyExt {
                 }
             }
         }
-        return aNum.doubleValue();
+        return aNum != null ? aNum.doubleValue() : 0.0d;
     }
 
     public static String exchangeRateAsString(double xrate) {

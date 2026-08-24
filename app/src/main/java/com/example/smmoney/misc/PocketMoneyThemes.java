@@ -117,7 +117,6 @@ public class PocketMoneyThemes {
 
     public static int alternatingRowColor() {
         return switch (getTheme()) {
-            case kThemeBlack -> getColor(R.color.black_theme_alternating_row_color);
             case kThemeBlue -> getColor(R.color.blue_theme_alternating_row_color);
             case kThemeGreen -> getColor(R.color.green_theme_alternating_row_color);
             case kThemePurple -> getColor(R.color.purple_theme_alternating_row_color);
@@ -125,7 +124,7 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> getColor(R.color.coffee_theme_alternating_row_color);
             case kThemeRuby -> getColor(R.color.ruby_theme_alternating_row_color);
             case kThemeWhite -> getColor(R.color.white_theme_alternating_row_color);
-            default -> getColor(R.color.black_theme_alternating_row_color);
+            default -> getColor(R.color.black_theme_alternating_row_color); // kThemeBlack as default
         };
     }
 
@@ -213,7 +212,7 @@ public class PocketMoneyThemes {
 
     public static int headerTextColor() {
         return switch (getTheme()) {
-            case kThemeWhite -> getColor(R.color.white_theme_text);
+            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby,kThemeWhite -> getColor(R.color.white_theme_text);
             default -> getColor(R.color.black_theme_text);
         };
     }
@@ -290,16 +289,14 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> R.drawable.list_selector_bg_coffee_alt;
             case kThemeRuby -> R.drawable.list_selector_bg_ruby_alt;
             case kThemeWhite -> R.drawable.list_selector_bg_white_alt;
-            case kThemeBlack -> R.drawable.list_selector_bg_black_alt;
-            default -> R.drawable.list_selector_bg_black_alt;
+            default -> R.drawable.list_selector_bg_black_alt; // kThemeBlack as default
         };
     }
 
     public static int settingsRowSelector() {
         return switch (getTheme()) {
-            case kThemeBlack -> R.drawable.list_selector_bg_black_settings;
             case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby, kThemeWhite -> R.drawable.list_selector_bg_white;
-            default -> R.drawable.list_selector_bg_white;
+            default -> R.drawable.list_selector_bg_black_settings; // kThemeBlack as default
         };
     }
 
@@ -386,7 +383,7 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> getColor(R.color.black);
             case kThemeRuby -> getColor(R.color.black);
             case kThemeWhite -> getColor(R.color.black);
-            default -> getColor(R.color.black);
+            default -> getColor(R.color.black); // kThemeBlack as default
         };
     }
 
@@ -400,7 +397,7 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> getColor(R.color.black_theme_text);
             case kThemeRuby -> getColor(R.color.black_theme_text);
             case kThemeWhite -> getColor(R.color.black_theme_text);
-            default -> getColor(R.color.black_theme_text);
+            default -> getColor(R.color.black_theme_text); // kThemeBlack as default
         };
     }
 
@@ -414,7 +411,7 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> getColor(R.color.black_theme_text);
             case kThemeRuby -> getColor(R.color.black_theme_text);
             case kThemeWhite -> getColor(R.color.black_theme_text);
-            default -> getColor(R.color.black_theme_text);
+            default -> getColor(R.color.black_theme_text); // kThemeBlack as default
         };
     }
 

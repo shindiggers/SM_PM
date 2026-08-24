@@ -169,32 +169,6 @@ public class CalExt {
         return (int) ((day2.getTimeInMillis() - day1.getTimeInMillis()) / 604800000);
     }
 
-    public static int monthsBetween(GregorianCalendar day1, GregorianCalendar day2) {
-        return (int) (((double) (day2.getTimeInMillis() - day1.getTimeInMillis())) / 2.62974383E9d);
-    }
-
-    public static int yearsBetween(GregorianCalendar day1, GregorianCalendar day2) {
-        return (int) (((double) (day2.getTimeInMillis() - day1.getTimeInMillis())) / 3.1558464E10d);
-    }
-
-    public static int daysInYear(GregorianCalendar cal) {
-        GregorianCalendar beginingOfYear = (GregorianCalendar) cal.clone();
-        GregorianCalendar endOfYear = (GregorianCalendar) cal.clone();
-        beginingOfYear.set(Calendar.MONTH, 0);
-        beginingOfYear.set(Calendar.DAY_OF_MONTH, 0);
-        beginingOfYear.set(Calendar.HOUR_OF_DAY, 0);
-        beginingOfYear.set(Calendar.MINUTE, 0);
-        beginingOfYear.set(Calendar.SECOND, 0);
-        beginingOfYear.set(Calendar.MILLISECOND, 0);
-        endOfYear.set(Calendar.MONTH, endOfYear.getActualMaximum(Calendar.MONTH));
-        endOfYear.set(Calendar.DAY_OF_MONTH, endOfYear.getActualMaximum(Calendar.DAY_OF_MONTH));
-        endOfYear.set(Calendar.HOUR_OF_DAY, 23);
-        endOfYear.set(Calendar.MINUTE, 59);
-        endOfYear.set(Calendar.SECOND, 59);
-        endOfYear.set(Calendar.MILLISECOND, 999);
-        return daysBetween(beginingOfYear, endOfYear);
-    }
-
     public static GregorianCalendar addHours(GregorianCalendar cal, int hours) {
         GregorianCalendar newCal = (GregorianCalendar) cal.clone();
         newCal.add(Calendar.HOUR_OF_DAY, hours);
@@ -349,27 +323,26 @@ public class CalExt {
         GregorianCalendar cal = new GregorianCalendar();
         dfdISO861.setTimeZone(TimeZone.getTimeZone("GMT"));
         try {
-            cal.setTime(dfdISO861.parse(aString));
+            Date parsedDate = dfdISO861.parse(aString);
+            if (parsedDate == null) {
+                return null;
+            }
+            cal.setTime(parsedDate);
             return cal;
         } catch (ParseException e) {
             return null;
         }
     }
 
-    public static GregorianCalendar dateFromDescriptionWithShortDate(String aString) {
-        try {
-            Date theDate = DateFormat.getDateFormat(SMMoney.getAppContext()).parse(aString);
-            GregorianCalendar newCal = new GregorianCalendar();
-            newCal.setTimeInMillis(theDate.getTime());
-            return newCal;
-        } catch (ParseException e) {
-            return null;
-        }
-    }
-
     public static GregorianCalendar dateFromDescriptionWithMediumDate(String aString) {
+        if (aString == null) {
+            return new GregorianCalendar();
+        }
         try {
             Date theDate = DateFormat.getMediumDateFormat(SMMoney.getAppContext()).parse(aString);
+            if (theDate == null) {
+                return new GregorianCalendar();
+            }
             GregorianCalendar newCal = new GregorianCalendar();
             newCal.setTimeInMillis(theDate.getTime());
             return newCal;

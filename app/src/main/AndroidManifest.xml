@@ -70,18 +70,7 @@
         <activity android:name="com.example.smmoney.views.transactions.PhotoReceiptOptionsActivity" />
         <activity
             android:name="com.example.smmoney.views.transactions.TransactionEditActivity"
-            android:configChanges="orientation"
-            android:exported="true">
-            <intent-filter>
-                <data
-                    android:host="hostlocation"
-                    android:scheme="ireceipt" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-            </intent-filter>
-        </activity>
+            android:configChanges="orientation" />
         <activity
             android:name="com.example.smmoney.misc.NoteEditor"
             android:configChanges="orientation"
