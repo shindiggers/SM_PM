@@ -84,10 +84,6 @@
             android:configChanges="orientation"
             android:finishOnTaskLaunch="true" />
         <activity
-            android:name="com.example.smmoney.prefs.DataTransfersEmailPrefActivity"
-            android:configChanges="orientation"
-            android:finishOnTaskLaunch="true" />
-        <activity
             android:name="com.example.smmoney.prefs.DisplayOptionsPrefsActivity"
             android:configChanges="orientation"
             android:finishOnTaskLaunch="true" />

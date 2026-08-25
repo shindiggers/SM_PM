@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -343,6 +345,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         setContentView(R.layout.transaction_edit);
         setupButtons();
         reloadData();
+        selectStartingCell();
         
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
@@ -576,14 +579,48 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.idEditText.setThreshold(2);
         this.classEditText.setThreshold(2);
 
-        this.payeeEditText.setOnFocusChangeListener((v, hasFocus) -> { if (!hasFocus) editTextDidFinishChanging(EDITTEXT_PAYEE); });
-        this.categoryEditText.setOnFocusChangeListener((v, hasFocus) -> { if (!hasFocus) editTextDidFinishChanging(EDITTEXT_CATEGORY); });
-        this.idEditText.setOnFocusChangeListener((v, hasFocus) -> { if (!hasFocus) editTextDidFinishChanging(EDITTEXT_ID); });
-        this.classEditText.setOnFocusChangeListener((v, hasFocus) -> { if (!hasFocus) editTextDidFinishChanging(EDITTEXT_CLASS); });
+        this.payeeEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                currencyKeyboard.hide();
+            } else {
+                editTextDidFinishChanging(EDITTEXT_PAYEE);
+            }
+        });
+        this.categoryEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                currencyKeyboard.hide();
+            } else {
+                editTextDidFinishChanging(EDITTEXT_CATEGORY);
+            }
+        });
+        this.idEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                currencyKeyboard.hide();
+            } else {
+                editTextDidFinishChanging(EDITTEXT_ID);
+            }
+        });
+        this.classEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                currencyKeyboard.hide();
+            } else {
+                editTextDidFinishChanging(EDITTEXT_CLASS);
+            }
+        });
+        this.memoEditText.setOnFocusChangeListener((v, hasFocus) -> {
+            if (hasFocus) {
+                currencyKeyboard.hide();
+            }
+        });
 
         getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
+                CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
+                if (currencyKeyboard != null && currencyKeyboard.hide()) {
+                    return;
+                }
+
                 if (transaction.dirty) {
                     new Builder(TransactionEditActivity.this, PocketMoneyThemes.dialogTheme())
                             .setTitle(R.string.dialog_discard_changes_title)
@@ -641,8 +678,44 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void amountAction() {
+        InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+        if (mgr != null && getCurrentFocus() != null) {
+            mgr.hideSoftInputFromWindow(getCurrentFocus().getWindowToken(), 0);
+        }
+        this.amountEditText.requestFocus();
+        this.amountEditText.setCursorVisible(true);
+        if (this.amountEditText.getText() != null) {
+            this.amountEditText.setSelection(this.amountEditText.getText().length());
+        }
         CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
         currencyKeyboard.show();
+    }
+
+    private void selectStartingCell() {
+        if (this.transaction != null && this.transaction.getTransactionID() == 0) {
+            String thePref = Prefs.getStringPref(Prefs.EDITTRANSACTION_STARTING_FIELD);
+            InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+
+            if (Locales.kLOC_GENERAL_PAYEE.equals(thePref)) {
+                this.payeeEditText.post(() -> {
+                    this.payeeEditText.requestFocus();
+                    if (mgr != null) {
+                        mgr.showSoftInput(this.payeeEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            } else if (Locales.kLOC_GENERAL_CATEGORY.equals(thePref)) {
+                this.categoryEditText.post(() -> {
+                    this.categoryEditText.requestFocus();
+                    if (mgr != null) {
+                        mgr.showSoftInput(this.categoryEditText, InputMethodManager.SHOW_IMPLICIT);
+                    }
+                });
+            } else if (Locales.kLOC_GENERAL_AMOUNT.equals(thePref)) {
+                this.amountEditText.post(this::amountAction);
+            } else {
+                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+            }
+        }
     }
 
     private void currencyAction() {

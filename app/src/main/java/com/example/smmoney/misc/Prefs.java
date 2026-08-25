@@ -1,10 +1,9 @@
 package com.example.smmoney.misc;
 
-import android.app.AlertDialog.Builder;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
@@ -13,12 +12,6 @@ import androidx.preference.PreferenceManager;
 
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
-import com.example.smmoney.misc.Locales;
-import com.example.smmoney.misc.PocketMoneyThemes;
-import com.example.smmoney.records.AccountClass;
-import com.example.smmoney.records.SplitsClass;
-import com.example.smmoney.records.TransactionClass;
-import com.example.smmoney.views.accounts.AccountTypeIconGridActivity;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -44,12 +37,10 @@ public class Prefs {
     private static final String APP_FIRST_RUN_U3 = "appFirstRunUpdate3"; // Is this first run v3. Type must be boolean
     public static final String AUTOADD_LOOKUPS = "prefsmanagedlistsautoadd";
     public static final String AUTO_FILL = "prefsmanagedlistsautofill";
-    public static final String AUTO_SUGGEST = "prefsautosuggest";
     public static final String BALANCEBARREGISTER = "balancebarregister";
     public static final String BALANCEBARUNIFIED = "balancebarunified";
     public static final String BALANCEONDATE = "prefsaccountsviewoptionsasofdate";
     public static final String BALANCETYPE = "balanceType";
-    public static final String BUDGETDISPLAY = "budgetDisplay";
     public static final String BUDGETHIDEZEROSACTUALS = "budgetHideZeros"; // BUDGET PREFS hide if amount = 0 Type: boolean
     public static final String BUDGETINCLUDETRANSFERS = "budgetIncludeTransfers"; // BUDGET PREFS incl both sides of xfer Type: boolean
     public static final String BUDGETINCLUDEUNBUDGETED = "budgetIncludeUnbudgeted"; // BUDGET PREFS incl unbudgeted cat in total Type: boolean
@@ -71,20 +62,15 @@ public class Prefs {
     public static final String COLLAPSE_ONLINE = "collapseOnline"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String COLLAPSE_UNBUDGETED = "collapseUnbudgeted"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String CREATED_ON = "createdon";
-    public static final String CURRENT_DATABASE_NAME = "currentDBName";
     private static final boolean DEBUGGING = true;
     private static final String DEFAULTROUNDING = "prefscurrencydefaultrounding";
     public static final String DISPLAY_BUDGETPERIOD = "budgetPeriod";
-    public static final String EDITTRANSACTION_CATBYPAYEE_FIELD = "prefsdispplayeditcatposition";
-    public static final String EDITTRANSACTION_SHOW_ALL_ACCOUNTS = "prefsdisplayeditallaccounts";
     public static final String EDITTRANSACTION_SHOW_CATEGORY_FIELD = "prefsdisplayeditcategory";
     public static final String EDITTRANSACTION_SHOW_CLASS_FIELD = "prefsdisplayeditclass";
     public static final String EDITTRANSACTION_SHOW_CLEARED_FIELD = "prefsdisplayeditcleared";
     public static final String EDITTRANSACTION_SHOW_ID_FIELD = "prefsdisplayeditid";
     public static final String EDITTRANSACTION_SHOW_MEMO_FIELD = "prefsdisplayeditmemo";
     public static final String EDITTRANSACTION_STARTING_FIELD = "prefsdisplayeditstartediting";
-    public static final String EMAILPARTNER_EMAIL = "emailpartneremail";
-    public static final String EMAILPARTNER_ENABLED = "emailpartner";
     public static final String ENCODING = "prefsdatatransfersfileencoding";
     public static final String EXPORT_STOREDEVICE = "prefsdatatransferssdcard";
     public static final String FILTERS = "prefsdisplayaccountfilters"; // ACCOUNTS PREFS Show filers on accounts screen Tpye:boolean
@@ -107,7 +93,6 @@ public class Prefs {
     public static final String LASTFULLEXPORT = "lastFllExport";
     public static final String LAST_UPGRADE_DIALOG = "lastupgradedialog";
     public static final String MULTIPLECURRENCIES = "prefscurrencymultiplecurrencies"; // multi curr. Tpye: boolean
-    public static final String NAMEOFPREFS = "myCustomSharedPrefs";
     public static final String NEWESTTRANSACTIONFIRST = "prefstransactionviewoptionssortorder";
     public static final String PASSWORD = "prefssecuritypassword"; // To hold password? Type presumably String?
     public static final String PASSWORD_DELAY = "prefssecuritydelay"; // To hold delay before require pw. Type? Maybe long? double?
@@ -115,12 +100,9 @@ public class Prefs {
     public static final String PMSYNC_CLIENTSERVER = "clientServer";
     public static final String PMSYNC_IP = "pmsyncip";
     public static final String PMSYNC_PORT = "pmsyncport";
-    public static final String PREFS_QIF_EXPORT_SEPERATELY = "datatransferqiffileforeachaccount";
     public static final String PREFS_REPEATING_UPCOMING_PERIOD = "repeatingupcomingperiod";
-    public static final String PREFS_REPORTDISPLAY = "reportDisplay";
     public static final String PREFS_REPORTS_CHARTTYPE = "reportChartType";
     public static final String PREFS_REPORTS_SORTDIRECTION = "reportSortDirection";
-    public static final String PREFS_REPORTS_SORTON = "reportSortOn";
     public static final String QIF_DATEFORMAT = "datatransferqifdateformat";
     public static final String QIF_DATESEPARATOR = "datatransferqifdateseparator";
     public static final String QIF_EXPORT_SEPERATELY = "datatransferqiffileforeachaccount";
@@ -128,7 +110,6 @@ public class Prefs {
     public static final String QIF_IMPORT_DUPS = "datatransferqifimportdups";
     public static final String QIF_MARKALLCLEARED = "datatransferqifmarkallclear";
     public static final String QIF_NUMBERFORMAT = "datatransfernumberformat";
-    public static final String QIF_WIPETRANSACTIONS = "datatransferqifbudgets";
     public static final String RECURPOSTINGDISABLEDWARNING = "recurpostingwarning";
     public static final String RECURPOSTINGENABLED = "recurPostingEnabled";
     public static final String RECURRDAYSINADVANCE = "recurDaysInAdvance";
@@ -154,29 +135,8 @@ public class Prefs {
     public static final String TRANSACTIONS_UNLINK_ID_FIELD = "prefsdisplayeditunlink";
     public static final String TRANSFERTYPE = "prefsdatatransferstransfermode";
     public static final String UPDATEEXCHANGERATES = "prefscurrencyupdatexrates"; // update f/x rates or no. Type: boolean
-    public static final String USINGUUID = "usinguuid";
     public static final String VIEWACCOUNTS = "prefsaccountsviewoptionsshowaccounts";
     private static SharedPreferences sharedPrefs = null;
-
-    public static void processDataBase(final Context context) {
-        Builder alt_bld = new Builder(context, PocketMoneyThemes.dialogTheme());
-        alt_bld.setMessage("/sdcard/PocketMoneyDB/SMMoneyDB.sql\nYou need to restart after importing")
-                .setCancelable(false)
-                .setPositiveButton("Import", (dialog, which) -> {
-                    Builder sub_bld = new Builder(context, PocketMoneyThemes.dialogTheme());
-                    sub_bld.setMessage("This will deleted the current DB. Are you sure you want to do this?")
-                            .setCancelable(false)
-                            .setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, id) -> Prefs.importDB(context))
-                            .setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog1, id) -> dialog1.cancel())
-                            .create()
-                            .show();
-                })
-                .setNegativeButton("Export", (dialog, which) -> {
-                    Prefs.exportDB(context);
-                    dialog.cancel();
-                });
-        alt_bld.create().show();
-    }
 
     public static void importDB(Context c) {
         File dbBackupFile = new File(SMMoney.getExternalPocketMoneyDirectory(), "SMMoneyDB.sql");
@@ -188,14 +148,13 @@ public class Prefs {
             return;
         }
         File dbFile = c.getDatabasePath("SMMoneyDB.sql");
-        if (dbFile.exists()) {
-            dbFile.delete();
+        File parent = dbFile.getParentFile();
+        if (parent != null && !parent.exists() && !parent.mkdirs()) {
+            Log.e(SMMoney.TAG, "Failed to create database directory: " + parent.getAbsolutePath());
+            Toast.makeText(c, "Import Failed", Toast.LENGTH_LONG).show();
+            return;
         }
         try {
-            if (dbFile.getParentFile() != null && !dbFile.getParentFile().exists()) {
-                dbFile.getParentFile().mkdirs();
-            }
-            dbFile.createNewFile();
             copyFile(dbBackupFile, dbFile);
             Toast.makeText(c, "Import Successful", Toast.LENGTH_LONG).show();
         } catch (IOException e) {
@@ -208,15 +167,13 @@ public class Prefs {
         File dbFile = c.getDatabasePath("SMMoneyDB.sql");
         if (SMMoney.IsExternalStorageWritable()) {
             File exportDir = new File(SMMoney.getExternalPocketMoneyDirectory());
-            if (!exportDir.exists()) {
-                exportDir.mkdirs();
+            if (!exportDir.exists() && !exportDir.mkdirs()) {
+                Log.e(SMMoney.TAG, "Failed to create export directory: " + exportDir.getAbsolutePath());
+                Toast.makeText(c, "Failed to copy backup file", Toast.LENGTH_LONG).show();
+                return null;
             }
             File file = new File(exportDir, dbFile.getName());
             try {
-                if (file.exists()) {
-                    file.delete();
-                }
-                file.createNewFile();
                 copyFile(dbFile, file);
                 Toast.makeText(c, "Backup Successful", Toast.LENGTH_LONG).show();
                 return file;
@@ -230,7 +187,10 @@ public class Prefs {
     }
 
     public static void copyFile(File src, File dst) throws IOException {
-        try (FileChannel inChannel = new FileInputStream(src).getChannel(); FileChannel outChannel = new FileOutputStream(dst).getChannel()) {
+        try (FileInputStream fis = new FileInputStream(src);
+             FileOutputStream fos = new FileOutputStream(dst);
+             FileChannel inChannel = fis.getChannel();
+             FileChannel outChannel = fos.getChannel()) {
             inChannel.transferTo(0, inChannel.size(), outChannel);
         }
     }
@@ -238,13 +198,6 @@ public class Prefs {
     private static SharedPreferences getSharedPrefs() {
         if (sharedPrefs == null) {
             sharedPrefs = PreferenceManager.getDefaultSharedPreferences(SMMoney.getAppContext());
-        }
-        return sharedPrefs;
-    }
-
-    private static SharedPreferences getSharedPrefs(Context context) {
-        if (sharedPrefs == null) {
-            sharedPrefs = PreferenceManager.getDefaultSharedPreferences(context);
         }
         return sharedPrefs;
     }
@@ -269,26 +222,13 @@ public class Prefs {
         return getSharedPrefs().getBoolean(thePref, false);
     }
 
-    public static String getStringPref(Context context, String thePref) {
-        return getSharedPrefs().getString(thePref, "");
-    }
-
-    public static Long getLongPref(Context context, String thePref) {
-        return getSharedPrefs().getLong(thePref, 0L);
-    }
-
-    public static int getIntPref(Context context, String thePref) {
-        return getSharedPrefs().getInt(thePref, 0);
-    }
-
-    public static boolean getBooleanPref(Context context, String thePref) {
-        return getSharedPrefs(context).getBoolean(thePref, false);
-    }
-
     public static boolean getBooleanPref(String thePref, boolean defaultValue) {
         return getSharedPrefs().getBoolean(thePref, defaultValue);
     }
 
+    // Suppress ApplySharedPref: commit() is used intentionally so critical string prefs (e.g. theme changes,
+    // security keys, database references) are synchronously written to disk before an immediate Activity/App recreate/restart.
+    @SuppressLint("ApplySharedPref")
     public static void setPref(String thePref, String newPref) {
         Editor editor = getSharedPrefs().edit();
         editor.putString(thePref, newPref);
@@ -332,7 +272,7 @@ public class Prefs {
 
     public static boolean hasPassword() {
         String pass = getStringPref(PASSWORD);
-        return (pass != null && !pass.isEmpty()) && DEBUGGING;
+        return !pass.isEmpty() && DEBUGGING;
     }
 
     public static void initialize() {
@@ -458,67 +398,5 @@ public class Prefs {
         uuid = UUID.randomUUID().toString();
         setPref("UUID", uuid);
         return uuid;
-    }
-
-    public static void replaceIconNamesForUpdate1_11() {
-        Cursor c = Database.rawQuery("SELECT accountID FROM accounts", null);
-        while (c.moveToNext()) {
-            AccountClass account = new AccountClass(c.getInt(0));
-            account.hydrate();
-            account.setIconFileName(AccountTypeIconGridActivity.replaceIconNameWithUppercase(account.getIconFileName()));
-            account.saveToDataBaseAndUpdateTimeStamp(false);
-        }
-    }
-
-    public static void fixRepeatingTransactionDisconnectionForUpdate1_09() {
-        Database.execSQL("DELETE FROM repeatingTransactions WHERE transactionID NOT IN( SELECT transactionID FROM transactions WHERE transactions.deleted = 0)");
-    }
-
-    private static void disconnectTransferForTransactionU4(TransactionClass transaction, int transactionsAccountID) {
-        Cursor c = Database.rawQuery("SELECT splitID,transferToAccountID FROM splits WHERE transactionID=" + transaction.getTransactionID(), null);
-        TransactionClass otherTransaction = null;
-        int transFromAccountID = transaction.getTransactionID();
-        while (c.moveToNext()) {
-            SplitsClass s = new SplitsClass(c.getInt(0));
-            int transToAccountID = c.getInt(1);
-            Cursor sc = Database.rawQuery("SELECT transactionID FROM transactions WHERE deleted=0 AND accountID=" + transToAccountID + " AND date=" + (transaction.getDate().getTimeInMillis() / 1000) + " AND type<>" + 5, null);
-            int transToID = 0;
-            while (sc.moveToNext()) {
-                transToID = sc.getInt(0);
-                otherTransaction = new TransactionClass(transToID);
-            }
-            Cursor tc = Database.rawQuery("SELECT splitID FROM splits WHERE transactionID=" + transToID, null);
-            int splitIndex = 0;
-            while (tc.moveToNext()) {
-                SplitsClass split = new SplitsClass(tc.getInt(0));
-                double transAmount = (-1.0d * split.getAmount()) / split.getXrate();
-                double diff = transAmount - split.getAmount();
-                if (CurrencyExt.amountAsCurrency(transAmount).equals(CurrencyExt.amountAsCurrency(split.getAmount()))) {
-                    diff = 0.0d;
-                }
-                if (diff >= -9.0E-6d && diff <= 1.0E-6d && transFromAccountID == transToAccountID) {
-                    if (otherTransaction.getPayee() == null || otherTransaction.getPayee().isEmpty()) {
-                        otherTransaction.setPayee("*accountID " + transToAccountID + " - missing account name*");
-                    } else if (otherTransaction.getCategoryAtIndex(splitIndex) == null || otherTransaction.getCategoryAtIndex(splitIndex).isEmpty()) {
-                        otherTransaction.setCategoryAtIndex(otherTransaction.getTransferToAccountAtIndex(splitIndex), splitIndex);
-                    }
-                    otherTransaction.setTransferToAccountAtIndex(null, splitIndex);
-                    otherTransaction.initType();
-                    otherTransaction.saveToDatabase();
-                }
-                splitIndex++;
-            }
-        }
-    }
-
-    public static void fixAccountsForUpdateU4() {
-        Cursor c = Database.rawQuery("SELECT transactionID,accountID FROM transactions WHERE accountID IN (SELECT DISTINCT accountID FROM transactions EXCEPT SELECT DISTINCT accountID FROM accounts)", null);
-        while (c.moveToNext()) {
-            TransactionClass t = new TransactionClass(c.getInt(0));
-            disconnectTransferForTransactionU4(t, c.getInt(1));
-            t.deleteFromDatabase();
-        }
-        Database.execSQL("UPDATE repeatingTransactions SET deleted='1', timestamp=" + System.currentTimeMillis() + " WHERE transactionID IN (SELECT transactionID " + "FROM transactions WHERE deleted = 0 AND accountID IN (" + "SELECT DISTINCT accountID FROM transactions " + "EXCEPT " + "SELECT DISTINCT accountID FROM accounts))");
-        Database.execSQL("UPDATE transactions SET deleted='1', timestamp=" + System.currentTimeMillis() + " WHERE type=" + 5 + " AND accountID IN (" + "SELECT DISTINCT accountID FROM transactions " + "EXCEPT " + "SELECT DISTINCT accountID FROM accounts)");
     }
 }

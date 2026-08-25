@@ -34,7 +34,6 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         ListPreference fileEncodingPref = fragment.findPreference(Prefs.ENCODING);
         ListPreference storageDevicePref = fragment.findPreference(Prefs.EXPORT_STOREDEVICE);
         Preference qifOptionsPref = fragment.findPreference("prefsdatatransfersqifoptions");
-        Preference emailPartnerOptionsPref = fragment.findPreference("datatransferemailprefs");
 
         if (transferModePref != null) {
             String[] theValues = new String[]{"0"};
@@ -63,13 +62,6 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
         if (qifOptionsPref != null) {
             qifOptionsPref.setOnPreferenceClickListener(preference -> {
                 DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, QIFDataTransferPrefsActivity.class));
-                return true;
-            });
-        }
-
-        if (emailPartnerOptionsPref != null) {
-            emailPartnerOptionsPref.setOnPreferenceClickListener(preference -> {
-                DataTransfersPrefsActivity.this.startActivity(new Intent(DataTransfersPrefsActivity.this, DataTransfersEmailPrefActivity.class));
                 return true;
             });
         }

@@ -34,10 +34,6 @@
             android:key="prefsdatatransfersqifoptions"
             android:title="@string/kLOC_QIFOPTIONS_TITLE" />
 
-        <Preference
-            android:key="datatransferemailprefs"
-            android:title="@string/kLOC_EMAILPARTNEROPTIONS_TITLE" />
-
     </PreferenceCategory>
 
 </PreferenceScreen>

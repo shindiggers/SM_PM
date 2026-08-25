@@ -221,17 +221,19 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
 
     private void internalProcessMath() {
         if (this.editText == null) return;
+        String currentText = this.editText.getText() != null ? this.editText.getText().toString().trim() : "";
+        if (currentText.isEmpty()) {
+            return;
+        }
         String newValue = null;
         try {
-            newValue = processMath(this.editText.getText().toString());
+            newValue = processMath(currentText);
         } catch (Exception e) {
             Log.e("CurrencyKeyboard", "Exception in processMath", e);
         }
-        if (newValue != null) {
+        if (newValue != null && !newValue.isEmpty()) {
             this.editText.setText(newValue);
             this.editText.setSelection(this.editText.getText().toString().length());
-        } else {
-            this.editText.setText("0");
         }
     }
 
@@ -284,6 +286,9 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
     }
 
     public static String processMath(String currentValue) {
+        if (currentValue == null || currentValue.trim().isEmpty()) {
+            return "";
+        }
         double savedDouble;
         MyScanner s = new MyScanner(currentValue);
         char savedSign = '\u0000';

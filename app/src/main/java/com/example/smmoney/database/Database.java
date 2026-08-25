@@ -413,9 +413,6 @@ public class Database {
         if (databaseVersion == DATABASE_VERSION_27) {
             execSqlWithCatch("ALTER TABLE categorypayee ADD deleted BOOLEAN");
             execSqlWithCatch("ALTER TABLE filters ADD selectedFilterName TEXT");
-            Prefs.fixAccountsForUpdateU4();
-            Prefs.fixRepeatingTransactionDisconnectionForUpdate1_09();
-            Prefs.replaceIconNamesForUpdate1_11();
             databaseVersion = DATABASE_VERSION_28;
             updateVersion(databaseVersion);
         }
