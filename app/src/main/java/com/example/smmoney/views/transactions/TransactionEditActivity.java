@@ -187,7 +187,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
-            TransactionClass updatedTrans = (TransactionClass) result.getData().getExtras().get("Transaction");
+            TransactionClass updatedTrans = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
             if (updatedTrans != null) {
                 this.transaction.setSplits(updatedTrans.getSplits());
                 this.transaction.setSubTotal(updatedTrans.getSubTotal());
@@ -201,8 +201,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private final ActivityResultLauncher<Intent> repeatingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
-            this.transaction = (TransactionClass) result.getData().getExtras().get("Transaction");
-            this.repeatingTransaction = (RepeatingTransactionClass) result.getData().getExtras().get("RepeatingTransaction");
+            this.transaction = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
+            this.repeatingTransaction = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "RepeatingTransaction", RepeatingTransactionClass.class);
             if (this.transaction != null && this.repeatingTransaction != null) {
                 this.transaction.isRepeatingTransaction = this.repeatingTransaction.isRepeating();
                 this.transaction.dirty = true;
@@ -332,7 +332,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            this.transaction = (TransactionClass) extras.getSerializable("Transaction");
+            this.transaction = androidx.core.os.BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
         }
         
         if (this.transaction == null) {

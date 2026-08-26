@@ -17,6 +17,7 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.IntentCompat;
 import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
@@ -100,11 +101,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts_edit);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            this.account = getIntent().getSerializableExtra("Account", AccountClass.class);
-        } else {
-            this.account = (AccountClass) getIntent().getSerializableExtra("Account");
-        }
+        this.account = androidx.core.content.IntentCompat.getSerializableExtra(getIntent(), "Account", AccountClass.class);
         loadInfo();
         setupButtons();
 

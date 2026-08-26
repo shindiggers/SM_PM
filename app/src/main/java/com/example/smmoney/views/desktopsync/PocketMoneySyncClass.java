@@ -1133,7 +1133,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
         while (currentIndex != cancel) {
             endIndex = xmlBlock.indexOf(endTag, currentIndex);
             try {
-                PocketMoneyRecordClass record = (PocketMoneyRecordClass) classOf.newInstance();
+                PocketMoneyRecordClass record = (PocketMoneyRecordClass) classOf.getDeclaredConstructor().newInstance();
                 record.updateWithXML(startTag + xmlBlock.substring(currentIndex, endIndex) + endTag);
                 processRecentChange(record, classOf, primaryKeyField);
             } catch (Exception e) {

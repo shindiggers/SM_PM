@@ -126,23 +126,14 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     private void extractData() {
         Bundle b = getIntent().getExtras();
         if (b == null) return;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            this.transaction = b.getSerializable("transaction", TransactionClass.class);
-        } else {
-            this.transaction = (TransactionClass) b.get("transaction");
-        }
+        this.transaction = androidx.core.os.BundleCompat.getSerializable(b, "transaction", TransactionClass.class);
         if (this.transaction != null) {
             AccountClass acct = AccountDB.recordFor(this.transaction.getAccount());
             this.accountCurrency = acct != null ? acct.getCurrencyCode() : Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         } else {
             this.accountCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
         }
-        SplitsClass s;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            s = b.getSerializable("split", SplitsClass.class);
-        } else {
-            s = (SplitsClass) b.get("split");
-        }
+        SplitsClass s = androidx.core.os.BundleCompat.getSerializable(b, "split", SplitsClass.class);
         if (s != null) {
             this.exchangeRate = s.getXrate() != 0 ? s.getXrate() : 1.0;
             this.accountAmount = Math.abs(s.getAmount());

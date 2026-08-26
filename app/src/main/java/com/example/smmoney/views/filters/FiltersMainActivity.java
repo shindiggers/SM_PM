@@ -28,11 +28,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     final ActivityResultLauncher<Intent> filterEditLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                this.filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
-            } else {
-                this.filter = (FilterClass) result.getData().getSerializableExtra("Filter");
-            }
+            this.filter = androidx.core.content.IntentCompat.getSerializableExtra(result.getData(), "Filter", FilterClass.class);
         }
     });
 
@@ -48,11 +44,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            this.filter = getIntent().getSerializableExtra("Filter", FilterClass.class);
-        } else {
-            this.filter = (FilterClass) getIntent().getSerializableExtra("Filter");
-        }
+        this.filter = androidx.core.content.IntentCompat.getSerializableExtra(getIntent(), "Filter", FilterClass.class);
         setContentView(R.layout.filter_main);
         this.context = this;
         setResult(FILTER_RESULT_NOCHANGE);
@@ -181,24 +173,14 @@ public class FiltersMainActivity extends PocketMoneyActivity {
             case CMENU_EDIT /*1*/:
                 Intent intent = new Intent(this.context, FilterEditActivity.class);
                 if (b != null) {
-                    FilterClass filter;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        filter = b.getSerializable("Filter", FilterClass.class);
-                    } else {
-                        filter = (FilterClass) b.get("Filter");
-                    }
+                    FilterClass filter = androidx.core.os.BundleCompat.getSerializable(b, "Filter", FilterClass.class);
                     intent.putExtra("Filter", filter);
                 }
                 filterEditLauncher.launch(intent);
                 return true;
             case CMENU_DELETE /*3*/:
                 if (b != null) {
-                    FilterClass filter;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        filter = b.getSerializable("Filter", FilterClass.class);
-                    } else {
-                        filter = (FilterClass) b.get("Filter");
-                    }
+                    FilterClass filter = androidx.core.os.BundleCompat.getSerializable(b, "Filter", FilterClass.class);
                     if (filter != null) filter.deleteFromDatabase();
                 }
                 this.theAdapter.reloadData();

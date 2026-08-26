@@ -134,13 +134,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                this.transaction = extras.getSerializable("Transaction", TransactionClass.class);
-                this.split = extras.getSerializable("Split", SplitsClass.class);
-            } else {
-                this.transaction = (TransactionClass) extras.get("Transaction");
-                this.split = (SplitsClass) extras.get("Split");
-            }
+            this.transaction = androidx.core.os.BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
+            this.split = androidx.core.os.BundleCompat.getSerializable(extras, "Split", SplitsClass.class);
         }
         if (this.split == null) {
             finish();

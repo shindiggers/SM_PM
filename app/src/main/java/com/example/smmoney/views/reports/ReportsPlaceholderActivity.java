@@ -41,20 +41,17 @@ public class ReportsPlaceholderActivity extends PocketMoneyActivity {
             if (itemId == R.id.nav_accounts) {
                 Intent intent = new Intent(this, AccountsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
                 return true;
             } else if (itemId == R.id.nav_budgets) {
                 Intent intent = new Intent(this, BudgetsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
                 return true;
             } else if (itemId == R.id.nav_charts) {
                 Intent intent = new Intent(this, ChartsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
                 return true;
             }
             return itemId == R.id.nav_reports;

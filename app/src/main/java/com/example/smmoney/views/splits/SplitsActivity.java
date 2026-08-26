@@ -49,12 +49,7 @@ public class SplitsActivity extends PocketMoneyActivity {
             result -> {
                 if (result.getResultCode() == RESULT_CHANGED && result.getData() != null) {
                     Intent data = result.getData();
-                    SplitsClass split;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        split = data.getSerializableExtra("Split", SplitsClass.class);
-                    } else {
-                        split = (SplitsClass) Objects.requireNonNull(data.getExtras()).get("Split");
-                    }
+                    SplitsClass split = androidx.core.content.IntentCompat.getSerializableExtra(data, "Split", SplitsClass.class);
                     int index = data.getIntExtra("SplitIndex", -1);
                     if (index != -1) {
                         this.transaction.getSplits().remove(index);
@@ -78,11 +73,7 @@ public class SplitsActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         if (intent != null && intent.getExtras() != null) {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                this.transaction = intent.getSerializableExtra("Transaction", TransactionClass.class);
-            } else {
-                this.transaction = (TransactionClass) intent.getExtras().get("Transaction");
-            }
+            this.transaction = androidx.core.content.IntentCompat.getSerializableExtra(intent, "Transaction", TransactionClass.class);
             if (this.transaction != null) {
                 this.transaction.hydrated = true;
                 this.transaction.dirty = true;

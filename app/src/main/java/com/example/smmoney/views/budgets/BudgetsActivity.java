@@ -179,20 +179,17 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             if (itemId == R.id.nav_accounts) {
                 Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.accounts.AccountsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
                 return true;
             } else if (itemId == R.id.nav_reports) {
                 Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
                 return true;
             } else if (itemId == R.id.nav_charts) {
                 Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
                 return true;
             }
             return itemId == R.id.nav_budgets;
@@ -439,12 +436,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             case CMENU_EDIT -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 if (b != null) {
-                    CategoryClass category;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        category = b.getSerializable("Category", CategoryClass.class);
-                    } else {
-                        category = (CategoryClass) b.get("Category");
-                    }
+                    CategoryClass category = androidx.core.os.BundleCompat.getSerializable(b, "Category", CategoryClass.class);
                     anIntent.putExtra("Category", category);
                 }
                 editLauncher.launch(anIntent);
@@ -452,12 +444,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             }
             case CMENU_DELETE -> {
                 if (b != null) {
-                    CategoryClass category;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        category = b.getSerializable("Category", CategoryClass.class);
-                    } else {
-                        category = (CategoryClass) b.get("Category");
-                    }
+                    CategoryClass category = androidx.core.os.BundleCompat.getSerializable(b, "Category", CategoryClass.class);
                     deleteBudget(category);
                 }
                 reloadData();

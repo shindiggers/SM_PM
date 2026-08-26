@@ -24,7 +24,6 @@ import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.provider.Settings;
-import android.text.Html;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.ContextMenu;
@@ -190,12 +189,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             result -> {
                 if (result.getResultCode() == ACCOUNT_REQUEST_FILTER && result.getData() != null) {
                     Intent i = new Intent(this, TransactionsActivity.class);
-                    FilterClass filter;
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                        filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
-                    } else {
-                        filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
-                    }
+                    FilterClass filter = androidx.core.content.IntentCompat.getSerializableExtra(result.getData(), "Filter", FilterClass.class);
                     i.putExtra("Filter", filter);
                     startActivity(i);
                 }
@@ -1005,20 +999,17 @@ public class AccountsActivity extends PocketMoneyActivity implements
             if (itemId == R.id.nav_budgets) {
                 Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.budgets.BudgetsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
                 return true;
             } else if (itemId == R.id.nav_reports) {
                 Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
                 return true;
             } else if (itemId == R.id.nav_charts) {
                 Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
                 intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent);
-                overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left);
+                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
                 return true;
             }
             return itemId == R.id.nav_accounts;
@@ -1736,12 +1727,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
         } else {
             // permission denied. Disable the functionality that depends on this permission.
-            Spanned message;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                message = Html.fromHtml(getString(R.string.permissions_declined_permission_message), Html.FROM_HTML_MODE_LEGACY);
-            } else {
-                message = Html.fromHtml(getString(R.string.permissions_declined_permission_message));
-            }
+            Spanned message = androidx.core.text.HtmlCompat.fromHtml(
+                    getString(R.string.permissions_declined_permission_message),
+                    androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
+            );
             showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), message);
         }
     }

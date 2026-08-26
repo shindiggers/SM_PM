@@ -440,21 +440,21 @@ public class PocketMoneyThemes {
         
         int activeColor;
         int inactiveColor;
-        
+
         switch (getTheme()) {
-            case kThemeWhite:
+            case kThemeWhite -> {
                 activeColor = getColor(R.color.blue_theme_field_label_color); // A dark blue for contrast
                 inactiveColor = 0x8A000000; // Material dark secondary text (54% black)
-                break;
-            case kThemeBlack:
+            }
+            case kThemeBlack -> {
                 activeColor = getColor(R.color.white);
                 inactiveColor = 0x8AFFFFFF; // 54% white
-                break;
-            default:
+            }
+            default -> {
                 // For themed bars (Purple, Blue, etc.), use white and dimmed white
                 activeColor = getColor(R.color.white);
                 inactiveColor = 0x8AFFFFFF;
-                break;
+            }
         }
         
         return new android.content.res.ColorStateList(states, new int[]{activeColor, inactiveColor});

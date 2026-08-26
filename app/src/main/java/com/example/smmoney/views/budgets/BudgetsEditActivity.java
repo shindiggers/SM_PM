@@ -211,9 +211,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.category = (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU)
-                ? getIntent().getSerializableExtra("Category", CategoryClass.class)
-                : (CategoryClass) getIntent().getSerializableExtra("Category");
+        this.category = androidx.core.content.IntentCompat.getSerializableExtra(getIntent(), "Category", CategoryClass.class);
 
         if (this.category != null) {
             this.oldCategory = this.category.getCategory();
@@ -445,12 +443,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         Intent intent = item.getIntent();
         Bundle b = (intent != null) ? intent.getExtras() : null;
         if (item.getItemId() == CMENU_DELETE && b != null) {
-            CategoryBudgetClass budgetItem;
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-                budgetItem = b.getSerializable("BudgetItem", CategoryBudgetClass.class);
-            } else {
-                budgetItem = (CategoryBudgetClass) b.get("BudgetItem");
-            }
+            CategoryBudgetClass budgetItem = androidx.core.os.BundleCompat.getSerializable(b, "BudgetItem", CategoryBudgetClass.class);
             if (budgetItem != null) {
                 this.categoryBudgetItems.remove(budgetItem);
                 this.deletedCategoryBudgetItems.add(budgetItem);
