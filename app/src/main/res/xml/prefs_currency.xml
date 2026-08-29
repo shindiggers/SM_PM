@@ -30,6 +30,7 @@
             android:layout_height="wrap_content"
             android:defaultValue="true"
             android:key="prefscurrencyupdatexrates"
+            android:dependency="prefscurrencymultiplecurrencies"
             android:title="@string/kLOC_PREFS_UPDATEEXCHANGERATES" />
 
     </PreferenceCategory>

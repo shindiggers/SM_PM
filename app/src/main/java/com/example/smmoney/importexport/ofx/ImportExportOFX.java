@@ -36,7 +36,7 @@ public class ImportExportOFX {
     private final Context context;
     public FilterClass filter;
     private OFXClass ofxData;
-    public String path;
+    public final String path;
 
     public ImportExportOFX(Context context, String path) {
         this.context = context;
@@ -149,13 +149,12 @@ public class ImportExportOFX {
     @SuppressWarnings("UnusedReturnValue")
     public boolean exportRecords(List<TransactionClass> transactions) {
         String data = this.generateData(transactions);
-        String fileDir = this.path;
         try {
             String ofxEncoding = Prefs.getStringPref("prefsdatatransfersfileencoding");
             if (ofxEncoding.isEmpty()) {
                 ofxEncoding = "US-ASCII";
             }
-            File file = new File(fileDir);
+            File file = new File(this.path);
             File parentDir = file.getParentFile();
             if (parentDir != null && !parentDir.exists()) {
                 //noinspection ResultOfMethodCallIgnored

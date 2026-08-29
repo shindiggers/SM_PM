@@ -35,7 +35,7 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     private GregorianCalendar date;
     private boolean resetRollover;
 
-    private CategoryBudgetClass(int pk) {
+    public CategoryBudgetClass(int pk) {
         this.categoryBudgetID = pk;
         this.resetRollover = false;
         this.budgetLimit = 0.0d;

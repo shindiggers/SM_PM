@@ -277,9 +277,13 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.keepTheChangeRoundToEditText = findViewById(R.id.account_keep_the_change_round_to_text);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
         if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            ((View) this.currency.getParent()).setVisibility(View.GONE);
-            ((View) this.exchangeRate.getParent()).setVisibility(View.GONE);
-            ((View) exchangeRateSuffix.getParent()).setVisibility(View.GONE);
+            findViewById(R.id.account_currency_label).setVisibility(View.GONE);
+            this.currency.setVisibility(View.GONE);
+            findViewById(R.id.currency_arrow).setVisibility(View.GONE);
+            findViewById(R.id.account_exchangerate_label).setVisibility(View.GONE);
+            this.exchangeRate.setVisibility(View.GONE);
+            exchangeRateSuffix.setVisibility(View.GONE);
+            findViewById(R.id.divider4).setVisibility(View.GONE);
         }
         this.accountName.setText(this.account.getAccount());
         this.totalworth.setChecked(this.account.getTotalWorth());

@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.Enums;
+import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
@@ -14,9 +15,8 @@ import com.example.smmoney.records.IDClass;
 import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
-import com.example.smmoney.views.accounts.AccountsActivity;
-
 import org.xml.sax.Attributes;
+
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
@@ -32,16 +32,15 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
     private ArrayList<AccountClass> accounts;
     private String currentElementValue;
 
-    boolean connectToServer() {
+    void connectToServer() {
         if (this.asyncSocket != null) {
-            return false;
+            return;
         }
         this.currentState = Enums.kDesktopSyncStateTriggerManual/*3*/;
-        this.delegate.desktopSyncWithState(this, this.currentState);
+        this.delegate.desktopSyncWithState(this.currentState);
         try {
             this.asyncSocket = new Socket(this.host, this.port);
             processStateLoop();
-            return true;
         } catch (IOException e) {
             this.delegate.runOnUiThread(() -> {
                 PocketMoneySyncActivity pocketMoneySyncActivity = PocketMoneySyncClientClass.this.delegate;
@@ -49,13 +48,19 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                 pocketMoneySyncActivity.showNoHostDialog();
             });
             Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: IOException in connectToServer", e);
-            return false;
         }
     }
 
     private void processStateLoop() {
         while (true) {
             Log.i("PMSYNCSTATETAG", "client state: " + this.currentState);
+            if (this.asyncSocket == null || this.asyncSocket.isClosed()) {
+                Log.w(SMMoney.TAG, "PocketMoneySyncClientClass: Socket closed/null, exiting state loop.");
+                if (this.currentState != Enums.kDesktopSyncStateDisconnected && this.currentState != Enums.kDesktopSyncStateError) {
+                    disconnect();
+                }
+                return;
+            }
             switch (this.currentState) {
                 case Enums.kDesktopSyncStateConnecting /*3*/:
                     getSyncVersionHeader();
@@ -85,19 +90,17 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     getUDID();
                     break;
                 case Enums.kDesktopSyncStateUDIDReceived /*22*/:
-                    if (!processUDID()) {
-                        break;
+                    if (processUDID()) {
+                        sendRecentChanges();
                     }
-                    sendRecentChanges();
                     break;
                 case Enums.kDesktopSyncStateSendPhotos /*30*/:
                     if (this.imageSentCounter >= this.imageFilenames.size()) {
                         sendUDID();
-                        break;
                     } else {
                         sendPhoto();
-                        break;
                     }
+                    break;
                 case Enums.kDesktopSyncStateSentPhoto /*32*/:
                     this.imageSentCounter++;
                     getPhotoACKHeader();
@@ -106,14 +109,14 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     getPhotos();
                     break;
                 case Enums.kDesktopSyncStatePhotoReceived /*36*/:
-                    if (!processPhotos()) {
+                    if (processPhotosFailed()) {
                         Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
                         Database.sqlite3_commit();
                         setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
                         disconnect();
-                        break;
+                    } else {
+                        sendPhotoACK();
                     }
-                    sendPhotoACK();
                     break;
                 case Enums.kDesktopSyncStateSentPhotoACK /*39*/:
                     getPhotoHeader();
@@ -122,8 +125,13 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     getPhotoACK();
                     break;
                 case Enums.kDesktopSyncStatePhotoACKReceived /*43*/:
-                    processPhotoACK();
-                    setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
+                    if (processPhotoACKFailed()) {
+                        Database.sqlite3_rollback();
+                        setCurrentState(Enums.kDesktopSyncStateError/*69*/);
+                        disconnect();
+                    } else {
+                        setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
+                    }
                     break;
                 case Enums.kDesktopSyncStateSentRecentChanges /*47*/:
                     getACKHeader();
@@ -135,30 +143,32 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
                     if (!processRecentChanges()) {
                         setCurrentState(Enums.kDesktopSyncStateError /*69*/);
                         sendFail();
-                        break;
+                    } else {
+                        setCurrentState(Enums.kDesktopSyncStateRecentChangesProcessed /*53*/);
+                        sendACK();
                     }
-                    setCurrentState(Enums.kDesktopSyncStateRecentChangesProcessed /*53*/);
-                    sendACK();
                     break;
                 case Enums.kDesktopSyncStateSentACK /*55*/:
                     if (this.syncVersion != 1) {
                         getPhotoHeader();
-                        break;
+                    } else {
+                        Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
+                        Database.sqlite3_commit();
+                        setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
+                        disconnect();
                     }
-                    Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
-                    Database.sqlite3_commit();
-                    setCurrentState(Enums.kDesktopSyncStateDisconnecting/*66*/);
-                    disconnect();
                     break;
                 case Enums.kDesktopSyncStateACKHeaderReceived /*57*/:
                     getACK();
                     break;
                 case Enums.kDesktopSyncStateACKReceived /*59*/:
                     processACK();
-                    if (this.syncVersion != 1) {
-                        setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
-                    } else {
-                        sendUDID();
+                    if (this.currentState == Enums.kDesktopSyncStateACKProcessed/*61*/) {
+                        if (this.syncVersion != 1) {
+                            setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
+                        } else {
+                            sendUDID();
+                        }
                     }
                     break;
                 case Enums.kDesktopSyncStateDisconnecting /*66*/:
@@ -178,40 +188,20 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
         }
     }
 
-    public boolean processRecentChangesOLD() {
-        System.gc();
-        String sData = "";
-        boolean z = AccountsActivity.DEBUG;
-        System.gc();
-        parseAccountsXML(sData, AccountClass.XML_LISTTAG_ACCOUNTS, AccountClass.XML_RECORDTAG_ACCOUNT, AccountClass.class);
-        System.gc();
-        parseTransactionXML(sData, TransactionClass.XML_LISTTAG_TRANSACTIONS, TransactionClass.XML_RECORDTAG_TRANSACTION, TransactionClass.class);
-        System.gc();
-        parseXML(sData, CategoryClass.XML_LISTTAG_CATEGORIES, CategoryClass.XML_RECORDTAG_CATEGORY, CategoryClass.class, "categoryID");
-        System.gc();
-        parseXML(sData, PayeeClass.XML_LISTTAG_PAYEES, PayeeClass.XML_RECORDTAG_PAYEE, PayeeClass.class, "payeeID");
-        System.gc();
-        parseXML(sData, IDClass.XML_LISTTAG_IDS, IDClass.XML_RECORDTAG_ID, IDClass.class, "idID");
-        System.gc();
-        parseXML(sData, ClassNameClass.XML_LISTTAG_CLASSES, ClassNameClass.XML_RECORDTAG_CLASS, ClassNameClass.class, "classID");
-        System.gc();
-        parseXML(sData, FilterClass.XML_LISTTAG_FILTERS, FilterClass.XML_RECORDTAG_FILTER, FilterClass.class, "filterID");
-        System.gc();
-        parseRepeatingTransactionXML(sData, RepeatingTransactionClass.XML_LISTTAG_REPEATINGTRANSACTIONS, RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION, RepeatingTransactionClass.class);
-        System.gc();
-        parseXML(sData, CategoryBudgetClass.XML_LISTTAG_CATEGORYBUDGETS, CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET, CategoryBudgetClass.class, "categoryBudgetID");
-        return true;
-    }
-
     private boolean processRecentChanges() {
         try {
-            FileInputStream fi = new FileInputStream(new File(SMMoney.getTempFile()).getAbsolutePath());
+            File tempFile = new File(SMMoney.getTempFile());
+            if (!tempFile.exists() || tempFile.length() == 0) {
+                return false;
+            }
+            FileInputStream fi = new FileInputStream(tempFile.getAbsolutePath());
             XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             InputSource is = new InputSource(fi);
             xr.setContentHandler(this);
             xr.parse(is);
         } catch (Exception e) {
             Log.e(SMMoney.TAG, "PocketMoneySyncClientClass: Exception in processRecentChanges", e);
+            return false;
         }
         return true;
     }
@@ -223,6 +213,22 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
+        if (localName.equals("SMMoney")) {
+            String multCurr = atts.getValue("MULTIPLE_CURRENCIES");
+            if (multCurr != null && Boolean.parseBoolean(multCurr)) {
+                Prefs.setPref(Prefs.MULTIPLECURRENCIES, true);
+                Database.setMultipleCurrencies(true);
+            }
+            String homeCurr = atts.getValue("HOME_CURRENCY");
+            if (homeCurr != null && !homeCurr.isEmpty()) {
+                Prefs.setPref(Prefs.HOMECURRENCYCODE, homeCurr);
+                Database.setHomeCurrency(homeCurr);
+            }
+            String updExch = atts.getValue("UPDATE_EXCHANGE_RATES");
+            if (updExch != null && Boolean.parseBoolean(updExch)) {
+                Prefs.setPref(Prefs.UPDATEEXCHANGERATES, true);
+            }
+        }
         if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT) || localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION) || localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY) || localName.equals(PayeeClass.XML_RECORDTAG_PAYEE) || localName.equals(IDClass.XML_RECORDTAG_ID) || localName.equals(ClassNameClass.XML_RECORDTAG_CLASS) || localName.equals(FilterClass.XML_RECORDTAG_FILTER) || localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION) || localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
             this.currentElementValue = "<" + localName + ">";
         } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
@@ -299,7 +305,7 @@ public class PocketMoneySyncClientClass extends PocketMoneySyncClass {
 
     public void characters(char[] ch, int start, int length) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String(ch, start, length).trim();
+            this.currentElementValue = new String(ch, start, length);
         } else {
             this.currentElementValue += new String(ch, start, length);
         }

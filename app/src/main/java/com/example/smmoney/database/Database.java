@@ -79,10 +79,6 @@ public class Database {
     public static final String IDS_TABLE_NAME = "ids";
     public static final String PAYEES_TABLE_NAME = "payees";
     private static final int PMSYNC_VERSION_1 = 1;
-    public static final int PMSYNC_VERSION_2 = 2;
-    // Current PocketMoney Desktop Sync protocol version constant
-    @SuppressWarnings("unused")
-    public static final int PMSYNC_VERSION_CURRENT = PMSYNC_VERSION_2;
     public static final String PREFS_TABLE_NAME = "preferences";
     public static final String REPEATINGTRANSACTIONS_TABLE_NAME = "repeatingTransactions";
     public static final String SPLITS_TABLE_NAME = "splits";
@@ -101,8 +97,8 @@ public class Database {
 
         public void onCreate(SQLiteDatabase db) {
             try {
-                db.execSQL("CREATE TABLE preferences (databaseVersion\t\tINTEGER,databaseID\t\t\tINTEGER,multipleCurrencies   BOOLEAN,nextServerID         INTEGER);");
-                db.execSQL("INSERT INTO preferences (databaseVersion, databaseID) VALUES (32, random());");
+                db.execSQL("CREATE TABLE preferences (databaseVersion\t\tINTEGER,databaseID\t\t\tINTEGER,multipleCurrencies   BOOLEAN,nextServerID         INTEGER,homeCurrency\t\t\tTEXT);");
+                db.execSQL("INSERT INTO preferences (databaseVersion, databaseID) VALUES (" + Database.DATABASE_VERSION_CURRENT + ", random());");
                 db.execSQL("CREATE TABLE accounts (deleted\t\t\t\tBOOLEAN DEFAULT 0,timestamp\t\t\tINTEGER,accountID\t\t\tINTEGER PRIMARY KEY AUTOINCREMENT,displayOrder\t\t\tINTEGER,account\t\t\t\tTEXT,balanceOverall\t\tREAL,balanceCleared\t\tREAL,type\t\t\t\t\tINTEGER,accountNumber\t\tTEXT,institution\t\t\tTEXT,phone\t\t\t\tTEXT,expirationDate\t\tTEXT,checkNumber\t\t\tTEXT,notes\t\t\t\tTEXT,iconFileName\t\t\tTEXT,url\t\t\t\t\tTEXT,ofxid\t\t\t\tTEXT,ofxurl\t\t\t\tTEXT,password\t\t\t\tTEXT,fee\t\t\t\t\tREAL,fixedPercent\t\t\tINTEGER,limitAmount\t\t\tREAL,noLimit\t\t\t\tINTEGER,totalWorth\t\t\tINTEGER,exchangeRate\t\t\tREAL,currencyCode\t\t\tTEXT,lastSyncTime\t\t\tINTEGER DEFAULT 0,keepTheChangeAccountID\tINTEGER,keepChangeRoundTo\t\tREAL,serverID\t\t\t\tTEXT,routingNumber\t\tTEXT,overdraftAccountID\tINTEGER DEFAULT 0);");
                 db.execSQL("CREATE INDEX accountNames ON accounts (account);");
                 db.execSQL("CREATE INDEX typeaccount ON accounts (type, account);");
@@ -130,7 +126,7 @@ public class Database {
                 db.execSQL("CREATE INDEX payeeIDs ON payees (payeeID);");
                 db.execSQL("CREATE INDEX payeeName ON payees (payee);");
                 db.execSQL("CREATE INDEX payeeServerIDs ON payees (serverID);");
-                db.execSQL("CREATE TABLE categorypayee (categoryID\t\t\tINTEGER,payeeID              INTEGER,deleted              BOOLEAN,serverID\t\t\t\tTEXT,PRIMARY KEY (categoryID, payeeID));");
+                db.execSQL("CREATE TABLE categorypayee (categoryID\t\t\tINTEGER,payeeID              INTEGER,deleted              BOOLEAN,serverID\t\t\t\tTEXT,timestamp\t\t\tINTEGER,PRIMARY KEY (categoryID, payeeID));");
                 db.execSQL("CREATE INDEX cpCategoryIDs ON categorypayee (categoryID);");
                 db.execSQL("CREATE INDEX cpPayeeIDs ON categorypayee (payeeID);");
                 db.execSQL("CREATE TABLE classes (deleted\t\t\t\tBOOLEAN DEFAULT 0,timestamp\t\t\tINTEGER,serverID\t\t\t\tTEXT,classID\t\t\t\tINTEGER PRIMARY KEY AUTOINCREMENT,class\t\t\t\tTEXT UNIQUE);");
@@ -675,8 +671,10 @@ public class Database {
 
     public static void sqlite3_commit() {
         try {
-            currentDB().setTransactionSuccessful();
-            currentDB().endTransaction();
+            if (currentDB().inTransaction()) {
+                currentDB().setTransactionSuccessful();
+                currentDB().endTransaction();
+            }
         } catch (Exception e) {
             Log.e(SMMoney.TAG, "sql error commiting a transaction");
         }
@@ -684,7 +682,9 @@ public class Database {
 
     public static void sqlite3_rollback() {
         try {
-            currentDB().endTransaction();
+            if (currentDB().inTransaction()) {
+                currentDB().endTransaction();
+            }
         } catch (Exception e) {
             Log.e(SMMoney.TAG, "sql error rollingback a transaction");
         }

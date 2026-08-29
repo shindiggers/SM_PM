@@ -28,7 +28,6 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.PocketMoneyActivity;
-import com.example.smmoney.views.transactions.TransactionEditActivity;
 
 import java.net.Inet4Address;
 import java.net.InetAddress;
@@ -36,21 +35,9 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-import java.util.Hashtable;
 import java.util.Objects;
 
 public class PocketMoneySyncActivity extends PocketMoneyActivity {
-    private final int DIALOG_FIRST_UDID_CLIENT = 2;
-    private final int DIALOG_FIRST_UDID_SERVER = 3;
-    private final int DIALOG_NO_HOST = 1;
-    private final int DIALOG_OPEN_CONNECTION = 4;
-    private final int DIALOG_PURCHASE = 6;
-    private final int DIALOG_REPEATINGWARNING = 7;
-    private final int DIALOG_RESTORE = 5;
-    private final int DIALOG_UPGRADE = 8;
-    private final int DIALOG_WIFI = 9;
-    @SuppressWarnings("unused")
-    private Hashtable addresses;
     private MaterialButton clientRadioButton;
     private TextView descriptionTextView;
     private int firstSyncToUDIDAction;
@@ -61,18 +48,13 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     int photoCount = 0;
     private PocketMoneySyncClass pocketmoneySync;
     private EditText portEditText;
-    private boolean programmaticUpdate;
     private ProgressBar progressBar;
     private CheckBox restoreCheckBox;
     private TextView restoreTextView;
-    @SuppressWarnings("FieldCanBeLocal")
-    private MaterialButton serverRadioButton;
     private ProgressBar spinningWheel;
     private TextView statusTextView;
     private Button syncButton;
     private String syncUdid = "";
-    private TextView titleTextView;
-    int udidFirstActionBlock = 0;
     private WakeLock wakelock;
 
     public void onCreate(Bundle savedInstanceState) {
@@ -104,30 +86,26 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.wakelock.acquire(10 * 60 * 1000L /*10 minutes*/);
     }
 
-    private void setTitle(String title) {
-        this.titleTextView.setText(title);
-    }
-
     protected void onPause() {
         super.onPause();
         this.wakelock.release();
     }
 
     private void setupViews() {
-        View aView = findViewById(R.id.outter);
-        this.clientRadioButton = aView.findViewById(R.id.clientbutton);
-        this.serverRadioButton = aView.findViewById(R.id.serverbutton);
-        aView = aView.findViewById(R.id.addressview);
-        this.ipaddressEditText = aView.findViewById(R.id.ipaddress);
-        this.ipaddressTextView = aView.findViewById(R.id.ipaddresstextview);
-        this.portEditText = aView.findViewById(R.id.port);
-        this.descriptionTextView = aView.findViewById(R.id.instructions);
-        this.syncButton = aView.findViewById(R.id.syncbutton);
-        this.statusTextView = aView.findViewById(R.id.status);
-        this.progressBar = aView.findViewById(R.id.progressbar);
-        this.spinningWheel = aView.findViewById(R.id.spinningwheel);
-        this.restoreTextView = aView.findViewById(R.id.restorelabel);
-        this.restoreCheckBox = aView.findViewById(R.id.restorecheckbox);
+        View outterView = findViewById(R.id.outter);
+        this.clientRadioButton = outterView.findViewById(R.id.clientbutton);
+        MaterialButton serverRadioButton = outterView.findViewById(R.id.serverbutton);
+        View addressView = outterView.findViewById(R.id.addressview);
+        this.ipaddressEditText = addressView.findViewById(R.id.ipaddress);
+        this.ipaddressTextView = addressView.findViewById(R.id.ipaddresstextview);
+        this.portEditText = addressView.findViewById(R.id.port);
+        this.descriptionTextView = addressView.findViewById(R.id.instructions);
+        this.syncButton = addressView.findViewById(R.id.syncbutton);
+        this.statusTextView = addressView.findViewById(R.id.status);
+        this.progressBar = addressView.findViewById(R.id.progressbar);
+        this.spinningWheel = addressView.findViewById(R.id.spinningwheel);
+        this.restoreTextView = addressView.findViewById(R.id.restorelabel);
+        this.restoreCheckBox = addressView.findViewById(R.id.restorecheckbox);
         CheckBoxTint.colorCheckBox(this.restoreCheckBox);
         this.ipaddressEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.ipaddressTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
@@ -143,14 +121,14 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                 b.create().show();
             }
         });
-        ((TextView) aView.findViewById(R.id.portlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+        ((TextView) addressView.findViewById(R.id.portlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.portEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.descriptionTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.statusTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        ((TextView) aView.findViewById(R.id.iplabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
-        ((TextView) aView.findViewById(R.id.restorelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((View) aView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((TextView) addressView.findViewById(R.id.iplabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+        ((TextView) addressView.findViewById(R.id.restorelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+        addressView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        ((View) addressView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.clientRadioButton.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.spinningWheel.setVisibility(View.INVISIBLE);
         this.progressBar.setVisibility(View.INVISIBLE);
@@ -158,7 +136,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         
         MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) this.clientRadioButton.getParent();
         group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
-            if (isChecked && !PocketMoneySyncActivity.this.programmaticUpdate) {
+            if (isChecked) {
                 Prefs.setPref(Prefs.PMSYNC_CLIENTSERVER, PocketMoneySyncActivity.this.clientRadioButton.isChecked());
                 if (PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
                     PocketMoneySyncActivity.this.stopSyncing();
@@ -178,17 +156,15 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.clientRadioButton.setTextColor(textTint);
         this.clientRadioButton.setStrokeColor(strokeTint);
         
-        this.serverRadioButton.setBackgroundTintList(bgTint);
-        this.serverRadioButton.setTextColor(textTint);
-        this.serverRadioButton.setStrokeColor(strokeTint);
+        serverRadioButton.setBackgroundTintList(bgTint);
+        serverRadioButton.setTextColor(textTint);
+        serverRadioButton.setStrokeColor(strokeTint);
 
         this.syncButton.setOnClickListener(v -> {
             try {
                 if (PocketMoneySyncActivity.this.pocketmoneySync != null) {
                     PocketMoneySyncActivity.this.stopSyncing();
-                } else if (!PocketMoneySyncActivity.this.clientRadioButton.isChecked()) {
-                    PocketMoneySyncActivity.this.startSyncing();
-                } else if (PocketMoneySyncActivity.this.restoreCheckBox.isChecked()) {
+                } else if (PocketMoneySyncActivity.this.clientRadioButton.isChecked() && PocketMoneySyncActivity.this.restoreCheckBox.isChecked()) {
                     PocketMoneySyncActivity.this.showRestoreDialog();
                 } else {
                     PocketMoneySyncActivity.this.startSyncing();
@@ -236,7 +212,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             this.pocketmoneySync.disconnect();
         }
         this.pocketmoneySync = null;
-        desktopSyncWithState(null, Enums.kDesktopSyncStateDisconnected /*67*/);
+        desktopSyncWithState(Enums.kDesktopSyncStateDisconnected /*67*/);
         reloadData();
     }
 
@@ -249,7 +225,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             this.pocketmoneySync.host = Prefs.getStringPref(Prefs.PMSYNC_IP);
             this.pocketmoneySync.port = Prefs.getIntPref(Prefs.PMSYNC_PORT);
             this.pocketmoneySync.restoreFromServer = this.restoreCheckBox.isChecked();
-            if (this.pocketmoneySync.host == null || this.pocketmoneySync.host.equals("")) {
+            if (this.pocketmoneySync.host == null || this.pocketmoneySync.host.isEmpty()) {
                 showNoHostDialog();
             } else {
                 new Thread() {
@@ -272,23 +248,11 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         }
     }
 
-    private void displayInfoUpdate(String ip) {
-        if (ip == null) {
-            showWifiDialog();
-        } else {
-            this.myIP = ip;
-        }
-        reloadData();
-    }
-
     private void displayInfoUpdate(ArrayList<String> ips) {
         if (ips == null || ips.isEmpty()) {
             showWifiDialog();
         } else {
-            this.myIPs = new String[ips.size()];
-            for (int i = 0; i < ips.size(); i++) {
-                this.myIPs[i] = ips.get(i);
-            }
+            this.myIPs = ips.toArray(new String[0]);
             this.myIP = ips.get(0);
         }
         reloadData();
@@ -315,7 +279,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.restoreCheckBox.setVisibility(View.INVISIBLE);
     }
 
-    public void desktopSyncComplete(PocketMoneySyncClass pocketMoneySyncClass) {
+    public void desktopSyncComplete() {
         this.spinningWheel.setVisibility(View.INVISIBLE);
         this.progressBar.setVisibility(View.INVISIBLE);
         this.pocketmoneySync = null;
@@ -327,32 +291,21 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         }
     }
 
-    public boolean pocketMoneySyncRequestActionForFirstSyncUDID(PocketMoneySyncClass pmSync, String udid) {
+    public void pocketMoneySyncRequestActionForFirstSyncUDID(String udid) {
         this.firstSyncToUDIDAction = 0;
         this.syncUdid = udid;
         if (this.clientRadioButton.isChecked()) {
-            runOnUiThread(() -> PocketMoneySyncActivity.this.showFirstUdidClientDialog());
+            runOnUiThread(this::showFirstUdidClientDialog);
         } else {
-            runOnUiThread(() -> PocketMoneySyncActivity.this.showFirstUdidServerDialog());
+            runOnUiThread(this::showFirstUdidServerDialog);
         }
-        this.udidFirstActionBlock = 1;
-        while (this.udidFirstActionBlock == 1) {
-            try {
-                Thread.sleep(100);
-            } catch (InterruptedException e) {
-                Log.e(SMMoney.TAG, "InterruptedException in showFirstUdidServerDialogWait", e);
-            }
-        }
-        return this.udidFirstActionBlock == 0;
     }
 
-    public void desktopSyncWithState(final Object object, final int state) {
-        runOnUiThread(() -> PocketMoneySyncActivity.this.desktopSyncWithStateMain(object, state));
+    public void desktopSyncWithState(final int state) {
+        runOnUiThread(() -> PocketMoneySyncActivity.this.desktopSyncWithStateMain(state));
     }
 
-    private void desktopSyncWithStateMain(Object object, int state) {
-        int i = 18;
-        int i2 = 15;
+    private void desktopSyncWithStateMain(int state) {
         String status = this.statusTextView.getText().toString();
         boolean isClient = this.clientRadioButton.isChecked();
         switch (state) {
@@ -398,30 +351,18 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                 break;
             case Enums.kDesktopSyncStateSentSyncVersion /*10*/:
                 status = Locales.kLOC_DESKTOPSYNC_SENTSYNCVERSION;
-                ProgressBar progressBar = this.progressBar;
-                if (isClient) {
-                    i2 = 20;
-                }
-                progressBar.setProgress(i2);
+                this.progressBar.setProgress(isClient ? 20 : 15);
                 break;
             case Enums.kDesktopSyncStateReceivingSyncVersion /*13*/:
                 status = Locales.kLOC_DESKTOPSYNC_RECEIVINGSYNCVERSION;
                 break;
             case Enums.kDesktopSyncStateSyncVersionReceived /*14*/:
                 status = Locales.kLOC_DESKTOPSYNC_RECEIVEDSYNCVERSION;
-                ProgressBar progressBar2 = this.progressBar;
-                if (!isClient) {
-                    i2 = 18;
-                }
-                progressBar2.setProgress(i2);
+                this.progressBar.setProgress(isClient ? 15 : 18);
                 break;
             case Enums.kDesktopSyncStateSyncVersionProcessed /*16*/:
                 status = Locales.kLOC_DESKTOPSYNC_SYNCVERSIONPROCESSED;
-                ProgressBar progressBar3 = this.progressBar;
-                if (!isClient) {
-                    i = 20;
-                }
-                progressBar3.setProgress(i);
+                this.progressBar.setProgress(isClient ? 18 : 20);
                 break;
             case Enums.kDesktopSyncStateSendingUDID /*17*/:
                 status = Locales.kLOC_DESKTOPSYNC_SENDINGUDID;
@@ -509,6 +450,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         CharSequence[] items = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_RESTOREFROMSERVER, Locales.kLOC_DESKTOPSYNC_SYNC, Locales.kLOC_GENERAL_CANCEL};
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
+                .setCancelable(false)
                 .setItems(items, (dialog, item) -> {
                     switch (item) {
                         case 0 /*0*/:
@@ -522,7 +464,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                             });
                             ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, which) -> {
                                 PocketMoneySyncActivity.this.stopSyncing();
-                                PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
+                                PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(-1);
                             });
                             ab.create().show();
                             return;
@@ -532,7 +474,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                         case 2 /*2*/:
                             PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
                             PocketMoneySyncActivity.this.stopSyncing();
-                            PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
+                            PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(-1);
                             return;
                     }
                     dialog.dismiss();
@@ -544,6 +486,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         CharSequence[] items2 = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_SENDDATA, Locales.kLOC_GENERAL_CANCEL};
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
+                .setCancelable(false)
                 .setItems(items2, (dialog, item) -> {
                     switch (item) {
                         case 0 /*0*/:
@@ -552,7 +495,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                         case 1 /*1*/:
                             PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionNone/*0*/;
                             PocketMoneySyncActivity.this.pocketmoneySync.reset();
-                            PocketMoneySyncActivity.this.udidFirstActionBlock = -1;
+                            PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(-1);
                             return;
                     }
                     dialog.dismiss();
@@ -578,20 +521,6 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show();
     }
 
-    public void showPurchaseDialog() {
-        if (SMMoney.isLiteVersion()) {
-            new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server is not available in the Lite version").setNegativeButton("OK", (dialog, which) -> {
-                PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
-                dialog.dismiss();
-            }).show();
-            return;
-        }
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("SMMoney Sync Server").setMessage("SMMoney Sync Server allows you to easily sync to other mobile devices.\nWould you like to buy it?").setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> dialog.dismiss()).setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, which) -> {
-            PocketMoneySyncActivity.this.clientRadioButton.setChecked(true);
-            dialog.dismiss();
-        }).show();
-    }
-
     public void showRepeatingWarningDialog() {
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS).setMessage(Locales.kLOC_REPEATING_TRANSACTIONS_DISABLED).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
@@ -611,26 +540,12 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             Enumeration<InetAddress> enumIpAddr = en.nextElement().getInetAddresses();
             while (enumIpAddr.hasMoreElements()) {
                 InetAddress inetAddress = enumIpAddr.nextElement();
-                if (!inetAddress.isLoopbackAddress() && inetAddress.getClass().equals(Inet4Address.class)) {
+                if (!inetAddress.isLoopbackAddress() && inetAddress instanceof Inet4Address) {
                     ips.add(inetAddress.getHostAddress());
                 }
             }
         }
         return ips;
-    }
-
-    public static String getLocalIpAddress() throws SocketException {
-        Enumeration<NetworkInterface> en = NetworkInterface.getNetworkInterfaces();
-        while (en.hasMoreElements()) {
-            Enumeration<InetAddress> enumIpAddr = en.nextElement().getInetAddresses();
-            while (enumIpAddr.hasMoreElements()) {
-                InetAddress inetAddress = enumIpAddr.nextElement();
-                if (!inetAddress.isLoopbackAddress() && inetAddress.getClass().equals(Inet4Address.class)) {
-                    return inetAddress.getHostAddress();
-                }
-            }
-        }
-        return null;
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {

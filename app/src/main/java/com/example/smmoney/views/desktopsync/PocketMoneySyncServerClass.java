@@ -5,6 +5,7 @@ import android.util.Log;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.Enums;
+import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
@@ -36,13 +37,15 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
     private ArrayList<AccountClass> accounts;
     private String currentElementValue;
 
-    boolean startServer() {
+    void startServer() {
         if (this.listeningSocket != null) {
             Log.i(SMMoney.TAG, "server already started");
-            return false;
+            return;
         }
         try {
-            this.listeningSocket = new ServerSocket(this.port);
+            this.listeningSocket = new ServerSocket();
+            this.listeningSocket.setReuseAddress(true);
+            this.listeningSocket.bind(new java.net.InetSocketAddress(this.port));
         } catch (IOException e) {
             Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in startServer (ServerSocket)", e);
         }
@@ -63,7 +66,11 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                             PocketMoneySyncServerClass.this.delegate.getClass();
                             pocketMoneySyncActivity.showOpenConnectionDialog();
                         } catch (SocketException | InterruptedIOException e) {
-                            Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: SocketException/InterruptedIOException in startServer", e);
+                            if (PocketMoneySyncServerClass.this.listeningSocket == null || PocketMoneySyncServerClass.this.listeningSocket.isClosed()) {
+                                Log.i(SMMoney.TAG, "PocketMoneySyncServerClass: ServerSocket closed normally.");
+                            } else {
+                                Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: SocketException/InterruptedIOException in startServer", e);
+                            }
                         } catch (IOException e3) {
                             Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in startServer (Thread)", e3);
                             Database.sqlite3_rollback();
@@ -76,7 +83,6 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
         }.start();
         this.restoreFromServer = false;
         setCurrentState(7);
-        return true;
     }
 
     private void stopServer() {
@@ -108,6 +114,13 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
     private void processStateLoop() {
         while (true) {
             Log.i("PMSYNCSTATETAG", "server state: " + this.currentState);
+            if (this.asyncSocket == null || this.asyncSocket.isClosed()) {
+                Log.w(SMMoney.TAG, "PocketMoneySyncServerClass: Socket closed/null, exiting state loop.");
+                if (this.currentState != Enums.kDesktopSyncStateDisconnected && this.currentState != Enums.kDesktopSyncStateError) {
+                    reset();
+                }
+                return;
+            }
             switch (this.currentState) {
                 case Enums.kDesktopSyncStateClientConnected /*4*/:
                     sendSyncVersion();
@@ -125,10 +138,9 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     getSyncVersion();
                     break;
                 case Enums.kDesktopSyncStateSyncVersionReceived /*14*/:
-                    if (!processSyncVersion()) {
-                        break;
+                    if (processSyncVersion()) {
+                        sendUDID();
                     }
-                    sendUDID();
                     break;
                 case Enums.kDesktopSyncStateSentUDID /*18*/:
                     getRecentChangesHeader();
@@ -137,10 +149,9 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     getUDID();
                     break;
                 case Enums.kDesktopSyncStateUDIDReceived /*22*/:
-                    if (!processUDID()) {
-                        break;
+                    if (processUDID()) {
+                        sendRecentChanges();
                     }
-                    sendRecentChanges();
                     break;
                 case Enums.kDesktopSyncStateSendPhotos /*30*/:
                     if (this.imageSentCounter >= this.imageFilenames.size()) {
@@ -157,7 +168,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     getPhotos();
                     break;
                 case Enums.kDesktopSyncStatePhotoReceived /*36*/:
-                    if (!processPhotos()) {
+                    if (processPhotosFailed()) {
                         setCurrentState(Enums.kDesktopSyncStateUDIDReceived/*22*/);
                     } else {
                         sendPhotoACK();
@@ -170,12 +181,12 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     getPhotoACK();
                     break;
                 case Enums.kDesktopSyncStatePhotoACKReceived /*43*/:
-                    if (!processPhotoACK()) {
+                    if (processPhotoACKFailed()) {
                         Database.sqlite3_rollback();
                         reset();
-                        break;
+                    } else {
+                        setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
                     }
-                    setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
                     break;
                 case Enums.kDesktopSyncStateSentRecentChanges /*47*/:
                     getACKHeader();
@@ -187,10 +198,10 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     if (!processRecentChanges()) {
                         setCurrentState(Enums.kDesktopSyncStateError/*69*/);
                         reset();
-                        break;
+                    } else {
+                        setCurrentState(Enums.kDesktopSyncStateRecentChangesProcessed/*53*/);
+                        sendACK();
                     }
-                    setCurrentState(Enums.kDesktopSyncStateRecentChangesProcessed/*53*/);
-                    sendACK();
                     break;
                 case Enums.kDesktopSyncStateSentACK /*55*/:
                     if (this.syncVersion != 1) {
@@ -204,20 +215,22 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
                     break;
                 case Enums.kDesktopSyncStateACKReceived /*59*/:
                     processACK();
-                    if (this.syncVersion != 1) {
-                        setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
-                        break;
-                    }
                     if (this.currentState == Enums.kDesktopSyncStateACKProcessed/*61*/) {
+                        if (this.syncVersion != 1) {
+                            setCurrentState(Enums.kDesktopSyncStateSendPhotos/*30*/);
+                            break;
+                        }
                         Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
                         Database.sqlite3_commit();
+                        disconnect();
+                    } else {
+                        reset();
                     }
-                    reset();
                     break;
                 case Enums.kDesktopSyncStateSentTheEnd /*65*/:
                     Database.setLastSyncTime(System.currentTimeMillis() / 1000, this.udid);
                     Database.sqlite3_commit();
-                    reset();
+                    disconnect();
                     break;
                 case Enums.kDesktopSyncStateDisconnecting /*66*/:
                 case Enums.kDesktopSyncStateDisconnected /*67*/:
@@ -232,12 +245,16 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
         try {
             byte[] buff = new byte["RESTORE".length()];
             FileInputStream fi = new FileInputStream(new File(SMMoney.getTempFile()).getAbsolutePath());
-            fi.read(buff, 0, "RESTORE".length());
+            int bytesRead = fi.read(buff, 0, "RESTORE".length());
             fi.close();
-            String sData = new String(buff, StandardCharsets.UTF_8);
-            this.restoreFromServer = sData.startsWith("RESTORE");
-            if (sData.startsWith("FAIL")) {
-                return false;
+            if (bytesRead > 0) {
+                String sData = new String(buff, 0, bytesRead, StandardCharsets.UTF_8);
+                this.restoreFromServer = sData.startsWith("RESTORE");
+                if (sData.startsWith("FAIL")) {
+                    return false;
+                }
+            } else {
+                this.restoreFromServer = false;
             }
         } catch (IOException e) {
             Log.e(SMMoney.TAG, "PocketMoneySyncServerClass: IOException in checkForRestoreAndIsFail", e);
@@ -250,7 +267,14 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
             if (!checkForRestoreAndIsFail()) {
                 return false;
             }
-            BufferedInputStream fi = new BufferedInputStream(new FileInputStream(new File(SMMoney.getTempFile()).getAbsolutePath()));
+            if (this.restoreFromServer) {
+                return true;
+            }
+            File tempFile = new File(SMMoney.getTempFile());
+            if (!tempFile.exists() || tempFile.length() == 0) {
+                return false;
+            }
+            BufferedInputStream fi = new BufferedInputStream(new FileInputStream(tempFile.getAbsolutePath()));
             XMLReader xr = SAXParserFactory.newInstance().newSAXParser().getXMLReader();
             InputSource is = new InputSource(fi);
             xr.setContentHandler(this);
@@ -269,6 +293,17 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
     }
 
     public void startElement(String namespaceURI, String localName, String qName, Attributes atts) {
+        if (localName.equals("SMMoney")) {
+            String multCurr = atts.getValue("MULTIPLE_CURRENCIES");
+            if (multCurr != null && Boolean.parseBoolean(multCurr)) {
+                Prefs.setPref(Prefs.MULTIPLECURRENCIES, true);
+                Database.setMultipleCurrencies(true);
+            }
+            String updExch = atts.getValue("UPDATE_EXCHANGE_RATES");
+            if (updExch != null && Boolean.parseBoolean(updExch)) {
+                Prefs.setPref(Prefs.UPDATEEXCHANGERATES, true);
+            }
+        }
         if (localName.equals(AccountClass.XML_RECORDTAG_ACCOUNT) || localName.equals(TransactionClass.XML_RECORDTAG_TRANSACTION) || localName.equals(CategoryClass.XML_RECORDTAG_CATEGORY) || localName.equals(PayeeClass.XML_RECORDTAG_PAYEE) || localName.equals(IDClass.XML_RECORDTAG_ID) || localName.equals(ClassNameClass.XML_RECORDTAG_CLASS) || localName.equals(FilterClass.XML_RECORDTAG_FILTER) || localName.equals(RepeatingTransactionClass.XML_RECORDTAG_REPEATINGTRANSACTION) || localName.equals(CategoryBudgetClass.XML_RECORDTAG_CATEGORYBUDGET)) {
             this.currentElementValue = "<" + localName + ">";
         } else if (localName.equals(AccountClass.XML_LISTTAG_ACCOUNTS)) {
@@ -345,7 +380,7 @@ public class PocketMoneySyncServerClass extends PocketMoneySyncClass {
 
     public void characters(char[] ch, int start, int length) {
         if (this.currentElementValue == null) {
-            this.currentElementValue = new String(ch, start, length).trim();
+            this.currentElementValue = new String(ch, start, length);
         } else {
             this.currentElementValue += new String(ch, start, length);
         }

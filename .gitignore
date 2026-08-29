@@ -19,4 +19,7 @@
 .externalNativeBuild
 .cxx
 TODO.md
+/.idea/misc.xml
+/.idea/planningMode.xml
+
 
