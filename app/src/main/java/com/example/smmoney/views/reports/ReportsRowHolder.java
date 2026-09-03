@@ -25,6 +25,7 @@ class ReportsRowHolder {
         int PAYEE_NAME_LENGTH = 20;
         this.expense.setText(this.report.expense.length() > PAYEE_NAME_LENGTH ? this.report.expense.substring(0, 19) : this.report.expense);
         
+        
         this.amount.setText(String.format(Locales.kLOC_REPORT_AMOUNT_FORMAT, 
                 amountString(), 
                 percentString(this.report.percent), 
@@ -35,6 +36,9 @@ class ReportsRowHolder {
     }
 
     private String percentString(double percent) {
+        if (!this.report.checked) {
+            return "-";
+        }
         DecimalFormat formatter = new DecimalFormat();
         formatter.setMaximumFractionDigits(1);
         return formatter.format(percent);

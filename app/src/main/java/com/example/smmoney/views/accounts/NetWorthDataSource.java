@@ -67,6 +67,9 @@ public class NetWorthDataSource implements ChartViewDataSource {
     }
 
     public int numberOfDataPointsInSeries(ChartView chartView, int series) {
+        if (this.chartLiabilities == null) {
+            return 0;
+        }
         return this.chartLiabilities.size();
     }
 

@@ -8,14 +8,14 @@
     android:focusable="true"
     android:orientation="vertical">
 
-    <com.example.smmoney.views.charts.views.ChartPieView
+    <androidx.compose.ui.platform.ComposeView
         android:id="@+id/piechartview"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="250dp"
         android:visibility="gone"
         tools:visibility="gone" />
 
-    <com.example.smmoney.views.charts.views.ChartBarView
+    <androidx.compose.ui.platform.ComposeView
         android:id="@+id/barchartview"
         android:layout_width="match_parent"
         android:layout_height="200dp" />

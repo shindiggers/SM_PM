@@ -33,16 +33,15 @@ import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.charts.items.ReportChartItem;
-import com.example.smmoney.views.charts.views.ChartBarView;
-import com.example.smmoney.views.charts.views.ChartPieView;
-import com.example.smmoney.views.charts.views.ChartView;
+import com.example.smmoney.views.charts.compose.ModernChartsKt;
+import androidx.compose.ui.platform.ComposeView;
 
 
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class ReportsActivity extends PocketMoneyActivity implements ChartViewDelegate, ReportDialog.ReportDialogListner {
+public class ReportsActivity extends PocketMoneyActivity implements ReportDialog.ReportDialogListner {
     public static boolean processData = false;
     private static final int MENU_VIEW = 1;
     private static final int MSG_PROGRESS_FINISH = 0;
@@ -51,12 +50,12 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private ReportsRowAdapter adapter;
     private TextView balanceAmountView;
     private TextView balanceLabelView;
-    private ChartBarView barChartView;
-    private ChartView chartView;
+    private ComposeView barChartView;
+    private ComposeView pieChartView;
+    private View chartView;
     private ReportDataSource datasource;
     private View nextPeriodView;
     private Button periodButton;
-    private ChartPieView pieChartView;
     private View previousPeriodView;
     private PocketMoneyProgressDialog progressDialog = null;
     private final Handler mHandler = new Handler(Looper.getMainLooper()) {
@@ -135,11 +134,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         this.balanceAmountView = findViewById(R.id.balance_amount);
         ((View) this.balanceLabelView.getParent().getParent()).setBackgroundResource(R.drawable.theme_gradient_black);
         this.barChartView = findViewById(R.id.barchartview);
-        this.barChartView.dataSource = this.datasource;
-        this.barChartView.delegate = this;
         this.pieChartView = findViewById(R.id.piechartview);
-        this.pieChartView.dataSource = this.datasource;
-        this.pieChartView.delegate = this;
         ((View) this.nextPeriodView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
@@ -186,9 +181,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     public void reloadData() {
         selectChartView();
         this.periodButton.setText(this.datasource.rangeOfPeriodAsString());
-        if (this.chartView != null) {
-            this.chartView.deselectChunk();
-        }
         processData = true;
         updateProgressBar(0);
         executor.execute(() -> {
@@ -210,8 +202,38 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
     private void reloadDataCallback() {
         this.adapter.setElements(this.datasource.data);
         loadBalanceBar();
-        if (this.chartView != null) {
-            this.chartView.invalidate();
+        updateComposeViews();
+    }
+    
+    private void updateComposeViews() {
+        if (this.datasource.data != null) {
+            java.util.List<ChartItem> chartItems = new java.util.ArrayList<>();
+            for (ReportItem ri : this.datasource.data) {
+                if (ri.checked) {
+                    ReportChartItem rci = new ReportChartItem(ri.amount, ri.expense, ri.color);
+                    rci.reportItem = ri;
+                    rci.percent = ri.percent;
+                    chartItems.add(rci);
+                }
+            }
+            
+            com.example.smmoney.views.charts.compose.ModernChartsKt.setPieChartContent(
+                this.pieChartView,
+                chartItems,
+                chartItem -> {
+                    chartViewSelectedItem(chartItem);
+                    return kotlin.Unit.INSTANCE;
+                }
+            );
+
+            com.example.smmoney.views.charts.compose.ModernChartsKt.setBarChartContent(
+                this.barChartView,
+                chartItems,
+                chartItem -> {
+                    chartViewSelectedItem(chartItem);
+                    return kotlin.Unit.INSTANCE;
+                }
+            );
         }
     }
 
@@ -228,7 +250,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ChartViewDel
         }
     }
 
-    public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
+    public void chartViewSelectedItem(ChartItem chartItem) {
         this.theList.setSelection(this.adapter.getElements().indexOf(((ReportChartItem) chartItem).reportItem));
     }
 

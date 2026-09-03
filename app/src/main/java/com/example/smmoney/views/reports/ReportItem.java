@@ -8,7 +8,7 @@ public class ReportItem {
     public int color;
     public int count;
     public FilterClass filter;
-    String expense;
+    public String expense;
     double percent;
 
     public ReportItem(String anExpense, double anAmount) {
