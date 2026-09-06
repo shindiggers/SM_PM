@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
+
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -166,7 +167,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                         this._filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
                     } else {
-                        this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).get("Filter");
+                        this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).getSerializable("Filter");
                     }
                     if (this._filter != null && this._filter.getAccount() != null && this._filter.getAccount().equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
                         this._filter.setAccount(currentAccount);
@@ -206,7 +207,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
             this._filter = Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter", FilterClass.class);
         } else {
-            this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).get("Filter");
+            this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter");
         }
         // Suppress InflateParams: null is acceptable here as the layout is inflated for setContentView() 
         // and doesn't need to resolve layout parameters against a parent container yet.
@@ -274,7 +275,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 if (position == RecyclerView.NO_POSITION) return;
 
                 TransactionClass transaction = adapter.getElements().get(position);

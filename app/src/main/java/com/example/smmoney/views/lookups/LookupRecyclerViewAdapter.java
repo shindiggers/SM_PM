@@ -111,7 +111,7 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             textView = (TextView) v;
             textView.setOnClickListener(v1 -> {
                 if (listener != null) {
-                    listener.onItemClick(getAdapterPosition());
+                    listener.onItemClick(getBindingAdapterPosition());
                 }
             });
         }
@@ -135,7 +135,7 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             checkedTextView = (CheckedTextView) v;
             checkedTextView.setOnClickListener(v1 -> {
                 if (listener != null) {
-                    listener.onItemClick(getAdapterPosition());
+                    listener.onItemClick(getBindingAdapterPosition());
                 }
             });
         }

@@ -136,7 +136,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
                 @Override
                 public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                    int position = viewHolder.getAdapterPosition();
+                    int position = viewHolder.getBindingAdapterPosition();
                     if (position == RecyclerView.NO_POSITION) return;
 
                     if (direction == ItemTouchHelper.RIGHT) {
@@ -545,10 +545,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             input.requestFocus();
             input.selectAll();
             // Force keyboard via IMM as a secondary measure
-            InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
-            if (imm != null) {
-                imm.showSoftInput(input, InputMethodManager.SHOW_IMPLICIT);
-            }
+            input.requestFocus();
         });
         
         dialog.show();

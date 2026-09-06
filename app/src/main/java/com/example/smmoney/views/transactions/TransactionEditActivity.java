@@ -694,22 +694,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private void selectStartingCell() {
         if (this.transaction != null && this.transaction.getTransactionID() == 0) {
             String thePref = Prefs.getStringPref(Prefs.EDITTRANSACTION_STARTING_FIELD);
-            InputMethodManager mgr = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
 
             if (Locales.kLOC_GENERAL_PAYEE.equals(thePref)) {
-                this.payeeEditText.post(() -> {
-                    this.payeeEditText.requestFocus();
-                    if (mgr != null) {
-                        mgr.showSoftInput(this.payeeEditText, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
+            this.payeeEditText.post(() -> this.payeeEditText.requestFocus());
             } else if (Locales.kLOC_GENERAL_CATEGORY.equals(thePref)) {
-                this.categoryEditText.post(() -> {
-                    this.categoryEditText.requestFocus();
-                    if (mgr != null) {
-                        mgr.showSoftInput(this.categoryEditText, InputMethodManager.SHOW_IMPLICIT);
-                    }
-                });
+            this.categoryEditText.post(() -> this.categoryEditText.requestFocus());
             } else if (Locales.kLOC_GENERAL_AMOUNT.equals(thePref)) {
                 this.amountEditText.post(this::amountAction);
             } else {

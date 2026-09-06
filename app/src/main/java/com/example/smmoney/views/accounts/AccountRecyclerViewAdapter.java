@@ -318,7 +318,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
                         ((AccountsActivity) mContext).reloadBalanceBar();
                         ((AccountsActivity) mContext).reloadCharts();
                     }
-                    notifyItemChanged(getAdapterPosition());
+                    notifyItemChanged(getBindingAdapterPosition());
                 }
             });
 
@@ -355,7 +355,7 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             newtransbutton.setVisibility(View.VISIBLE);
             newtransbutton.setColorFilter(PocketMoneyThemes.currentTintColor());
             
-            if (getAdapterPosition() % 2 == 0) {
+            if (getBindingAdapterPosition() % 2 == 0) {
                 therow.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
             } else {
                 therow.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());

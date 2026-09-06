@@ -114,7 +114,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
             @Override
             public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
-                int position = viewHolder.getAdapterPosition();
+                int position = viewHolder.getBindingAdapterPosition();
                 if (position == RecyclerView.NO_POSITION) return;
 
                 TransactionClass transaction = adapter.getElements().get(position);

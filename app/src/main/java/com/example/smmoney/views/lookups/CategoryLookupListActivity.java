@@ -2,6 +2,7 @@ package com.example.smmoney.views.lookups;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
@@ -9,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowInsets;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.AdapterView.AdapterContextMenuInfo;
 import android.widget.BaseAdapter;
@@ -158,7 +160,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 });
                 alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
+                input.requestFocus();
                 return true;
             case CMENU_DELETE /*3*/:
                 originalString = this.adapter.getItem(info.position);
@@ -181,7 +183,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 });
                 alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
-                ((InputMethodManager) Objects.requireNonNull(getSystemService(INPUT_METHOD_SERVICE))).showSoftInput(input, 1);
+                input.requestFocus();
                 return true;
             default:
                 return super.onContextItemSelected(item);

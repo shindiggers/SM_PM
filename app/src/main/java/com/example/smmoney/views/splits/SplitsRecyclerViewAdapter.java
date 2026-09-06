@@ -117,7 +117,7 @@ public class SplitsRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
             theClass = v.findViewById(R.id.classtextview);
             
             v.setOnClickListener(v1 -> {
-                int pos = getAdapterPosition();
+                int pos = getBindingAdapterPosition();
                 if (pos != RecyclerView.NO_POSITION && context instanceof SplitsActivity) {
                     Intent i = new Intent(context, SplitsEditActivity.class);
                     i.putExtra("Split", items.get(pos));
