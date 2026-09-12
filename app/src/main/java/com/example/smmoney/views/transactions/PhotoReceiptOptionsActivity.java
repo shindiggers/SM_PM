@@ -2,6 +2,7 @@ package com.example.smmoney.views.transactions;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.BitmapFactory.Options;
@@ -82,7 +83,7 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
         }
 
         TextView replaceTextView = findViewById(R.id.replace);
-        replaceTextView.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
+        replaceTextView.setBackgroundTintList(ColorStateList.valueOf(PocketMoneyThemes.toolbarTextColor()));
         replaceTextView.setTextColor(Color.WHITE);
         replaceTextView.setOnClickListener(v -> {
             Intent i = new Intent();
@@ -92,7 +93,7 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
         });
 
         TextView deleteTextView = findViewById(R.id.delete);
-        deleteTextView.setBackgroundResource(PocketMoneyThemes.currentTintToolbarButtonDrawable());
+        deleteTextView.setBackgroundTintList(ColorStateList.valueOf(PocketMoneyThemes.toolbarTextColor()));
         deleteTextView.setTextColor(Color.WHITE);
         deleteTextView.setOnClickListener(v -> {
             AlertDialog.Builder b = new AlertDialog.Builder(PhotoReceiptOptionsActivity.this, PocketMoneyThemes.dialogTheme());

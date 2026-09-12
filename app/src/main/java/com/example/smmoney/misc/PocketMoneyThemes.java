@@ -199,8 +199,8 @@ public class PocketMoneyThemes {
 
     public static int highlightColor() {
         return switch (getTheme()) {
-            case kThemeBlue -> getColor(R.color.blue_theme_tint_color);
-            case kThemeGreen -> getColor(R.color.green_theme_tint_color);
+            case kThemeBlue -> getColor(R.color.blue_theme_highlighted_color);
+            case kThemeGreen -> getColor(R.color.green_theme_highlighted_color);
             case kThemePurple -> getColor(R.color.purple_theme_highlighted_color);
             case kThemeGray -> getColor(R.color.gray_theme_highlighted_color);
             case kThemeCoffee -> getColor(R.color.coffee_theme_highlighted_color);
@@ -214,17 +214,6 @@ public class PocketMoneyThemes {
         return switch (getTheme()) {
             case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby,kThemeWhite -> getColor(R.color.white_theme_text);
             default -> getColor(R.color.black_theme_text);
-        };
-    }
-
-    public static int currentTintToolbarButtonDrawable() {
-        return switch (getTheme()) {
-            case kThemeBlue -> R.drawable.theme_toolbar_selector_blue;
-            case kThemeGreen -> R.drawable.theme_toolbar_selector_green;
-            case kThemePurple -> R.drawable.theme_toolbar_selector_purple;
-            case kThemeGray -> R.drawable.theme_toolbar_selector_gray;
-            case kThemeCoffee -> R.drawable.theme_toolbar_selector_coffee;
-            default -> R.drawable.theme_toolbar_selector_black;
         };
     }
 

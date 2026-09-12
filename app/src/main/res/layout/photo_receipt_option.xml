@@ -17,41 +17,26 @@
     <LinearLayout
         android:id="@+id/bottom_tool_bar"
         android:layout_width="match_parent"
-        android:layout_height="48dp"
+        android:layout_height="wrap_content"
         android:background="#000"
         android:gravity="center"
+        android:padding="8dp"
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/replace"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="24dp"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="6dp"
+            android:layout_marginEnd="16dp"
             android:text="@string/kLOC_GENERAL_REPLACE"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="normal" />
+            style="@style/Widget.MaterialComponents.Button" />
 
-        <TextView
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackground"
-            android:clickable="true"
-            android:focusable="true"
-            android:paddingStart="16dp"
-            android:paddingTop="6dp"
-            android:paddingEnd="16dp"
-            android:paddingBottom="6dp"
             android:text="@string/kLOC_GENERAL_DELETE"
-            android:textAppearance="?android:textAppearanceMedium"
-            android:textStyle="normal" />
+            style="@style/Widget.MaterialComponents.Button" />
 
     </LinearLayout>
 

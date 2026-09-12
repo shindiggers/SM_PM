@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/theme_gradient_blue_toolbar_button" android:state_window_focused="false" />
-    <item android:drawable="@drawable/theme_toolbar_button_selected" android:state_focused="true" android:state_pressed="true" />
-    <item android:drawable="@drawable/theme_toolbar_button_selected" android:state_focused="false" android:state_pressed="true" />
-    <item android:drawable="@drawable/theme_gradient_blue_toolbar_button_focused" android:state_focused="true" />
-</selector>

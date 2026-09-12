@@ -175,6 +175,7 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
                 R.drawable.ic_bhd,
                 R.drawable.ic_bnp_paribas,
                 R.drawable.ic_cibc,
+                R.drawable.ic_capital_one,
                 R.drawable.ic_cic,
                 R.drawable.ic_citi,
                 R.drawable.ic_commerz_bank,
