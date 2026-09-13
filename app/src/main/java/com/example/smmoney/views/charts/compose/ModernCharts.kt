@@ -26,10 +26,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
-import com.example.smmoney.misc.CurrencyExt
-import com.example.smmoney.misc.Prefs
 import com.example.smmoney.views.charts.items.ChartItem
 import com.example.smmoney.views.charts.items.ReportChartItem
 import kotlin.math.PI
@@ -191,7 +188,6 @@ fun ModernPieChart(
                 if (labels.size == 1) return listOf(labels.first().idealY)
 
                 val padding = 30f
-                val canvasTop = padding
                 val canvasBottom = size.height - padding
                 val adjustedYs = MutableList(labels.size) { 0f }
 
@@ -201,14 +197,14 @@ fun ModernPieChart(
                 val highestLabel = if (isRightSide) labels.first() else labels.last()
                 val lowestLabel = if (isRightSide) labels.last() else labels.first()
 
-                var topPin = maxOf(canvasTop, highestLabel.idealY - (labels.size * 5f)) // Give it a slight stretch up
+                var topPin = maxOf(padding, highestLabel.idealY - (labels.size * 5f)) // Give it a slight stretch up
                 var bottomPin = minOf(canvasBottom, lowestLabel.idealY + (labels.size * 5f)) // Give it a slight stretch down
                 
                 // Ensure we have at least minimum spacing available overall
                 val requiredTotalHeight = (labels.size - 1) * minLabelSpacing
                 if (bottomPin - topPin < requiredTotalHeight) {
                     val expand = (requiredTotalHeight - (bottomPin - topPin)) / 2f
-                    topPin = maxOf(canvasTop, topPin - expand)
+                    topPin = maxOf(padding, topPin - expand)
                     bottomPin = minOf(canvasBottom, bottomPin + expand)
                 }
 
@@ -263,8 +259,8 @@ fun ModernPieChart(
                         }
                     }
                     // If nudging pushed us past top, push everything down
-                    if (adjustedYs.last() < canvasTop) {
-                        val overflow = canvasTop - adjustedYs.last()
+                    if (adjustedYs.last() < padding) {
+                        val overflow = padding - adjustedYs.last()
                         for (i in adjustedYs.indices) {
                             adjustedYs[i] += overflow
                         }
@@ -324,7 +320,7 @@ fun ModernPieChart(
                         center.x - radius - 60f 
                     }
                     
-                    // Bezier Curve Control points
+                    // Bézier Curve Control points
                     // We draw a short straight line out radially, then curve to the target Y/X
                     val radialExitX = center.x + (itemRadius + 20f) * cos(angleInRadians)
                     val radialExitY = center.y + (itemRadius + 20f) * sin(angleInRadians)
@@ -333,7 +329,7 @@ fun ModernPieChart(
                         moveTo(lineStart.x, lineStart.y)
                         lineTo(radialExitX, radialExitY) // Straight line exiting the pie radially
                         
-                        // Bezier curve to the column - pull controls further out since column is further
+                        // Bézier curve to the column - pull controls further out since column is further
                         cubicTo(
                             x1 = radialExitX + if (isRightSide) 40f else -40f, y1 = radialExitY, 
                             x2 = columnX - if (isRightSide) 40f else -40f, y2 = targetY,       
@@ -460,18 +456,21 @@ fun ModernBarChart(
                 val isSelected = index == selectedIndex
                 val color = if (isSelected) Color(item.color).copy(alpha = 0.7f) else Color(item.color)
 
+                val maxWidthPx = 50.dp.toPx()
+                
                 drawRect(
                     color = color,
                     topLeft = Offset(currentX, size.height - barHeight),
-                    size = Size(Math.min(barWidth, with(density) { 50.dp.toPx() }), barHeight)
+                    size = Size(barWidth.coerceAtMost(maxWidthPx), barHeight)
                 )
 
                 // Re-draw rounded rect on top for just the top corners
+                val cornerRadius = (barWidth.coerceAtMost(maxWidthPx)) / 4
                 drawRoundRect(
                     color = color,
                     topLeft = Offset(currentX, size.height - barHeight),
-                    size = Size(Math.min(barWidth, with(density) { 50.dp.toPx() }), barHeight),
-                    cornerRadius = CornerRadius(Math.min(barWidth, with(density) { 50.dp.toPx() }) / 4, Math.min(barWidth, with(density) { 50.dp.toPx() }) / 4)
+                    size = Size(barWidth.coerceAtMost(maxWidthPx), barHeight),
+                    cornerRadius = CornerRadius(cornerRadius, cornerRadius)
                 )
 
                 // Optional: Draw X-axis labels
