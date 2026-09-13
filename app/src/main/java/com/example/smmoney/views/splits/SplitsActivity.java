@@ -303,7 +303,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_NEW, 0, Locales.kLOC_SPLITS_NEW)
                 .setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 

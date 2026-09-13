@@ -73,9 +73,9 @@ public class NoteEditor extends PocketMoneyActivity {
         super.onCreateOptionsMenu(menu);
 
         MenuItem menuItem = menu.add(0, SAVE_ID, 0, "Save");
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         menuItem = menu.add(0, DELETE_ID, 0, "Cancel");
-        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menuItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         return true;
     }

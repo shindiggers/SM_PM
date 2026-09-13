@@ -416,13 +416,13 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
     public boolean onCreateOptionsMenu(Menu menu) {
         if (this.isMultiSelect) {
-            menu.add(0, 2 /* MENU_DONE */, 0, Locales.kLOC_GENERAL_DONE).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+            menu.add(0, 2 /* MENU_DONE */, 0, Locales.kLOC_GENERAL_DONE).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
         if (this.currentType != PAYEE_LOOKUP && this.currentType != CATEGORY_LOOKUP && this.currentType != CLASS_LOOKUP && this.currentType != ID_LOOKUP) {
             return this.isMultiSelect;
         }
         int MENU_ADD = 1;
-        menu.add(0, MENU_ADD, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_ADD, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 

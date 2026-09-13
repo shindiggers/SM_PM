@@ -725,9 +725,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem item = menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW);
         item.setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS/*2*/);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM/*1*/);
         
-        menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         
         SubMenu toolsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_TOOLS);
         toolsMenu.setIcon(R.drawable.icon);

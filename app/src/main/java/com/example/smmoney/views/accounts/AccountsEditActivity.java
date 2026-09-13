@@ -122,7 +122,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public boolean onCreateOptionsMenu(Menu menu) {
         menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE)
                 .setIcon(R.drawable.ic_save_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 

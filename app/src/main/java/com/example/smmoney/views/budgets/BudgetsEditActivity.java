@@ -242,7 +242,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
         item.setIcon(R.drawable.ic_save_white_24dp);
-        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
