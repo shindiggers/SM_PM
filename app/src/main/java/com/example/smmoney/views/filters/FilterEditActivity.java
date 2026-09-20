@@ -173,16 +173,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         findViewById(R.id.filter_edit_root).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         
-        // ArrayList<View> theViews = new ArrayList<>();
-        // theViews.add(findViewById(R.id.filter_name_row));
-        // theViews.add(findViewById(R.id.transaction_type_row));
-        // theViews.add(findViewById(R.id.accounts_row));
-        // theViews.add(findViewById(R.id.dates_row));
-        // theViews.add(findViewById(R.id.payees_row));
-        // theViews.add(findViewById(R.id.ids_row));
-        // theViews.add(findViewById(R.id.cleared_row));
-        // theViews.add(findViewById(R.id.categories_row));
-        // theViews.add(findViewById(R.id.classes_row));
 
         int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
 

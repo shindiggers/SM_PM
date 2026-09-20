@@ -54,7 +54,7 @@ public class BudgetsHeaderHolder extends RelativeLayout {
         int backgroundColor = PocketMoneyThemes.actionBarColor();
         setBackgroundColor(backgroundColor);
         
-        int textColor = PocketMoneyThemes.headerTextColor();
+        int textColor = PocketMoneyThemes.balanceBarTextViewColor();
         this.labelTextView.setTextColor(textColor);
         this.valueTextView.setTextColor(textColor);
         

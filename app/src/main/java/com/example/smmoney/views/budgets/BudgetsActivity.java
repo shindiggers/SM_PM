@@ -32,6 +32,8 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -46,6 +48,9 @@ import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
+import com.example.smmoney.views.accounts.AccountsActivity;
+import com.example.smmoney.views.charts.ChartsActivity;
+import com.example.smmoney.views.reports.ReportsPlaceholderActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.button.MaterialButton;
 
@@ -133,7 +138,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         
         this.startDateDisplay = layout.findViewById(R.id.start_date_display);
         OnClickListener startDateListener = v -> {
-            Intent anIntent = new Intent(BudgetsActivity.this, com.example.smmoney.views.EndOnDateActivity.class);
+            Intent anIntent = new Intent(BudgetsActivity.this, EndOnDateActivity.class);
             anIntent.putExtra("Date", BudgetsActivity.this.startDateDisplay.getText().toString());
             anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
             startDatePickerLauncher.launch(anIntent);
@@ -174,26 +179,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.bottomNav.setBackgroundColor(PocketMoneyThemes.bottomNavBackgroundColor());
         this.bottomNav.setItemIconTintList(PocketMoneyThemes.bottomNavColorStateList());
         this.bottomNav.setItemTextColor(PocketMoneyThemes.bottomNavColorStateList());
-        this.bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_accounts) {
-                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.accounts.AccountsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
-                return true;
-            } else if (itemId == R.id.nav_reports) {
-                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
-                return true;
-            } else if (itemId == R.id.nav_charts) {
-                Intent intent = new Intent(BudgetsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
-                return true;
-            }
-            return itemId == R.id.nav_budgets;
-        });
+        this.bottomNav.setOnItemSelectedListener(item -> handleBottomNavigation(item.getItemId()));
 
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
@@ -204,6 +190,29 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.periodButton.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.periodButton.setBackgroundTintList(ColorStateList.valueOf(PocketMoneyThemes.highlightColor()));
         this.periodButton.setCornerRadius((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.0f, getResources().getDisplayMetrics()));
+    }
+
+    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* navigation IDs
+    // as 0 during static analysis, falsely flagging subsequent branches in the if-else chain as always false.
+    @SuppressWarnings("ConstantValue")
+    private boolean handleBottomNavigation(int itemId) {
+        if (itemId == R.id.nav_accounts) {
+            Intent intent = new Intent(BudgetsActivity.this, AccountsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_left, R.anim.slide_out_right).toBundle());
+            return true;
+        } else if (itemId == R.id.nav_reports) {
+            Intent intent = new Intent(BudgetsActivity.this, ReportsPlaceholderActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+            return true;
+        } else if (itemId == R.id.nav_charts) {
+            Intent intent = new Intent(BudgetsActivity.this, ChartsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+            return true;
+        }
+        return itemId == R.id.nav_budgets;
     }
 
     private boolean showCents() {
@@ -229,7 +238,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         }
         
         String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(savings)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(savings));
-        int textColor = PocketMoneyThemes.headerTextColor();
+        int textColor = PocketMoneyThemes.balanceBarTextViewColor();
         
         if (savings < 0.0d) {
             this.balanceBar.balanceAmountTextView.setText(String.format("(%s)", text));
@@ -412,6 +421,9 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 .show();
     }
 
+    // Suppress ConstantValue: IDE data-flow analysis evaluates R.id.sort_* constants as 0 during static analysis,
+    // falsely treating subsequent if-conditions as always false.
+    @SuppressWarnings("ConstantValue")
     private int getSortTypeFromId(int selectedPropertyId) {
         if (selectedPropertyId == R.id.sort_actual) return Enums.kBudgetsSortTypeActual;
         if (selectedPropertyId == R.id.sort_budget) return Enums.kBudgetsSortTypeBudgeted;
@@ -436,7 +448,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             case CMENU_EDIT -> {
                 Intent anIntent = new Intent(this, BudgetsEditActivity.class);
                 if (b != null) {
-                    CategoryClass category = androidx.core.os.BundleCompat.getSerializable(b, "Category", CategoryClass.class);
+                    CategoryClass category = BundleCompat.getSerializable(b, "Category", CategoryClass.class);
                     anIntent.putExtra("Category", category);
                 }
                 editLauncher.launch(anIntent);
@@ -444,7 +456,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             }
             case CMENU_DELETE -> {
                 if (b != null) {
-                    CategoryClass category = androidx.core.os.BundleCompat.getSerializable(b, "Category", CategoryClass.class);
+                    CategoryClass category = BundleCompat.getSerializable(b, "Category", CategoryClass.class);
                     deleteBudget(category);
                 }
                 reloadData();

@@ -191,60 +191,47 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setVerticalScrollBarEnabled(false);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        View aView = findViewById(R.id.row_frequency);
         ImageView frequencyDateIcon = findViewById(R.id.frequency_ic_calendar);
         frequencyDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.frequency_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.frequencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         
-        aView = findViewById(R.id.row_every);
         ((TextView) findViewById(R.id.every_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.everyTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         
-        aView = findViewById(R.id.row_endon);
         ImageView theDateIcon = findViewById(R.id.repeting_edit_ic_calendar);
         theDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.end_on_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         
-        aView = findViewById(R.id.row_notify);
         ((TextView) findViewById(R.id.notifylabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         
         this.notifyDaysInAdvanceTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        aView = findViewById(R.id.row_daysinadvance);
         ((TextView) findViewById(R.id.daysinadvancelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         ((TextView) findViewById(R.id.daysinadvancesuffixtextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         
-        aView = findViewById(R.id.row_repeaton);
         this.repeatOnTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_sunday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_sunday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.sundayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_monday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_monday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.mondayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_tuesday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_tuesday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.tuesdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_wednesday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_wednesday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.wednesdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_thursday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_thursday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.thursdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_friday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_friday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.fridayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
-        aView = findViewById(R.id.row_saturday);
-        aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+        findViewById(R.id.row_saturday).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.saturdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         
         this.suffixTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());

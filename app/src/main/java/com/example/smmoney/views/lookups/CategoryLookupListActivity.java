@@ -64,9 +64,9 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
             if (isChecked && !CategoryLookupListActivity.this.progUpdate) {
                 CategoryLookupListActivity.this.progUpdate = true;
-                if (checkedId == R.id.payeebutton) {
+                if (checkedId == payeeButton.getId()) {
                     CategoryLookupListActivity.this.currentType = 2;
-                } else if (checkedId == R.id.allbutton) {
+                } else if (checkedId == allButton.getId()) {
                     CategoryLookupListActivity.this.currentType = 1;
                 }
                 CategoryLookupListActivity.this.progUpdate = false;

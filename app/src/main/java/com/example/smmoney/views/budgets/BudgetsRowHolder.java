@@ -46,7 +46,7 @@ public class BudgetsRowHolder {
             view.setText(text);
         }
         // Always use high-contrast text color as requested
-        view.setTextColor(PocketMoneyThemes.headerTextColor());
+        view.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
     public void setCategory(CategoryClass category, boolean isUnbudgeted) {
@@ -75,7 +75,7 @@ public class BudgetsRowHolder {
         // 3. Update UI Text
         formatAmount(this.spentTextView, spent);
         this.categoryTextView.setText(category.getCategory());
-        this.categoryTextView.setTextColor(PocketMoneyThemes.headerTextColor());
+        this.categoryTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         formatAmount(this.budgetTextView, budget);
         
         // 4. Update Variance Label
@@ -85,7 +85,7 @@ public class BudgetsRowHolder {
         } else {
             this.varianceTextView.setText(String.format(Locales.kLOC_FORMAT_AHEAD, varText));
         }
-        this.varianceTextView.setTextColor(PocketMoneyThemes.headerTextColor());
+        this.varianceTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
 
         updateBars(spent, budget);
     }

@@ -6,9 +6,11 @@ import android.app.DatePickerDialog;
 import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -164,7 +166,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             result -> {
                 if (result.getResultCode() == 1 && result.getData() != null) {
                     String currentAccount = this._filter.getAccount();
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
                         this._filter = result.getData().getSerializableExtra("Filter", FilterClass.class);
                     } else {
                         this._filter = (FilterClass) Objects.requireNonNull(result.getData().getExtras()).getSerializable("Filter");
@@ -204,7 +206,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         super.onCreate(savedInstanceState);
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "TransactionsActivity:DoNotDimScreen");
         this.context = this;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             this._filter = Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter", FilterClass.class);
         } else {
             this._filter = (FilterClass) Objects.requireNonNull(getIntent().getExtras()).getSerializable("Filter");
@@ -370,9 +372,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         group.addOnButtonCheckedListener(getRadioChangedListener());
         
         // Theme the buttons
-        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
-        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
-        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        ColorStateList strokeTint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
         
         pendingButton.setBackgroundTintList(bgTint);
         pendingButton.setTextColor(textTint);
@@ -428,7 +430,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         // Theme the dialog
         int labelColor = PocketMoneyThemes.fieldLabelColor();
         int textColor = PocketMoneyThemes.primaryCellTextColor();
-        android.content.res.ColorStateList tint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        ColorStateList tint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
 
         ((TextView) dialogView.findViewById(R.id.sort_by_label)).setTextColor(labelColor);
         ((TextView) dialogView.findViewById(R.id.order_label)).setTextColor(labelColor);
@@ -482,6 +484,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 .show();
     }
 
+    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* resource IDs
+    // as 0 during static analysis, falsely flagging subsequent equality checks in if-else chains as always false.
+    @SuppressWarnings("ConstantValue")
     private String getSortTypeFromId(int selectedPropertyId) {
         if (selectedPropertyId == R.id.sort_amount) return Locales.kLOC_GENERAL_AMOUNT;
         if (selectedPropertyId == R.id.sort_payee) return Locales.kLOC_GENERAL_PAYEE;
@@ -969,7 +974,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                             try {
                                 TransactionsActivity.this.wakeLock.acquire(10 * 60 * 1000L /*10 minutes*/);
                             } catch (Exception e) {
-                                Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_UPDATE) acquiring wakeLock", e);
+                                Log.e(SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_UPDATE) acquiring wakeLock", e);
                             }
                         }
                         if (TransactionsActivity.this.progressDialog != null && TransactionsActivity.this.progressDialog.isShowing()) {
@@ -985,13 +990,13 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         try {
                             TransactionsActivity.this.wakeLock.release();
                         } catch (Exception e2) {
-                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) releasing wakeLock", e2);
+                            Log.e(SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) releasing wakeLock", e2);
                         }
                         try {
                             TransactionsActivity.this.progressDialog.dismiss();
                             TransactionsActivity.this.progressDialog = null;
                         } catch (Exception e3) {
-                            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) dismissing progressDialog", e3);
+                            Log.e(SMMoney.TAG, "Exception in handleMessage (MSG_PROGRESS_FINISH) dismissing progressDialog", e3);
                         }
                         if (TransactionsActivity.this.progressDialog != null) {
                             Log.i("*** MSG_PROGRESS_FINISH", "Dismissing");
@@ -1061,6 +1066,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return true;
     }
 
+    // Suppress ConstantValue: IDE data-flow analysis evaluates R.id.* values as 0 during static analysis,
+    // falsely flagging subsequent equality branches as unreachable/always false.
+    @SuppressWarnings("ConstantValue")
     private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
         return (group, checkedId, isChecked) -> {
             if (isChecked) {

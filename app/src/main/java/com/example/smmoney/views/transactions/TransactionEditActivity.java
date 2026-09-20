@@ -5,6 +5,10 @@ import android.app.NotificationManager;
 import android.app.TimePickerDialog;
 import android.app.TimePickerDialog.OnTimeSetListener;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -13,6 +17,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.format.DateFormat;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +41,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog.Builder;
 import androidx.core.content.FileProvider;
+import androidx.core.os.BundleCompat;
+import androidx.exifinterface.media.ExifInterface;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
@@ -100,6 +107,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private AutoCompleteTextView idEditText;
     private EditText memoEditText;
     private AutoCompleteTextView payeeEditText;
+    private TextView payeeLabelTextView;
     private boolean programaticUpdate;
     private ImageView repeatingImageView;
     private RepeatingTransactionClass repeatingTransaction;
@@ -187,7 +195,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private final ActivityResultLauncher<Intent> splitsLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
-            TransactionClass updatedTrans = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
+            TransactionClass updatedTrans = BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
             if (updatedTrans != null) {
                 this.transaction.setSplits(updatedTrans.getSplits());
                 this.transaction.setSubTotal(updatedTrans.getSubTotal());
@@ -201,8 +209,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private final ActivityResultLauncher<Intent> repeatingLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() == -1 && result.getData() != null && result.getData().getExtras() != null) {
-            this.transaction = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
-            this.repeatingTransaction = androidx.core.os.BundleCompat.getSerializable(result.getData().getExtras(), "RepeatingTransaction", RepeatingTransactionClass.class);
+            this.transaction = BundleCompat.getSerializable(result.getData().getExtras(), "Transaction", TransactionClass.class);
+            this.repeatingTransaction = BundleCompat.getSerializable(result.getData().getExtras(), "RepeatingTransaction", RepeatingTransactionClass.class);
             if (this.transaction != null && this.repeatingTransaction != null) {
                 this.transaction.isRepeatingTransaction = this.repeatingTransaction.isRepeating();
                 this.transaction.dirty = true;
@@ -329,10 +337,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            this.transaction = androidx.core.os.BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
+            this.transaction = BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
         }
         
         if (this.transaction == null) {
@@ -386,9 +394,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         MaterialButtonToggleGroup group = findViewById(R.id.radiogroup);
         group.addOnButtonCheckedListener(getRadioChangedListener());
         
-        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
-        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
-        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        ColorStateList strokeTint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
         
         this.withdrawalButton.setBackgroundTintList(bgTint);
         this.withdrawalButton.setTextColor(textTint);
@@ -483,7 +491,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
         ((TextView) findViewById(R.id.date_label)).setTextColor(fieldLabelColor);
         ((TextView) findViewById(R.id.account_label)).setTextColor(fieldLabelColor);
-        ((TextView) findViewById(R.id.payeelabeltextview)).setTextColor(fieldLabelColor);
+        this.payeeLabelTextView = findViewById(R.id.payeelabeltextview);
+        this.payeeLabelTextView.setTextColor(fieldLabelColor);
         ((TextView) findViewById(R.id.category_label)).setTextColor(fieldLabelColor);
         ((TextView) findViewById(R.id.amount_label)).setTextColor(fieldLabelColor);
         ((TextView) findViewById(R.id.id_label)).setTextColor(fieldLabelColor);
@@ -754,12 +763,16 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void saveAction() {
+        TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
+
         // Always save the current transaction to the register first.
         // This ensures the entry the user is currently editing actually appears in the list.
         boolean originalRepeatingFlag = this.transaction.isRepeatingTransaction;
         this.transaction.isRepeatingTransaction = false;
         this.transaction.saveToDatabase();
         
+        saveUpdateTransferFromOriginalRecord(originalRecord, this.transaction);
+
         // Restore the flag so we know if we need to set up a repeating schedule
         this.transaction.isRepeatingTransaction = originalRepeatingFlag;
 
@@ -778,11 +791,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.dateTextView.setText(CalExt.descriptionWithMediumDate(this.transaction.getDate()));
         if (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating()) {
             this.dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-            this.repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
+            this.repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         } else {
             int green = 0xFF00FF00;
             this.dateTextView.setTextColor(green); // Green for repeating
-            this.repeatingImageView.setColorFilter(green, android.graphics.PorterDuff.Mode.SRC_IN);
+            this.repeatingImageView.setColorFilter(green, PorterDuff.Mode.SRC_IN);
         }
 
         if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
@@ -835,9 +848,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             File photoDir = new File(getFilesDir(), "photos");
             File f = new File(photoDir, firstName);
             if (f.exists()) {
-                android.graphics.BitmapFactory.Options options = new android.graphics.BitmapFactory.Options();
+                BitmapFactory.Options options = new BitmapFactory.Options();
                 options.inSampleSize = 8; // Scale down for thumbnail
-                android.graphics.Bitmap thumb = android.graphics.BitmapFactory.decodeFile(f.getAbsolutePath(), options);
+                Bitmap thumb = BitmapFactory.decodeFile(f.getAbsolutePath(), options);
                 if (thumb != null) {
                     // Fix rotation for thumbnail
                     thumb = rotateImageIfRequired(thumb, f.getAbsolutePath());
@@ -864,15 +877,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    private android.graphics.Bitmap rotateImageIfRequired(android.graphics.Bitmap img, String path) {
+    private Bitmap rotateImageIfRequired(Bitmap img, String path) {
         try {
-            androidx.exifinterface.media.ExifInterface ei = new androidx.exifinterface.media.ExifInterface(path);
-            int orientation = ei.getAttributeInt(androidx.exifinterface.media.ExifInterface.TAG_ORIENTATION, androidx.exifinterface.media.ExifInterface.ORIENTATION_NORMAL);
+            ExifInterface ei = new ExifInterface(path);
+            int orientation = ei.getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL);
 
             return switch (orientation) {
-                case androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(img, 90);
-                case androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(img, 180);
-                case androidx.exifinterface.media.ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(img, 270);
+                case ExifInterface.ORIENTATION_ROTATE_90 -> rotateImage(img, 90);
+                case ExifInterface.ORIENTATION_ROTATE_180 -> rotateImage(img, 180);
+                case ExifInterface.ORIENTATION_ROTATE_270 -> rotateImage(img, 270);
                 default -> img;
             };
         } catch (Exception e) {
@@ -880,10 +893,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    private android.graphics.Bitmap rotateImage(android.graphics.Bitmap img, int degree) {
-        android.graphics.Matrix matrix = new android.graphics.Matrix();
+    private Bitmap rotateImage(Bitmap img, int degree) {
+        Matrix matrix = new Matrix();
         matrix.postRotate(degree);
-        android.graphics.Bitmap rotatedImg = android.graphics.Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
+        Bitmap rotatedImg = Bitmap.createBitmap(img, 0, 0, img.getWidth(), img.getHeight(), matrix, true);
         img.recycle();
         return rotatedImg;
     }
@@ -1067,7 +1080,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     @Override
-    public boolean onKeyDown(int keyCode, @NonNull android.view.KeyEvent event) {
+    public boolean onKeyDown(int keyCode, @NonNull KeyEvent event) {
         CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
         if (keyCode == 4 && currencyKeyboard.hide()) {
             return false;
@@ -1212,6 +1225,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         double d;
         double newRate;
         double newAmount;
+        String currencyCode = AccountDB.recordFor(modRecP.getAccount()) != null ? AccountDB.recordFor(modRecP.getAccount()).getCurrencyCode() : "";
         int i = 0;
         while (i < oldRecP.getNumberOfSplits()) {
             if (oldRecP.getTransferToAccountAtIndex(i) != null && !oldRecP.getTransferToAccountAtIndex(i).isEmpty()) {
@@ -1261,7 +1275,81 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         transactionClass.initType();
                         transactionClass.saveToDatabase();
                     }
+                } else {
+                    TransactionClass transferRecord = new TransactionClass();
+                    transferRecord.setAccount(modRecP.getTransferToAccountAtIndex(i));
+                    transferRecord.setPayee(modRecP.getPayee());
+                    if (!Prefs.getBooleanPref(Prefs.TRANSACTIONS_UNLINK_ID_FIELD)) {
+                        transferRecord.setCheckNumber(modRecP.getCheckNumber());
+                    }
+                    transferRecord.setTransferToAccount(modRecP.getAccount());
+                    transferRecord.setCategory(modRecP.getCategoryAtIndex(i));
+                    transferRecord.setClassName(modRecP.getClassNameAtIndex(i));
+                    transferRecord.setMemo(modRecP.getMemoAtIndex(i));
+                    AccountClass targetAcct = AccountDB.recordFor(modRecP.getTransferToAccountAtIndex(i));
+                    if (targetAcct != null && modRecP.getCurrencyCodeAtIndex(i).equals(targetAcct.getCurrencyCode())) {
+                        transferRecord.setCurrencyCode(currencyCode);
+                        transferRecord.setSubTotal((-modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i));
+                        transferRecord.setAmount((-modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i));
+                        transferRecord.setXrate(1.0d / modRecP.getXrateAtIndex(i));
+                    } else {
+                        double xrate = xrateFromAccountToAccount(modRecP.getAccount(), modRecP.getTransferToAccount());
+                        amountAtIndex = modRecP.getXrateAtIndex(i);
+                        d = (xrate == 0.0d) ? 1.0d : xrate;
+                        newRate = amountAtIndex / d;
+                        d = ((-1.0d * modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i)) * modRecP.getXrateAtIndex(i);
+                        if (xrate == 0.0d) xrate = 1.0d;
+                        newAmount = d / xrate;
+                        transferRecord.setCurrencyCode(modRecP.getCurrencyCodeAtIndex(i));
+                        transferRecord.setSubTotal(newAmount);
+                        transferRecord.setAmount(newAmount);
+                        transferRecord.setXrate(newRate);
+                    }
+                    transferRecord.setDate(modRecP.getDate());
+                    transferRecord.initType();
+                    transferRecord.saveToDatabase();
                 }
+            }
+            i++;
+        }
+        i = 0;
+        while (i < modRecP.getNumberOfSplits()) {
+            if (modRecP.getTransferToAccountAtIndex(i) != null && !modRecP.getTransferToAccountAtIndex(i).isEmpty()
+                    && ((i < oldRecP.getNumberOfSplits() && (oldRecP.getTransferToAccountAtIndex(i) == null || oldRecP.getTransferToAccountAtIndex(i).isEmpty()))
+                    || i >= oldRecP.getNumberOfSplits())) {
+                TransactionClass transferRecord = new TransactionClass();
+                transferRecord.setAccount(modRecP.getTransferToAccountAtIndex(i));
+                transferRecord.setPayee(modRecP.getPayee());
+                if (!Prefs.getBooleanPref(Prefs.TRANSACTIONS_UNLINK_ID_FIELD)) {
+                    transferRecord.setCheckNumber(modRecP.getCheckNumber());
+                }
+                transferRecord.setTransferToAccount(modRecP.getAccount());
+                transferRecord.setCategory(modRecP.getCategoryAtIndex(i));
+                transferRecord.setClassName(modRecP.getClassNameAtIndex(i));
+                transferRecord.setMemo(modRecP.getMemoAtIndex(i));
+                AccountClass targetAcct = AccountDB.recordFor(modRecP.getTransferToAccountAtIndex(i));
+                if (targetAcct != null && modRecP.getCurrencyCodeAtIndex(i).equals(targetAcct.getCurrencyCode())) {
+                    transferRecord.setCurrencyCode(currencyCode);
+                    transferRecord.setSubTotal((-modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i));
+                    transferRecord.setAmount((-modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i));
+                    transferRecord.setXrate(1.0d / modRecP.getXrateAtIndex(i));
+                } else {
+                    double xrate = xrateFromAccountToAccount(modRecP.getAccount(), modRecP.getTransferToAccount());
+                    double amountAtIndex = modRecP.getXrateAtIndex(i);
+                    d = (xrate == 0.0d) ? 1.0d : xrate;
+                    newRate = amountAtIndex / d;
+                    d = ((-1.0d * modRecP.getAmountAtIndex(i)) / modRecP.getXrateAtIndex(i)) * modRecP.getXrateAtIndex(i);
+                    if (xrate == 0.0d) xrate = 1.0d;
+                    newAmount = d / xrate;
+                    transferRecord.setCurrencyCode(modRecP.getCurrencyCodeAtIndex(i));
+                    transferRecord.setSubTotal(newAmount);
+                    transferRecord.setAmount(newAmount);
+                    transferRecord.setXrate(newRate);
+                }
+                transferRecord.setDate(modRecP.getDate());
+                transferRecord.setCleared(modRecP.getCleared());
+                transferRecord.initType();
+                transferRecord.saveToDatabase();
             }
             i++;
         }
@@ -1292,11 +1380,20 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
         return (group, checkedId, isChecked) -> {
             if (isChecked && !programaticUpdate) {
-                if (checkedId == R.id.withdrawalbutton) transaction.setType(0);
-                else if (checkedId == R.id.depositbutton) transaction.setType(1);
-                else if (checkedId == R.id.transferbutton) {
-                    transaction.setType(3);
-                    accountAction();
+                if (checkedId == withdrawalButton.getId()) {
+                    transaction.setType(Enums.kTransactionTypeWithdrawal /*0*/);
+                } else if (checkedId == depositButton.getId()) {
+                    transaction.setType(Enums.kTransactionTypeDeposit /*1*/);
+                } else if (checkedId == transferButton.getId()) {
+                    if (transaction.getSubTotal() > 0.0d) {
+                        transaction.setType(Enums.kTransactionTypeTransferFrom /*3*/);
+                    } else {
+                        transaction.setType(Enums.kTransactionTypeTransferTo /*2*/);
+                    }
+                    getCells();
+                    Intent i = new Intent(this, LookupsListActivity.class);
+                    i.putExtra("type", 3);
+                    transferLauncher.launch(i);
                 }
                 reloadData();
             }
@@ -1304,9 +1401,35 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void setType() {
-        if (transaction.isWithdrawal()) withdrawalButton.setChecked(true);
-        else if (transaction.isDeposit()) depositButton.setChecked(true);
-        else if (transaction.isTransfer()) transferButton.setChecked(true);
+        if (transaction.isWithdrawal()) {
+            withdrawalButton.setChecked(true);
+            this.payeeEditText.setEnabled(true);
+            this.payeeEditText.setHint(Locales.kLOC_GENERAL_PAYEE);
+            if (this.payeeLabelTextView != null) {
+                this.payeeLabelTextView.setText(Locales.kLOC_GENERAL_PAYEE);
+            }
+        } else if (transaction.isDeposit()) {
+            depositButton.setChecked(true);
+            this.payeeEditText.setEnabled(true);
+            this.payeeEditText.setHint(Locales.kLOC_GENERAL_PAYEE);
+            if (this.payeeLabelTextView != null) {
+                this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_FROM);
+            }
+        } else if (transaction.isTransfer()) {
+            transferButton.setChecked(true);
+            this.payeeEditText.setEnabled(false);
+            if (transaction.getType() == Enums.kTransactionTypeTransferFrom /*3*/) {
+                this.payeeEditText.setHint(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
+                if (this.payeeLabelTextView != null) {
+                    this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
+                }
+            } else {
+                this.payeeEditText.setHint(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+                if (this.payeeLabelTextView != null) {
+                    this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+                }
+            }
+        }
     }
 
     private void reloadData() {

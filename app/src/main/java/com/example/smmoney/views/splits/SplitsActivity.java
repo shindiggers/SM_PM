@@ -10,7 +10,6 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +39,6 @@ import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import java.util.Objects;
 
 public class SplitsActivity extends PocketMoneyActivity {
     public static final int REQUEST_EDIT = 3;
