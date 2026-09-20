@@ -20,12 +20,28 @@
             android:layout_height="wrap_content"
             android:paddingBottom="24dp">
 
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/label_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="date_label,account_label,payeelabeltextview,category_label,amount_label,id_label,cleared_label,class_label,memo_label" />
+
+            <androidx.constraintlayout.widget.Barrier
+                android:id="@+id/divider_barrier"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:barrierDirection="end"
+                app:constraint_referenced_ids="repeatingimageview" />
+
+
             <!-- Transaction Type Toggle -->
             <com.google.android.material.button.MaterialButtonToggleGroup
                 android:id="@+id/radiogroup"
                 android:layout_width="0dp"
                 android:layout_height="48dp"
-                android:layout_margin="8dp"
+                android:layout_margin="0dp"
+                android:spacing="0dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -38,12 +54,10 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
-                    android:paddingStart="4dp"
-                    android:paddingEnd="4dp"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/kLOC_GENERAL_WITHDRAWAL"
-                    android:textAllCaps="false"
-                    android:textSize="13sp"
-                    app:cornerRadius="4dp" />
+                    android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/depositbutton"
@@ -51,6 +65,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/kLOC_GENERAL_DEPOSIT"
                     android:textAllCaps="false" />
 
@@ -60,6 +76,8 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="1.0"
+                    android:insetTop="0dp"
+                    android:insetBottom="0dp"
                     android:text="@string/kLOC_GENERAL_TRANSFER"
                     android:textAllCaps="false"
                     app:cornerRadius="4dp" />
@@ -115,7 +133,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/date_label"
                 app:layout_constraintTop_toBottomOf="@id/date_label" />
 
@@ -157,7 +175,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/account_label"
                 app:layout_constraintTop_toBottomOf="@id/account_label" />
 
@@ -203,7 +221,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/payeelabeltextview"
                 app:layout_constraintTop_toBottomOf="@id/payeelabeltextview" />
 
@@ -272,7 +290,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/category_label"
                 app:layout_constraintTop_toBottomOf="@id/category_label" />
 
@@ -347,7 +365,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/amount_label"
                 app:layout_constraintTop_toBottomOf="@id/amount_label" />
 
@@ -394,7 +412,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/id_label"
                 app:layout_constraintTop_toBottomOf="@id/id_label" />
 
@@ -423,7 +441,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/cleared_label"
                 app:layout_constraintTop_toBottomOf="@id/cleared_label" />
 
@@ -480,7 +498,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/class_label"
                 app:layout_constraintTop_toBottomOf="@id/class_label" />
 
@@ -528,7 +546,7 @@
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/memo_label"
                 app:layout_constraintTop_toBottomOf="@id/memoedittext" />
 

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 
+import androidx.annotation.ColorRes;
 import androidx.core.content.ContextCompat;
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -21,7 +22,7 @@ public class PocketMoneyThemes {
 
     private static int theme = -1;
 
-    private static int getColor(int id) {
+    private static int getColor(@ColorRes int id) {
         Context context = SMMoney.getAppContext();
         if (context == null) return 0;
         return ContextCompat.getColor(context, id);
@@ -289,8 +290,10 @@ public class PocketMoneyThemes {
         };
     }
 
-    public static int editRowSelector(int index) {
-        return settingsRowSelector();
+    public static int dataEntryBoxBackground() {
+        int tint = currentTintColor();
+        // Return current tint color with ~15% opacity (0x26 alpha) for a translucent look
+        return (tint & 0x00FFFFFF) | 0x26000000;
     }
 
     public static int redLabelColor() {
@@ -421,7 +424,7 @@ public class PocketMoneyThemes {
         return chkBoxColorChecked();
     }
 
-    public static android.content.res.ColorStateList bottomNavColorStateList() {
+    public static ColorStateList bottomNavColorStateList() {
         int[][] states = new int[][]{
                 new int[]{android.R.attr.state_checked},
                 new int[]{-android.R.attr.state_checked}
@@ -446,7 +449,7 @@ public class PocketMoneyThemes {
             }
         }
         
-        return new android.content.res.ColorStateList(states, new int[]{activeColor, inactiveColor});
+        return new ColorStateList(states, new int[]{activeColor, inactiveColor});
     }
 
     public static int bottomNavBackgroundColor() {

@@ -33,7 +33,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 
 import java.text.DateFormatSymbols;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Objects;
@@ -163,12 +162,12 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
 
 
     private void setupButtons() {
-        ((View) this.frequencyTextView.getParent()).setOnClickListener(v -> {
+        findViewById(R.id.row_frequency).setOnClickListener(v -> {
             Intent i = new Intent(this, LookupsListActivity.class);
             i.putExtra("type", 16);
             frequencyLauncher.launch(i);
         });
-        ((View) this.endOnTextView.getParent()).setOnClickListener(v -> {
+        findViewById(R.id.row_endon).setOnClickListener(v -> {
             Intent i = new Intent(this, EndOnDateActivity.class);
             i.putExtra("Date", this.endOnTextView.getText().toString());
             endOnLauncher.launch(i);
@@ -180,80 +179,86 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 this.everyTextView.setText(String.format("%s%s", this.everyTextView.getText().toString(), this.suffix));
             }
         });
-        this.notifyCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> ((View) RepeatingEditActivity.this.notifyDaysInAdvanceTextView.getParent()).setVisibility(isChecked ? View.VISIBLE : View.GONE));
-        ((View) this.sundayTextView.getParent()).setOnClickListener(getDayClickListener(this.sundayCheck));
-        ((View) this.mondayTextView.getParent()).setOnClickListener(getDayClickListener(this.mondayCheck));
-        ((View) this.tuesdayTextView.getParent()).setOnClickListener(getDayClickListener(this.tuesdayCheck));
-        ((View) this.wednesdayTextView.getParent()).setOnClickListener(getDayClickListener(this.wednesdayCheck));
-        ((View) this.thursdayTextView.getParent()).setOnClickListener(getDayClickListener(this.thursdayCheck));
-        ((View) this.fridayTextView.getParent()).setOnClickListener(getDayClickListener(this.fridayCheck));
-        ((View) this.saturdayTextView.getParent()).setOnClickListener(getDayClickListener(this.saturdayCheck));
-        ArrayList<View> theViews = new ArrayList<>();
+        this.notifyCheckBox.setOnCheckedChangeListener((buttonView, isChecked) -> findViewById(R.id.row_daysinadvance).setVisibility(isChecked ? View.VISIBLE : View.GONE));
+        findViewById(R.id.row_sunday).setOnClickListener(getDayClickListener(this.sundayCheck));
+        findViewById(R.id.row_monday).setOnClickListener(getDayClickListener(this.mondayCheck));
+        findViewById(R.id.row_tuesday).setOnClickListener(getDayClickListener(this.tuesdayCheck));
+        findViewById(R.id.row_wednesday).setOnClickListener(getDayClickListener(this.wednesdayCheck));
+        findViewById(R.id.row_thursday).setOnClickListener(getDayClickListener(this.thursdayCheck));
+        findViewById(R.id.row_friday).setOnClickListener(getDayClickListener(this.fridayCheck));
+        findViewById(R.id.row_saturday).setOnClickListener(getDayClickListener(this.saturdayCheck));
+        // ArrayList<View> theViews = new ArrayList<>();
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setVerticalScrollBarEnabled(false);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        View aView = (View) this.frequencyTextView.getParent();
+        View aView = findViewById(R.id.row_frequency);
         ImageView frequencyDateIcon = findViewById(R.id.frequency_ic_calendar);
         frequencyDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.frequency_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.frequencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add(aView);
-        aView = (View) this.everyTextView.getParent();
+        
+        aView = findViewById(R.id.row_every);
         ((TextView) findViewById(R.id.every_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.everyTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add(aView);
-        aView = (View) this.endOnTextView.getParent();
+        
+        aView = findViewById(R.id.row_endon);
         ImageView theDateIcon = findViewById(R.id.repeting_edit_ic_calendar);
         theDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.end_on_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add(aView);
-        aView = (View) this.notifyCheckBox.getParent();
+        
+        aView = findViewById(R.id.row_notify);
         ((TextView) findViewById(R.id.notifylabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
+        
         this.notifyDaysInAdvanceTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        aView = (View) this.notifyDaysInAdvanceTextView.getParent();
+        aView = findViewById(R.id.row_daysinadvance);
         ((TextView) findViewById(R.id.daysinadvancelabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         ((TextView) findViewById(R.id.daysinadvancesuffixtextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add(aView);
-        aView = (View) this.repeatOnTextView.getParent();
+        
+        aView = findViewById(R.id.row_repeaton);
         this.repeatOnTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.sundayTextView.getParent();
+        
+        aView = findViewById(R.id.row_sunday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.sundayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.mondayTextView.getParent();
+        
+        aView = findViewById(R.id.row_monday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.mondayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.tuesdayTextView.getParent();
+        
+        aView = findViewById(R.id.row_tuesday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.tuesdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.wednesdayTextView.getParent();
+        
+        aView = findViewById(R.id.row_wednesday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.wednesdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.thursdayTextView.getParent();
+        
+        aView = findViewById(R.id.row_thursday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.thursdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.fridayTextView.getParent();
+        
+        aView = findViewById(R.id.row_friday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.fridayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
-        aView = (View) this.saturdayTextView.getParent();
+        
+        aView = findViewById(R.id.row_saturday);
         aView.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.saturdayTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add(aView);
+        
         this.suffixTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        int i = 0;
-        for (View view : theViews) {
-            view.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
-            i++;
+
+        // Theme the dividers for visibility in all themes
+        int[] dividerIds = {R.id.divider_freq, R.id.divider_notify, R.id.divider_repeaton, R.id.divider_sunday, R.id.divider_monday, R.id.divider_tuesday, R.id.divider_wednesday, R.id.divider_thursday, R.id.divider_friday, R.id.divider_saturday};
+        for (int id : dividerIds) {
+            View divider = findViewById(id);
+            if (divider != null) {
+                divider.setBackgroundColor(PocketMoneyThemes.fieldLabelColor());
+                divider.setAlpha(0.3f); // Subtle but visible
+            }
         }
+
     }
 
     private void reloadData() {
@@ -407,17 +412,17 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         every = View.VISIBLE /*0*/;
         endon = View.VISIBLE /*0*/;
         notify = View.VISIBLE /*0*/;
-        ((View) this.notifyCheckBox.getParent()).setVisibility(notify);
-        ((View) this.everyTextView.getParent()).setVisibility(every);
-        ((View) this.endOnTextView.getParent()).setVisibility(endon);
-        ((View) this.sundayTextView.getParent()).setVisibility(sunday);
-        ((View) this.mondayTextView.getParent()).setVisibility(monday);
-        ((View) this.tuesdayTextView.getParent()).setVisibility(tuesday);
-        ((View) this.wednesdayTextView.getParent()).setVisibility(wednesday);
-        ((View) this.thursdayTextView.getParent()).setVisibility(thursday);
-        ((View) this.fridayTextView.getParent()).setVisibility(friday);
-        ((View) this.saturdayTextView.getParent()).setVisibility(saturday);
-        ((View) this.repeatOnTextView.getParent()).setVisibility(repeaton);
+        findViewById(R.id.row_notify).setVisibility(notify);
+        findViewById(R.id.row_every).setVisibility(every);
+        findViewById(R.id.row_endon).setVisibility(endon);
+        findViewById(R.id.row_sunday).setVisibility(sunday);
+        findViewById(R.id.row_monday).setVisibility(monday);
+        findViewById(R.id.row_tuesday).setVisibility(tuesday);
+        findViewById(R.id.row_wednesday).setVisibility(wednesday);
+        findViewById(R.id.row_thursday).setVisibility(thursday);
+        findViewById(R.id.row_friday).setVisibility(friday);
+        findViewById(R.id.row_saturday).setVisibility(saturday);
+        findViewById(R.id.row_repeaton).setVisibility(repeaton);
     }
 
     private void save() {
@@ -546,3 +551,11 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     }
 
 }
+
+
+
+
+
+
+
+

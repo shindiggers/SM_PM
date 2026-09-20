@@ -27,23 +27,113 @@
 
             <!-- Row Backgrounds for Alternating Colors & Clicks -->
             <View android:id="@+id/account_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/account_row" />
             <View android:id="@+id/total_worth_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/total_worth_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/total_worth_row" />
             <View android:id="@+id/type_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/account_type_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/type_row" />
             <View android:id="@+id/icon_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/account_icon_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/icon_row" />
             <View android:id="@+id/expires_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_expires_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/expires_row" />
             <View android:id="@+id/account_number_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_number_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/account_number_row" />
             <View android:id="@+id/routing_number_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/routing_number_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/routing_number_row" />
             <View android:id="@+id/institution_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_institution_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/institution_row" />
             <View android:id="@+id/phone_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_phone_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/phone_row" />
             <View android:id="@+id/website_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_website_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/website_row" />
             <View android:id="@+id/fee_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_fee_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/fee_row" />
             <View android:id="@+id/limit_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_limit_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/limit_row" />
             <View android:id="@+id/check_number_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_check_number_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/check_number_row" />
             <View android:id="@+id/currency_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/account_currency_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/currency_row" />
             <View android:id="@+id/xrate_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_exchangerate_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/xrate_row" />
             <View android:id="@+id/ktc_account_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/account_keep_the_change_account_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/ktc_account_row" />
             <View android:id="@+id/ktc_round_row" android:layout_width="0dp" android:layout_height="58dp" app:layout_constraintTop_toTopOf="@id/account_keep_the_change_round_to_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/ktc_round_row" />
             <View android:id="@+id/notes_row" android:layout_width="0dp" android:layout_height="58dp" android:focusable="true" app:layout_constraintTop_toTopOf="@id/account_notes_label" app:layout_constraintStart_toStartOf="parent" app:layout_constraintEnd_toEndOf="parent" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0.5dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintBottom_toBottomOf="@id/notes_row" />
 
             <!-- Row 1: Account -->
             <TextView android:id="@+id/account_label" android:layout_width="wrap_content" android:layout_height="58dp" android:layout_marginStart="6dp" android:maxWidth="120dp" android:gravity="start|center_vertical" android:text="@string/kLOC_GENERAL_ACCOUNT" app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toTopOf="parent" />

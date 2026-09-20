@@ -173,16 +173,28 @@ public class FilterEditActivity extends PocketMoneyActivity {
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         findViewById(R.id.filter_edit_root).setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         
-        ArrayList<View> theViews = new ArrayList<>();
-        theViews.add(findViewById(R.id.filter_name_row));
-        theViews.add(findViewById(R.id.transaction_type_row));
-        theViews.add(findViewById(R.id.accounts_row));
-        theViews.add(findViewById(R.id.dates_row));
-        theViews.add(findViewById(R.id.payees_row));
-        theViews.add(findViewById(R.id.ids_row));
-        theViews.add(findViewById(R.id.cleared_row));
-        theViews.add(findViewById(R.id.categories_row));
-        theViews.add(findViewById(R.id.classes_row));
+        // ArrayList<View> theViews = new ArrayList<>();
+        // theViews.add(findViewById(R.id.filter_name_row));
+        // theViews.add(findViewById(R.id.transaction_type_row));
+        // theViews.add(findViewById(R.id.accounts_row));
+        // theViews.add(findViewById(R.id.dates_row));
+        // theViews.add(findViewById(R.id.payees_row));
+        // theViews.add(findViewById(R.id.ids_row));
+        // theViews.add(findViewById(R.id.cleared_row));
+        // theViews.add(findViewById(R.id.categories_row));
+        // theViews.add(findViewById(R.id.classes_row));
+
+        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+
+        // Theme the dividers for visibility in all themes
+        int[] dividerIds = {R.id.divider1, R.id.divider2, R.id.divider3, R.id.divider4, R.id.divider5, R.id.divider6, R.id.divider7, R.id.divider8, R.id.divider9};
+        for (int id : dividerIds) {
+            View divider = findViewById(id);
+            if (divider != null) {
+                divider.setBackgroundColor(fieldLabelColor);
+                divider.setAlpha(0.3f); // Subtle but visible
+            }
+        }
 
         TextView label;
         label = findViewById(R.id.filter_name_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -205,7 +217,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.categoriesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.classesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
 
-        int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
+        // Theme the arrow icons for visibility in all themes
         ((android.widget.ImageView) findViewById(R.id.transtype_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         ((android.widget.ImageView) findViewById(R.id.accounts_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         ((android.widget.ImageView) findViewById(R.id.dates_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
@@ -214,12 +226,6 @@ public class FilterEditActivity extends PocketMoneyActivity {
         ((android.widget.ImageView) findViewById(R.id.cleared_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         ((android.widget.ImageView) findViewById(R.id.categories_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         ((android.widget.ImageView) findViewById(R.id.classes_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-
-        int i = 0;
-        for (View theView : theViews) {
-            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
-            i++;
-        }
     }
 
     private void loadInfo() {
@@ -328,3 +334,8 @@ public class FilterEditActivity extends PocketMoneyActivity {
         };
     }
 }
+
+
+
+
+

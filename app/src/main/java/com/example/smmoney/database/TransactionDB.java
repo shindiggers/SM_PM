@@ -112,6 +112,7 @@ public class TransactionDB {
         return TimeZone.getDefault().getOffset(0) / 1000;
     }
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty") // Android's StringBuilder doesn't have isEmpty() so cannot replace sb.length() > 0 with sb.isEmpty()
     private static String getInClauseForAccounts(String accounts) {
         if (accounts == null || accounts.isEmpty()) return "";
         if (!accounts.contains(";")) return " t.accountID=" + AccountClass.idForAccount(accounts);
@@ -128,6 +129,7 @@ public class TransactionDB {
         return sb.length() > 0 ? " t.accountID IN (" + sb + ")" : "";
     }
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty") // Android's StringBuilder doesn't have isEmpty() so cannot replace sb.length() > 0 with sb.isEmpty()
     private static String getInClause(String field, String values, String unfiledLabel) {
         if (values == null || values.isEmpty()) return "";
         String[] parts = values.split(";");

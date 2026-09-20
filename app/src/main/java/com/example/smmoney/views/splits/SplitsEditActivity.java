@@ -1,6 +1,8 @@
 package com.example.smmoney.views.splits;
 
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.text.Editable;
@@ -16,7 +18,9 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
-import android.widget.LinearLayout;
+import android.widget.ImageView;
+
+import com.example.smmoney.SMMoney;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.button.MaterialButtonToggleGroup;
 import android.widget.TextView;
@@ -25,6 +29,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.Group;
+import androidx.core.os.BundleCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
@@ -44,7 +51,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.exchangerates.ExchangeRateActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 
-import java.util.ArrayList;
 
 public class SplitsEditActivity extends PocketMoneyActivity {
     private static final int MENU_SAVE = 1;
@@ -72,7 +78,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
                     getCells();
                 }
             } catch (NullPointerException e) {
-                Log.e(com.example.smmoney.SMMoney.TAG, "NullPointerException in currencyLauncher", e);
+                Log.e(SMMoney.TAG, "NullPointerException in currencyLauncher", e);
             }
         }
     });
@@ -122,7 +128,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
     private SplitsClass split;
     private int splitIndex = -1;
     private int splitTransactionType;
-    private LinearLayout transToLayout;
+    private Group transToLayout;
     private TextView transToTextView;
     private TextView transToTitleTextView;
     private TransactionClass transaction;
@@ -134,8 +140,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            this.transaction = androidx.core.os.BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
-            this.split = androidx.core.os.BundleCompat.getSerializable(extras, "Split", SplitsClass.class);
+            this.transaction = BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
+            this.split = BundleCompat.getSerializable(extras, "Split", SplitsClass.class);
         }
         if (this.split == null) {
             finish();
@@ -213,7 +219,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.amountXrateTextView = findViewById(R.id.amount_xrate_text_view);
         this.memoEditText = findViewById(R.id.memoedittext);
         this.classEditText = findViewById(R.id.classedittext);
-        this.transToLayout = findViewById(R.id.transtobutton);
+        this.transToLayout = findViewById(R.id.transtogroup);
         this.transToTitleTextView = findViewById(R.id.transtolabel);
         FrameLayout keyboardToolbar = findViewById(R.id.keyboard_toolbar);
         this.amountEditText.setShowSoftInputOnFocus(false);
@@ -223,9 +229,9 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         MaterialButtonToggleGroup group = (MaterialButtonToggleGroup) this.withdrawalButton.getParent();
         group.addOnButtonCheckedListener(getRadioChangedListener());
         
-        android.content.res.ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
-        android.content.res.ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
-        android.content.res.ColorStateList strokeTint = android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
+        ColorStateList bgTint = PocketMoneyThemes.segmentedButtonBackgroundTint();
+        ColorStateList textTint = PocketMoneyThemes.segmentedButtonTextTint();
+        ColorStateList strokeTint = ColorStateList.valueOf(PocketMoneyThemes.currentTintColor());
         
         this.withdrawalButton.setBackgroundTintList(bgTint);
         this.withdrawalButton.setTextColor(textTint);
@@ -239,24 +245,54 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.transferButton.setTextColor(textTint);
         this.transferButton.setStrokeColor(strokeTint);
 
-        ((LinearLayout) this.memoEditText.getParent()).setOnClickListener(view -> {
+        findViewById(R.id.memoedittext).setOnClickListener(view -> {
             Intent i = new Intent(this, NoteEditor.class);
             i.putExtra("note", this.split.getMemo());
             noteLauncher.launch(i);
         });
-        LinearLayout v = (LinearLayout) this.categoryEditText.getParent();
-        v.setOnClickListener(getLookupListClickListener());
-        v.setTag(5);
-        v = (LinearLayout) this.classEditText.getParent();
-        v.setOnClickListener(getLookupListClickListener());
-        v.setTag(6);
+        
+        View transToRow = findViewById(R.id.transtotextview);
+        if (transToRow != null) {
+            transToRow.setOnClickListener(getLookupListClickListener());
+            transToRow.setTag(3);
+        }
+        View transToButton = findViewById(R.id.transtoto_drop_down);
+        if (transToButton != null) {
+            transToButton.setOnClickListener(getLookupListClickListener());
+            transToButton.setTag(3);
+        }
+
+        View categoryButton = findViewById(R.id.category_drop_down);
+        if (categoryButton != null) {
+            categoryButton.setOnClickListener(getLookupListClickListener());
+            categoryButton.setTag(5);
+        }
+
+        View classButton = findViewById(R.id.class_drop_down);
+        if (classButton != null) {
+            classButton.setOnClickListener(getLookupListClickListener());
+            classButton.setTag(6);
+        }
+
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-            ((LinearLayout) this.amountEditText.getParent()).setOnClickListener(v3 -> {
-                Intent i = new Intent(this, ExchangeRateActivity.class);
-                i.putExtra("transaction", this.transaction);
-                i.putExtra("split", this.split);
-                currencyLauncher.launch(i);
-            });
+            View amountRow = findViewById(R.id.amountedittext);
+            if (amountRow != null) {
+                amountRow.setOnClickListener(v3 -> {
+                    Intent i = new Intent(this, ExchangeRateActivity.class);
+                    i.putExtra("transaction", this.transaction);
+                    i.putExtra("split", this.split);
+                    currencyLauncher.launch(i);
+                });
+            }
+            View currencyButton = findViewById(R.id.amount_currency_button);
+            if (currencyButton != null) {
+                currencyButton.setOnClickListener(v3 -> {
+                    Intent i = new Intent(this, ExchangeRateActivity.class);
+                    i.putExtra("transaction", this.transaction);
+                    i.putExtra("split", this.split);
+                    currencyLauncher.launch(i);
+                });
+            }
         } else {
             findViewById(R.id.amount_currency_button).setVisibility(View.GONE);
             this.amountXrateTextView.setVisibility(View.GONE);
@@ -269,39 +305,42 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.categoryEditText.setKeyListener(new MyKeyListener(this.categoryEditText.getKeyListener()));
         this.classEditText.setKeyListener(new MyKeyListener(this.classEditText.getKeyListener()));
         findViewById(R.id.scroll_view).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ArrayList<View> theViews = new ArrayList<>();
+        // ArrayList<View> theViews = new ArrayList<>();
         this.transToTitleTextView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.transToTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) this.transToTitleTextView.getParent());
+        // theViews.add((View) this.transToTitleTextView.getParent());
         TextView tView = findViewById(R.id.category_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.categoryEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
+        
         tView = findViewById(R.id.amount_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.amountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         this.amountXrateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        theViews.add((View) tView.getParent());
+        
         tView = findViewById(R.id.class_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.classEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
-        theViews.add((View) tView.getParent());
+        
         tView = findViewById(R.id.memo_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.memoEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
 
         int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
-        android.widget.ImageView iconView;
-        if ((iconView = findViewById(R.id.transtoto_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.category_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.class_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.amount_currency_button)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        ImageView iconView;
+        if ((iconView = findViewById(R.id.transtoto_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.category_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.class_drop_down)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.amount_currency_button)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
 
-        theViews.add((View) tView.getParent());
-        int i = 0;
-        for (View theView : theViews) {
-            (theView).setBackgroundResource(i % 2 == 0 ? PocketMoneyThemes.primaryRowSelector() : PocketMoneyThemes.alternatingRowSelector());
-            i++;
+        // Theme the dividers for visibility in all themes
+        int[] dividerIds = {R.id.divider1, R.id.divider2, R.id.divider3, R.id.divider4, R.id.divider5, R.id.divider6};
+        for (int id : dividerIds) {
+            View divider = findViewById(id);
+            if (divider != null) {
+                divider.setBackgroundColor(fieldLabelColor);
+                divider.setAlpha(0.3f); // Subtle but visible
+            }
         }
     }
 
@@ -547,3 +586,6 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         }
     }
 }
+
+
+

@@ -117,7 +117,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         //theViews.add((View) separatorView);
         int i = 0;
         for (View theView : theViews) {
-            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
+
             i++;
         }
     }
@@ -190,3 +190,6 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         }
     }
 }
+
+
+

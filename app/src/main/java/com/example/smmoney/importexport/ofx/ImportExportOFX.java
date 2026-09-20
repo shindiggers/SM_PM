@@ -195,6 +195,7 @@ public class ImportExportOFX {
         return "";
     }
 
+    @SuppressWarnings("SizeReplaceableByIsEmpty") // Android's StringBuilder doesn't have isEmpty() so cannot replace sb.length() > 0 with sb.isEmpty()
     public void importIntoDatabase() {
         Database.currentDB().beginTransaction();
         String encodingStr = Prefs.getStringPref(Prefs.ENCODING);

@@ -172,24 +172,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         ScrollView sv = findViewById(R.id.scroll_view);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
 
-        ArrayList<View> theViews = new ArrayList<>();
-
-        theViews.add(findViewById(R.id.account_row));
-        theViews.add(findViewById(R.id.total_worth_row));
-        theViews.add(findViewById(R.id.type_row));
-        theViews.add(findViewById(R.id.icon_row));
-        theViews.add(findViewById(R.id.expires_row));
-        theViews.add(findViewById(R.id.account_number_row));
-        theViews.add(findViewById(R.id.routing_number_row));
-        theViews.add(findViewById(R.id.institution_row));
-        theViews.add(findViewById(R.id.phone_row));
-        theViews.add(findViewById(R.id.website_row));
-        theViews.add(findViewById(R.id.fee_row));
-        theViews.add(findViewById(R.id.limit_row));
-        theViews.add(findViewById(R.id.check_number_row));
-        theViews.add(findViewById(R.id.currency_row));
-        theViews.add(findViewById(R.id.xrate_row));
-
         TextView tView = findViewById(R.id.account_keep_the_change_account_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
 
@@ -200,10 +182,10 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         View aView = findViewById(R.id.ktc_account_row);
         aView.setTag(18);
         aView.setOnClickListener(getBtnClickListener());
-        theViews.add(aView);
+        
 
-        theViews.add(findViewById(R.id.ktc_round_row));
-        theViews.add(findViewById(R.id.notes_row));
+        
+        
 
         TextView label;
         label = findViewById(R.id.account_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -247,12 +229,6 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         if ((iconView = findViewById(R.id.currency_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         if ((iconView = findViewById(R.id.ktc_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
         if ((iconView = findViewById(R.id.notes_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-
-        int i = 0;
-        for (View theView : theViews) {
-            theView.setBackgroundResource(PocketMoneyThemes.editRowSelector(i));
-            i++;
-        }
     }
 
     private void loadInfo() {
@@ -417,3 +393,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         };
     }
 }
+
+
+
+
+
+
+
+
+
+
+
