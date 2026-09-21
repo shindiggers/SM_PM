@@ -243,9 +243,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
             }
         }
         
-        Collections.sort(newIncomeCategories, getCategoryComparator(false));
-        Collections.sort(newExpenseCategories, getCategoryComparator(false));
-        Collections.sort(newNonBudgetedCategories, getCategoryComparator(true));
+        newIncomeCategories.sort(getCategoryComparator(false));
+        newExpenseCategories.sort(getCategoryComparator(false));
+        newNonBudgetedCategories.sort(getCategoryComparator(true));
         
         ((Activity) this.context).runOnUiThread(() -> {
             BudgetsRowAdapter.this.incomeCategories = newIncomeCategories;

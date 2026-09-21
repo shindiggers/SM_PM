@@ -265,7 +265,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         LayoutInflater vi = (LayoutInflater) getApplicationContext().getSystemService(LAYOUT_INFLATER_SERVICE);
         
         // Sort Newest to Oldest (Descending)
-        Collections.sort(this.categoryBudgetItems, (o1, o2) -> o2.getDate().compareTo(o1.getDate()));
+        this.categoryBudgetItems.sort((o1, o2) -> o2.getDate().compareTo(o1.getDate()));
         
         if (!this.categoryBudgetItems.isEmpty()) {
             // The "Original" row represents the oldest entry in the history (now at the end of our sorted list)

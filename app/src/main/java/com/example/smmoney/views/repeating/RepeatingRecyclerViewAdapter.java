@@ -63,7 +63,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
     public void setElements(ArrayList<TransactionClass> aList) {
         this.elements = aList;
         // Sort by the calculated next occurrence date instead of the template's internal date
-        Collections.sort(this.elements, (object1, object2) -> {
+        this.elements.sort((object1, object2) -> {
             RepeatingTransactionClass rt1 = new RepeatingTransactionClass(object1);
             rt1.hydrate();
             GregorianCalendar next1 = rt1.getNextTransactionDateAfter(rt1.lastProcessedDate);

@@ -95,7 +95,7 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
             generateReport();
         }
         if (this.data != null) {
-            Collections.sort(this.data, this.comparator);
+            this.data.sort(this.comparator);
             if (ReportsActivity.processData) {
                 calculatePercentagesAndColors(this.data);
             }

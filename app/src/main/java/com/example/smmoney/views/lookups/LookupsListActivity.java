@@ -339,7 +339,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         }
         
         if (alphabetList) {
-            Collections.sort(this.theStrings, String.CASE_INSENSITIVE_ORDER);
+            this.theStrings.sort(String.CASE_INSENSITIVE_ORDER);
         }
         
         this.adapter.setItems(this.theStrings);
