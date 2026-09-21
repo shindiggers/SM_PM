@@ -6,7 +6,6 @@ import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.DatePicker;
@@ -14,6 +13,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -59,6 +59,13 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                processDate();
+            }
+        });
     }
 
 
@@ -122,15 +129,6 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
             setResult(ENDONDATE_RESULT_NODATESELECTED);
         }
         finish();
-    }
-
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            processDate();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     @Override

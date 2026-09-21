@@ -30,10 +30,8 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.PocketMoneyProgressDialog;
-import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.charts.items.ReportChartItem;
-import com.example.smmoney.views.charts.compose.ModernChartsKt;
 import androidx.compose.ui.platform.ComposeView;
 
 

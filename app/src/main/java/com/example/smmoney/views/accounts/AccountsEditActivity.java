@@ -17,7 +17,6 @@ import android.widget.TextView;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.IntentCompat;
 import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
@@ -34,7 +33,6 @@ import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 import com.example.smmoney.views.splits.SplitsActivity;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 public class AccountsEditActivity extends PocketMoneyActivity implements ExchangeRateCallbackInterface {

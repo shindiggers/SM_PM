@@ -1,6 +1,5 @@
 package com.example.smmoney.views;
 
-import static android.view.KeyEvent.KEYCODE_BACK;
 import static android.view.KeyEvent.KEYCODE_HOME;
 
 import android.content.Intent;
@@ -8,11 +7,14 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smmoney.SMMoney;
+import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 
 public abstract class PocketMoneyActivity extends AppCompatActivity {
@@ -41,11 +43,24 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
                 dontShowPass = extras.getString("dontShowPass");
             }
         } catch (Exception e) {
-            Log.e(com.example.smmoney.SMMoney.TAG, "Exception in PocketMoneyActivity onCreate getting extras", e);
+            Log.e(SMMoney.TAG, "Exception in PocketMoneyActivity onCreate getting extras", e);
         }
         if (dontShowPass == null) {
             this.showPasswordScreen = true;
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
+                String className = PocketMoneyActivity.this.getClass().getSimpleName();
+                if (className.equals("AccountsActivity") || className.equals("BudgetsActivity")) {
+                    startActivity(new Intent(PocketMoneyActivity.this, PasswordActivity.class));
+                }
+                setEnabled(false);
+                getOnBackPressedDispatcher().onBackPressed();
+            }
+        });
     }
 
     protected void onResume() {
@@ -70,32 +85,32 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
     }
 
     private long getDelayLongFromDelayPref(String theString) {
-        if (com.example.smmoney.misc.Locales.kLOC_GENERAL_NONE.equals(theString)) return 0;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY1MIN.equals(theString)) return 60000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY5MINS.equals(theString))
+        if (Locales.kLOC_GENERAL_NONE.equals(theString)) return 0;
+        if (Locales.kLOC_PASSWORDDELAY1MIN.equals(theString)) return 60000;
+        if (Locales.kLOC_PASSWORDDELAY5MINS.equals(theString))
             return 300000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY10MINS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY10MINS.equals(theString))
             return 600000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY15MINS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY15MINS.equals(theString))
             return 900000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY30MINS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY30MINS.equals(theString))
             return 1800000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY1HOUR.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY1HOUR.equals(theString))
             return 3600000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY2HOURS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY2HOURS.equals(theString))
             return 7200000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY4HOURS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY4HOURS.equals(theString))
             return 14400000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY8HOURS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY8HOURS.equals(theString))
             return 28800000;
-        if (com.example.smmoney.misc.Locales.kLOC_PASSWORDDELAY24HOURS.equals(theString))
+        if (Locales.kLOC_PASSWORDDELAY24HOURS.equals(theString))
             return 86400000;
         return 0;
     }
 
     protected void onPause() {
         super.onPause();
-        android.util.Log.d("PMA", "onPause: " + getClass().getSimpleName() + " isStarting=" + isStartingActivity);
+        Log.d("PMA", "onPause: " + getClass().getSimpleName() + " isStarting=" + isStartingActivity);
         if (!this.isStartingActivity) {
             this.showPasswordScreen = true;
         }
@@ -123,12 +138,6 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
         if (keyCode == KEYCODE_HOME) {
             Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
             startActivity(new Intent(this, PasswordActivity.class));
-        } else if (keyCode == KEYCODE_BACK) {
-            Prefs.setPref(Prefs.PASSWORD_DELAY_LAST, System.currentTimeMillis());
-            String className = getClass().getSimpleName();
-            if (className.equals("AccountsActivity") || className.equals("BudgetsActivity")) {
-                startActivity(new Intent(this, PasswordActivity.class));
-            }
         }
         return super.onKeyDown(keyCode, event);
     }

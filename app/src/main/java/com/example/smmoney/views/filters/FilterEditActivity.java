@@ -24,7 +24,6 @@ import com.example.smmoney.views.FromToDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
 
-import java.util.ArrayList;
 import java.util.GregorianCalendar;
 
 public class FilterEditActivity extends PocketMoneyActivity {

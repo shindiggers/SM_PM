@@ -31,7 +31,7 @@
     </style>
 
     <!-- Base Dialog Theme for Light/Colored Themes -->
-    <style name="DialogTheme" parent="android:Theme.Material.Light.Dialog.NoActionBar">
+    <style name="DialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert">
         <item name="android:background">@color/white_theme_background_color</item>
         <item name="android:windowBackground">@color/white_theme_background_color</item>
         <item name="android:textColor">@color/white_theme_text</item>
@@ -40,10 +40,24 @@
         <item name="android:textColorAlertDialogListItem">@color/white_theme_text</item>
         <item name="textColorAlertDialogListItem">@color/white_theme_text</item>
         <item name="colorAccent">@color/blue_theme_field_label_color</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
     </style>
 
     <!-- Specific Dialog Theme for Black Theme -->
-    <style name="DialogTheme.Black" parent="android:Theme.Material.Dialog.NoActionBar">
+    <style name="DialogTheme.Black" parent="Theme.MaterialComponents.Dialog.Alert">
         <item name="android:background">@color/black_theme_dialog_background_color</item>
         <item name="android:windowBackground">@color/black_theme_dialog_background_color</item>
         <item name="android:textColor">@color/black_theme_text</item>
@@ -52,6 +66,20 @@
         <item name="android:colorAccent">@color/black_theme_tint_color</item>
         <item name="android:textColorAlertDialogListItem">@color/black_theme_text</item>
         <item name="textColorAlertDialogListItem">@color/black_theme_text</item>
+        <item name="textInputStyle">@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox</item>
+        <item name="textAppearanceHeadline1">@style/TextAppearance.MaterialComponents.Headline1</item>
+        <item name="textAppearanceHeadline2">@style/TextAppearance.MaterialComponents.Headline2</item>
+        <item name="textAppearanceHeadline3">@style/TextAppearance.MaterialComponents.Headline3</item>
+        <item name="textAppearanceHeadline4">@style/TextAppearance.MaterialComponents.Headline4</item>
+        <item name="textAppearanceHeadline5">@style/TextAppearance.MaterialComponents.Headline5</item>
+        <item name="textAppearanceHeadline6">@style/TextAppearance.MaterialComponents.Headline6</item>
+        <item name="textAppearanceSubtitle1">@style/TextAppearance.MaterialComponents.Subtitle1</item>
+        <item name="textAppearanceSubtitle2">@style/TextAppearance.MaterialComponents.Subtitle2</item>
+        <item name="textAppearanceBody1">@style/TextAppearance.MaterialComponents.Body1</item>
+        <item name="textAppearanceBody2">@style/TextAppearance.MaterialComponents.Body2</item>
+        <item name="textAppearanceCaption">@style/TextAppearance.MaterialComponents.Caption</item>
+        <item name="textAppearanceButton">@style/TextAppearance.MaterialComponents.Button</item>
+        <item name="textAppearanceOverline">@style/TextAppearance.MaterialComponents.Overline</item>
     </style>
 
     <style name="DialogTheme.Blue" parent="DialogTheme">
@@ -107,6 +135,7 @@
         <item name="android:dialogTheme">@style/DialogTheme</item>
         <item name="alertDialogTheme">@style/DialogTheme</item>
         <item name="preferenceTheme">@style/PreferenceTheme</item>
+        <item name="materialThemeOverlay">@style/ThemeOverlay.MaterialComponents</item>
     </style>
 
     <style name="PreferenceTheme.Black" parent="PreferenceTheme">

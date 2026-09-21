@@ -2,12 +2,13 @@ package com.example.smmoney.prefs;
 
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+
+import androidx.activity.OnBackPressedCallback;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.Locales;
@@ -30,6 +31,15 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                save();
+                finish();
+            }
+        });
+
         this.postCheckBox = findViewById(R.id.postcheckbox);
         CheckBoxTint.colorCheckBox(this.postCheckBox);
         this.postEditText = findViewById(R.id.postedittext);
@@ -62,15 +72,6 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
             Prefs.setPref(Prefs.RECURRDAYSINADVANCE, 0);
         }
         Prefs.setPref(Prefs.RECURPOSTINGENABLED, this.postCheckBox.isChecked());
-    }
-
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode != KeyEvent.KEYCODE_BACK) {
-            return super.onKeyDown(keyCode, event);
-        }
-        save();
-        finish();
-        return true;
     }
 
     @Override

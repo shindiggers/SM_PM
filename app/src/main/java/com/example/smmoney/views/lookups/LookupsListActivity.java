@@ -1,6 +1,8 @@
 package com.example.smmoney.views.lookups;
 
 import android.content.Intent;
+import java.util.ArrayList;
+import java.util.List;
 import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -12,12 +14,12 @@ import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
@@ -40,8 +42,7 @@ import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Set;
 
 public class LookupsListActivity extends PocketMoneyActivity {
     public static final int ACCOUNT_ICON_LOOKUP = 2;
@@ -87,6 +88,18 @@ public class LookupsListActivity extends PocketMoneyActivity {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (LookupsListActivity.this.isMultiSelect) {
+                    returnDoneResult();
+                } else {
+                    setEnabled(false);
+                    getOnBackPressedDispatcher().onBackPressed();
+                }
+            }
+        });
     }
 
     @Override
@@ -578,8 +591,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     private void returnDoneResult() {
-        StringBuilder sb = new StringBuilder();
-        java.util.Set<Integer> checked = this.adapter.getCheckedPositions();
+        List<String> selectedValues = new ArrayList<>();
+        Set<Integer> checked = this.adapter.getCheckedPositions();
         boolean hasSpecificSelection = false;
         String allItemValue = "";
 
@@ -589,32 +602,17 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 if (isAllItem(val)) {
                     allItemValue = val;
                 } else {
-                    if (sb.length() > 0) sb.append(";");
-                    sb.append(val);
+                    selectedValues.add(val);
                     hasSpecificSelection = true;
                 }
             }
         }
         
-        String result;
-        if (hasSpecificSelection) {
-            result = sb.toString();
-        } else {
-            result = allItemValue;
-        }
+        String result = hasSpecificSelection ? String.join(";", selectedValues) : allItemValue;
         
         Intent i = new Intent();
         i.putExtra("selection", result);
         setResult(this.currentType, i); // Return currentType to support FilterEditActivity
         finish();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, android.view.KeyEvent event) {
-        if (keyCode == android.view.KeyEvent.KEYCODE_BACK && this.isMultiSelect) {
-            returnDoneResult();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }

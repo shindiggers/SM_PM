@@ -1,15 +1,21 @@
 package com.example.smmoney.views;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.RippleDrawable;
 import android.text.Editable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -62,6 +68,10 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         }
     }
 
+    // Suppress ConstantConditions inspection: Android Studio / IntelliJ's static dataflow analyzer
+    // falsely evaluates R.id comparisons in chained if-else branches as compile-time constants (always false)
+    // when resource IDs are processed by the build toolchain. At runtime, these conditions match the clicked view ID.
+    @SuppressWarnings("ConstantConditions")
     private void onButtonClick(View v) {
         int id = v.getId();
         if (this.editText == null) return;
@@ -86,41 +96,32 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
             View next = this.editText.focusSearch(FOCUS_DOWN);
             if (next != null) {
                 next.requestFocus();
-                if (next instanceof EditText) {
-                    ((EditText) next).setSelection(((EditText) next).getText().length());
+                if (next instanceof EditText et) {
+                    et.setSelection(et.getText().length());
                 }
                 return;
             }
             hide();
-        } else {
-            String val = "";
-            if (id == R.id.key_0) val = "0";
-            else if (id == R.id.key_1) val = "1";
-            else if (id == R.id.key_2) val = "2";
-            else if (id == R.id.key_3) val = "3";
-            else if (id == R.id.key_4) val = "4";
-            else if (id == R.id.key_5) val = "5";
-            else if (id == R.id.key_6) val = "6";
-            else if (id == R.id.key_7) val = "7";
-            else if (id == R.id.key_8) val = "8";
-            else if (id == R.id.key_9) val = "9";
-            else if (id == R.id.key_dot) val = String.valueOf(decimalSeparator());
-            else if (id == R.id.key_minus) {
-                String text = editable.toString();
-                if (text.startsWith("-")) {
-                    editable.delete(0, 1);
-                } else if (!text.isEmpty() && !text.equals("0")) {
-                    editable.insert(0, "-");
-                }
-                return;
+        } else if (id == R.id.key_minus) {
+            String text = editable.toString();
+            if (text.startsWith("-")) {
+                editable.delete(0, 1);
+            } else if (!text.isEmpty() && !"0".equals(text)) {
+                editable.insert(0, "-");
             }
-
-            if (!val.isEmpty()) {
-                editable.replace(start, end, val);
+        } else if (id == R.id.key_dot) {
+            editable.replace(start, end, String.valueOf(decimalSeparator()));
+        } else if (v instanceof Button btn) {
+            String text = btn.getText().toString();
+            if (!text.isEmpty()) {
+                editable.replace(start, end, text);
             }
         }
     }
 
+    // Suppress ConstantConditions inspection: IntelliJ dataflow analyzer evaluates R.id
+    // comparisons inside this loop over allKeys as compile-time constants (false positives).
+    @SuppressWarnings("ConstantConditions")
     public void refreshTheme() {
         boolean isDark = PocketMoneyThemes.isDarkTheme();
         int gridLineColor = isDark ? 0xFF333333 : 0xFFE0E0E0;
@@ -141,32 +142,44 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
 
         for (int id : allKeys) {
             View v = findViewById(id);
-            int bgColor = numKeyColor;
-            
-            if (id == R.id.key_minus || id == R.id.key_clear || id == R.id.key_delete || id == R.id.key_hide) {
-                bgColor = sideKeyColor;
-            } else if (id == R.id.key_next) {
+            final boolean isNext = (id == R.id.key_next);
+            final int bgColor;
+            if (isNext) {
                 bgColor = actionKeyColor;
+            } else if (isSideKey(id)) {
+                bgColor = sideKeyColor;
+            } else {
+                bgColor = numKeyColor;
             }
 
-            android.graphics.drawable.Drawable background = v.getBackground();
-            if (background instanceof android.graphics.drawable.RippleDrawable ripple) {
-                ripple.setColor(android.content.res.ColorStateList.valueOf(id == R.id.key_next ? 0x44FFFFFF : rippleColor));
+            Drawable background = v.getBackground();
+            if (background instanceof RippleDrawable ripple) {
+                ripple.setColor(ColorStateList.valueOf(isNext ? 0x44FFFFFF : rippleColor));
                 
-                android.graphics.drawable.Drawable shape = ripple.getDrawable(0);
-                if (shape instanceof android.graphics.drawable.GradientDrawable gd) {
+                Drawable shape = ripple.getDrawable(0);
+                if (shape instanceof GradientDrawable gd) {
                     gd.setColor(bgColor);
                     gd.setStroke((int) (0.5f * getResources().getDisplayMetrics().density), gridLineColor);
                 }
             }
             
-            if (v instanceof Button) {
-                ((Button) v).setTextColor(id == R.id.key_next ? Color.WHITE : textColor);
-                if (id == R.id.key_next) ((Button) v).setText(Locales.kLOC_GENERAL_NEXT);
-            } else if (v instanceof ImageButton) {
-                ((ImageButton) v).setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
+            if (v instanceof Button btn) {
+                btn.setTextColor(isNext ? Color.WHITE : textColor);
+                if (isNext) btn.setText(Locales.kLOC_GENERAL_NEXT);
+            } else if (v instanceof ImageButton imgBtn) {
+                imgBtn.setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
             }
         }
+    }
+
+    // Suppress ConstantConditions inspection: IntelliJ dataflow analyzer evaluates R.id
+    // comparisons in sequence as compile-time constants (false positives).
+    @SuppressWarnings("ConstantConditions")
+    private boolean isSideKey(int id) {
+        if (id == R.id.key_minus) return true;
+        if (id == R.id.key_clear) return true;
+        if (id == R.id.key_delete) return true;
+        return id == R.id.key_hide;
     }
 
     private char decimalSeparator() {
@@ -251,9 +264,9 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         }
         
         // Lock the window to never show keyboard automatically
-        if (this.context instanceof android.app.Activity) {
-            ((android.app.Activity) this.context).getWindow().setSoftInputMode(
-                android.view.WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
+        if (this.context instanceof Activity) {
+            ((Activity) this.context).getWindow().setSoftInputMode(
+                WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN
             );
         }
     }

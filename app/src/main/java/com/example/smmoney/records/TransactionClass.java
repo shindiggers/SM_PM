@@ -772,12 +772,10 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
     }
 
     public String imageLocationFromNames(ArrayList<String> names) {
-        StringBuilder sb = new StringBuilder();
-        for (String name : names) {
-            if (sb.length() > 0) sb.append(";");
-            sb.append(name);
+        if (names == null || names.isEmpty()) {
+            return "";
         }
-        return sb.toString();
+        return String.join(";", names);
     }
 
     public void deleteSplitsfromDatabasePermentantly() {

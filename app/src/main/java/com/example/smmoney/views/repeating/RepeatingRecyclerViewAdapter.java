@@ -22,7 +22,6 @@ import com.example.smmoney.views.transactions.TransactionEditActivity;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.GregorianCalendar;
 
 public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<RepeatingRecyclerViewAdapter.RepeatingViewHolder> {

@@ -5,12 +5,12 @@ import android.app.DatePickerDialog.OnDateSetListener;
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Locales;
@@ -38,6 +38,13 @@ public class FromToDateActivity extends PocketMoneyActivity {
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                processDates();
+            }
+        });
     }
 
     @Override
@@ -182,14 +189,5 @@ public class FromToDateActivity extends PocketMoneyActivity {
             (isFromDate ? FromToDateActivity.this.fromDateButton : FromToDateActivity.this.toDateButton).setText(dateStr);
             validateRange();
         };
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            processDates();
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }

@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.appcompat.app.AlertDialog;
 import androidx.transition.TransitionManager;
 
@@ -121,6 +122,15 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
+
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if (!currencyKeyboard.hide()) {
+                    onSupportNavigateUp();
+                }
+            }
+        });
     }
 
     private void extractData() {
@@ -349,14 +359,5 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
                 Toast.makeText(this, Locales.kLOC_EXCHANGERATE_FETCH_ERROR, Toast.LENGTH_SHORT).show();
             }
         });
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if (this.currencyKeyboard.hide()) return false;
-            return onSupportNavigateUp();
-        }
-        return super.onKeyDown(keyCode, event);
     }
 }
