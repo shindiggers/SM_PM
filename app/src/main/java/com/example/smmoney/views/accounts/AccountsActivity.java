@@ -16,6 +16,7 @@ import android.graphics.Paint;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -39,6 +40,10 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import androidx.core.app.ActivityOptionsCompat;
+import androidx.core.content.IntentCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ProgressBar;
@@ -49,6 +54,10 @@ import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+
+import com.example.smmoney.views.budgets.BudgetsActivity;
+import com.example.smmoney.views.charts.ChartsActivity;
+import com.example.smmoney.views.reports.ReportsPlaceholderActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -100,12 +109,7 @@ import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-//import com.android.vending.licensing.LicenseChecker;
-//import com.android.vending.licensing.LicenseCheckerCallback;
-//import com.android.vending.licensing.LicenseCheckerCallback.ApplicationErrorCode;
-//import com.google.android.gms.ads.AdRequest.Builder;
-//import com.google.android.gms.ads.AdView;
+import java.util.concurrent.Future;
 
 public class AccountsActivity extends PocketMoneyActivity implements
         HandlerActivity, ChartViewDelegate,
@@ -128,7 +132,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private static final int PERMISSION_RESTORE_TDF = 112;
     private static final int PERMISSION_RESTORE_QIF = 113;
     private static final int PERMISSION_RESTORE_OFX = 114;
-    public static final boolean DEBUG = false;
     public static final boolean IS_GOOGLE_MARKET = false;
     private static boolean initTaskRunning = false;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -166,17 +169,14 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private ArrayList<Uri> fileNames;
     private double futureBalanceCache = 0.0d;
     private boolean graphButtonEnabled = true;
-    private ImageView graphLeftArrow;
     private TextView graphNetworthTextView;
-    private ImageView graphRightArrow;
     private ProgressBar graphSpinner;
-    private java.util.concurrent.Future<?> graphFuture;
+    private Future<?> graphFuture;
     private TextView graphTitleTextView;
     private Handler mHandler = null;
     private Button moreChartsButton;
     private int msgEmail = -1;
     private ChartView netWorthChartView;
-    private boolean progUpdate = false;
     private PocketMoneyProgressDialog progressDialog = null;
     private boolean shouldEmail = false;
     private ChartView theChartView;
@@ -189,7 +189,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             result -> {
                 if (result.getResultCode() == ACCOUNT_REQUEST_FILTER && result.getData() != null) {
                     Intent i = new Intent(this, TransactionsActivity.class);
-                    FilterClass filter = androidx.core.content.IntentCompat.getSerializableExtra(result.getData(), "Filter", FilterClass.class);
+                    FilterClass filter = IntentCompat.getSerializableExtra(result.getData(), "Filter", FilterClass.class);
                     i.putExtra("Filter", filter);
                     startActivity(i);
                 }
@@ -199,16 +199,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
     public final ActivityResultLauncher<Intent> editLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> reloadData()
-    );
-
-    private final ActivityResultLauncher<Intent> budgetLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (Prefs.getBooleanPref(Prefs.SHUTTINGDOWN)) {
-                    setResult(ACCOUNT_REQUEST_FILTER);
-                    finish();
-                }
-            }
     );
 
     private final ActivityResultLauncher<Intent> emailLauncher = registerForActivityResult(
@@ -238,38 +228,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
     );
 
-    @SuppressWarnings("EmptyMethod")
-    private void testTest() {
-    }
-
-    @SuppressWarnings("EmptyMethod")
-    private void checkLicense() {
-    }
-
-    //private class MyLicenseCheckerCallback implements LicenseCheckerCallback {
-    //  private MyLicenseCheckerCallback() {
-    //}
-
-//    TODO: Investigate what this method was intended to do? Based on dontAllow() method, seems to be related to Licensing. What if wtf?
-//    public void allow() {
-//        if (!AccountsActivity.this.isFinishing()) {
-//            String wtf = "";
-//        }
-//    }
-
-//    TODO: May need to reactivte this method as part of licensing app
-//    public void dontAllow() {
-//        if (!AccountsActivity.this.isFinishing()) {
-//            AccountsActivity.this.showDialog(LISCENSING /*8*/);
-//        }
-//    }
-
-//        public void applicationError(ApplicationErrorCode errorCode) {
-//            if (!AccountsActivity.this.isFinishing()) {
-//                String breakokay = new StringBuilder(String.valueOf("")).toString();
-//            }
-//        }
-
     public void reloadCharts() {
         this.netWorthChartView.setVisibility(View.GONE);
         this.cashFlowChartView.setVisibility(View.GONE);
@@ -293,11 +251,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 this.graphFuture = null;
             }
             this.graphFuture = executor.submit(() -> {
-                if (AccountsActivity.this.theChartView != null) {
-                    synchronized (AccountsActivity.this.adapterLock) {
-                        //AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
-                    }
-                }
+                // AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
                 runOnUiThread(() -> {
                     synchronized (AccountsActivity.this.adapterLock) {
                         AccountsActivity.this.graphReloadCallback();
@@ -327,7 +281,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
 
         // Request Notification permission for Android 13+
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
                 requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS);
             }
@@ -383,8 +337,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         Log.d("ACCOUNTSACTIVITY", "onResume just called");
         if (isLite(this)) {
             checkLastUpgradeDialog();
-        } else if (IS_GOOGLE_MARKET && !DEBUG) {
-            checkLicense();
         }
         if (!Prefs.getBooleanPref(Prefs.HINT_WELCOME) && (this.tipDialog == null || !this.tipDialog.isShowing())) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
@@ -415,6 +367,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
         int i2 = (!Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS) || SMMoney.isLiteVersion()) ? View.GONE : View.VISIBLE;
         frameLayout.setVisibility(i2);
         clearBalanceCache();
+        synchronized (adapterLock) {
+            reloadData();
+            reloadBalanceBar();
+            reloadCharts();
+        }
         if (!initTaskRunning) {
             initTaskRunning = true;
             executor.execute(() -> {
@@ -439,7 +396,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 });
             });
         }
-        testTest();
     }
 
     public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
@@ -458,7 +414,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
             return;
         }
         GregorianCalendar selectedDate = this.theChartView.dataSource.dateForRow(row);
-        this.graphTitleTextView.setText(this.theChartView.dataSource.title() + ": " + CalExt.descriptionWithYear(selectedDate) + " " + CalExt.descriptionWithMonth(selectedDate));
+        this.graphTitleTextView.setText(getString(R.string.accounts_graph_title_format,
+                this.theChartView.dataSource.title(),
+                CalExt.descriptionWithYear(selectedDate),
+                CalExt.descriptionWithMonth(selectedDate)));
         this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
     }
 
@@ -493,8 +452,11 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     private void reloadData() {
         this.adapter.setElements(AccountDB.queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
+        // notifyDataSetChanged is appropriate here as queryOnViewType re-queries and replaces
+        // the entire list of accounts from the database (e.g. on view filter, balance update, or preference change).
         this.adapter.notifyDataSetChanged();
     }
 
@@ -524,7 +486,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                         if (AccountsActivity.this.shouldEmail) {
                             Intent emailIntent = new Intent("android.intent.action.SEND");
                             AccountsActivity accountsActivity = AccountsActivity.this;
-                            int i;
                             Object[] objArr;
                             switch (AccountsActivity.this.msgEmail) {
                                 case EMAIL_QIF /*0*/:
@@ -534,15 +495,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriQif = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedQifFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "QIF";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailText = new Object[2];
-                                    objArrEmailText[0] = "QIF";
-                                    objArrEmailText[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailText));
+                                    objArr = new Object[]{"QIF"};
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    Object[] objArrEmailText = new Object[]{"QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailText));
                                     AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
                                     break;
                                 case EMAIL_TDF /*1*/:
@@ -552,15 +508,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriTxt = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedTxtFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    Object[] objArrEmailSubjectTDF = new Object[1];
-                                    objArrEmailSubjectTDF[0] = "TDF";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArrEmailSubjectTDF));
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextTDF = new Object[2];
-                                    objArrEmailTextTDF[0] = "TDF";
-                                    objArrEmailTextTDF[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextTDF));
+                                    Object[] objArrEmailSubjectTDF = new Object[]{"TDF"};
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArrEmailSubjectTDF));
+                                    Object[] objArrEmailTextTDF = new Object[]{"TDF", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextTDF));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_CSV /*2*/:
@@ -570,15 +521,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     Uri contentUriCsv = getUriForFile(AccountsActivity.this, "com.example.fileprovider", sharedCsvFile);
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "CSV";
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextCSV = new Object[2];
-                                    objArrEmailTextCSV[0] = "CSV";
-                                    objArrEmailTextCSV[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextCSV));
+                                    objArr = new Object[]{"CSV"};
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    Object[] objArrEmailTextCSV = new Object[]{"CSV", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextCSV));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_OFX /*3*/:
@@ -598,15 +544,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     }
                                     emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-                                    objArr = new Object[1];
-                                    objArr[0] = "OFX/QFX";
-                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(i, objArr));
-                                    i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-                                    Object[] objArrEmailTextOFX = new Object[2];
-                                    objArrEmailTextOFX[0] = "OFX/QFX";
-                                    objArrEmailTextOFX[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(i, objArrEmailTextOFX));
+                                    objArr = new Object[]{"OFX/QFX"};
+                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    Object[] objArrEmailTextOFX = new Object[]{"OFX/QFX", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
+                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextOFX));
                                     Log.i(TAG, "ACCOUNTS_ACTIVITY.JAVA: HANDLER - BEFORE START ACTIVTY CALLED");
                                     AccountsActivity.this.startActivity(emailOfxIntent);
                                     break;
@@ -994,31 +935,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.bottomNav.setBackgroundColor(PocketMoneyThemes.bottomNavBackgroundColor());
         this.bottomNav.setItemIconTintList(PocketMoneyThemes.bottomNavColorStateList());
         this.bottomNav.setItemTextColor(PocketMoneyThemes.bottomNavColorStateList());
-        this.bottomNav.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
-            if (itemId == R.id.nav_budgets) {
-                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.budgets.BudgetsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
-                return true;
-            } else if (itemId == R.id.nav_reports) {
-                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.reports.ReportsPlaceholderActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
-                return true;
-            } else if (itemId == R.id.nav_charts) {
-                Intent intent = new Intent(AccountsActivity.this, com.example.smmoney.views.charts.ChartsActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-                startActivity(intent, androidx.core.app.ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
-                return true;
-            }
-            return itemId == R.id.nav_accounts;
-        });
+        this.bottomNav.setOnItemSelectedListener(item -> handleBottomNavigation(item.getItemId()));
 
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
-        this.graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
-        this.graphLeftArrow.setOnClickListener(v -> {
+        ImageView graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
+        graphLeftArrow.setOnClickListener(v -> {
             if (AccountsActivity.this.graphButtonEnabled) {
                 switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
                     case Enums.kSumamryChartTypeNetWorth /*0*/:
@@ -1034,8 +956,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 AccountsActivity.this.runOnUiThread(this::reloadCharts);
             }
         });
-        this.graphRightArrow = layout.findViewById(R.id.graphrightarrow);
-        this.graphRightArrow.setOnClickListener(v -> {
+        ImageView graphRightArrow = layout.findViewById(R.id.graphrightarrow);
+        graphRightArrow.setOnClickListener(v -> {
             if (AccountsActivity.this.graphButtonEnabled) {
                 switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
                     case Enums.kSumamryChartTypeNetWorth /*0*/:
@@ -1064,6 +986,29 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.graphSpinner = layout.findViewById(R.id.graphspinner);
         this.graphTitleTextView = layout.findViewById(R.id.graphtitletextview);
         this.graphNetworthTextView = layout.findViewById(R.id.networthtextview);
+    }
+
+    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* navigation IDs
+    // as 0 during static analysis, falsely flagging subsequent branches in the if-else chain as always false.
+    @SuppressWarnings("ConstantValue")
+    private boolean handleBottomNavigation(int itemId) {
+        if (itemId == R.id.nav_budgets) {
+            Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+            return true;
+        } else if (itemId == R.id.nav_reports) {
+            Intent intent = new Intent(AccountsActivity.this, ReportsPlaceholderActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+            return true;
+        } else if (itemId == R.id.nav_charts) {
+            Intent intent = new Intent(AccountsActivity.this, ChartsActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+            startActivity(intent, ActivityOptionsCompat.makeCustomAnimation(this, R.anim.slide_in_right, R.anim.slide_out_left).toBundle());
+            return true;
+        }
+        return itemId == R.id.nav_accounts;
     }
 
     private void importQIFFromSD() {
@@ -1280,15 +1225,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", qifUris);
-        int i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
-        Object[] objArr = new Object[1];
-        objArr[0] = "QIF";
-        emailIntent.putExtra("android.intent.extra.SUBJECT", getString(i, objArr));
-        i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
-        Object[] objArr2 = new Object[2];
-        objArr2[0] = "QIF";
-        objArr2[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr2));
+        emailIntent.putExtra("android.intent.extra.SUBJECT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "QIF"));
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
         this.fileNames = fileNames;
         emailLauncher.launch(emailIntent);
     }
@@ -1549,24 +1487,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return true;
     }
 
-    private void showLicensingDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("Application not licensed").setMessage("This application is not licensed. Please purchase it from Android Market.").setPositiveButton("Buy app", (dialog, which) -> {
-            AccountsActivity.this.startActivity(new Intent("android.intent.action.VIEW", Uri.parse("http://market.android.com/details?id=" + AccountsActivity.this.getPackageName())));
-            AccountsActivity.this.finish();
-        }).setNegativeButton("Quit", (dialog, which) -> {
-            Intent i = new Intent();
-            i.setAction("android.intent.action.MAIN");
-            i.addCategory("android.intent.category.HOME");
-            AccountsActivity.this.context.startActivity(i);
-        }).setCancelable(false).show();
-    }
-
     public static boolean isLite(Context c) {
         return c.getPackageName().toLowerCase().contains("lite");
     }
 
     protected void showWriteExternalStoraageStatePermission(int requestCode) {
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M && android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.Q) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
             int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
             if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
@@ -1727,9 +1653,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
         } else {
             // permission denied. Disable the functionality that depends on this permission.
-            Spanned message = androidx.core.text.HtmlCompat.fromHtml(
+            Spanned message = HtmlCompat.fromHtml(
                     getString(R.string.permissions_declined_permission_message),
-                    androidx.core.text.HtmlCompat.FROM_HTML_MODE_LEGACY
+                    HtmlCompat.FROM_HTML_MODE_LEGACY
             );
             showPermissionDeclinedAlertDialog(getString(R.string.permissions_declined_permission_dialog_title), message);
         }

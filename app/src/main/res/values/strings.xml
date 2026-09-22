@@ -644,6 +644,7 @@
     <string name="content_description_left_arrow">left arrow</string>
     <string name="content_description_graph_foreground">graph foreground</string>
     <string name="accounts_view_graph_title">Cash Flow: 2012 Month</string>
+    <string name="accounts_graph_title_format">%1$s: %2$s %3$s</string>
     <string name="accounts_view_net_worth">$0.00</string>
     <string name="content_description_open_payee_pick_list">Open payee pick list</string>
     <string name="content_description_open_account_pick_list">Open account pick list</string>

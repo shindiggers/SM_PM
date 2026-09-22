@@ -5,6 +5,7 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateClass;
 import com.example.smmoney.misc.Locales;
@@ -50,10 +51,10 @@ public class AccountDB {
         curs.moveToFirst();
         for (int i = 0; i < count; i++) {
             AccountClass acct = new AccountClass(curs.getInt(0));
-            if (viewType != Enums.kViewAccountsNonZero/*1*/ || acct.getType() == Enums.kAccountTypeOnline/*5*/) {
+            if (viewType != Enums.kViewAccountsNonZero/*1*/) {
                 accounts.add(acct);
             } else {
-                double bal = acct.balanceOfType(Enums.kBalanceTypeFuture/*0*/);
+                double bal = acct.balanceOfType(Enums.kBalanceTypeCleared/*1*/);
                 if (bal < -0.005d || bal > 0.005d) {
                     accounts.add(acct);
                 }
@@ -61,7 +62,7 @@ public class AccountDB {
             try {
                 curs.moveToNext();
             } catch (CursorIndexOutOfBoundsException e) {
-                Log.e(com.example.smmoney.SMMoney.TAG, "CursorIndexOutOfBoundsException in queryOnViewType", e);
+                Log.e(SMMoney.TAG, "CursorIndexOutOfBoundsException in queryOnViewType", e);
             }
         }
         curs.close();

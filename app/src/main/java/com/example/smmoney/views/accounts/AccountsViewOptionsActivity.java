@@ -17,9 +17,6 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
-import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
-
 import java.util.GregorianCalendar;
 
 public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
@@ -69,28 +66,29 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private String nameOfAccountListPref() {
-        return switch (Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
-            case SplitsActivity.RESULT_CHANGED /*1*/ -> Locales.kLOC_PREFERENCES_NON_ZERO;
-            case LookupsListActivity.ACCOUNT_ICON_LOOKUP /*2*/ -> Locales.kLOC_GENERAL_TOTALWORTH;
+        return nameOfAccountListPref(Prefs.getIntPref(Prefs.VIEWACCOUNTS));
+    }
+
+    private String nameOfAccountListPref(int viewType) {
+        return switch (viewType) {
+            case Enums.kViewAccountsNonZero /*1*/ -> Locales.kLOC_PREFERENCES_NON_ZERO;
+            case Enums.kViewAccountsTotalWorth /*2*/ -> Locales.kLOC_GENERAL_TOTALWORTH;
             default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
         };
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        this.showAccountsListPref = fragment.findPreference("viewaccountslistpreference");
+        this.showAccountsListPref = fragment.findPreference("prefsaccountsviewoptionsshowaccounts");
         this.asOfDatePref = fragment.findPreference(Prefs.BALANCEONDATE);
         String[] theStrings = new String[]{Locales.kLOC_PREFERENCES_SHOW_ALL, Locales.kLOC_PREFERENCES_NON_ZERO, Locales.kLOC_GENERAL_TOTALWORTH};
         this.showAccountsListPref.setEntries(theStrings);
-        this.showAccountsListPref.setEntryValues(theStrings);
+        this.showAccountsListPref.setEntryValues(new String[]{"0", "1", "2"});
+        this.showAccountsListPref.setValue(String.valueOf(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
+        this.showAccountsListPref.setSummary(nameOfAccountListPref());
         this.showAccountsListPref.setOnPreferenceChangeListener((preference, newValue) -> {
-            if (newValue.equals(Locales.kLOC_PREFERENCES_SHOW_ALL)) {
-                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsAll /*0*/);
-            } else if (newValue.equals(Locales.kLOC_PREFERENCES_NON_ZERO)) {
-                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsNonZero /*1*/);
-            } else if (newValue.equals(Locales.kLOC_GENERAL_TOTALWORTH)) {
-                Prefs.setPref(Prefs.VIEWACCOUNTS, Enums.kViewAccountsTotalWorth/*2*/);
-            }
-            preference.setSummary((String) newValue);
+            int viewType = Integer.parseInt((String) newValue);
+            Prefs.setPref(Prefs.VIEWACCOUNTS, viewType);
+            preference.setSummary(nameOfAccountListPref(viewType));
             return true;
         });
         this.asOfDatePref.setOnPreferenceClickListener(preference -> {

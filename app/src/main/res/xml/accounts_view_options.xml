@@ -5,8 +5,9 @@
     is doing as it doesn't seem to appear in the preference screen
 
     <ListPreference
-        android:defaultValue="@string/kLOC_PREFERENCES_SHOW_ALL"
-        android:key="viewaccountslistpreference"
+        android:defaultValue="0"
+        android:key="prefsaccountsviewoptionsshowaccounts"
+        android:persistent="false"
         android:title="@string/kLOC_PREFERENCES_SHOW_ACCOUNTS_TITLE" />
 
     <PreferenceCategory android:title="@string/kLOC_SHOW_BALANCES_OVERALL">
