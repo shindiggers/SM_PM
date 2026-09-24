@@ -9,6 +9,8 @@ import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.core.os.BundleCompat;
+
 import com.example.smmoney.R;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
@@ -27,9 +29,11 @@ public class LocalNotificationAlertActivitiy extends Activity {
         GregorianCalendar gregorianCalendar;
         if (which == PocketMoneyThemes.kThemeBlack) { /*0*/
             gregorianCalendar = (GregorianCalendar) LocalNotificationAlertActivitiy.this.date.clone();
-            return;
+        } else {
+            gregorianCalendar = new GregorianCalendar();
         }
-        gregorianCalendar = new GregorianCalendar();
+        
+        LocalNotificationAlertActivitiy.this.repeatingTransaction.postAndAdvanceTransaction(LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getSubTotal(), gregorianCalendar);
     };
     private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
     private final OnClickListener snoozeMenuListener = (dialog, which) -> {
@@ -75,8 +79,12 @@ public class LocalNotificationAlertActivitiy extends Activity {
         this.context = this;
         setTheme(R.style.MyTheme); //MyTheme used as placeholder. Work on it for final
         Bundle extras = getIntent().getExtras();
-        this.repeatingTransaction = new RepeatingTransactionClass(extras.getInt("repeatingID"));
-        this.date = androidx.core.os.BundleCompat.getSerializable(extras, "date", GregorianCalendar.class);
+        if (extras == null) {
+            finish();
+            return;
+        }
+        this.repeatingTransaction = new RepeatingTransactionClass(extras.getInt("repeatingID", 0));
+        this.date = BundleCompat.getSerializable(extras, "date", GregorianCalendar.class);
         String amount = extras.getString("amount");
         String body = extras.getString("body");
         Builder builder = new Builder(this.context, PocketMoneyThemes.dialogTheme());

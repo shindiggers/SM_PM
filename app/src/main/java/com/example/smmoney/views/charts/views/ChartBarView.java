@@ -7,6 +7,7 @@ import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.Path.Direction;
 import android.graphics.Point;
+import androidx.annotation.NonNull;
 import android.util.AttributeSet;
 
 import com.example.smmoney.views.charts.items.ChartItem;
@@ -24,11 +25,10 @@ public class ChartBarView extends ChartView {
         super(context, attr);
     }
 
-    protected void onDraw(Canvas canvas) {
+    protected void onDraw(@NonNull Canvas canvas) {
         super.onDraw(canvas);
         if (this.series != null && !this.series.isEmpty()) {
             double d;
-            ChartItem item;
             Path path;
             float barHeight;
             float leftEdge = 10.0f;
@@ -59,8 +59,7 @@ public class ChartBarView extends ChartView {
             this.mLinePaints.setStyle(Style.STROKE);
             this.mLinePaints.setColor(-16777216);
             this.mLinePaints.setStrokeWidth(0.5f);
-            for (Object o : this.series.get(0)) {
-                item = (ChartItem) o;
+            for (ChartItem item : this.series.get(0)) {
                 path = new Path();
                 barHeight = (float) Math.abs(item.value * ((double) verticalScale));
                 if (item.value > 0.0d || this.allNegative) {
@@ -84,8 +83,7 @@ public class ChartBarView extends ChartView {
             }
             currentBar = leftEdge + 2.0f;
             if (this.series.size() >= 2) {
-                for (Object o : this.series.get(1)) {
-                    item = (ChartItem) o;
+                for (ChartItem item : this.series.get(1)) {
                     path = new Path();
                     barHeight = (float) Math.abs(item.value * ((double) verticalScale));
                     if (item.value > 0.0d) {
@@ -112,9 +110,8 @@ public class ChartBarView extends ChartView {
                 Point lastPoint = null;
                 currentBar = leftEdge + ((barWidth - 2.0f) / 2.0f);
                 boolean firstPoint = true;
-                for (Object o : this.series.get(2)) {
+                for (ChartItem item : this.series.get(2)) {
                     Point nextPoint;
-                    item = (ChartItem) o;
                     path = new Path();
                     barHeight = (float) Math.abs(item.value * ((double) verticalScale));
                     if (item.value > 0.0d) {

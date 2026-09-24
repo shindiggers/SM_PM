@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 
@@ -39,10 +40,7 @@ public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
         Intent i = new Intent(context, TransactionEditActivity.class);
         i.putExtras(extras);
 
-        int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-            pendingIntentFlags |= PendingIntent.FLAG_IMMUTABLE;
-        }
+        int pendingIntentFlags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
 
         if (extras.getBoolean("cancelled")) {
             am.set(AlarmManager.RTC_WAKEUP, CalExt.addWeeks(new GregorianCalendar(), 520).getTimeInMillis(), PendingIntent.getBroadcast(context, repeatingTransaction.repeatingID, new Intent(context, LocalNotificationRepeatingReciever.class), pendingIntentFlags));
@@ -52,7 +50,7 @@ public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
 
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "repeating_transactions";
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(channelId, "Repeating Transactions", NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
@@ -74,7 +72,7 @@ public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
         builder.setDeleteIntent(PendingIntent.getBroadcast(context, 0, deleteIntent, pendingIntentFlags));
 
         notificationManager.notify(repeatingTransaction.repeatingID, builder.build());
-        PendingIntent p = PendingIntent.getBroadcast(context, repeatingTransaction.repeatingID, intent, PendingIntent.FLAG_NO_CREATE | (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M ? PendingIntent.FLAG_IMMUTABLE : 0));
+        PendingIntent p = PendingIntent.getBroadcast(context, repeatingTransaction.repeatingID, intent, PendingIntent.FLAG_NO_CREATE | PendingIntent.FLAG_IMMUTABLE);
         if (p != null) {
             p.cancel();
         }

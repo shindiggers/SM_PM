@@ -525,19 +525,12 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
                 Log.d("NOTIFY", "Scheduling notification for ID: " + this.repeatingID + " at " + CalExt.descriptionWithTimestamp(newDate));
 
-                int flags = PendingIntent.FLAG_UPDATE_CURRENT;
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                    flags |= PendingIntent.FLAG_IMMUTABLE;
-                }
+                int flags = PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE;
 
                 PendingIntent pIntent = PendingIntent.getBroadcast(context, this.repeatingID, intent, flags);
                 AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 if (am != null) {
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
-                    } else {
-                        am.set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
-                    }
+                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
                 }
             }
         } else {

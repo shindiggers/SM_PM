@@ -1,5 +1,6 @@
 package com.example.smmoney.views.accounts;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -132,6 +133,11 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         return -1;
     }
 
+    // Suppress NotifyDataSetChanged: calculateItems() completely rebuilds the flattened view list
+    // (headers, accounts, and custom rows). Since sections can be expanded/collapsed and the entire
+    // underlying dataset could have changed, calculating specific diffs or item animations would be
+    // complex and provide minimal benefit given the relatively small maximum size of an accounts list.
+    @SuppressLint("NotifyDataSetChanged")
     private void calculateItems() {
         items.clear();
         if (isSectioned()) {
@@ -162,6 +168,11 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
         if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
             items.add(AccountListItem.createCustom(Locales.kLOC_REPEATING_TRANSACTIONS));
         }
+        // notifyDataSetChanged() is appropriate here because calculateItems() completely rebuilds
+        // the flattened view list (headers, accounts, and custom rows). Since sections can be
+        // expanded/collapsed and the entire underlying dataset could have changed, calculating
+        // specific diffs or item animations would be complex and provide minimal benefit given
+        // the relatively small maximum size of an accounts list.
         notifyDataSetChanged();
     }
 

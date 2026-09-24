@@ -5,7 +5,6 @@
     android:id="@+id/therow"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:background="@color/blue_theme_background_color"
     android:clickable="true"
     android:focusable="true"
     android:nextFocusLeft="@+id/selected"

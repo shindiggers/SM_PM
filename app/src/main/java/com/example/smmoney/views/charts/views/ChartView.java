@@ -8,13 +8,13 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.views.charts.ChartViewDataSource;
 import com.example.smmoney.views.charts.ChartViewDelegate;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.reports.ReportDataSource;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 public class ChartView extends View {
     public ChartViewDataSource dataSource;
@@ -26,7 +26,6 @@ public class ChartView extends View {
     double positiveTotal;
     ChartItem selectedItem;
     ArrayList<ArrayList<ChartItem>> series;
-    boolean showChartLabels;
 
     public ChartView(Context context) {
         super(context);
@@ -54,11 +53,9 @@ public class ChartView extends View {
         this.positiveTotal = 0.0d;
         this.negativeMaxValue = 0.0d;
         this.positiveMaxValue = 0.0d;
-        this.allNegative = this.dataSource.getClass().equals(ReportDataSource.class);
-        Iterator<ArrayList<ChartItem>> it = this.series.iterator();
-        while (it.hasNext()) {
-            for (Object o : it.next()) {
-                ChartItem anItem = (ChartItem) o;
+        this.allNegative = this.dataSource instanceof ReportDataSource;
+        for (ArrayList<ChartItem> chartItems : this.series) {
+            for (ChartItem anItem : chartItems) {
                 if (anItem.value > 0.0d) {
                     this.positiveTotal += anItem.value;
                     this.allNegative = false;
@@ -69,10 +66,8 @@ public class ChartView extends View {
                 this.positiveMaxValue = Math.max(this.positiveMaxValue, anItem.value);
             }
         }
-        it = this.series.iterator();
-        while (it.hasNext()) {
-            for (Object o : it.next()) {
-                ChartItem anItem = (ChartItem) o;
+        for (ArrayList<ChartItem> chartItems : this.series) {
+            for (ChartItem anItem : chartItems) {
                 if (anItem.value < 0.0d) {
                     anItem.percent = anItem.value / this.negativeTotal;
                 } else {
@@ -82,22 +77,25 @@ public class ChartView extends View {
         }
     }
 
-    public void deselectChunk() {
-        this.selectedItem = null;
+    @Override
+    public boolean performClick() {
+        super.performClick();
+        return true;
     }
 
+    @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (this.selectedItem != null) {
             this.selectedItem.selected = false;
         }
-        if (event.getAction() == 1) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            performClick();
             float x = event.getX();
             float y = event.getY();
             RectF rect = new RectF();
             Region region = new Region();
             for (ArrayList<ChartItem> chartItems : this.series) {
-                for (Object o : chartItems) {
-                    ChartItem item = (ChartItem) o;
+                for (ChartItem item : chartItems) {
                     try {
                         item.path.computeBounds(rect, true);
                         region.setPath(item.path, new Region((int) rect.left, (int) rect.top, (int) rect.right, (int) rect.bottom));
@@ -106,7 +104,7 @@ public class ChartView extends View {
                             this.selectedItem = item;
                         }
                     } catch (Exception e) {
-                        Log.e(com.example.smmoney.SMMoney.TAG, "Exception in onTouchEvent (computing bounds)", e);
+                        Log.e(SMMoney.TAG, "Exception in onTouchEvent (computing bounds)", e);
                     }
                 }
             }
@@ -114,7 +112,7 @@ public class ChartView extends View {
         try {
             this.delegate.chartViewSelectedItem(this, this.selectedItem);
         } catch (NullPointerException e2) {
-            Log.e(com.example.smmoney.SMMoney.TAG, "NullPointerException in onTouchEvent (delegate call)", e2);
+            Log.e(SMMoney.TAG, "NullPointerException in onTouchEvent (delegate call)", e2);
         }
         invalidate();
         return true;

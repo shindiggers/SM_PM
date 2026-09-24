@@ -988,9 +988,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.graphNetworthTextView = layout.findViewById(R.id.networthtextview);
     }
 
-    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* navigation IDs
-    // as 0 during static analysis, falsely flagging subsequent branches in the if-else chain as always false.
-    @SuppressWarnings("ConstantValue")
     private boolean handleBottomNavigation(int itemId) {
         if (itemId == R.id.nav_budgets) {
             Intent intent = new Intent(AccountsActivity.this, BudgetsActivity.class);

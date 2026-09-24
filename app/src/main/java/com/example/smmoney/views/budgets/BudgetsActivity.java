@@ -192,9 +192,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.periodButton.setCornerRadius((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.0f, getResources().getDisplayMetrics()));
     }
 
-    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* navigation IDs
-    // as 0 during static analysis, falsely flagging subsequent branches in the if-else chain as always false.
-    @SuppressWarnings("ConstantValue")
     private boolean handleBottomNavigation(int itemId) {
         if (itemId == R.id.nav_accounts) {
             Intent intent = new Intent(BudgetsActivity.this, AccountsActivity.class);
@@ -421,9 +418,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                 .show();
     }
 
-    // Suppress ConstantValue: IDE data-flow analysis evaluates R.id.sort_* constants as 0 during static analysis,
-    // falsely treating subsequent if-conditions as always false.
-    @SuppressWarnings("ConstantValue")
     private int getSortTypeFromId(int selectedPropertyId) {
         if (selectedPropertyId == R.id.sort_actual) return Enums.kBudgetsSortTypeActual;
         if (selectedPropertyId == R.id.sort_budget) return Enums.kBudgetsSortTypeBudgeted;

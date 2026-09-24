@@ -161,6 +161,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 reloadBalanceBar();
             }
     );
+    // Suppress deprecation warning: We explicitly handle the deprecated getSerializable(String)
+    // for compatibility with devices running Android 12 (API 32) or older.
+    @SuppressWarnings("deprecation")
     private final ActivityResultLauncher<Intent> filterLauncher = registerForActivityResult(
             new ActivityResultContracts.StartActivityForResult(),
             result -> {
@@ -201,6 +204,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             }
     );
 
+    // Suppress deprecation warning: We explicitly handle the deprecated getSerializable(String)
+    // for compatibility with devices running Android 12 (API 32) or older.
+    @SuppressWarnings("deprecation")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

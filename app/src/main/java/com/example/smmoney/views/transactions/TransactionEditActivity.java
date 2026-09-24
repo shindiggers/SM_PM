@@ -1200,7 +1200,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         }
     }
 
-    private TransactionClass createKeepTheChangeRecord(AccountClass account, AccountClass ktcAccount) {
+    private TransactionClass createKeepTheChangeRecord(@NonNull AccountClass account, AccountClass ktcAccount) {
         TransactionClass record = new TransactionClass();
         record.setAccount(this.transaction.getAccount());
         if (ktcAccount != null) {
@@ -1225,7 +1225,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         double d;
         double newRate;
         double newAmount;
-        String currencyCode = AccountDB.recordFor(modRecP.getAccount()) != null ? AccountDB.recordFor(modRecP.getAccount()).getCurrencyCode() : "";
+        AccountClass account = AccountDB.recordFor(modRecP.getAccount());
+        String currencyCode = account != null ? account.getCurrencyCode() : "";
         int i = 0;
         while (i < oldRecP.getNumberOfSplits()) {
             if (oldRecP.getTransferToAccountAtIndex(i) != null && !oldRecP.getTransferToAccountAtIndex(i).isEmpty()) {

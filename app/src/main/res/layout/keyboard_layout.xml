@@ -4,8 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/keyboard_grid"
     android:layout_width="match_parent"
-    android:layout_height="260dp"
-    android:background="#333333">
+    android:layout_height="260dp">
 
     <!-- Row 1 -->
     <Button android:id="@+id/key_1" style="@style/KeyboardButtonStyle" android:text="1" tools:ignore="HardcodedText"

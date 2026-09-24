@@ -68,10 +68,6 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         }
     }
 
-    // Suppress ConstantConditions inspection: Android Studio / IntelliJ's static dataflow analyzer
-    // falsely evaluates R.id comparisons in chained if-else branches as compile-time constants (always false)
-    // when resource IDs are processed by the build toolchain. At runtime, these conditions match the clicked view ID.
-    @SuppressWarnings("ConstantConditions")
     private void onButtonClick(View v) {
         int id = v.getId();
         if (this.editText == null) return;
@@ -119,9 +115,6 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         }
     }
 
-    // Suppress ConstantConditions inspection: IntelliJ dataflow analyzer evaluates R.id
-    // comparisons inside this loop over allKeys as compile-time constants (false positives).
-    @SuppressWarnings("ConstantConditions")
     public void refreshTheme() {
         boolean isDark = PocketMoneyThemes.isDarkTheme();
         int gridLineColor = isDark ? 0xFF333333 : 0xFFE0E0E0;
@@ -172,9 +165,6 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         }
     }
 
-    // Suppress ConstantConditions inspection: IntelliJ dataflow analyzer evaluates R.id
-    // comparisons in sequence as compile-time constants (false positives).
-    @SuppressWarnings("ConstantConditions")
     private boolean isSideKey(int id) {
         if (id == R.id.key_minus) return true;
         if (id == R.id.key_clear) return true;
