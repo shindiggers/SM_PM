@@ -4,6 +4,8 @@ import android.graphics.Path;
 
 import com.example.smmoney.views.reports.ReportItem;
 
+import java.util.GregorianCalendar;
+
 public class ChartItem {
     public final int color;
     public Path path;
@@ -11,8 +13,12 @@ public class ChartItem {
     public boolean selected = false;
     public final double value;
     public ReportItem reportItem;
-    @SuppressWarnings("FieldCanBeLocal")
-    private final String label;
+    public final String label;
+    
+    // Properties for drilling down into charts
+    public GregorianCalendar fromDate;
+    public GregorianCalendar toDate;
+    public Boolean isIncome; // Null for NetWorth, true/false for CashFlow
 
     public ChartItem(double value, String label, int color) {
         this.value = value;

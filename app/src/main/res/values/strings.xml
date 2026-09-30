@@ -413,7 +413,7 @@
     <string name="kLOC_SHOW_CHARTS">Summary charts</string>
     <string name="kLOC_CHARTS_NETWORTH">Net Worth</string>
     <string name="kLOC_CHARTS_CASHFLOW">Cash Flow</string>
-    <string name="kLOC_CHARTS_MORECHARTS">More Charts</string>
+    <string name="kLOC_CHARTS_MORECHARTS">Charts</string>
     <string name="kLOC_REPORTDISPLAY_ITEM">Item</string>
     <string name="kLOC_REPORTDISPLAY_COUNT">Count</string>
     <string name="kLOC_ICON_DELETE">Delete Icon</string>

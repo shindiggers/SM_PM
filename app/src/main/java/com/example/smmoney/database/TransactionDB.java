@@ -26,6 +26,7 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TimeZone;
 
 public class TransactionDB {
@@ -456,9 +457,28 @@ public class TransactionDB {
     }
 
     public static double cashFlowBalanceWith(int type, GregorianCalendar fromDate, GregorianCalendar toDate) {
+        return cashFlowBalanceWith(type, fromDate, toDate, null);
+    }
+
+    public static double cashFlowBalanceWith(int type, GregorianCalendar fromDate, GregorianCalendar toDate, Set<Integer> filteredAccountIds) {
         double amount = 0.0d;
-        int viewAccountType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
-        String accountsWhere = getAccountsWhere(viewAccountType);
+        
+        String accountsWhere;
+        if (filteredAccountIds != null) {
+            StringBuilder idList = new StringBuilder();
+            boolean first = true;
+            for (Integer id : filteredAccountIds) {
+                if (!first) idList.append(",");
+                idList.append(id);
+                first = false;
+            }
+            // Include only filtered accounts, but explicitly exclude ANY transfer to another active account in the DB
+            accountsWhere = " AND t.accountID IN (" + idList + ") AND (NOT s.transferToAccountID IN (SELECT accountID FROM accounts WHERE deleted=0))";
+        } else {
+            int viewAccountType = Prefs.getIntPref(Prefs.VIEWACCOUNTS);
+            accountsWhere = getAccountsWhere(viewAccountType);
+        }
+        
         StringBuilder append = new StringBuilder("SELECT  sum(s.amount / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = t.accountID )) FROM transactions t INNER JOIN splits s ON t.transactionID=s.transactionID WHERE deleted=0 AND type<>5 AND ").append(type == 0 ? -1.0d : 1.0d).append(" * s.amount > 0 AND t.date>=");
         if (fromDate == null) {
             fromDate = CalExt.distantPast();
@@ -467,7 +487,8 @@ public class TransactionDB {
         if (toDate == null) {
             toDate = CalExt.distantFuture();
         }
-        Cursor curs = Database.rawQuery(append.append(CalExt.beginningOfDay(toDate).getTimeInMillis() / 1000).append(" ").append(accountsWhere).toString(), null);
+        // Use endOfDay(toDate) instead of beginningOfDay(toDate) to ensure transactions on the last day are included!
+        Cursor curs = Database.rawQuery(append.append(CalExt.endOfDay(toDate).getTimeInMillis() / 1000).append(" ").append(accountsWhere).toString(), null);
         if (curs.getCount() > 0) {
             curs.moveToFirst();
             amount = curs.getDouble(0);

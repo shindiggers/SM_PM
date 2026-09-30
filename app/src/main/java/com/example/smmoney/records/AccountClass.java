@@ -11,6 +11,8 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.util.Xml;
 
+import androidx.annotation.NonNull;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
@@ -914,7 +916,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return retBalance;
     }
 
-    static String accountForID(int pk) {
+    public static String accountForID(int pk) {
         if (pk == 0) {
             return null;
         }
@@ -1157,7 +1159,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 this.string.append((char) b);
             }
 
-            @androidx.annotation.NonNull
+            @NonNull
             @Override
             public String toString() {
                 return this.string.toString();
