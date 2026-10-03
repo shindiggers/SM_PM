@@ -67,13 +67,14 @@ public class Database {
     private static final int DATABASE_VERSION_32 = 32;
     private static final int DATABASE_VERSION_33 = 33;
     public static final int DATABASE_VERSION_34 = 34;
+    public static final int DATABASE_VERSION_35 = 35;
     private static final int DATABASE_VERSION_4 = 4;
     private static final int DATABASE_VERSION_5 = 5;
     private static final int DATABASE_VERSION_6 = 6;
     private static final int DATABASE_VERSION_7 = 7;
     private static final int DATABASE_VERSION_8 = 8;
     private static final int DATABASE_VERSION_9 = 9;
-    private static final int DATABASE_VERSION_CURRENT = DATABASE_VERSION_34;
+    private static final int DATABASE_VERSION_CURRENT = DATABASE_VERSION_35;
     public static final String EXCHANGERATES_TABLE_NAME = "exchangeRates";
     public static final String FILTERS_TABLE_NAME = "filters";
     public static final String IDS_TABLE_NAME = "ids";
@@ -99,7 +100,7 @@ public class Database {
             try {
                 db.execSQL("CREATE TABLE preferences (databaseVersion\t\tINTEGER,databaseID\t\t\tINTEGER,multipleCurrencies   BOOLEAN,nextServerID         INTEGER,homeCurrency\t\t\tTEXT);");
                 db.execSQL("INSERT INTO preferences (databaseVersion, databaseID) VALUES (" + Database.DATABASE_VERSION_CURRENT + ", random());");
-                db.execSQL("CREATE TABLE accounts (deleted\t\t\t\tBOOLEAN DEFAULT 0,timestamp\t\t\tINTEGER,accountID\t\t\tINTEGER PRIMARY KEY AUTOINCREMENT,displayOrder\t\t\tINTEGER,account\t\t\t\tTEXT,balanceOverall\t\tREAL,balanceCleared\t\tREAL,type\t\t\t\t\tINTEGER,accountNumber\t\tTEXT,institution\t\t\tTEXT,phone\t\t\t\tTEXT,expirationDate\t\tTEXT,checkNumber\t\t\tTEXT,notes\t\t\t\tTEXT,iconFileName\t\t\tTEXT,url\t\t\t\t\tTEXT,ofxid\t\t\t\tTEXT,ofxurl\t\t\t\tTEXT,password\t\t\t\tTEXT,fee\t\t\t\t\tREAL,fixedPercent\t\t\tINTEGER,limitAmount\t\t\tREAL,noLimit\t\t\t\tINTEGER,totalWorth\t\t\tINTEGER,exchangeRate\t\t\tREAL,currencyCode\t\t\tTEXT,lastSyncTime\t\t\tINTEGER DEFAULT 0,keepTheChangeAccountID\tINTEGER,keepChangeRoundTo\t\tREAL,serverID\t\t\t\tTEXT,routingNumber\t\tTEXT,overdraftAccountID\tINTEGER DEFAULT 0);");
+                db.execSQL("CREATE TABLE accounts (deleted\t\t\t\tBOOLEAN DEFAULT 0,timestamp\t\t\tINTEGER,accountID\t\t\tINTEGER PRIMARY KEY AUTOINCREMENT,displayOrder\t\t\tINTEGER,account\t\t\t\tTEXT,balanceOverall\t\tREAL,balanceCleared\t\tREAL,type\t\t\t\t\tINTEGER,accountNumber\t\tTEXT,institution\t\t\tTEXT,phone\t\t\t\tTEXT,expirationDate\t\tTEXT,checkNumber\t\t\tTEXT,notes\t\t\t\tTEXT,iconFileName\t\t\tTEXT,url\t\t\t\t\tTEXT,ofxid\t\t\t\tTEXT,ofxurl\t\t\t\tTEXT,password\t\t\t\tTEXT,fee\t\t\t\t\tREAL,fixedPercent\t\t\tINTEGER,limitAmount\t\t\tREAL,noLimit\t\t\t\tINTEGER,totalWorth\t\t\tINTEGER,exchangeRate\t\t\tREAL,currencyCode\t\t\tTEXT,lastSyncTime\t\t\tINTEGER DEFAULT 0,keepTheChangeAccountID\tINTEGER,keepChangeRoundTo\t\tREAL,serverID\t\t\t\tTEXT,routingNumber\t\tTEXT,overdraftAccountID\tINTEGER DEFAULT 0,ccStatementCycleRule\tTEXT,ccDueDateRule\t\tTEXT,ccWeekendPolicy\t\tTEXT);");
                 db.execSQL("CREATE INDEX accountNames ON accounts (account);");
                 db.execSQL("CREATE INDEX typeaccount ON accounts (type, account);");
                 db.execSQL("CREATE INDEX accountDisplayOrder ON accounts (displayOrder);");
@@ -458,6 +459,13 @@ public class Database {
             if (!currencyCode.isEmpty()) {
                 setHomeCurrency(currencyCode);
             }
+            databaseVersion = DATABASE_VERSION_34;
+            updateVersion(databaseVersion);
+        }
+        if (databaseVersion == DATABASE_VERSION_34) {
+            execSqlWithCatch("ALTER TABLE accounts ADD ccStatementCycleRule TEXT");
+            execSqlWithCatch("ALTER TABLE accounts ADD ccDueDateRule TEXT");
+            execSqlWithCatch("ALTER TABLE accounts ADD ccWeekendPolicy TEXT");
             databaseVersion = DATABASE_VERSION_CURRENT;
             updateVersion(databaseVersion);
         }

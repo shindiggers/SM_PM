@@ -1,5 +1,6 @@
 package com.example.smmoney.views.charts.compose
 
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.background
+import androidx.compose.material3.Surface
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -22,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
@@ -49,6 +54,7 @@ import com.example.smmoney.records.FilterClass
 import com.example.smmoney.views.transactions.TransactionsActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun ChartsScreen() {
@@ -61,7 +67,124 @@ fun ChartsScreen() {
         NetWorthChart()
         Spacer(modifier = Modifier.height(32.dp))
         CashFlowChart()
-        ChartPlaceholder("Credit Card Chart")
+        Spacer(modifier = Modifier.height(32.dp))
+        CreditCardSummaryList()
+    }
+}
+
+@Composable
+fun CreditCardSummaryList() {
+    var summaries by remember { mutableStateOf<List<CreditCardCycleSummary>>(emptyList()) }
+    var refreshTrigger by remember { mutableIntStateOf(0) }
+    val context = LocalContext.current
+
+    // Observe lifecycle to refresh data on resume
+    DisposableEffect(LocalContext.current) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                refreshTrigger++
+            }
+        }
+        val lifecycle = (context as? LifecycleOwner)?.lifecycle
+        lifecycle?.addObserver(observer)
+        onDispose {
+            lifecycle?.removeObserver(observer)
+        }
+    }
+
+    LaunchedEffect(refreshTrigger) {
+        withContext(Dispatchers.IO) {
+            val dbAccounts = AccountDB.queryOnViewType(0) // 0 is All Accounts
+            val ccAccounts = dbAccounts.filter { it.type == Enums.kAccountTypeCreditCard && !it.deleted }
+            val summs = ccAccounts.mapNotNull { 
+                CreditCardComposeDataSource.getCycleSummary(it)
+            }
+            withContext(Dispatchers.Main) {
+                summaries = summs
+            }
+        }
+    }
+
+    if (summaries.isNotEmpty()) {
+        Text("Credit Card Summary", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 16.dp))
+        Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            for (summary in summaries) {
+                CreditCardSummaryItem(summary)
+            }
+        }
+    }
+}
+
+@Composable
+fun CreditCardSummaryItem(summary: CreditCardCycleSummary) {
+    var showFullCycleSpent by remember { mutableStateOf(false) }
+
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        shape = RoundedCornerShape(12.dp),
+        shadowElevation = 2.dp,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Column(modifier = Modifier.padding(16.dp)) {
+            Text(text = summary.account.account, style = MaterialTheme.typography.titleMedium)
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Column {
+                    Text(text = "Last Stmt Balance", style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Text(text = summary.account.formatAmountAsCurrency(summary.lastStatementBalance), style = MaterialTheme.typography.titleMedium)
+                        
+                        val locale = LocalConfiguration.current.locales[0]
+                        val formatter = remember(locale) {
+                            DateTimeFormatter.ofPattern(
+                                DateFormat.getBestDateTimePattern(locale, "MMMd")
+                            )
+                        }
+                        Text(
+                            text = " (Due ${summary.nextDueDate.format(formatter)})", 
+                            style = MaterialTheme.typography.labelSmall, 
+                            color = MaterialTheme.colorScheme.error,
+                            modifier = Modifier.padding(start = 4.dp)
+                        )
+                    }
+                }
+                Column(
+                    horizontalAlignment = Alignment.End,
+                    modifier = Modifier.clickable { showFullCycleSpent = !showFullCycleSpent }
+                ) {
+                    Text(
+                        text = if (showFullCycleSpent) "Spent (Full Cycle)" else "Spent (To Date)", 
+                        style = MaterialTheme.typography.labelSmall, 
+                        color = MaterialTheme.colorScheme.primary
+                    )
+                    Text(
+                        text = summary.account.formatAmountAsCurrency(
+                            if (showFullCycleSpent) summary.spentSinceStatementToNext else summary.spentSinceStatementToNow
+                        ), 
+                        style = MaterialTheme.typography.titleMedium,
+                        color = Color(0xFFE57373)
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Progress Bar
+            val locale = LocalConfiguration.current.locales[0]
+            val formatter = remember(locale) {
+                DateTimeFormatter.ofPattern(
+                    DateFormat.getBestDateTimePattern(locale, "MMMd")
+                )
+            }
+            Box(modifier = Modifier.fillMaxWidth().height(8.dp).background(MaterialTheme.colorScheme.surfaceVariant, RoundedCornerShape(4.dp))) {
+                Box(modifier = Modifier.fillMaxWidth(summary.cycleProgressPercentage).height(8.dp).background(Color(0xFF81C784), RoundedCornerShape(4.dp)))
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
+                Text(text = "Stmt: ${summary.lastStatementDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(text = "Next: ${summary.nextStatementDate.format(formatter)}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            }
+        }
     }
 }
 

@@ -30,14 +30,19 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.PocketMoneyProgressDialog;
+import com.example.smmoney.views.charts.compose.ModernChartsKt;
 import com.example.smmoney.views.charts.items.ChartItem;
 import com.example.smmoney.views.charts.items.ReportChartItem;
 import androidx.compose.ui.platform.ComposeView;
 
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import kotlin.Unit;
 
 public class ReportsActivity extends PocketMoneyActivity implements ReportDialog.ReportDialogListner {
     public static boolean processData = false;
@@ -48,9 +53,8 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
     private ReportsRowAdapter adapter;
     private TextView balanceAmountView;
     private TextView balanceLabelView;
-    private ComposeView barChartView;
-    private ComposeView pieChartView;
-    private View chartView;
+    private ComposeView chartComposeContainer;
+
     private ReportDataSource datasource;
     private View nextPeriodView;
     private Button periodButton;
@@ -80,6 +84,8 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
     private ListView theList;
 
     private WakeLock wakeLock;
+
+    private View emptyChartStateContainer;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -117,6 +123,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
 
     private void setupView() {
         this.theList = findViewById(R.id.thelist);
+        this.emptyChartStateContainer = findViewById(R.id.empty_chart_state_container);
         this.adapter = new ReportsRowAdapter(this);
         this.theList.setAdapter(this.adapter);
         this.theList.setFocusable(false);
@@ -131,8 +138,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
         this.balanceLabelView = findViewById(R.id.balance_label);
         this.balanceAmountView = findViewById(R.id.balance_amount);
         ((View) this.balanceLabelView.getParent().getParent()).setBackgroundResource(R.drawable.theme_gradient_black);
-        this.barChartView = findViewById(R.id.barchartview);
-        this.pieChartView = findViewById(R.id.piechartview);
+        this.chartComposeContainer = findViewById(R.id.chart_compose_container);
         ((View) this.nextPeriodView.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ((View) this.theList.getParent()).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
     }
@@ -154,25 +160,13 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
     }
 
     private void selectChartView() {
-        switch (Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE)) {
-            case Enums.kReportsChartTypeNone /*0*/:
-                this.chartView = null;
-                this.pieChartView.setVisibility(View.GONE);
-                this.barChartView.setVisibility(View.GONE);
-                break;
-            case Enums.kReportsChartTypePie /*1*/:
-                this.chartView = this.pieChartView;
-                this.pieChartView.setVisibility(View.VISIBLE);
-                this.barChartView.setVisibility(View.GONE);
-                break;
-            case Enums.kReportsChartTypeBar /*2*/:
-                this.chartView = this.barChartView;
-                this.pieChartView.setVisibility(View.GONE);
-                this.barChartView.setVisibility(View.VISIBLE);
-                break;
-        }
-        if (SMMoney.isLiteVersion() && this.chartView != null) {
-            this.chartView.setVisibility(View.GONE);
+        int chartType = Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE);
+        if (this.chartComposeContainer != null) {
+            if (chartType == Enums.kReportsChartTypeNone || SMMoney.isLiteVersion()) {
+                this.chartComposeContainer.setVisibility(View.GONE);
+            } else {
+                this.chartComposeContainer.setVisibility(View.VISIBLE);
+            }
         }
     }
 
@@ -201,11 +195,31 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
         this.adapter.setElements(this.datasource.data);
         loadBalanceBar();
         updateComposeViews();
+        
+        // Show empty state if there is no data
+        if (this.datasource.data == null || this.datasource.data.isEmpty()) {
+            this.emptyChartStateContainer.setVisibility(View.VISIBLE);
+            
+            View chartIconContainer = this.emptyChartStateContainer.findViewById(R.id.empty_chart_icon_container);
+            if (chartIconContainer != null) {
+                int chartType = Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE);
+                if (chartType == Enums.kReportsChartTypeNone || SMMoney.isLiteVersion()) {
+                    chartIconContainer.setVisibility(View.GONE);
+                    this.chartComposeContainer.setVisibility(View.GONE);
+                } else {
+                    chartIconContainer.setVisibility(View.VISIBLE);
+                    this.chartComposeContainer.setVisibility(View.INVISIBLE);
+                }
+            }
+        } else {
+            this.emptyChartStateContainer.setVisibility(View.GONE);
+            selectChartView(); // Restore chart visibility based on preference
+        }
     }
     
     private void updateComposeViews() {
         if (this.datasource.data != null) {
-            java.util.List<ChartItem> chartItems = new java.util.ArrayList<>();
+            List<ChartItem> chartItems = new ArrayList<>();
             for (ReportItem ri : this.datasource.data) {
                 if (ri.checked) {
                     ReportChartItem rci = new ReportChartItem(ri.amount, ri.expense, ri.color);
@@ -215,23 +229,27 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
                 }
             }
             
-            com.example.smmoney.views.charts.compose.ModernChartsKt.setPieChartContent(
-                this.pieChartView,
-                chartItems,
-                chartItem -> {
-                    chartViewSelectedItem(chartItem);
-                    return kotlin.Unit.INSTANCE;
-                }
-            );
-
-            com.example.smmoney.views.charts.compose.ModernChartsKt.setBarChartContent(
-                this.barChartView,
-                chartItems,
-                chartItem -> {
-                    chartViewSelectedItem(chartItem);
-                    return kotlin.Unit.INSTANCE;
-                }
-            );
+            int chartType = Prefs.getIntPref(Prefs.PREFS_REPORTS_CHARTTYPE);
+            
+            if (chartType == Enums.kReportsChartTypePie) {
+                ModernChartsKt.setPieChartContent(
+                    this.chartComposeContainer,
+                    chartItems,
+                    chartItem -> {
+                        chartViewSelectedItem(chartItem);
+                        return Unit.INSTANCE;
+                    }
+                );
+            } else if (chartType == Enums.kReportsChartTypeBar) {
+                ModernChartsKt.setBarChartContent(
+                    this.chartComposeContainer,
+                    chartItems,
+                    chartItem -> {
+                        chartViewSelectedItem(chartItem);
+                        return Unit.INSTANCE;
+                    }
+                );
+            }
         }
     }
 

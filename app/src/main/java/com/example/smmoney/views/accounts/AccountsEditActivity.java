@@ -1,6 +1,7 @@
 package com.example.smmoney.views.accounts;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,16 +12,20 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.ArrayAdapter;
 import android.widget.ScrollView;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.IntentCompat;
 import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
 import com.example.smmoney.misc.Locales;
@@ -88,6 +93,12 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private EditText institution;
     private TextView keepTheChangeAccountTextView;
     private EditText keepTheChangeRoundToEditText;
+    private TextView ccCycleTemplateLabel;
+    private Spinner ccCycleTemplateSpinner;
+    private TextView ccStatementDayLabel;
+    private Spinner ccStatementDaySpinner;
+    private TextView ccDueOffsetLabel;
+    private Spinner ccDueOffsetSpinner;
     private FrameLayout keyboardToolbar;
     private EditText limit;
     private TextView notes;
@@ -99,7 +110,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.accounts_edit);
-        this.account = androidx.core.content.IntentCompat.getSerializableExtra(getIntent(), "Account", AccountClass.class);
+        this.account = IntentCompat.getSerializableExtra(getIntent(), "Account", AccountClass.class);
         loadInfo();
         setupButtons();
 
@@ -222,11 +233,11 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
 
         int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
         ImageView iconView;
-        if ((iconView = findViewById(R.id.type_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.icon_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.currency_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.ktc_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
-        if ((iconView = findViewById(R.id.notes_arrow)) != null) iconView.setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.type_arrow)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.icon_arrow)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.currency_arrow)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.ktc_arrow)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+        if ((iconView = findViewById(R.id.notes_arrow)) != null) iconView.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
     }
 
     private void loadInfo() {
@@ -249,6 +260,13 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         TextView exchangeRateSuffix = findViewById(R.id.amount_xrate_text_view);
         this.keepTheChangeAccountTextView = findViewById(R.id.keep_the_change_account_text);
         this.keepTheChangeRoundToEditText = findViewById(R.id.account_keep_the_change_round_to_text);
+        
+        this.ccCycleTemplateLabel = findViewById(R.id.account_cc_cycle_template_label);
+        this.ccCycleTemplateSpinner = findViewById(R.id.account_cc_cycle_template_spinner);
+        this.ccStatementDayLabel = findViewById(R.id.account_cc_statement_day_label);
+        this.ccStatementDaySpinner = findViewById(R.id.account_cc_statement_day_spinner);
+        this.ccDueOffsetLabel = findViewById(R.id.account_cc_due_offset_label);
+        this.ccDueOffsetSpinner = findViewById(R.id.account_cc_due_offset_spinner);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
         if (!Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             findViewById(R.id.account_currency_label).setVisibility(View.GONE);
@@ -278,8 +296,67 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         exchangeRateSuffix.setText(String.format(getString(R.string.equalscurrencysymbol), Prefs.getStringPref(Prefs.HOMECURRENCYCODE)));
         this.keepTheChangeAccountTextView.setText(this.account.getKeepTheChangeAccount() == null ? "None" : this.account.getKeepTheChangeAccount());
         this.keepTheChangeRoundToEditText.setText(this.account.keepChangeRoundToAsString());
+        
+        setupCreditCardSpinners();
+        
         this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this);
         this.icon.setImageResource(this.iconResourceID);
+    }
+
+    private void setupCreditCardSpinners() {
+        boolean isCreditCard = this.account.getType() == Enums.kAccountTypeCreditCard;
+        this.ccCycleTemplateLabel.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+        this.ccCycleTemplateSpinner.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+        this.ccStatementDayLabel.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+        this.ccStatementDaySpinner.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+        this.ccDueOffsetLabel.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+        this.ccDueOffsetSpinner.setVisibility(isCreditCard ? View.VISIBLE : View.GONE);
+
+        if (!isCreditCard) return;
+
+        // 1. Template Spinner
+        String[] templates = new String[]{"Standard UK (Working Day Statement -> Offset Payment)", "Standard US (Fixed Due Date -> Offset Statement)", "Fixed Calendar Day (Fixed Statement -> Offset Payment)", "Custom"};
+        ArrayAdapter<String> templateAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, templates);
+        templateAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.ccCycleTemplateSpinner.setAdapter(templateAdapter);
+
+        // 2. Statement Day Spinner
+        String[] days = new String[31];
+        for (int i = 0; i < 31; i++) days[i] = String.valueOf(i + 1);
+        ArrayAdapter<String> dayAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, days);
+        dayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.ccStatementDaySpinner.setAdapter(dayAdapter);
+
+        // 3. Due Offset Spinner
+        String[] offsets = new String[60];
+        for (int i = 0; i < 60; i++) offsets[i] = String.valueOf(i);
+        ArrayAdapter<String> offsetAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, offsets);
+        offsetAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.ccDueOffsetSpinner.setAdapter(offsetAdapter);
+
+        // Parse existing rules
+        String stmtRule = this.account.getCcStatementCycleRule();
+        String dueRule = this.account.getCcDueDateRule();
+        
+        // Very basic mapping for prototype
+        if (stmtRule.startsWith("WorkingDayOfMonth")) {
+            this.ccCycleTemplateSpinner.setSelection(0);
+            try { this.ccStatementDaySpinner.setSelection(Integer.parseInt(stmtRule.split(":")[1]) - 1); } catch (Exception ignored) {}
+        } else if (stmtRule.startsWith("WorkingDaysBeforeDue")) {
+            this.ccCycleTemplateSpinner.setSelection(1);
+            try { this.ccDueOffsetSpinner.setSelection(Integer.parseInt(stmtRule.split(":")[1])); } catch (Exception ignored) {}
+        } else if (stmtRule.startsWith("FixedCalendarDay")) {
+            this.ccCycleTemplateSpinner.setSelection(2);
+            try { this.ccStatementDaySpinner.setSelection(Integer.parseInt(stmtRule.split(":")[1]) - 1); } catch (Exception ignored) {}
+        } else {
+            this.ccCycleTemplateSpinner.setSelection(3);
+        }
+        
+        if (dueRule.startsWith("CalendarDaysAfterStatement")) {
+            try { this.ccDueOffsetSpinner.setSelection(Integer.parseInt(dueRule.split(":")[1])); } catch (Exception ignored) {}
+        } else if (dueRule.startsWith("FixedDayOfMonth")) {
+            try { this.ccStatementDaySpinner.setSelection(Integer.parseInt(dueRule.split(":")[1]) - 1); } catch (Exception ignored) {}
+        }
     }
 
     private void save() {
@@ -310,6 +387,30 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             }
             this.account.setKeepChangeRoundToFromString(this.keepTheChangeRoundToEditText.getText().toString());
             this.account.setKeepTheChangeAccount(this.keepTheChangeAccountTextView.getText().toString());
+
+            if (this.account.getType() == Enums.kAccountTypeCreditCard) {
+                int tmpl = this.ccCycleTemplateSpinner.getSelectedItemPosition();
+                int day = this.ccStatementDaySpinner.getSelectedItemPosition() + 1; // 1-based index
+                int offset = this.ccDueOffsetSpinner.getSelectedItemPosition();
+                
+                if (tmpl == 0) {
+                    // Standard UK
+                    this.account.setCcStatementCycleRule("WorkingDayOfMonth:" + day);
+                    this.account.setCcDueDateRule("CalendarDaysAfterStatement:" + offset);
+                    this.account.setCcWeekendPolicy("FRIDAY_PULLS_TO_THURSDAY");
+                } else if (tmpl == 1) {
+                    // Standard US
+                    this.account.setCcStatementCycleRule("WorkingDaysBeforeDue:" + offset);
+                    this.account.setCcDueDateRule("FixedDayOfMonth:" + day); // 'day' here is due date
+                    this.account.setCcWeekendPolicy("NEXT_WORKING_DAY");
+                } else if (tmpl == 2) {
+                    // Fixed Calendar Day
+                    this.account.setCcStatementCycleRule("FixedCalendarDay:" + day);
+                    this.account.setCcDueDateRule("CalendarDaysAfterStatement:" + offset);
+                    this.account.setCcWeekendPolicy("NEXT_WORKING_DAY");
+                }
+            }
+
             this.account.saveToDatabase();
         }
     }

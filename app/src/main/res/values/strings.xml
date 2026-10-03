@@ -594,6 +594,7 @@
     <string name="kLOC_REPEATING_TRANSACTIONS_DISABLED">Processing of repeating transactions has been disabled. Only the device with PocketMoney acting as the server should have this feature active, otherwise multiple repeating transactions will be created. You can re-enable this in Preferences &gt; Repeating Transactions.</string>
     <string name="kLOC_HTTPSERVER_SAVEEXPORTTIME">Do you want to set the last export date to the current date and time?</string>
     <string name="kLOC_REPORTS_GROUP_SUBCATEGORIES">Group Subcategories</string>
+    <string name="no_data_for_this_period">No data for this period</string>
     <string name="kLOC_GENERAL_LASTMODTIME">Modification time</string>
     <string name="kLOC_PREFERENCES_CLEAR_AMOUNT">Clear Amount on Autocomplete</string>
     <string name="kLOC_PREFERENCES_CLEAR_SPLITS">Clear Splits on Autocomplete</string>

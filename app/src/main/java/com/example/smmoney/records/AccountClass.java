@@ -71,6 +71,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private boolean noLimit;
     private String notes;
     private String overdraftAccount;
+    private String ccStatementCycleRule;
+    private String ccDueDateRule;
+    private String ccWeekendPolicy;
     private String phone;
     private String routingNumber;
     private boolean totalWorth;
@@ -510,6 +513,48 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.overdraftAccount;
     }
 
+    public void setCcStatementCycleRule(String aString) {
+        if (this.ccStatementCycleRule != null || aString != null) {
+            if (this.ccStatementCycleRule == null || !this.ccStatementCycleRule.equals(aString)) {
+                this.dirty = true;
+                this.ccStatementCycleRule = aString;
+            }
+        }
+    }
+
+    public String getCcStatementCycleRule() {
+        hydrate();
+        return this.ccStatementCycleRule;
+    }
+
+    public void setCcDueDateRule(String aString) {
+        if (this.ccDueDateRule != null || aString != null) {
+            if (this.ccDueDateRule == null || !this.ccDueDateRule.equals(aString)) {
+                this.dirty = true;
+                this.ccDueDateRule = aString;
+            }
+        }
+    }
+
+    public String getCcDueDateRule() {
+        hydrate();
+        return this.ccDueDateRule;
+    }
+
+    public void setCcWeekendPolicy(String aString) {
+        if (this.ccWeekendPolicy != null || aString != null) {
+            if (this.ccWeekendPolicy == null || !this.ccWeekendPolicy.equals(aString)) {
+                this.dirty = true;
+                this.ccWeekendPolicy = aString;
+            }
+        }
+    }
+
+    public String getCcWeekendPolicy() {
+        hydrate();
+        return this.ccWeekendPolicy;
+    }
+
     public void setLastSyncTime(double time) {
         if (this.lastSyncTime != time) {
             this.dirty = true;
@@ -530,6 +575,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         this.url = "";
         this.currencyCode = "";
         this.overdraftAccount = "";
+        this.ccStatementCycleRule = "";
+        this.ccDueDateRule = "";
+        this.ccWeekendPolicy = "";
         this.keepTheChangeAccount = "";
         this.accountID = 0;
         this.displayOrder = 0;
@@ -542,6 +590,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         this.lastSyncTime = 0.0d;
         this.displayOrder = 0;
         this.overdraftAccount = "";
+        this.ccStatementCycleRule = "";
+        this.ccDueDateRule = "";
+        this.ccWeekendPolicy = "";
         this.deleted = false;
     }
 
@@ -648,6 +699,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         this.url = "";
         this.currencyCode = "";
         this.overdraftAccount = "";
+        this.ccStatementCycleRule = "";
+        this.ccDueDateRule = "";
+        this.ccWeekendPolicy = "";
         this.keepTheChangeAccount = "";
         this.accountID = 0;
         this.displayOrder = 0;
@@ -679,7 +733,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         if (!this.hydrated) {
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
             qb.setTables(Database.ACCOUNTS_TABLE_NAME);
-            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "displayOrder", "account", "type", "accountNumber", "routingNumber", "institution", "phone", "expirationDate", "checkNumber", "notes", "iconFileName", "url", "fee", "fixedPercent", "limitAmount", "noLimit", "totalWorth", "exchangeRate", "currencyCode", "lastSyncTime", "overdraftAccountID", "serverID", "keepTheChangeAccountID", "keepChangeRoundTo"}, "accountID=" + this.accountID, null, null, null, null);
+            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "displayOrder", "account", "type", "accountNumber", "routingNumber", "institution", "phone", "expirationDate", "checkNumber", "notes", "iconFileName", "url", "fee", "fixedPercent", "limitAmount", "noLimit", "totalWorth", "exchangeRate", "currencyCode", "lastSyncTime", "overdraftAccountID", "serverID", "keepTheChangeAccountID", "keepChangeRoundTo", "ccStatementCycleRule", "ccDueDateRule", "ccWeekendPolicy"}, "accountID=" + this.accountID, null, null, null, null);
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
@@ -753,11 +807,21 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 setServerID(str);
                 col = col2 + 1;
                 setKeepTheChangeAccount(accountForID(curs.getInt(col2)));
+                col2 = col + 1;
                 double keep = curs.getDouble(col);
                 if (keep == 0.0d) {
                     keep = 1.0d;
                 }
                 setKeepChangeRoundTo(keep);
+                col = col2 + 1;
+                str = curs.getString(col2);
+                setCcStatementCycleRule(Objects.requireNonNullElse(str, ""));
+                col2 = col + 1;
+                str = curs.getString(col);
+                setCcDueDateRule(Objects.requireNonNullElse(str, ""));
+                col = col2 + 1;
+                str = curs.getString(col2);
+                setCcWeekendPolicy(Objects.requireNonNullElse(str, ""));
                 if (!wasDirty && this.dirty) {
                     this.dirty = false;
                 }
@@ -956,6 +1020,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             content.put("keepChangeRoundTo", this.keepChangeRoundTo);
             content.put("lastSyncTime", this.lastSyncTime);
             content.put("overdraftAccountID", idForAccount(this.overdraftAccount));
+        content.put("ccStatementCycleRule", getCcStatementCycleRule());
+        content.put("ccDueDateRule", getCcDueDateRule());
+        content.put("ccWeekendPolicy", getCcWeekendPolicy());
             if (Database.update(Database.ACCOUNTS_TABLE_NAME, content, "accountID=" + this.accountID, null) != 1) {
                 Log.e("PockeyMoney", "Problem updating accountID=" + this.accountID);
             }
@@ -1118,6 +1185,9 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 case "currencyCode":
                 case "url":
                 case "overdraftAccount":
+                case "ccStatementCycleRule":
+                case "ccDueDateRule":
+                case "ccWeekendPolicy":
                     Class<?> c = getClass();
                     try {
                         // String "UTF-8" used instead of StandardCharsets for API 21 compatibility (URLDecoder(String, Charset) requires API 33+)
@@ -1241,6 +1311,15 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             body.startTag(null, "overdraftAccount");
             addTextWithEncoding(body, getOverdraftAccount());
             body.endTag(null, "overdraftAccount");
+            body.startTag(null, "ccStatementCycleRule");
+            addTextWithEncoding(body, getCcStatementCycleRule());
+            body.endTag(null, "ccStatementCycleRule");
+            body.startTag(null, "ccDueDateRule");
+            addTextWithEncoding(body, getCcDueDateRule());
+            body.endTag(null, "ccDueDateRule");
+            body.startTag(null, "ccWeekendPolicy");
+            addTextWithEncoding(body, getCcWeekendPolicy());
+            body.endTag(null, "ccWeekendPolicy");
             body.startTag(null, "iconFileName");
             addTextWithEncoding(body, getIconFileName());
             body.endTag(null, "iconFileName");
