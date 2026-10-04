@@ -490,9 +490,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 .show();
     }
 
-    // Suppress ConstantValue: IDE data-flow analysis incorrectly evaluates distinct R.id.* resource IDs
-    // as 0 during static analysis, falsely flagging subsequent equality checks in if-else chains as always false.
-    @SuppressWarnings("ConstantValue")
     private String getSortTypeFromId(int selectedPropertyId) {
         if (selectedPropertyId == R.id.sort_amount) return Locales.kLOC_GENERAL_AMOUNT;
         if (selectedPropertyId == R.id.sort_payee) return Locales.kLOC_GENERAL_PAYEE;
@@ -699,6 +696,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private void generateEmailForOFX(ArrayList<String> fileNames) {
         Intent emailIntent = new Intent("android.intent.action.SEND");
         emailIntent.setType("text/ofx");
+        emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         Prefs.exportDB(this);
         for (String fileName : fileNames) {
             Uri contentUri = FileProvider.getUriForFile(this, "com.example.fileprovider", new File(fileName));
@@ -1011,6 +1009,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                         }
                         if (TransactionsActivity.this.shouldEmail) {
                             Intent emailIntent = new Intent("android.intent.action.SEND");
+                            emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                             switch (TransactionsActivity.this.msgEmail) {
                                 case EMAIL_QIF /*0*/:
                                     Log.i("****EMAIL", "Should Email");
@@ -1072,9 +1071,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         return true;
     }
 
-    // Suppress ConstantValue: IDE data-flow analysis evaluates R.id.* values as 0 during static analysis,
-    // falsely flagging subsequent equality branches as unreachable/always false.
-    @SuppressWarnings("ConstantValue")
     private MaterialButtonToggleGroup.OnButtonCheckedListener getRadioChangedListener() {
         return (group, checkedId, isChecked) -> {
             if (isChecked) {
