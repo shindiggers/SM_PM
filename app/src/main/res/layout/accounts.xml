@@ -1,159 +1,160 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/tools"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/accounts_root_view"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <!--lh 25601-->
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/chartframelayout"
-        android:layout_width="match_parent"
-        android:layout_height="100dp">
+        android:layout_width="0dp"
+        android:layout_height="120dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/content_description_graph_background"
-            android:scaleType="fitXY"
-            android:src="@drawable/graphbackground" />
+        <androidx.constraintlayout.widget.Barrier
+            android:id="@+id/chart_top_barrier"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:barrierDirection="bottom"
+            app:constraint_referenced_ids="graphtitletextview,networthtextview">
 
-        <!--lh 20481-->
+        </androidx.constraintlayout.widget.Barrier>
+
+
+        <TextView
+            android:id="@+id/graphtitletextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="3dp"
+            android:text="@string/accounts_view_graph_title"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            ads:text="Net Worth" />
+
+        <TextView
+            android:id="@+id/networthtextview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="3dp"
+            android:text="@string/accounts_view_net_worth"
+            android:textColor="#000000"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            ads:text="£0.00" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/networthbarchart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="6dp"
+            android:paddingStart="6dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/graphleftarrow"
+            app:layout_constraintTop_toBottomOf="@id/chart_top_barrier" />
+
+        <androidx.compose.ui.platform.ComposeView
+            android:id="@+id/cashflowbarchart"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_marginEnd="30dp"
+            android:layout_marginBottom="6dp"
+            android:paddingStart="6dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/graphleftarrow"
+            app:layout_constraintTop_toBottomOf="@id/chart_top_barrier"/>
+
         <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="80dp"
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+            android:id="@+id/morecharts_container"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/chart_top_barrier">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
+            <ProgressBar
+                android:id="@+id/graphspinner"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:indeterminate="true" />
 
-                <com.example.smmoney.views.charts.views.ChartBarView
-                    android:id="@+id/networthbarchart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:visibility="gone" />
-
-                <com.example.smmoney.views.charts.views.ChartBarView
-                    android:id="@+id/cashflowbarchart"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginRight="30dp"
-                    android:visibility="gone" />
-
-                <FrameLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent">
-
-                    <ProgressBar
-                        android:id="@+id/graphspinner"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:indeterminate="true" />
-
-                    <Button
-                        android:id="@+id/morechartsbutton"
-                        android:layout_width="100dp"
-                        android:layout_height="40dp"
-                        android:layout_gravity="center_vertical|center_horizontal"
-                        android:background="@drawable/graphsplacard" />
-                </FrameLayout>
-            </LinearLayout>
-
-            <ImageView
-                android:id="@+id/graphrightarrow"
-                android:layout_width="30dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="end|center_vertical"
-                android:clickable="true"
-                android:contentDescription="@string/content_description_right_arrow"
-                android:focusable="true"
-                android:scaleType="center"
-                android:src="@drawable/grapharrowright" />
-
-            <ImageView
-                android:id="@+id/graphleftarrow"
-                android:layout_width="30dp"
-                android:layout_height="match_parent"
-                android:layout_gravity="start|center_vertical"
-                android:clickable="true"
-                android:contentDescription="@string/content_description_left_arrow"
-                android:focusable="true"
-                android:scaleType="center"
-                android:src="@drawable/grapharrowleft" />
+            <Button
+                android:id="@+id/morechartsbutton"
+                android:layout_width="100dp"
+                android:layout_height="40dp"
+                android:layout_gravity="center"
+                android:background="@drawable/graphsplacard" />
         </FrameLayout>
 
         <ImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:contentDescription="@string/content_description_graph_foreground"
-            android:scaleType="fitXY"
-            android:src="@drawable/graphforeground" />
+            android:id="@+id/graphleftarrow"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:clickable="true"
+            android:contentDescription="@string/content_description_left_arrow"
+            android:focusable="true"
+            android:scaleType="center"
+            android:src="@drawable/grapharrowleft"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="20dp"
-            android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill">
+        <ImageView
+            android:id="@+id/graphrightarrow"
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            android:clickable="true"
+            android:contentDescription="@string/content_description_right_arrow"
+            android:focusable="true"
+            android:scaleType="center"
+            android:src="@drawable/grapharrowright"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/graphtitletextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="top|bottom|start|end|center_vertical|fill_vertical|center_horizontal|fill_horizontal|center|fill|start|end"
-                android:layout_marginStart="3dp"
-                android:text="@string/accounts_view_graph_title"
-                android:textColor="#000000"
-                ads:text="Net Worth" />
-
-            <TextView
-                android:id="@+id/networthtextview"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_gravity="end"
-                android:layout_marginEnd="3dp"
-                android:text="@string/accounts_view_net_worth"
-                android:textColor="#000000"
-                ads:text="£0.00" />
-        </FrameLayout>
-
-    </FrameLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/the_list"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill"
-        android:layout_weight="2.0"
+        app:layout_constraintBottom_toTopOf="@+id/balancebar"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/chartframelayout"
         tools:listitem="@layout/accounts_row" />
-
-    <!--<com.google.android.gms.ads.AdView
-        ads:id="@+id/adView"
-        ads:layout_width="match_parent"
-        ads:layout_height="wrap_content"
-        ads:layout_alignParentBottom="true"
-        ads:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/banner_ad_unit_id" />-->
 
     <com.example.smmoney.views.BalanceBar
         android:id="@+id/balancebar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="50dp"
-        android:layout_gravity="top|bottom|center_vertical|fill_vertical|center|fill" />
+        app:layout_constraintBottom_toTopOf="@+id/bottom_navigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottom_navigation"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled" />
-</LinearLayout>
+        app:labelVisibilityMode="labeled"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:menu="@menu/bottom_nav_menu" />
+</androidx.constraintlayout.widget.ConstraintLayout>

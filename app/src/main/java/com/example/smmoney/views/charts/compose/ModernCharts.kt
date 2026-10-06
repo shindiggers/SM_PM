@@ -14,6 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Tab
 import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Text
+import androidx.compose.material3.Surface
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.layout.layout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -421,8 +429,10 @@ fun ModernBarChart(
                 .fillMaxSize()
                 .pointerInput(items) {
                     detectTapGestures { tapOffset ->
-                        val barWidth = size.width / (items.size * 2)
-                        var currentX = barWidth / 2
+                        val yAxisWidth = 2f
+                        val drawWidth = size.width - yAxisWidth
+                        val barWidth = drawWidth / (items.size * 2)
+                        var currentX = (barWidth / 2) + yAxisWidth
 
                         for (i in items.indices) {
                             if (tapOffset.x >= currentX && tapOffset.x <= (currentX + barWidth)) {
@@ -439,7 +449,9 @@ fun ModernBarChart(
         ) {
             val maxAbsValue = items.maxOfOrNull { abs(it.value) } ?: 0.0
             val maxValue = if (maxAbsValue > 0) maxAbsValue else 1.0 // Prevent division by zero
-            val barWidth = size.width / (items.size * 2)
+            val yAxisWidth = 2f
+            val drawWidth = size.width - yAxisWidth
+            val barWidth = drawWidth / (items.size * 2)
             var currentX = barWidth / 2
 
             // Draw Grid Lines
@@ -477,9 +489,12 @@ fun ModernBarChart(
 
                 val maxWidthPx = 50.dp.toPx()
                 
+                // Adjust currentX slightly to push bars to the right of the Y-axis labels
+                val barStartX = currentX + yAxisWidth 
+
                 drawRect(
                     color = color,
-                    topLeft = Offset(currentX, size.height - barHeight),
+                    topLeft = Offset(barStartX, size.height - barHeight),
                     size = Size(barWidth.coerceAtMost(maxWidthPx), barHeight)
                 )
 
@@ -487,7 +502,7 @@ fun ModernBarChart(
                 val cornerRadius = (barWidth.coerceAtMost(maxWidthPx)) / 4
                 drawRoundRect(
                     color = color,
-                    topLeft = Offset(currentX, size.height - barHeight),
+                    topLeft = Offset(barStartX, size.height - barHeight),
                     size = Size(barWidth.coerceAtMost(maxWidthPx), barHeight),
                     cornerRadius = CornerRadius(cornerRadius, cornerRadius)
                 )
@@ -495,7 +510,7 @@ fun ModernBarChart(
                 // Optional: Draw X-axis labels
                  drawContext.canvas.nativeCanvas.drawText(
                         item.label ?: "", // Fallback to item.label since reportItem might be null for Net Worth
-                        currentX + barWidth / 2,
+                        barStartX + barWidth / 2,
                         size.height + 40f,
                         Paint().apply {
                             this.color = android.graphics.Color.GRAY
@@ -515,16 +530,23 @@ fun ModernBarChart(
 fun NetWorthBarChart(
     modifier: Modifier = Modifier,
     items: List<ChartItem>,
+    isMini: Boolean = false,
+    gridLineColor: Color = Color.LightGray,
     onItemClick: (ChartItem) -> Unit = {}
 ) {
     var selectedIndex by remember { mutableIntStateOf(-1) }
     val animationProgress = remember { Animatable(0f) }
 
     var lastItems by remember { mutableStateOf(items) }
+    
+    // State to track the tooltip position calculated inside the Canvas
+    var tooltipPosition by remember { mutableStateOf<Offset?>(null) }
+    val density = LocalDensity.current
 
     LaunchedEffect(items, selectedIndex) {
         if (selectedIndex == -1 || lastItems != items) {
             lastItems = items
+            tooltipPosition = null
             animationProgress.snapTo(0f)
             animationProgress.animateTo(
                 targetValue = 1f,
@@ -538,19 +560,39 @@ fun NetWorthBarChart(
             modifier = Modifier
                 .fillMaxSize()
                 .pointerInput(items) {
-                    detectTapGestures { tapOffset ->
-                        val barWidth = size.width / (items.size * 2)
-                        var currentX = barWidth / 2
-
-                        for (i in items.indices) {
-                            if (tapOffset.x >= currentX && tapOffset.x <= (currentX + barWidth)) {
-                                selectedIndex = if (selectedIndex == i) -1 else i
-                                if (selectedIndex != -1) {
-                                    onItemClick(items[i])
+                    awaitPointerEventScope {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            val tapOffset = event.changes.firstOrNull()?.position ?: continue
+                            
+                            // Check if finger is down, moving, or hovering
+                            if (event.type == PointerEventType.Press || 
+                                event.type == PointerEventType.Move) {
+                                
+                                val yAxisWidth = 2f
+                                val drawWidth = size.width - yAxisWidth
+                                val barWidth = drawWidth / (items.size * 2)
+                                
+                                // tapOffset.x is absolute. We need to check against absolute bar positions.
+                                var currentX = barWidth / 2f
+                                
+                                var found = false
+                                for (i in items.indices) {
+                                    val barStartX = currentX + yAxisWidth
+                                    if (tapOffset.x >= barStartX && tapOffset.x <= (barStartX + barWidth)) {
+                                        if (selectedIndex != i) {
+                                            selectedIndex = i
+                                            onItemClick(items[i])
+                                        }
+                                        found = true
+                                        break
+                                    }
+                                    currentX += barWidth * 2f
                                 }
-                                break
+                                
+                                // Optional: Deselect if moving off bars
+                                // if (!found && event.type == PointerEventType.Move) selectedIndex = -1
                             }
-                            currentX += barWidth * 2
                         }
                     }
                 }
@@ -567,8 +609,9 @@ fun NetWorthBarChart(
             val paddedMin = if (minValue < 0) minValue * 1.05 else if (maxValue > 0) 0.0 else -50.0
 
             // 2. Calculate a "Nice Step" for the grid
+            val targetIntervals = if (isMini) 3.0 else 5.0
             val rawRange = paddedMax - paddedMin
-            val rawStep = rawRange / 5.0
+            val rawStep = rawRange / targetIntervals
             val exponent = floor(log10(rawStep))
             val fraction = rawStep / 10.0.pow(exponent)
             val niceFraction = when {
@@ -588,20 +631,26 @@ fun NetWorthBarChart(
             val totalRange = maxBound - minBound
             val rangeToUse = if (totalRange > 0) totalRange else 100.0 // Prevent div by 0
 
+            // We reserve some space on the left for the Y-axis labels
+            val yAxisWidth = 2f
+            // The drawing area for the bars is the total width minus the y-axis width
+            val drawWidth = size.width - yAxisWidth
+            // Each item gets an equal slice of the drawing area.
+            // We multiply by 2 because we want whitespace between the bars.
+            val barWidth = drawWidth / (items.size * 2)
+            // Start at half a barWidth (relative to drawing area, not canvas)
+            var currentX = barWidth / 2f
+
             val zeroY = (size.height * (maxBound / rangeToUse)).toFloat()
-
-            val barWidth = size.width / (items.size * 2)
-            var currentX = barWidth / 2
-
             val maxAbsLabel = maxOf(abs(maxBound), abs(minBound))
-
+            
             // Draw Grid Lines (Dynamic based on nice step)
             var currentGridValue = maxBound
             while (currentGridValue >= minBound - (niceStep * 0.1)) { // tolerance for double math
                 val y = (size.height * ((maxBound - currentGridValue) / rangeToUse)).toFloat()
                 
                 drawLine(
-                    color = Color.LightGray,
+                    color = gridLineColor,
                     start = Offset(0f, y),
                     end = Offset(size.width, y),
                     strokeWidth = 2f,
@@ -685,8 +734,9 @@ fun NetWorthBarChart(
                     zeroY // Bar goes DOWN from zero line, so top is at zero
                 }
                 
-                // Adjust currentX slightly to push bars to the right of the Y-axis labels
-                val barStartX = currentX + 60f 
+                // The currentX value already tracks position inside the draw area.
+                // To get the actual pixel starting coordinate of the bar, we just add the yAxisWidth offset.
+                val barStartX = currentX + yAxisWidth 
 
                 // Only draw the bar if it actually has a visible height (prevents 1px anti-aliased artifacts for 0.0 values)
                 if (barHeight > 0.5f && abs(item.value) > 0.005) {
@@ -713,6 +763,104 @@ fun NetWorthBarChart(
 
                 currentX += barWidth * 2
             }
+            
+                // Calculate tooltip position for Compose overlay
+            if (selectedIndex != -1 && selectedIndex < items.size) {
+                val selectedItem = items[selectedIndex]
+                
+                val yAxisWidth = 2f
+                val drawWidth = size.width - yAxisWidth
+                val bWidth = drawWidth / (items.size * 2)
+                
+                // Replicate the exact math used in the drawing loop for the selected bar
+                var currentX = bWidth / 2f
+                for (i in 0 until selectedIndex) {
+                    currentX += bWidth * 2f
+                }
+                
+                // The actual bar drawing start coordinate
+                val barStartX = currentX + yAxisWidth
+                
+                val maxWidthPx = 50.dp.toPx()
+                val actualBarWidth = bWidth.coerceAtMost(maxWidthPx)
+                
+                val absoluteValue = abs(selectedItem.value)
+                val rawBarHeight = (absoluteValue / rangeToUse * size.height).toFloat()
+                val barHeight = rawBarHeight * animationProgress.value
+                val rectTopY = if (selectedItem.value >= 0) zeroY - barHeight else zeroY
+                
+                // The center of the bar
+                val tooltipX = barStartX + (actualBarWidth / 2f)
+                
+                // For positive values, we want the tooltip hovering 10px above the top of the bar (rectTopY)
+                // For negative values, the bar drops down from zero, so we also want the tooltip above the zero line (zeroY)
+                val tooltipY = if (selectedItem.value >= 0) rectTopY - 10f else zeroY - 10f
+                
+                // Update state only if changed to avoid unnecessary recomposition
+                val newPos = Offset(tooltipX, tooltipY)
+                if (tooltipPosition != newPos) {
+                    tooltipPosition = newPos
+                }
+            } else {
+                if (tooltipPosition != null) {
+                    tooltipPosition = null
+                }
+            }
+        }
+        
+        // --- Compose Overlay for Tooltip ---
+        tooltipPosition?.let { pos ->
+            val selectedItem = items.getOrNull(selectedIndex)
+            if (selectedItem != null) {
+                // Formatting value to x,xxx (0 decimal places)
+                val formatter = java.text.DecimalFormat("#,##0")
+                val tooltipText = formatter.format(selectedItem.value)
+                
+                var tooltipSize by remember { mutableStateOf(androidx.compose.ui.unit.IntSize.Zero) }
+                
+                // We use a Surface to get beautiful shadows and rounded corners
+                Surface(
+                    modifier = Modifier
+                        .onSizeChanged { tooltipSize = it }
+                        .graphicsLayer {
+                            // Calculate centered X position
+                            val targetX = pos.x - (tooltipSize.width / 2f)
+                            // Keep it within the bounds of the Box/Canvas
+                            // size.width here inside graphicsLayer actually refers to the size of the Surface itself!
+                            // We need to use the Box constraints, but we don't have them easily here.
+                            // To ensure the translationX is applied correctly, we use the literal pos.x
+                            // The easiest way is to let the Surface overflow its parent if necessary,
+                            // or use the Canvas width which we know is `size.width` from the *outer* Canvas scope.
+                            // BUT we are inside the Modifier of the Surface. `size.width` is NOT the Canvas width.
+                            // Let's just use targetX and if it bleeds, we can fix it.
+                            translationX = targetX
+                            
+                            // Calculate Y position (pos.y already includes a 15f gap above the bar)
+                            // We need to shift up by the tooltip's height so it sits ABOVE that pos.y coordinate.
+                            val targetY = pos.y - tooltipSize.height
+                            
+                            // If it goes off the top of the screen, place it just below the top of the canvas
+                            val finalY = if (targetY < 0f) 10f else targetY
+                            
+                            translationY = finalY
+                        },
+                    shape = RoundedCornerShape(6.dp),
+                    // Use a slightly lighter/neutral color for the overlay for better theme compatibility, 
+                    // or keep it semi-transparent black which usually works ok.
+                    color = Color(0xCC333333), 
+                    shadowElevation = 6.dp
+                ) {
+                    Box(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+                        Text(
+                            text = tooltipText,
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold,
+                            // Extremely small text requested
+                            fontSize = androidx.compose.ui.unit.TextUnit(9f, androidx.compose.ui.unit.TextUnitType.Sp)
+                        )
+                    }
+                }
+            }
         }
     }
 }
@@ -722,6 +870,8 @@ fun CashFlowBarChart(
     modifier: Modifier = Modifier,
     assets: List<ChartItem>, // Income
     liabilities: List<ChartItem>, // Expenses
+    isMini: Boolean = false,
+    gridLineColor: Color = Color.LightGray,
     onItemClick: (ChartItem) -> Unit = {}
 ) {
     val animationProgress = remember { Animatable(0f) }
@@ -740,11 +890,11 @@ fun CashFlowBarChart(
                 .fillMaxSize()
                 .pointerInput(assets, liabilities) {
                     detectTapGestures { tapOffset ->
-                        val drawWidth = size.width - 60f
+                        val drawWidth = size.width - 2f
                         val actualPeriodWidth = drawWidth / assets.size
                         val barWidth = (actualPeriodWidth * 0.35f).coerceAtMost(40.dp.toPx())
                         val gapBetweenPairedBars = 2.dp.toPx()
-                        var currentPeriodX = 60f
+                        var currentPeriodX = 2f
 
                         for (i in assets.indices) {
                             val incomeX = currentPeriodX + (actualPeriodWidth / 2f) - barWidth - (gapBetweenPairedBars / 2f)
@@ -777,7 +927,8 @@ fun CashFlowBarChart(
             // 2. Calculate "Nice Step"
             val paddedMax = if (absoluteMax > 0) absoluteMax * 1.05 else 50.0
             
-            val rawStep = paddedMax / 5.0
+            val targetIntervals = if (isMini) 3.0 else 5.0
+            val rawStep = paddedMax / targetIntervals
             val exponent = floor(log10(rawStep))
             val fraction = rawStep / 10.0.pow(exponent)
             val niceFraction = when {
@@ -807,7 +958,7 @@ fun CashFlowBarChart(
                 val y = (size.height * ((maxBound - currentGridValue) / rangeToUse)).toFloat()
                 
                 drawLine(
-                    color = Color.LightGray,
+                    color = gridLineColor,
                     start = Offset(0f, y),
                     end = Offset(size.width, y),
                     strokeWidth = 2f,
@@ -856,8 +1007,8 @@ fun CashFlowBarChart(
             )
 
             // Draw Paired Bars
-            var currentPeriodX = 60f // Starting gutter for Y-axis labels
-            val drawWidth = size.width - 60f
+            var currentPeriodX = 2f // Starting gutter for Y-axis labels
+            val drawWidth = size.width - 2f
             val actualPeriodWidth = drawWidth / assets.size
 
             assets.forEachIndexed { index, incomeItem ->
@@ -921,16 +1072,41 @@ fun setPieChartContent(
     }
 }
 
+@JvmOverloads
 fun setBarChartContent(
     view: androidx.compose.ui.platform.ComposeView,
     items: List<ChartItem>,
+    isMini: Boolean = false,
+    gridLineColorInt: Int = android.graphics.Color.LTGRAY,
     onItemClick: (ChartItem) -> Unit
 ) {
     view.setContent {
-        ChartWithTabs(
+        NetWorthBarChart(
             modifier = Modifier.fillMaxSize(),
             items = items,
-            isPieChart = false,
+            isMini = isMini,
+            gridLineColor = Color(gridLineColorInt),
+            onItemClick = onItemClick
+        )
+    }
+}
+
+@JvmOverloads
+fun setCashFlowBarChartContent(
+    view: androidx.compose.ui.platform.ComposeView,
+    assets: List<ChartItem>,
+    liabilities: List<ChartItem>,
+    isMini: Boolean = false,
+    gridLineColorInt: Int = android.graphics.Color.LTGRAY,
+    onItemClick: (ChartItem) -> Unit
+) {
+    view.setContent {
+        CashFlowBarChart(
+            modifier = Modifier.fillMaxSize(),
+            assets = assets,
+            liabilities = liabilities,
+            isMini = isMini,
+            gridLineColor = Color(gridLineColorInt),
             onItemClick = onItemClick
         )
     }

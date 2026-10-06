@@ -51,6 +51,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 
 import android.widget.TextView;
 import android.widget.Toast;
+import androidx.constraintlayout.widget.ConstraintLayout;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
@@ -161,7 +162,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private double availableFundsBalanceCache = 0.0d;
     private BalanceBar balanceBar;
     private BottomNavigationView bottomNav;
-    private ChartView cashFlowChartView;
+    private androidx.compose.ui.platform.ComposeView cashFlowChartView;
     private double clearedBalanceCache = 0.0d;
     private Context context;
     private double currentBalanceCache = 0.0d;
@@ -176,11 +177,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private Handler mHandler = null;
     private Button moreChartsButton;
     private int msgEmail = -1;
-    private ChartView netWorthChartView;
+    private androidx.compose.ui.platform.ComposeView netWorthChartView;
     private PocketMoneyProgressDialog progressDialog = null;
     private boolean shouldEmail = false;
-    private ChartView theChartView;
-    private FrameLayout theGraphLayout;
+    private ConstraintLayout theGraphLayout;
     private AlertDialog tipDialog;
     private WakeLock wakeLock;
 
@@ -232,31 +232,52 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.netWorthChartView.setVisibility(View.GONE);
         this.cashFlowChartView.setVisibility(View.GONE);
         this.moreChartsButton.setVisibility(View.GONE);
-        ((View) this.graphSpinner.getParent()).setVisibility(View.VISIBLE);
         this.graphSpinner.setVisibility(View.VISIBLE);
         if (Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS)) {
-            switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
-                case Enums.kSumamryChartTypeNetWorth /*0*/:
-                    this.theChartView = this.netWorthChartView;
-                    break;
-                case Enums.kSumamryChartTypeCashFlow /*1*/:
-                    this.theChartView = this.cashFlowChartView;
-                    break;
-                case Enums.kSumamryChartMoreCharts /*2*/:
-                    this.theChartView = null;
-                    break;
-            }
+            // Deprecated logic that set 'this.theChartView' object 
             if (this.graphFuture != null) {
                 this.graphFuture.cancel(true);
                 this.graphFuture = null;
             }
             this.graphFuture = executor.submit(() -> {
-                // AccountsActivity.this.theChartView.reloadData(true); TODO This line causes null pointer exception. Same as trying to load graph in ReportsActivity. To fix
+                java.util.Set<Integer> accountIds = new java.util.HashSet<>();
+                for (com.example.smmoney.records.AccountClass acc : AccountsActivity.this.adapter.getElements()) {
+                    if (acc.getTotalWorth()) {
+                        accountIds.add(acc.accountID);
+                    }
+                }
+                
                 runOnUiThread(() -> {
                     synchronized (AccountsActivity.this.adapterLock) {
                         AccountsActivity.this.graphReloadCallback();
-                        if (AccountsActivity.this.theChartView != null) {
-                            AccountsActivity.this.theChartView.reloadData(true);
+                        
+                        // Get the color integer. We use alternatingRowColor because it provides
+                        // a slight contrast against the background in each theme.
+                        int gridLineColorInt = PocketMoneyThemes.highlightColor();
+
+                        if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeNetWorth /*0*/) {
+                            ChartDataHelper.INSTANCE.fetchNetWorthData(accountIds, data -> {
+                                com.example.smmoney.views.charts.compose.ModernChartsKt.setBarChartContent(
+                                        AccountsActivity.this.netWorthChartView,
+                                        data.getNetWorth(),
+                                        true,
+                                        gridLineColorInt,
+                                        chartItem -> kotlin.Unit.INSTANCE
+                                );
+                                return kotlin.Unit.INSTANCE;
+                            });
+                        } else if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeCashFlow /*1*/) {
+                            ChartDataHelper.INSTANCE.fetchCashFlowData(accountIds, data -> {
+                                com.example.smmoney.views.charts.compose.ModernChartsKt.setCashFlowBarChartContent(
+                                        AccountsActivity.this.cashFlowChartView,
+                                        data.getAssets(),
+                                        data.getLiabilities(),
+                                        true,
+                                        gridLineColorInt,
+                                        chartItem -> kotlin.Unit.INSTANCE
+                                );
+                                return kotlin.Unit.INSTANCE;
+                            });
                         }
                     }
                     this.graphFuture = null;
@@ -271,7 +292,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         Log.d("ACCOUNTSACTIVITY", "onCreate() has just run");
         this.wakeLock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "AccountsActivity:DoNotDimScreen");
         this.context = this;
-        @SuppressLint("InflateParams") LinearLayout layout = (LinearLayout) LayoutInflater.from(this).inflate(R.layout.accounts, null);
+        @SuppressLint("InflateParams") ConstraintLayout layout = (ConstraintLayout) LayoutInflater.from(this).inflate(R.layout.accounts, null);
         setContentView(layout);
         setupView(layout);
         setResult(ACCOUNT_REQUEST_FILTER);
@@ -363,9 +384,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
             });
             alert.show();
         }
-        FrameLayout frameLayout = this.theGraphLayout;
+        ConstraintLayout graphLayout = this.theGraphLayout;
         int i2 = (!Prefs.getBooleanPref(Prefs.SHOWSUMMARYCHARTS) || SMMoney.isLiteVersion()) ? View.GONE : View.VISIBLE;
-        frameLayout.setVisibility(i2);
+        graphLayout.setVisibility(i2);
         clearBalanceCache();
         synchronized (adapterLock) {
             reloadData();
@@ -398,44 +419,28 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    public void chartViewSelectedItem(ChartView chartView, ChartItem chartItem) {
-        int row = this.theChartView.dataSource.rowOfChartItem(chartItem);
-        if (row != -1) {
-            this.theChartView.dataSource.selectAllDataPointsForRow(row);
-            reloadChartHeader(row);
-        }
-        this.theChartView.invalidate();
+    public void chartViewSelectedItem(com.example.smmoney.views.charts.views.ChartView chartView, com.example.smmoney.views.charts.items.ChartItem chartItem) {
+        
     }
 
-    private void reloadChartHeader(int row) {
-        if (row == -1) {
-            this.graphNetworthTextView.setText("");
+    private void reloadChartHeader() {
+        if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeNetWorth) {
+            this.graphTitleTextView.setText(Locales.kLOC_CHARTS_NETWORTH + " 12 " + Locales.kLOC_REPEATING_FREQUENCY_MONTHS);
+        } else if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeCashFlow) {
+            this.graphTitleTextView.setText(Locales.kLOC_CHARTS_CASHFLOW + " 6 " + Locales.kLOC_REPEATING_FREQUENCY_MONTHS);
+        } else {
             this.graphTitleTextView.setText("");
-            return;
         }
-        GregorianCalendar selectedDate = this.theChartView.dataSource.dateForRow(row);
-        this.graphTitleTextView.setText(getString(R.string.accounts_graph_title_format,
-                this.theChartView.dataSource.title(),
-                CalExt.descriptionWithYear(selectedDate),
-                CalExt.descriptionWithMonth(selectedDate)));
-        this.graphNetworthTextView.setText(CurrencyExt.amountAsCurrency(this.theChartView.dataSource.networthForRow(row)));
+        this.graphNetworthTextView.setText("");
     }
 
     private void graphReloadCallback() {
-        if (this.theChartView != null) {
-            reloadChartHeader(this.theChartView.dataSource.numberOfDataPointsInSeries(this.theChartView, 0) - 1);
-        } else {
-            reloadChartHeader(-1);
-        }
-        if (this.theChartView != null) {
-            this.theChartView.invalidate();
-        }
+        reloadChartHeader();
         showCorrectChart();
         this.graphButtonEnabled = true;
     }
 
     private void showCorrectChart() {
-        ((View) this.graphSpinner.getParent()).setVisibility(View.GONE);
         this.graphSpinner.setVisibility(View.GONE);
         switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
             case Enums.kSumamryChartTypeNetWorth /*0*/:
@@ -445,7 +450,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 this.cashFlowChartView.setVisibility(View.VISIBLE);
                 return;
             case Enums.kSumamryChartMoreCharts /*2*/:
-                ((View) this.moreChartsButton.getParent()).setVisibility(View.VISIBLE);
                 this.moreChartsButton.setVisibility(View.VISIBLE);
                 return;
             default:
@@ -788,7 +792,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         return temp.typeAsString();
     }
 
-    private void setupView(LinearLayout layout) {
+    private void setupView(ConstraintLayout layout) {
         Log.d("ACCOUNTSACTIVITY", "setupView() called and started");
         createHandler();
         this.balanceBar = layout.findViewById(R.id.balancebar);
@@ -974,11 +978,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
         });
         this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
-        this.netWorthChartView.delegate = this;
-        this.netWorthChartView.dataSource = new NetWorthDataSource(this.adapter);
         this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
-        this.cashFlowChartView.delegate = this;
-        this.cashFlowChartView.dataSource = new CashFlowDataSource(this.adapter);
         this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
         this.moreChartsButton.setTextColor(-7829368);
         this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
