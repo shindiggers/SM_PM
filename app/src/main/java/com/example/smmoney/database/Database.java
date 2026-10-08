@@ -498,13 +498,11 @@ public class Database {
         }
     }
 
-    public static int delete(String table, String whereClause, String[] whereArgs) {
-        int retVal;
+    public static void delete(String table, String whereClause, String[] whereArgs) {
         SQLiteDatabase db = currentDB();
         synchronized (dbLock) {
-            retVal = db.delete(table, whereClause, whereArgs);
+            db.delete(table, whereClause, whereArgs);
         }
-        return retVal;
     }
 
     public static Cursor query(SQLiteQueryBuilder qb, String[] projectionIn, String selection, String[] selectionArgs, String groupBy, String having, String sortOrder) {

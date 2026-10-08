@@ -399,6 +399,8 @@ public class Locales {
     public static final String kLOC_INAPPPURCHASES_SYNCSERVERTITLE = SMMoney.getAppContext().getString(R.string.kLOC_INAPPPURCHASES_SYNCSERVERTITLE);
     public static final String kLOC_INAPPPURCHASES_THEMESDESCRIPTION = SMMoney.getAppContext().getString(R.string.kLOC_INAPPPURCHASES_THEMESDESCRIPTION);
     public static final String kLOC_INAPPPURCHASES_THEMESTITLE = SMMoney.getAppContext().getString(R.string.kLOC_INAPPPURCHASES_THEMESTITLE);
+    public static final String kLOC_SUMMARYCHARTS_12_MONTHS = SMMoney.getAppContext().getString(R.string.kLOC_SUMMARYCHARTS_12_MONTHS);
+    public static final String kLOC_SUMMARYCHARTS_6_MONTHS = SMMoney.getAppContext().getString(R.string.kLOC_SUMMARYCHARTS_6_MONTHS);
     public static final String kLOC_LITE_BUYIT = SMMoney.getAppContext().getString(R.string.kLOC_LITE_BUYIT);
     public static final String kLOC_LITE_UPGRADE = SMMoney.getAppContext().getString(R.string.kLOC_LITE_UPGRADE);
     public static final String kLOC_LITE_UPGRADE_BODY = SMMoney.getAppContext().getString(R.string.kLOC_LITE_UPGRADE_BODY);

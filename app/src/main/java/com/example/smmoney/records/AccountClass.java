@@ -813,13 +813,15 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     keep = 1.0d;
                 }
                 setKeepChangeRoundTo(keep);
+                
                 col = col2 + 1;
                 str = curs.getString(col2);
                 setCcStatementCycleRule(Objects.requireNonNullElse(str, ""));
+                
                 col2 = col + 1;
                 str = curs.getString(col);
                 setCcDueDateRule(Objects.requireNonNullElse(str, ""));
-                col = col2 + 1;
+                
                 str = curs.getString(col2);
                 setCcWeekendPolicy(Objects.requireNonNullElse(str, ""));
                 if (!wasDirty && this.dirty) {

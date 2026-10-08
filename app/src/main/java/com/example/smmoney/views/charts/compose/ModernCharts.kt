@@ -16,12 +16,10 @@ import androidx.compose.material3.PrimaryTabRow
 import androidx.compose.material3.Text
 import androidx.compose.material3.Surface
 import androidx.compose.ui.layout.onSizeChanged
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.ui.layout.layout
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -541,7 +539,6 @@ fun NetWorthBarChart(
     
     // State to track the tooltip position calculated inside the Canvas
     var tooltipPosition by remember { mutableStateOf<Offset?>(null) }
-    val density = LocalDensity.current
 
     LaunchedEffect(items, selectedIndex) {
         if (selectedIndex == -1 || lastItems != items) {
@@ -576,7 +573,6 @@ fun NetWorthBarChart(
                                 // tapOffset.x is absolute. We need to check against absolute bar positions.
                                 var currentX = barWidth / 2f
                                 
-                                var found = false
                                 for (i in items.indices) {
                                     val barStartX = currentX + yAxisWidth
                                     if (tapOffset.x >= barStartX && tapOffset.x <= (barStartX + barWidth)) {
@@ -584,7 +580,6 @@ fun NetWorthBarChart(
                                             selectedIndex = i
                                             onItemClick(items[i])
                                         }
-                                        found = true
                                         break
                                     }
                                     currentX += barWidth * 2f
@@ -774,7 +769,7 @@ fun NetWorthBarChart(
                 
                 // Replicate the exact math used in the drawing loop for the selected bar
                 var currentX = bWidth / 2f
-                for (i in 0 until selectedIndex) {
+                repeat(selectedIndex) {
                     currentX += bWidth * 2f
                 }
                 
@@ -855,7 +850,7 @@ fun NetWorthBarChart(
                             text = tooltipText,
                             color = Color.White,
                             fontWeight = FontWeight.Bold,
-                            // Extremely small text requested
+                            // Minimal text requested
                             fontSize = androidx.compose.ui.unit.TextUnit(9f, androidx.compose.ui.unit.TextUnitType.Sp)
                         )
                     }

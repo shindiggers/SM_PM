@@ -81,7 +81,7 @@ data class CreditCardScheduleConfig(
     val statementRule: StatementCycleRule,
     val dueDateRule: DueDateRule,
     val weekendPolicy: WeekendRollPolicy,
-    val holidayCalendar: UKBankHolidayCalendar = UKBankHolidayCalendar()
+    val holidayCalendar: HolidayCalendar = HolidayCalendarFactory.getCalendarForJurisdiction()
 ) {
     fun calculateNextPaymentDate(referenceDate: LocalDate): PaymentSchedule {
         val statementDate = resolveStatementDate(referenceDate)
@@ -169,11 +169,9 @@ data class CreditCardScheduleConfig(
         }
 
         // Standard weekend/bank holiday rolls
-        while (!holidayCalendar.isWorkingDay(debit)) {
-            debit = when (weekendPolicy) {
-                WeekendRollPolicy.PREVIOUS_WORKING_DAY -> debit.minusDays(1)
-                else -> debit.plusDays(1)
-            }
+        debit = when (weekendPolicy) {
+            WeekendRollPolicy.PREVIOUS_WORKING_DAY -> holidayCalendar.rollBackwardToWorkingDay(debit)
+            else -> holidayCalendar.rollForwardToWorkingDay(debit)
         }
         return debit
     }

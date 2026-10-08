@@ -36,7 +36,8 @@ object CreditCardComposeDataSource {
         val config = CreditCardScheduleConfig(
             statementRule = statementRule,
             dueDateRule = dueDateRule,
-            weekendPolicy = weekendPolicy
+            weekendPolicy = weekendPolicy,
+            holidayCalendar = com.example.smmoney.calendar.HolidayCalendarFactory.getCalendarForJurisdiction()
         )
 
         // Find the statement that covers the current date

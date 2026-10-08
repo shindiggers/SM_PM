@@ -38,6 +38,11 @@ class OFX_Statement {
         }
     }
 
+    // We suppress the "SameReturnValue" warning here. The OFX protocol allows for an optional
+    // <AVAILBAL> (Available Balance) block. SMMoney does not currently track a distinct
+    // available balance vs ledger balance, so we intentionally return an empty string 
+    // to omit this optional block from the exported OFX file.
+    @SuppressWarnings("SameReturnValue")
     String availableBalanceMessage() {
         return "";
     }

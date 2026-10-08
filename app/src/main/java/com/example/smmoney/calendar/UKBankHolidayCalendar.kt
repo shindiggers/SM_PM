@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap
 /**
  * Handles England and Wales statutory bank holidays and working day calculations.
  */
-class UKBankHolidayCalendar {
+class UKBankHolidayCalendar : HolidayCalendar {
 
     // Cache computed bank holidays per year to avoid redundant calculation
     private val holidayCache = ConcurrentHashMap<Int, Set<LocalDate>>()
@@ -23,17 +23,14 @@ class UKBankHolidayCalendar {
     /**
      * Returns true if the date is a Monday-Friday working day and not a Bank Holiday.
      */
-    fun isWorkingDay(date: LocalDate): Boolean {
-        if (date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY) {
-            return false
-        }
-        return !isBankHoliday(date)
+    override fun isWorkingDay(date: LocalDate): Boolean {
+        return date.dayOfWeek != DayOfWeek.SATURDAY && date.dayOfWeek != DayOfWeek.SUNDAY && !isBankHoliday(date)
     }
 
     /**
      * Returns true if the date is an England & Wales statutory bank holiday.
      */
-    fun isBankHoliday(date: LocalDate): Boolean {
+    override fun isBankHoliday(date: LocalDate): Boolean {
         val yearHolidays = holidayCache.computeIfAbsent(date.year) { calculateHolidaysForYear(it) }
         return yearHolidays.contains(date)
     }
@@ -41,7 +38,7 @@ class UKBankHolidayCalendar {
     /**
      * Resolves the n-th working day of a given month and year (e.g. 15th working day for Barclaycard).
      */
-    fun getNthWorkingDayOfMonth(year: Int, month: Int, n: Int): LocalDate {
+    override fun getNthWorkingDayOfMonth(year: Int, month: Int, n: Int): LocalDate {
         require(n > 0) { "Working day index must be greater than 0" }
         var date = LocalDate.of(year, month, 1)
         var count = 0
@@ -60,7 +57,7 @@ class UKBankHolidayCalendar {
     /**
      * Rolls a date to the next available working day if it falls on a weekend or holiday.
      */
-    fun rollForwardToWorkingDay(date: LocalDate): LocalDate {
+    override fun rollForwardToWorkingDay(date: LocalDate): LocalDate {
         var current = date
         while (!isWorkingDay(current)) {
             current = current.plusDays(1)
@@ -71,7 +68,7 @@ class UKBankHolidayCalendar {
     /**
      * Rolls a date to the previous available working day if it falls on a weekend or holiday.
      */
-    fun rollBackwardToWorkingDay(date: LocalDate): LocalDate {
+    override fun rollBackwardToWorkingDay(date: LocalDate): LocalDate {
         var current = date
         while (!isWorkingDay(current)) {
             current = current.minusDays(1)

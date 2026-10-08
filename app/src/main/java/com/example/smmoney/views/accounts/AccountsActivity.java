@@ -37,9 +37,7 @@ import android.view.View;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
 import android.widget.Button;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.IntentCompat;
@@ -90,9 +88,6 @@ import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.HandlerActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.PocketMoneyProgressDialog;
-import com.example.smmoney.views.charts.ChartViewDelegate;
-import com.example.smmoney.views.charts.items.ChartItem;
-import com.example.smmoney.views.charts.views.ChartView;
 import com.example.smmoney.views.desktopsync.PocketMoneySyncActivity;
 import com.example.smmoney.views.repeating.RepeatingActivity;
 import com.example.smmoney.views.reports.AccountsReportDataSource;
@@ -113,8 +108,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 public class AccountsActivity extends PocketMoneyActivity implements
-        HandlerActivity, ChartViewDelegate,
-        DialogFragmentEmailTransfers.DialogEmailTransferListener,
+        HandlerActivity, DialogFragmentEmailTransfers.DialogEmailTransferListener,
         DialogFragmentFileTransfer.DialogFileTransferListener,
         DialogFragmentSdImport.DialogSdImportListener,
         DialogFragmentSdExport.DialogSdExportListener,
@@ -419,15 +413,13 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
     }
 
-    public void chartViewSelectedItem(com.example.smmoney.views.charts.views.ChartView chartView, com.example.smmoney.views.charts.items.ChartItem chartItem) {
-        
-    }
+
 
     private void reloadChartHeader() {
         if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeNetWorth) {
-            this.graphTitleTextView.setText(Locales.kLOC_CHARTS_NETWORTH + " 12 " + Locales.kLOC_REPEATING_FREQUENCY_MONTHS);
+            this.graphTitleTextView.setText(String.format("%s%s", Locales.kLOC_CHARTS_NETWORTH, Locales.kLOC_SUMMARYCHARTS_12_MONTHS));
         } else if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeCashFlow) {
-            this.graphTitleTextView.setText(Locales.kLOC_CHARTS_CASHFLOW + " 6 " + Locales.kLOC_REPEATING_FREQUENCY_MONTHS);
+            this.graphTitleTextView.setText(String.format("%s%s", Locales.kLOC_CHARTS_CASHFLOW, Locales.kLOC_SUMMARYCHARTS_6_MONTHS));
         } else {
             this.graphTitleTextView.setText("");
         }

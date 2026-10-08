@@ -11,10 +11,6 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.TransactionClass;
-import com.example.smmoney.views.charts.ChartViewDataSource;
-import com.example.smmoney.views.charts.items.ChartItem;
-import com.example.smmoney.views.charts.items.ReportChartItem;
-import com.example.smmoney.views.charts.views.ChartView;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -22,7 +18,7 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.Iterator;
 
-public abstract class ReportDataSource implements ChartViewDataSource, Serializable {
+public abstract class ReportDataSource implements Serializable {
     public ArrayList<ReportItem> data;
     int currentAction = 0;
     int currentPeriod;
@@ -289,48 +285,10 @@ public abstract class ReportDataSource implements ChartViewDataSource, Serializa
         this.delegate.finishProgressBar();
     }
 
-    public int numberOfDataPointsInSeries(ChartView chartView, int series) {
-        int count = 0;
-        for (ReportItem datum : this.data) {
-            if ((datum).checked) {
-                count++;
-            }
-        }
-        return count;
-    }
 
-    public ChartItem itemForDataAtIndex(ChartView chartView, int row, int sections) {
-        boolean displayCount = Prefs.getIntPref(Prefs.REPORTS_SORTON) == 2;
-        int indexPos = 0;
-        for (ReportItem item : this.data) {
-            if (item.checked) {
-                if (indexPos == row) {
-                    ChartItem reportChartItem = new ReportChartItem(displayCount ? (double) item.count : item.amount, item.expense, item.color);
-                    reportChartItem.reportItem = item;
-                    return reportChartItem;
-                }
-                indexPos++;
-            }
-        }
-        return null;
-    }
 
-    public int numberOfSeriesInChartView(ChartView chartView) {
-        return 1;
-    }
 
-    public GregorianCalendar dateForRow(int row) {
-        return null;
-    }
 
-    public double networthForRow(int row) {
-        return 0.0d;
-    }
 
-    public void selectAllDataPointsForRow(int row) {
-    }
 
-    public int rowOfChartItem(ChartItem chartItem) {
-        return 0;
-    }
 }

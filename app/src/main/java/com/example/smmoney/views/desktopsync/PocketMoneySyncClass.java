@@ -603,6 +603,7 @@ public class PocketMoneySyncClass extends DefaultHandler {
                 pocketMoneySyncActivity.showUpgradeDialog();
                 PocketMoneySyncClass.this.delegate.stopSyncing();
             });
+            return false;
         }
         setCurrentState(Enums.kDesktopSyncStateSyncVersionProcessed/*16*/);
         return true;

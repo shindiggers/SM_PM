@@ -248,6 +248,8 @@
     <string name="kLOC_EDIT_REPEATING_MONTHLYREPEATON">Monthly Repeat On</string>
     <string name="kLOC_GENERAL_NONE">None</string>
     <string name="kLOC_REPEATING_FREQUENCY_DAILY">Daily</string>
+    <string name="kLOC_SUMMARYCHARTS_12_MONTHS"> 12 Month(s)</string>
+    <string name="kLOC_SUMMARYCHARTS_6_MONTHS"> 6 Month(s)</string>
     <string name="kLOC_REPEATING_FREQUENCY_DAYS">Day(s)</string>
     <string name="kLOC_REPEATING_FREQUENCY_WEEKLY">Weekly</string>
     <string name="kLOC_REPEATING_FREQUENCY_WEEKS">Week(s)</string>
@@ -640,10 +642,8 @@
     <string name="kLOC_DESKTOPSYNC_DIFFNETWORKS">This device appears to be on a different network than the IP you have entered. Please double-check that the host and server devices are on the same network and the IP address and port are typed correctly</string>
     <string name="kLOC_DESKTOPSYNC_CLIENTTIMEDOUT">Error connecting to server. Please ensure that both devices are on the same network, and they are not behind any firewalls</string>
     <string name="kLOC_TRANSACTION_SORTDATEAMOUNT">Date, Amount</string>
-    <string name="content_description_graph_background">graph background</string>
     <string name="content_description_right_arrow">right arrow</string>
     <string name="content_description_left_arrow">left arrow</string>
-    <string name="content_description_graph_foreground">graph foreground</string>
     <string name="accounts_view_graph_title">Cash Flow: 2012 Month</string>
     <string name="accounts_graph_title_format">%1$s: %2$s %3$s</string>
     <string name="accounts_view_net_worth">$0.00</string>
