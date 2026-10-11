@@ -49,7 +49,7 @@
             android:clickable="true"
             android:contentDescription="@string/content_desctiption_select_filter"
             android:focusable="true"
-            android:src="@drawable/ic_arrow_drop_down_circle" />
+            android:src="@drawable/ic_outline_arrow_drop_down_circle_24" />
 
     </FrameLayout>
 

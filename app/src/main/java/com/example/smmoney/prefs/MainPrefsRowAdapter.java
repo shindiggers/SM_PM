@@ -107,7 +107,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
             atemp[5] = R.drawable.filetransfersicon;
             atemp[6] = R.drawable.viewprefs;
             atemp[7] = R.drawable.managedlistsicon;
-            atemp[8] = R.drawable.ic_date_range;
+            atemp[8] = R.drawable.repeatingicon;
             this.imageList = atemp;
             return;
         }
@@ -151,6 +151,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.image.setImageResource(this.imageList[position]);
+        holder.image.setColorFilter(PocketMoneyThemes.currentTintColor());
         holder.title.setText(this.nameList[position]);
         holder.theRow.setOnClickListener(this.listenerList.get(position));
         return convertView;

@@ -192,7 +192,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         sv.setVerticalScrollBarEnabled(false);
         sv.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         ImageView frequencyDateIcon = findViewById(R.id.frequency_ic_calendar);
-        frequencyDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
+        frequencyDateIcon.setColorFilter(PocketMoneyThemes.chkBoxColorChecked(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.frequency_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.frequencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         
@@ -200,7 +200,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.everyTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
         
         ImageView theDateIcon = findViewById(R.id.repeting_edit_ic_calendar);
-        theDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
+        theDateIcon.setColorFilter(PocketMoneyThemes.chkBoxColorChecked(), PorterDuff.Mode.SRC_IN);
         ((TextView) findViewById(R.id.end_on_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.endOnTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         

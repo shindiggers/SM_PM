@@ -876,13 +876,13 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         if (this.iconFileName == null || this.iconFileName.isEmpty()) {
             switch (this.type) {
                 case Enums.kAccountTypeChecking /*0*/:
-                    this.iconFileName = "checkbook.png";
+                    this.iconFileName = "checkbook.xml";
                     break;
                 case Enums.kAccountTypeCreditCard /*2*/:
                     this.iconFileName = "ic_visa.xml";
                     break;
                 case Enums.kAccountTypeAsset /*3*/:
-                    this.iconFileName = "asset.png";
+                    this.iconFileName = "asset.xml";
                     break;
                 case Enums.kAccountTypeLiability /*4*/:
                     this.iconFileName = "liability.png";
@@ -891,7 +891,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     this.iconFileName = "savings.png";
                     break;
                 default:
-                    this.iconFileName = "cash.png";
+                    this.iconFileName = "cash.xml";
                     break;
             }
         }

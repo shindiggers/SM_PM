@@ -31,11 +31,12 @@
 
                 <ImageView
                     android:id="@+id/lefttarrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center_vertical"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/earlier_period"
-                    android:src="@drawable/leftarrow" />
+                    android:src="@drawable/ic_left_arrow" />
 
                 <Button
                     android:id="@+id/periodbutton"
@@ -46,11 +47,12 @@
 
                 <ImageView
                     android:id="@+id/rightarrow"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
                     android:layout_gravity="end|center_vertical"
+                    android:scaleType="fitCenter"
                     android:contentDescription="@string/later_period"
-                    android:src="@drawable/rightarrow" />
+                    android:src="@drawable/ic_right_arrow" />
 
             </FrameLayout>
 

@@ -102,7 +102,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_BUDGETS_TYPE" />
 
@@ -143,7 +143,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="4dp"
                     android:background="@null"
-                    android:src="@drawable/ic_arrow_drop_down_circle"
+                    android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     android:clickable="false"
                     android:contentDescription="@string/kLOC_BUDGETS_PERIOD" />
 
@@ -262,7 +262,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="50dp"
                     android:contentDescription="@string/kLOC_BUDGETS_NEW"
-                    android:src="@drawable/circleplus" />
+                    android:src="@drawable/ic_add_circle_outline_white_24dp_svg" />
 
             </FrameLayout>
 

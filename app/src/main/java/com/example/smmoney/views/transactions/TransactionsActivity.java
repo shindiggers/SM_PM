@@ -746,7 +746,7 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         toolsMenu.add(0, MENU_TOOLS_ADJUSTBALANCE, 0, Locales.kLOC_TOOLS_RECONCILE);
         toolsMenu.add(0, MENU_TOOLS_MARKASCLEAR, 0, Locales.kLOC_TOOLS_MARKCLEARED);
         toolsMenu.add(0, MENU_TOOLS_ROLLUP, 0, Locales.kLOC_TOOLS_ROLLUP);
-        menu.add(0, MENU_FILTER, 0, Locales.kLOC_TOOLS_FILTERS).setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_FILTER, 0, Locales.kLOC_TOOLS_FILTERS).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
         SubMenu reportsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_REPORTS);
         reportsMenu.setIcon(R.drawable.icon);
         reportsMenu.add(0, MENU_REPORTS_ACCOUNT, 0, Locales.kLOC_TOOLS_ACCOUNTREPORT);

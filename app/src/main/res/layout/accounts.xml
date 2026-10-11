@@ -94,36 +94,42 @@
                 android:layout_gravity="center"
                 android:indeterminate="true" />
 
-            <Button
+            <com.google.android.material.button.MaterialButton
                 android:id="@+id/morechartsbutton"
-                android:layout_width="100dp"
-                android:layout_height="40dp"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="150dp"
+                android:layout_height="50dp"
                 android:layout_gravity="center"
-                android:background="@drawable/graphsplacard" />
+                android:layout_marginBottom="8dp"
+                android:gravity="center"
+                app:cornerRadius="8dp"
+                tools:text="Charts" />
+
+
         </FrameLayout>
 
         <ImageView
             android:id="@+id/graphleftarrow"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:clickable="true"
             android:contentDescription="@string/content_description_left_arrow"
             android:focusable="true"
-            android:scaleType="center"
-            android:src="@drawable/grapharrowleft"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_left_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/graphrightarrow"
-            android:layout_width="30dp"
-            android:layout_height="0dp"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
             android:clickable="true"
             android:contentDescription="@string/content_description_right_arrow"
             android:focusable="true"
-            android:scaleType="center"
-            android:src="@drawable/grapharrowright"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_right_arrow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />

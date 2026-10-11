@@ -37,20 +37,22 @@ public class BalanceBar extends FrameLayout {
 
         // Previous Button (Left Arrow)
         this.previousButton = new ImageView(context);
-        this.previousButton.setImageResource(R.drawable.leftarrow);
+        this.previousButton.setImageResource(R.drawable.ic_left_arrow);
         this.previousButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
-        this.previousButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        this.previousButton.setPadding((int)(8 * density), 0, (int)(16 * density), 0);
-        LayoutParams prevLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
+        this.previousButton.setScaleType(ImageView.ScaleType.FIT_XY);
+        int pad = (int) (1 * density);
+        this.previousButton.setPadding(pad,pad,pad,pad);
+        int buttonWidth = (int)(64*density);
+        LayoutParams prevLp = new LayoutParams(buttonWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
         addView(this.previousButton, prevLp);
 
         // Next Button (Right Arrow)
         this.nextButton = new ImageView(context);
-        this.nextButton.setImageResource(R.drawable.rightarrow);
+        this.nextButton.setImageResource(R.drawable.ic_right_arrow);
         this.nextButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
-        this.nextButton.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        this.nextButton.setPadding((int)(16 * density), 0, (int)(8 * density), 0);
-        LayoutParams nextLp = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END);
+        this.nextButton.setScaleType(ImageView.ScaleType.FIT_XY);
+        this.previousButton.setPadding(pad,pad,pad,pad);
+        LayoutParams nextLp = new LayoutParams(buttonWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END);
         addView(this.nextButton, nextLp);
 
         this.balanceView = new LinearLayout(context);

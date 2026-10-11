@@ -31,8 +31,9 @@
         android:text="@string/asterisk"
         android:textAppearance="?android:textAppearanceMedium"
         app:cornerRadius="8dp"
-        app:icon="@drawable/ic_date_range"
+        app:icon="@drawable/ic_calendar"
         app:iconGravity="end"
+        app:iconSize="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/from_date_label" />
@@ -88,8 +89,9 @@
         android:text="@string/asterisk"
         android:textAppearance="?android:textAppearanceMedium"
         app:cornerRadius="8dp"
-        app:icon="@drawable/ic_date_range"
+        app:icon="@drawable/ic_calendar"
         app:iconGravity="end"
+        app:iconSize="32dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/to_date_label" />

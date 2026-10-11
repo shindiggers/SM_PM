@@ -10,6 +10,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -36,7 +37,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import androidx.core.app.ActivityOptionsCompat;
@@ -97,6 +97,7 @@ import com.example.smmoney.views.reports.PayeeReportDataSource;
 import com.example.smmoney.views.reports.ReportsActivity;
 import com.example.smmoney.views.transactions.TransactionsActivity;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.button.MaterialButton;
 
 import java.io.File;
 import java.io.IOException;
@@ -169,7 +170,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     private Future<?> graphFuture;
     private TextView graphTitleTextView;
     private Handler mHandler = null;
-    private Button moreChartsButton;
+    private MaterialButton moreChartsButton;
     private int msgEmail = -1;
     private androidx.compose.ui.platform.ComposeView netWorthChartView;
     private PocketMoneyProgressDialog progressDialog = null;
@@ -936,6 +937,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theGraphLayout = layout.findViewById(R.id.chartframelayout);
         ImageView graphLeftArrow = layout.findViewById(R.id.graphleftarrow);
+        graphLeftArrow.setColorFilter(PocketMoneyThemes.currentTintColor());
         graphLeftArrow.setOnClickListener(v -> {
             if (AccountsActivity.this.graphButtonEnabled) {
                 switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
@@ -953,6 +955,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
             }
         });
         ImageView graphRightArrow = layout.findViewById(R.id.graphrightarrow);
+        graphRightArrow.setColorFilter(PocketMoneyThemes.currentTintColor());
         graphRightArrow.setOnClickListener(v -> {
             if (AccountsActivity.this.graphButtonEnabled) {
                 switch (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE)) {
@@ -972,8 +975,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.netWorthChartView = layout.findViewById(R.id.networthbarchart);
         this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
         this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
-        this.moreChartsButton.setTextColor(-7829368);
+        this.moreChartsButton.setTextColor(PocketMoneyThemes.currentTintColor());
         this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
+        this.moreChartsButton.setStrokeColor(ColorStateList.valueOf(PocketMoneyThemes.currentTintColor()));
+        this.moreChartsButton.setStrokeWidth(2);
         this.moreChartsButton.setOnClickListener(v -> AccountsActivity.this.showReportsDialog());
         this.graphSpinner = layout.findViewById(R.id.graphspinner);
         this.graphTitleTextView = layout.findViewById(R.id.graphtitletextview);

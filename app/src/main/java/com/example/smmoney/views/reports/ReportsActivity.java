@@ -1,6 +1,7 @@
 package com.example.smmoney.views.reports;
 
 import android.content.Intent;
+import android.graphics.PorterDuff;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -132,6 +134,9 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
         this.periodButton = findViewById(R.id.periodbutton);
         this.periodButton.setOnClickListener(v -> openDialog());
         this.previousPeriodView = findViewById(R.id.lefttarrow);
+        if(this.previousPeriodView instanceof ImageView) {
+            ((ImageView) this.previousPeriodView).setColorFilter(PocketMoneyThemes.chkBoxColorChecked(), PorterDuff.Mode.SRC_IN);
+        }
         this.nextPeriodView = findViewById(R.id.rightarrow);
         this.previousPeriodView.setOnClickListener(getClickListener());
         this.nextPeriodView.setOnClickListener(getClickListener());
@@ -293,7 +298,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_VIEW/*1*/, 0, "View Options").setIcon(R.drawable.ic_arrow_drop_down_circle);
+        menu.add(0, MENU_VIEW/*1*/, 0, "View Options").setIcon(R.drawable.ic_outline_arrow_drop_down_circle_24);
         return true;
     }
 
