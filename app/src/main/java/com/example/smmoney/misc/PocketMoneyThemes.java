@@ -142,7 +142,7 @@ public class PocketMoneyThemes {
         };
     }
 
-    public static int preferenceScreenTheme() {
+    public static int currentAppTheme() {
         return switch (getTheme()) {
             case kThemeBlue -> R.style.MyTheme_Blue;
             case kThemeGreen -> R.style.MyTheme_Green;
@@ -153,6 +153,10 @@ public class PocketMoneyThemes {
             case kThemeWhite -> R.style.MyTheme_White;
             default -> R.style.MyTheme_Black;
         };
+    }
+
+    public static int preferenceScreenTheme() {
+        return currentAppTheme();
     }
 
     public static int datePickerTheme() {

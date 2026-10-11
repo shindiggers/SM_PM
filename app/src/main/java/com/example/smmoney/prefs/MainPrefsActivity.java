@@ -18,6 +18,7 @@ public class MainPrefsActivity extends PocketMoneyActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+        setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
         setTitle(Locales.kLOC_PREFERENCES_TITLE);
         setContentView(R.layout.activity_main_prefs);

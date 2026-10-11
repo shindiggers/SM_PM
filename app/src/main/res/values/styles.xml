@@ -202,7 +202,7 @@
         <item name="android:textColorHint">@color/black_theme_text_alt</item>
         <item name="colorControlNormal">@color/black_theme_tint_color</item>
         <item name="colorControlActivated">@color/black_theme_tint_color</item>
-        <item name="colorControlHighlight">@color/black_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/black_theme_ripple_color</item>
         <item name="textColorAlertDialogListItem">@color/black_theme_text</item>
         <item name="dialogTheme">@style/DialogTheme.Black</item>
         <item name="alertDialogTheme">@style/DialogTheme.Black</item>
@@ -224,6 +224,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Blue</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Blue</item>
         <item name="colorControlActivated">@color/blue_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/blue_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Blue" parent="android:Theme.Material.Light.Dialog">
@@ -239,6 +240,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Green</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Green</item>
         <item name="colorControlActivated">@color/green_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/green_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Green" parent="android:Theme.Material.Light.Dialog">
@@ -254,6 +256,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Purple</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Purple</item>
         <item name="colorControlActivated">@color/purple_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/purple_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Purple" parent="android:Theme.Material.Light.Dialog">
@@ -269,6 +272,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Coffee</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Coffee</item>
         <item name="colorControlActivated">@color/coffee_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/coffee_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Coffee" parent="android:Theme.Material.Light.Dialog">
@@ -284,6 +288,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Ruby</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Ruby</item>
         <item name="colorControlActivated">@color/ruby_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/ruby_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Ruby" parent="android:Theme.Material.Light.Dialog">
@@ -299,6 +304,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.Gray</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Gray</item>
         <item name="colorControlActivated">@color/gray_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/gray_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.Gray" parent="android:Theme.Material.Light.Dialog">
@@ -314,6 +320,7 @@
         <item name="android:datePickerDialogTheme">@style/DatePicker.White</item>
         <item name="preferenceTheme">@style/PreferenceTheme.White</item>
         <item name="colorControlActivated">@color/white_theme_tint_color</item>
+        <item name="colorControlHighlight">@color/white_theme_ripple_color</item>
     </style>
 
     <style name="DatePicker.White" parent="android:Theme.Material.Light.Dialog">

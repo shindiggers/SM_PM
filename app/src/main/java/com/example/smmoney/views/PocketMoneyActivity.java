@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Locales;
+import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
 public abstract class PocketMoneyActivity extends AppCompatActivity {
@@ -34,6 +35,7 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
+        setTheme(PocketMoneyThemes.currentAppTheme());
         super.onCreate(savedInstanceState);
         setResult(0);
         String dontShowPass = null;

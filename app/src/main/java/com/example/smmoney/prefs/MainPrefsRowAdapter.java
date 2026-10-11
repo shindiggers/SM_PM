@@ -145,7 +145,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
             holder.title.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             holder.image = convertView.findViewById(R.id.prefsrowimage);
             holder.theRow = (FrameLayout) holder.title.getParent();
-            holder.theRow.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+            holder.theRow.setBackgroundResource(PocketMoneyThemes.settingsRowSelector());
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -153,6 +153,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
         holder.image.setImageResource(this.imageList[position]);
         holder.image.setColorFilter(PocketMoneyThemes.currentTintColor());
         holder.title.setText(this.nameList[position]);
+        holder.theRow.setBackgroundResource(PocketMoneyThemes.settingsRowSelector());
         holder.theRow.setOnClickListener(this.listenerList.get(position));
         return convertView;
     }
