@@ -114,4 +114,11 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
+    <!-- Budget Progress Beam Colors -->
+    <color name="budget_beam_cyan">#00B0FF</color>
+    <color name="budget_beam_deep_teal">#00796B</color>
+    <color name="budget_beam_vivid_magenta">#D81B60</color>
+    <color name="budget_beam_rich_purple">#8E24AA</color>
+    <color name="budget_beam_royal_blue">#0091EA</color>
+
 </resources>

@@ -424,11 +424,19 @@ public class BudgetsRowAdapter extends BaseAdapter {
         }
     }
 
+    boolean isCurrentPeriod() {
+        GregorianCalendar today = new GregorianCalendar();
+        return !today.before(startOfPeriod()) && !today.after(endOfPeriod());
+    }
+
     double getProgressPercent() {
         GregorianCalendar today = new GregorianCalendar();
-        if (startOfPeriod().after(today)) return 1.0;
-        if (endOfPeriod().before(today)) return 0.0;
-        return ((double) (today.getTimeInMillis() - startOfPeriod().getTimeInMillis())) / ((double) (endOfPeriod().getTimeInMillis() - startOfPeriod().getTimeInMillis()));
+        if (startOfPeriod().after(today)) return 0.0;
+        if (endOfPeriod().before(today)) return 1.0;
+        long start = startOfPeriod().getTimeInMillis();
+        long end = endOfPeriod().getTimeInMillis();
+        if (end <= start) return 0.0;
+        return ((double) (today.getTimeInMillis() - start)) / ((double) (end - start));
     }
 
     CharSequence rangeOfPeriodAsString() {

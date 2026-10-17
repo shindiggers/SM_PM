@@ -281,18 +281,29 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.reloadProgressBar.setVisibility(View.INVISIBLE);
         this.theList.setVisibility(View.VISIBLE);
         
-        int newWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 9.0f, getResources().getDisplayMetrics());
-        LayoutParams lp = new LayoutParams(newWidth, this.theList.getHeight());
-        lp.gravity = Gravity.START;
-        int width = this.theList.getWidth();
-        int leftMargin = (int) (((double) width) * this.adapter.getProgressPercent());
-        if (leftMargin + newWidth > width) {
-            leftMargin = width - newWidth;
+        if (!this.adapter.isCurrentPeriod()) {
+            this.progressiBeamBar.setVisibility(View.GONE);
+        } else {
+            this.progressiBeamBar.setVisibility(View.VISIBLE);
+            android.graphics.drawable.Drawable bg = this.progressiBeamBar.getBackground();
+            if (bg != null) {
+                bg.mutate().setTint(PocketMoneyThemes.budgetProgressBeamColor());
+            }
+            int newWidth = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 12.0f, getResources().getDisplayMetrics());
+            LayoutParams lp = new LayoutParams(newWidth, this.theList.getHeight());
+            lp.gravity = Gravity.START;
+            int width = this.theList.getWidth();
+            int leftMargin = (int) (((double) width) * this.adapter.getProgressPercent()) - (newWidth / 2);
+            if (leftMargin < 0) {
+                leftMargin = 0;
+            } else if (leftMargin + newWidth > width) {
+                leftMargin = width - newWidth;
+            }
+            lp.leftMargin = leftMargin;
+            this.progressiBeamBar.setLayoutParams(lp);
+            this.progressiBeamBar.bringToFront();
+            this.progressiBeamBar.requestLayout();
         }
-        lp.leftMargin = leftMargin;
-        this.progressiBeamBar.setLayoutParams(lp);
-        this.progressiBeamBar.bringToFront();
-        this.progressiBeamBar.requestLayout();
 
     }
 

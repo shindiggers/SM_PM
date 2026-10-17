@@ -747,4 +747,10 @@
     <string name="account_cc_statement_day">Statement Day</string>
     <string name="account_cc_due_offset">Due Offset</string>
 
+    <!-- Repeating Plurals -->
+    <plurals name="repeating_upcoming_days">
+        <item quantity="one">%1$s %2$d day</item>
+        <item quantity="other">%1$s %2$d days</item>
+    </plurals>
+
 </resources>

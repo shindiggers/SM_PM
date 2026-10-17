@@ -369,6 +369,17 @@ public class PocketMoneyThemes {
         };
     }
 
+    public static int budgetProgressBeamColor() {
+        return switch (getTheme()) {
+            case kThemeBlack, kThemeGray, kThemeRuby -> getColor(R.color.budget_beam_cyan);
+            case kThemeBlue -> getColor(R.color.budget_beam_vivid_magenta);
+            case kThemeGreen -> getColor(R.color.budget_beam_rich_purple);
+            case kThemePurple -> getColor(R.color.budget_beam_deep_teal);
+            case kThemeWhite -> getColor(R.color.budget_beam_royal_blue);
+            default -> getColor(R.color.budget_beam_cyan);
+        };
+    }
+
     public static int balanceBarBackgroundColor() {
         return switch (getTheme()) {
             case kThemeBlack -> getColor(R.color.black);

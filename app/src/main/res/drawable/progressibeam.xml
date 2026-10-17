@@ -1,0 +1,18 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="12dp"
+    android:height="100dp"
+    android:viewportWidth="12"
+    android:viewportHeight="100">
+    <!-- Top shallow triangle pointing down (height = 3) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M0,0 L12,0 L6,3 Z" />
+    <!-- Straight vertical center spine running right into the triangles from top to bottom (width = 2) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M5,0 L7,0 L7,100 L5,100 Z" />
+    <!-- Bottom shallow triangle pointing up (height = 3) -->
+    <path
+        android:fillColor="@android:color/white"
+        android:pathData="M0,100 L12,100 L6,97 Z" />
+</vector>

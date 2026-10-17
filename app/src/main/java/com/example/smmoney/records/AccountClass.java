@@ -885,10 +885,10 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     this.iconFileName = "asset.xml";
                     break;
                 case Enums.kAccountTypeLiability /*4*/:
-                    this.iconFileName = "liability.png";
+                    this.iconFileName = "liability.xml";
                     break;
                 case Enums.kAccountTypeSavings /*6*/:
-                    this.iconFileName = "savings.png";
+                    this.iconFileName = "savings.xml";
                     break;
                 default:
                     this.iconFileName = "cash.xml";

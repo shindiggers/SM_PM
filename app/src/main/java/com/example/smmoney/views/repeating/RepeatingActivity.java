@@ -227,7 +227,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private void reloadBalanceBar() {
         ArrayList<RepeatingTransactionClass> repeatingTransactions = TransactionDB.queryAllRepeatingTransactions();
         int days = Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD);
-        String text = Locales.kLOC_REPEATING_UPCOMING_LABEL + " " + days + " " + Locales.kLOC_REPEATING_FREQUENCY_DAYS;
+        String text = getResources().getQuantityString(R.plurals.repeating_upcoming_days, days, Locales.kLOC_REPEATING_UPCOMING_LABEL, days);
         
         GregorianCalendar today = CalExt.beginningOfToday();
         GregorianCalendar upcomingEndDate = CalExt.endOfDay(CalExt.addDays((GregorianCalendar) today.clone(), days));

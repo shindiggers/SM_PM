@@ -39,10 +39,8 @@ public class BalanceBar extends FrameLayout {
         this.previousButton = new ImageView(context);
         this.previousButton.setImageResource(R.drawable.ic_left_arrow);
         this.previousButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
-        this.previousButton.setScaleType(ImageView.ScaleType.FIT_XY);
-        int pad = (int) (1 * density);
-        this.previousButton.setPadding(pad,pad,pad,pad);
-        int buttonWidth = (int)(64*density);
+        this.previousButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
+        int buttonWidth = (int)(48 * density);
         LayoutParams prevLp = new LayoutParams(buttonWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.START);
         addView(this.previousButton, prevLp);
 
@@ -50,8 +48,7 @@ public class BalanceBar extends FrameLayout {
         this.nextButton = new ImageView(context);
         this.nextButton.setImageResource(R.drawable.ic_right_arrow);
         this.nextButton.setColorFilter(PocketMoneyThemes.balanceBarArrowColor());
-        this.nextButton.setScaleType(ImageView.ScaleType.FIT_XY);
-        this.previousButton.setPadding(pad,pad,pad,pad);
+        this.nextButton.setScaleType(ImageView.ScaleType.FIT_CENTER);
         LayoutParams nextLp = new LayoutParams(buttonWidth, ViewGroup.LayoutParams.MATCH_PARENT, Gravity.END);
         addView(this.nextButton, nextLp);
 
@@ -86,9 +83,13 @@ public class BalanceBar extends FrameLayout {
         this.balanceView.addView(this.innerLinearLayout);
 
         this.seperatorImage = new ImageView(context);
-        this.seperatorImage.setBackgroundResource(R.drawable.seperatorline);
+        this.seperatorImage.setImageResource(R.drawable.seperatorline);
+        this.seperatorImage.setScaleType(ImageView.ScaleType.FIT_XY);
         this.seperatorImage.setVisibility(GONE);
-        this.seperatorImage.setLayoutParams(new LinearLayout.LayoutParams(1, ViewGroup.LayoutParams.MATCH_PARENT));
+        LinearLayout.LayoutParams sepLp = new LinearLayout.LayoutParams((int) Math.max(1, density), ViewGroup.LayoutParams.MATCH_PARENT);
+        int verticalMargin = (int) (8 * density);
+        sepLp.setMargins(0, verticalMargin, 0, verticalMargin);
+        this.seperatorImage.setLayoutParams(sepLp);
         this.balanceView.addView(this.seperatorImage);
 
         this.secondBalanceTypeTextView = new TextView(context);
@@ -123,8 +124,19 @@ public class BalanceBar extends FrameLayout {
         this.innerLinearLayout.setOrientation(enable ? LinearLayout.VERTICAL : LinearLayout.HORIZONTAL);
         this.secondInnerLinearLayout.setVisibility(enable ? VISIBLE : GONE);
         
+        float density = getResources().getDisplayMetrics().density;
         if (enable) {
             this.previousButton.setVisibility(GONE);
+            // Spread the two text views and divider across the available width excluding the right arrow.
+            int rightArrowWidth = (int) (48 * density);
+            this.balanceView.setPadding(0, 0, rightArrowWidth, 0);
+
+            this.innerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f));
+            this.secondInnerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.MATCH_PARENT, 1.0f));
+        } else {
+            this.balanceView.setPadding(0, 0, 0, 0);
+            this.innerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            this.secondInnerLinearLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
         }
     }
 
