@@ -418,9 +418,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     private void reloadChartHeader() {
         if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeNetWorth) {
-            this.graphTitleTextView.setText(String.format("%s%s", Locales.kLOC_CHARTS_NETWORTH, Locales.kLOC_SUMMARYCHARTS_12_MONTHS));
+            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 12, Locales.kLOC_CHARTS_NETWORTH, 12));
         } else if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeCashFlow) {
-            this.graphTitleTextView.setText(String.format("%s%s", Locales.kLOC_CHARTS_CASHFLOW, Locales.kLOC_SUMMARYCHARTS_6_MONTHS));
+            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 6, Locales.kLOC_CHARTS_CASHFLOW, 6));
         } else {
             this.graphTitleTextView.setText("");
         }

@@ -56,7 +56,7 @@ public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
         }
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.pm_icon)
+                .setSmallIcon(R.drawable.ic_launcher_monochrome)
                 .setContentTitle((repeatingTransaction.isOverdueOnDate(new GregorianCalendar()) ? "OVERDUE " : "") + "Repeating Transaction Due")
                 .setContentText(newBody)
                 .setWhen(System.currentTimeMillis())

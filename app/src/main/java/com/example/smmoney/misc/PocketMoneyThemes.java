@@ -217,7 +217,7 @@ public class PocketMoneyThemes {
 
     public static int headerTextColor() {
         return switch (getTheme()) {
-            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby,kThemeWhite -> getColor(R.color.white_theme_text);
+            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby,kThemeWhite -> getColor(R.color.black_theme_text);
             default -> getColor(R.color.black_theme_text);
         };
     }
@@ -237,7 +237,13 @@ public class PocketMoneyThemes {
 
     public static int alternateCellTextColor() {
         return switch (getTheme()) {
-            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby, kThemeWhite -> getColor(R.color.white_theme_text_alt);
+            case kThemeBlue -> getColor(R.color.blue_theme_text_alt);
+            case kThemeGreen -> getColor(R.color.green_theme_text_alt);
+            case kThemePurple -> getColor(R.color.purple_theme_text_alt);
+            case kThemeGray -> getColor(R.color.gray_theme_text_alt);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_text_alt);
+            case kThemeRuby -> getColor(R.color.ruby_theme_text_alt);
+            case kThemeWhite -> getColor(R.color.white_theme_text_alt);
             default -> getColor(R.color.black_theme_text_alt);
         };
     }
@@ -246,13 +252,6 @@ public class PocketMoneyThemes {
         return switch (getTheme()) {
             case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby, kThemeWhite -> getColor(R.color.white_theme_text);
             default -> getColor(R.color.black_theme_text);
-        };
-    }
-
-    public static int primaryEditTextColor_NJA() {
-        return switch (getTheme()) {
-            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby, kThemeWhite -> getColor(R.color.white_theme_text);
-            default -> getColor(R.color.white_theme_primary_row_color);
         };
     }
 
@@ -371,12 +370,11 @@ public class PocketMoneyThemes {
 
     public static int budgetProgressBeamColor() {
         return switch (getTheme()) {
-            case kThemeBlack, kThemeGray, kThemeRuby -> getColor(R.color.budget_beam_cyan);
             case kThemeBlue -> getColor(R.color.budget_beam_vivid_magenta);
             case kThemeGreen -> getColor(R.color.budget_beam_rich_purple);
             case kThemePurple -> getColor(R.color.budget_beam_deep_teal);
             case kThemeWhite -> getColor(R.color.budget_beam_royal_blue);
-            default -> getColor(R.color.budget_beam_cyan);
+            default -> getColor(R.color.budget_beam_cyan); // defauly used for kThemeBlack, kThemeGray, kThemeRuby
         };
     }
 

@@ -739,7 +739,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         
         SubMenu toolsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_TOOLS);
-        toolsMenu.setIcon(R.drawable.pm_icon);
         menu.add(0, MENU_SEARCH, 0, Locales.kLOC_TOOLS_SEARCH).setIcon(R.drawable.places_ic_search);
         toolsMenu.add(0, MENU_TOOLS_FILETRANSFERS, 0, Locales.kLOC_TOOLS_FILETRANSFERS);
         toolsMenu.add(0, MENU_TOOLS_GOTODATE, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
@@ -748,7 +747,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         toolsMenu.add(0, MENU_TOOLS_ROLLUP, 0, Locales.kLOC_TOOLS_ROLLUP);
         menu.add(0, MENU_FILTER, 0, Locales.kLOC_TOOLS_FILTERS).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
         SubMenu reportsMenu = menu.addSubMenu(Locales.kLOC_GENERAL_REPORTS);
-        reportsMenu.setIcon(R.drawable.pm_icon);
         reportsMenu.add(0, MENU_REPORTS_ACCOUNT, 0, Locales.kLOC_TOOLS_ACCOUNTREPORT);
         reportsMenu.add(0, MENU_REPORTS_CATEGORY, 0, Locales.kLOC_TOOLS_CATEGORYREPORT);
         reportsMenu.add(0, MENU_REPORTS_CLASS, 0, Locales.kLOC_TOOLS_CLASSREPORT);

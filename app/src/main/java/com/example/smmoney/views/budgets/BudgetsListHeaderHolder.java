@@ -54,7 +54,7 @@ public class BudgetsListHeaderHolder extends ConstraintLayout {
 
     private void setupTheme() {
         setBackgroundColor(PocketMoneyThemes.actionBarColor());
-        int textColor = PocketMoneyThemes.balanceBarTextViewColor();
+        int textColor = PocketMoneyThemes.headerTextColor();
         
         ((TextView)findViewById(R.id.header_actual_label)).setTextColor(textColor);
         this.actualValueView.setTextColor(textColor);
