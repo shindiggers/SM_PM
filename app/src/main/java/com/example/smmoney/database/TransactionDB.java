@@ -456,10 +456,6 @@ public class TransactionDB {
         return amount;
     }
 
-    public static double cashFlowBalanceWith(int type, GregorianCalendar fromDate, GregorianCalendar toDate) {
-        return cashFlowBalanceWith(type, fromDate, toDate, null);
-    }
-
     public static double cashFlowBalanceWith(int type, GregorianCalendar fromDate, GregorianCalendar toDate, Set<Integer> filteredAccountIds) {
         double amount = 0.0d;
         

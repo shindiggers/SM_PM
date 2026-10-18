@@ -14,7 +14,6 @@ import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class BudgetsHeaderHolder extends RelativeLayout {
-    public String label;
     private TextView labelTextView;
     private TextView valueTextView;
     private ImageView iconView;
@@ -62,7 +61,6 @@ public class BudgetsHeaderHolder extends RelativeLayout {
     }
 
     public void setData(String label, String xofy) {
-        this.label = label;
         this.labelTextView.setText(label);
         this.valueTextView.setText(xofy);
     }

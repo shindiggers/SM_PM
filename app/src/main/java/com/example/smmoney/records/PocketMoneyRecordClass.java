@@ -79,6 +79,8 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
         return "Not overridden";
     }
 
+    // Retained as part of the base record contract alongside XMLString() for polymorphic sync/deserialization.
+    @SuppressWarnings("unused")
     public void updateWithXML(String xmlString) {
         Log.i(SMMoney.TAG, "updateWithXml notOverriden");
     }

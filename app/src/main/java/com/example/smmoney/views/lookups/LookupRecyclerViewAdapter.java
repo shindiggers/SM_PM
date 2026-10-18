@@ -46,10 +46,6 @@ public class LookupRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerView
         notifyDataSetChanged();
     }
 
-    public List<String> getItems() {
-        return items;
-    }
-
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.listener = listener;
     }

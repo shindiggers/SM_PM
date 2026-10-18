@@ -12,7 +12,6 @@ import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
-import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.HandlerActivity;
 
@@ -34,7 +33,6 @@ import java.util.List;
 public class ImportExportOFX {
     public String accountNameBeingImported;
     private final Context context;
-    public FilterClass filter;
     private OFXClass ofxData;
     public final String path;
 

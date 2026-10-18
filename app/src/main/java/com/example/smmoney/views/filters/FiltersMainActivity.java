@@ -21,7 +21,6 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
 
-import java.util.ArrayList;
 import java.util.Objects;
 
 public class FiltersMainActivity extends PocketMoneyActivity {
@@ -102,24 +101,14 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         ((android.widget.ImageView) findViewById(R.id.filtercurrentedit)).setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
 
         theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ArrayList<View> theViews = new ArrayList<>();
         TextView tView = findViewById(R.id.reset_filter_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add((View) tView.getParent());
         tView = findViewById(R.id.current_filter_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add((View) tView.getParent());
         tView = findViewById(R.id.user_defined_label);
         tView.setTextColor(PocketMoneyThemes.fieldLabelColor());
-        theViews.add((View) tView.getParent());
         View separatorView = findViewById(R.id.filter_separator);
         separatorView.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
-        //theViews.add((View) separatorView);
-        int i = 0;
-        for (View theView : theViews) {
-
-            i++;
-        }
     }
 
     public void filterSelected(FilterClass aFilter) {

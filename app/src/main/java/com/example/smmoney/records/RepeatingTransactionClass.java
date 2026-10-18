@@ -517,11 +517,13 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 if (getNotifyDaysInAdance() > 0) {
                     newDate = CalExt.subtractDays(newDate, getNotifyDaysInAdance());
                 }
-                String newBody = CalExt.descriptionWithMediumDate(getTransaction().getDate()) + " " + getTransaction().getAccount() + "->" + (getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee());
+                String amountStr = getTransaction().subTotalAsABSString();
+                String newBody = CalExt.descriptionWithMediumDate(getTransaction().getDate()) + " " + getTransaction().getAccount() + "->" + (getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee()) + " (" + amountStr + ")";
                 intent.putExtra("repeatingID", this.repeatingID);
                 intent.putExtra("localNotification", true);
                 intent.putExtra("Posting", true);
                 intent.putExtra("body", newBody);
+                intent.putExtra("amount", amountStr);
 
                 Log.d("NOTIFY", "Scheduling notification for ID: " + this.repeatingID + " at " + CalExt.descriptionWithTimestamp(newDate));
 

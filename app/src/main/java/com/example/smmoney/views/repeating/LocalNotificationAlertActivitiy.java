@@ -87,6 +87,9 @@ public class LocalNotificationAlertActivitiy extends Activity {
         this.date = BundleCompat.getSerializable(extras, "date", GregorianCalendar.class);
         String amount = extras.getString("amount");
         String body = extras.getString("body");
+        if (body != null && amount != null && !amount.isEmpty() && !body.contains(amount)) {
+            body = body + "\n" + Locales.kLOC_GENERAL_AMOUNT + ": " + amount;
+        }
         Builder builder = new Builder(this.context, PocketMoneyThemes.dialogTheme());
         builder.setMessage(body);
         builder.setPositiveButton("Post", this.mainPostListener);
@@ -95,7 +98,11 @@ public class LocalNotificationAlertActivitiy extends Activity {
         builder.create().show();
     }
 
-    public static void updateLocalNotifications() {
+    public static void updateLocalNotifications(Context context) {
+        if (context == null) return;
         ArrayList<RepeatingTransactionClass> items = TransactionDB.queryAllRepeatingTransactionsWithLocalNotifications();
+        for (RepeatingTransactionClass item : items) {
+            item.setupNotification(context);
+        }
     }
 }

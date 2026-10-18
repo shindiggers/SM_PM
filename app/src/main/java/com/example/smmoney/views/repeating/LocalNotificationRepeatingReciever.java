@@ -23,6 +23,13 @@ import java.util.GregorianCalendar;
 public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         Log.d("NOTIFY", "onReceive triggered");
+
+        if (Intent.ACTION_BOOT_COMPLETED.equals(intent.getAction()) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(intent.getAction())) {
+            Log.d("NOTIFY", "Rescheduling notifications after boot/update");
+            new Thread(() -> LocalNotificationAlertActivitiy.updateLocalNotifications(context.getApplicationContext())).start();
+            return;
+        }
+
         Bundle extras = intent.getExtras();
         if (extras == null) {
             Log.e("NOTIFY", "No extras in intent");

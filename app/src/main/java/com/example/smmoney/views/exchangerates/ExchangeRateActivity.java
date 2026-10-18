@@ -345,7 +345,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     }
 
     @Override
-    public void lookupExchangeRateCallback(ExchangeRateClass ex, double rate, AccountClass a) {
+    public void lookupExchangeRateCallback(double rate) {
         runOnUiThread(() -> {
             if (rate > 0) {
                 this.exchangeRate = rate;

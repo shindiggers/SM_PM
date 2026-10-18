@@ -222,10 +222,6 @@ public class Prefs {
         return getSharedPrefs().getBoolean(thePref, false);
     }
 
-    public static boolean getBooleanPref(String thePref, boolean defaultValue) {
-        return getSharedPrefs().getBoolean(thePref, defaultValue);
-    }
-
     // Suppress ApplySharedPref: commit() is used intentionally so critical string prefs (e.g. theme changes,
     // security keys, database references) are synchronously written to disk before an immediate Activity/App recreate/restart.
     @SuppressLint("ApplySharedPref")

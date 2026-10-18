@@ -683,7 +683,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 ArrayList<TransactionClass> query = TransactionDB.queryWithFilter(TransactionsActivity.this._filter);
                 String fileName = (TransactionsActivity.this._filter.allAccounts() ? "SMMoney" : TransactionsActivity.this._filter.getAccount()) + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
                 ImportExportOFX exportofx = new ImportExportOFX(TransactionsActivity.this.context, pmExternalPath + fileName);
-                exportofx.filter = TransactionsActivity.this._filter;
                 if (!TransactionsActivity.this._filter.allAccounts()) {
                     exportofx.accountNameBeingImported = TransactionsActivity.this._filter.getAccount();
                 }
@@ -720,7 +719,6 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                 String fileName = pmExternalPath + "/PocketMoneyBackup/" + (TransactionsActivity.this._filter.allAccounts() ? "SMMoney" : TransactionsActivity.this._filter.getAccount()) + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
                 fileNames.add(fileName);
                 ImportExportOFX exportofx = new ImportExportOFX(TransactionsActivity.this.context, fileName);
-                exportofx.filter = TransactionsActivity.this._filter;
                 if (!TransactionsActivity.this._filter.allAccounts()) {
                     exportofx.accountNameBeingImported = TransactionsActivity.this._filter.getAccount();
                 }

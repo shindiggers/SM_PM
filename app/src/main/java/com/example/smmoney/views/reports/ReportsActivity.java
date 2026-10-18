@@ -229,7 +229,6 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
                 if (ri.checked) {
                     ReportChartItem rci = new ReportChartItem(ri.amount, ri.expense, ri.color);
                     rci.reportItem = ri;
-                    rci.percent = ri.percent;
                     chartItems.add(rci);
                 }
             }

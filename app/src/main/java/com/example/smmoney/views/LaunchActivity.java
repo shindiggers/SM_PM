@@ -34,6 +34,8 @@ public class LaunchActivity extends AppCompatActivity {
         Log.d("LAUNCHACTIVITY", "Database.loadDatabasePreferences() has just been called");
         Prefs.initialize();
         Log.d("LAUNCHACTIVITY", "Prefs.initialize() has just been called");
+
+        new Thread(() -> com.example.smmoney.views.repeating.LocalNotificationAlertActivitiy.updateLocalNotifications(getApplicationContext())).start();
     }
 
     private boolean alreadyLaunched = false;

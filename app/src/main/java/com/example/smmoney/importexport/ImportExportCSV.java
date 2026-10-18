@@ -24,6 +24,7 @@ import com.example.smmoney.views.HandlerActivity;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -494,9 +495,11 @@ public class ImportExportCSV {
     public boolean exportRecords() {
         String CSVData = generateData();
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        String fileName = "SMMoney.csv";
+        String filePath = (this.CSVPath != null && !this.CSVPath.isEmpty())
+                ? this.CSVPath
+                : pmExternalPath + "SMMoney.csv";
+        String fileName = new File(filePath).getName();
         try {
-            String filePath = pmExternalPath + fileName;
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             BufferedWriter csvWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
             try {
@@ -559,9 +562,11 @@ public class ImportExportCSV {
     public boolean exportRecords(ArrayList<TransactionClass> transactions) {
         String CSVData = generateData(transactions);
         String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
-        String fileName = "SMMoney.csv";
+        String filePath = (this.CSVPath != null && !this.CSVPath.isEmpty())
+                ? this.CSVPath
+                : pmExternalPath + "SMMoney.csv";
+        String fileName = new File(filePath).getName();
         try {
-            String filePath = pmExternalPath + fileName;
             String encodingStr = Prefs.getStringPref(Prefs.ENCODING);
             BufferedWriter csvWriter = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(filePath), encodingStr));
             try {

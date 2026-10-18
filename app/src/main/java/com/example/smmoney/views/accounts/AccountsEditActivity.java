@@ -429,7 +429,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     }
 
     @Override
-    public void lookupExchangeRateCallback(ExchangeRateClass exchangeRateInstance, final double rate, AccountClass account) {
+    public void lookupExchangeRateCallback(final double rate) {
         runOnUiThread(() -> {
             if (rate == 0.0d) {
                 AccountsEditActivity.this.exchangeRate.setText(Locales.kLOC_EXCHANGERATE_DEFAULT_RATE);

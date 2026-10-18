@@ -13,28 +13,8 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 public class AccountDB {
-    private static final HashMap<Integer, AccountClass> map = new HashMap<>();
-
-    /**
-     * Uses HashMap called map to find the AccountClass object that matches the {@param id} that was passed in.
-     * If there is no mapping for the {@param id} passed in then a new AccountClass object is created using the passed in {@param id} and this is put into the HashMap.
-     *
-     * @param id the int id number of the account
-     * @return an AccountClass object that corresponds to the id
-     */
-    public static AccountClass getAccount(int id) {
-        AccountClass retAct = map.get(id);
-        if (retAct != null) {
-            return retAct;
-        }
-        retAct = new AccountClass(id);
-        map.put(id, retAct);
-        return retAct;
-    }
-
     public static ArrayList<AccountClass> queryOnViewType(int viewType) {
         String where;
         ArrayList<AccountClass> accounts = new ArrayList<>();

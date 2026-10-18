@@ -65,17 +65,13 @@ fun ChartWithTabs(
         val filtered = items.filter { item ->
             if (selectedTabIndex == 0) item.value > 0 else item.value < 0
         }
-        // Calculate new total for percentages
-        val total = filtered.sumOf { abs(it.value) }
-        
-        // Return a mapped list with updated percentages and positive values
+        // Return a mapped list with positive values
         filtered.map { originalItem ->
             val newItem = ReportChartItem(
                 abs(originalItem.value),
                 (originalItem as? ReportChartItem)?.reportItem?.expense ?: "",
                 originalItem.color
             ).apply {
-                this.percent = if (total > 0) abs(originalItem.value) / total else 0.0
                 this.reportItem = (originalItem as? ReportChartItem)?.reportItem
             }
             newItem

@@ -9,7 +9,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class CheckBoxTint {
 
-    public CheckBoxTint() {
+    private CheckBoxTint() {
         // empty constructor
     }
 

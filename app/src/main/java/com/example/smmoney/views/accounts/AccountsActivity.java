@@ -1140,7 +1140,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     String filePath = pmExternalPath + item + "-" + CalExt.descriptionWithTimestamp(new GregorianCalendar()) + ".qfx";
                     ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
                     exportofx.accountNameBeingImported = item;
-                    exportofx.filter = filter;
                     exportofx.exportRecords(query);
                 }
                 pd.dismiss();
@@ -1413,7 +1412,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     fileNames.add(Uri.parse("file://" + filePath));
                     ImportExportOFX exportofx = new ImportExportOFX(AccountsActivity.this.context, filePath);
                     exportofx.accountNameBeingImported = item;
-                    exportofx.filter = filter;
                     exportofx.exportRecords(query);
                 }
 

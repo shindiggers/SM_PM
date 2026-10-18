@@ -86,7 +86,7 @@ public class ExchangeRateClass {
         if (this.justUpdateTheAccounts && account != null && rate > 0.0d) {
             updateAccount(rate, account);
         } else if (this.delegate != null) {
-            this.delegate.lookupExchangeRateCallback(this, rate, account);
+            this.delegate.lookupExchangeRateCallback(rate);
         }
     }
 
