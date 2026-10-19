@@ -84,6 +84,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         });
         this.categoryEditText = aView.findViewById(R.id.categoryedittext);
         this.categoryEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.categoryEditText.setHintTextColor(PocketMoneyThemes.primaryHintTextColor());
         ((TextView) aView.findViewById(R.id.categorytextview)).setTextColor(PocketMoneyThemes.primaryCellTextColor());
         ((TextView) this.outterView.findViewById(R.id.category_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         aView = findViewById(R.id.budgettypebutton);
@@ -116,6 +117,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         ((TextView) aView.findViewById(R.id.periodlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.budgetEditText = this.outterView.findViewById(R.id.budgetedittext);
         this.budgetEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.budgetEditText.setHintTextColor(PocketMoneyThemes.primaryHintTextColor());
         this.currencyKeyboard = findViewById(R.id.keyboardView);
         this.currencyKeyboard.setEditText(this.budgetEditText, null);
         this.budgetCell = (View) this.budgetEditText.getParent();

@@ -196,15 +196,21 @@ public class FilterEditActivity extends PocketMoneyActivity {
         label = findViewById(R.id.filter_category_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
         label = findViewById(R.id.filter_classes_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
 
+        int primaryHintTextColor = PocketMoneyThemes.primaryHintTextColor();
         this.filterNameEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.filterNameEditText.setHintTextColor(primaryHintTextColor);
         this.transactionTypeTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.accountsTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.datesTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.payeeEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.payeeEditText.setHintTextColor(primaryHintTextColor);
         this.idEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.idEditText.setHintTextColor(primaryHintTextColor);
         this.clearedTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.categoriesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.categoriesTextView.setHintTextColor(primaryHintTextColor);
         this.classesTextView.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.classesTextView.setHintTextColor(primaryHintTextColor);
 
         // Theme the arrow icons for visibility in all themes
         ((android.widget.ImageView) findViewById(R.id.transtype_arrow)).setColorFilter(fieldLabelColor, android.graphics.PorterDuff.Mode.SRC_IN);

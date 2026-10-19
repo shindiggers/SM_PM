@@ -195,9 +195,13 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         findViewById(R.id.rate_row).setBackgroundColor(PocketMoneyThemes.dataEntryBoxBackground());
         findViewById(R.id.account_row).setBackgroundColor(PocketMoneyThemes.dataEntryBoxBackground());
 
+        int primaryHintTextColor = PocketMoneyThemes.primaryHintTextColor();
         this.row1EditText.setTextColor(amountColor);
+        this.row1EditText.setHintTextColor(primaryHintTextColor);
         this.row2EditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.row2EditText.setHintTextColor(primaryHintTextColor);
         this.row3EditText.setTextColor(amountColor);
+        this.row3EditText.setHintTextColor(primaryHintTextColor);
         this.row1CurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.row3CurrencyTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
 

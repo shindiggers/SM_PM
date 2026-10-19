@@ -33,6 +33,7 @@ public class NoteEditor extends PocketMoneyActivity {
         setContentView(R.layout.note_editor);
         mText = findViewById(R.id.note_editor_edittext);
         mText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        mText.setHintTextColor(PocketMoneyThemes.primaryHintTextColor());
         findViewById(R.id.note_editor_layout).setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         
         if (savedInstanceState != null) {

@@ -215,20 +215,33 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         label = findViewById(R.id.account_keep_the_change_round_to_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
         label = findViewById(R.id.account_notes_label); label.setTextColor(PocketMoneyThemes.fieldLabelColor());
 
+        int primaryHintTextColor = PocketMoneyThemes.primaryHintTextColor();
         this.accountName.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.accountName.setHintTextColor(primaryHintTextColor);
         this.type.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.expires.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.expires.setHintTextColor(primaryHintTextColor);
         this.accountNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.accountNumber.setHintTextColor(primaryHintTextColor);
         this.bankID.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.bankID.setHintTextColor(primaryHintTextColor);
         this.institution.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.institution.setHintTextColor(primaryHintTextColor);
         this.phone.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.phone.setHintTextColor(primaryHintTextColor);
         this.website.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.website.setHintTextColor(primaryHintTextColor);
         this.fee.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.fee.setHintTextColor(primaryHintTextColor);
         this.limit.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.limit.setHintTextColor(primaryHintTextColor);
         this.checkNumber.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.checkNumber.setHintTextColor(primaryHintTextColor);
         this.currency.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.exchangeRate.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.exchangeRate.setHintTextColor(primaryHintTextColor);
         this.keepTheChangeRoundToEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.keepTheChangeRoundToEditText.setHintTextColor(primaryHintTextColor);
         this.notes.setTextColor(PocketMoneyThemes.primaryCellTextColor());
 
         int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();

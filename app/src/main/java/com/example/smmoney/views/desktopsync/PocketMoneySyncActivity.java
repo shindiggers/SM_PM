@@ -108,6 +108,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.restoreCheckBox = addressView.findViewById(R.id.restorecheckbox);
         CheckBoxTint.colorCheckBox(this.restoreCheckBox);
         this.ipaddressEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.ipaddressEditText.setHintTextColor(PocketMoneyThemes.primaryHintTextColor());
         this.ipaddressTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.ipaddressTextView.setOnClickListener(v -> {
             if (PocketMoneySyncActivity.this.myIPs != null && PocketMoneySyncActivity.this.myIPs.length > 0) {
@@ -123,6 +124,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         });
         ((TextView) addressView.findViewById(R.id.portlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.portEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.portEditText.setHintTextColor(PocketMoneyThemes.primaryHintTextColor());
         this.descriptionTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         this.statusTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         ((TextView) addressView.findViewById(R.id.iplabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());

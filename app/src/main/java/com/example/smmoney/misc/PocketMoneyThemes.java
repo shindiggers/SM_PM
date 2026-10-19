@@ -28,9 +28,6 @@ public class PocketMoneyThemes {
         return ContextCompat.getColor(context, id);
     }
 
-    public static void refreshTheme() {
-        theme = -1;
-    }
 
     public static void setTheme(String themeStr) {
         if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLACK)) {
@@ -125,7 +122,8 @@ public class PocketMoneyThemes {
             case kThemeCoffee -> getColor(R.color.coffee_theme_alternating_row_color);
             case kThemeRuby -> getColor(R.color.ruby_theme_alternating_row_color);
             case kThemeWhite -> getColor(R.color.white_theme_alternating_row_color);
-            default -> getColor(R.color.black_theme_alternating_row_color); // kThemeBlack as default
+            default ->
+                    getColor(R.color.black_theme_alternating_row_color); // kThemeBlack as default
         };
     }
 
@@ -217,8 +215,14 @@ public class PocketMoneyThemes {
 
     public static int headerTextColor() {
         return switch (getTheme()) {
-            case kThemeBlue, kThemeGreen, kThemePurple, kThemeGray, kThemeCoffee, kThemeRuby,kThemeWhite -> getColor(R.color.black_theme_text);
-            default -> getColor(R.color.black_theme_text);
+            case kThemeBlue -> getColor(R.color.blue_theme_header_color);
+            case kThemeGreen -> getColor(R.color.green_theme_header_color);
+            case kThemePurple -> getColor(R.color.purple_theme_header_color);
+            case kThemeGray -> getColor(R.color.gray_theme_header_color);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_header_color);
+            case kThemeRuby -> getColor(R.color.ruby_theme_header_color);
+            case kThemeWhite -> getColor(R.color.white_theme_header_color);
+            default -> getColor(R.color.black_theme_header_color);
         };
     }
 
@@ -256,7 +260,16 @@ public class PocketMoneyThemes {
     }
 
     public static int primaryHintTextColor() {
-        return getColor(R.color.blue_theme_hint_color);
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_hint_color);
+            case kThemeWhite -> getColor(R.color.white_theme_hint_color);
+            case kThemeGreen -> getColor(R.color.green_theme_hint_color);
+            case kThemePurple -> getColor(R.color.purple_theme_hint_color);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_hint_color);
+            case kThemeRuby -> getColor(R.color.ruby_theme_hint_color);
+            case kThemeGray -> getColor(R.color.gray_theme_hint_color);
+            default -> getColor(R.color.blue_theme_hint_color);
+        };
     }
 
     public static int primaryCellTextColor() {

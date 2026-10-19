@@ -317,18 +317,23 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         this.transToTitleTextView.setTextColor(fieldLabelColor);
         this.transToTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         // theViews.add((View) this.transToTitleTextView.getParent());
+        int primaryHintTextColor = PocketMoneyThemes.primaryHintTextColor();
         ((TextView) findViewById(R.id.category_label)).setTextColor(fieldLabelColor);
         this.categoryEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.categoryEditText.setHintTextColor(primaryHintTextColor);
         
         ((TextView) findViewById(R.id.amount_label)).setTextColor(fieldLabelColor);
         this.amountEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.amountEditText.setHintTextColor(primaryHintTextColor);
         this.amountXrateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         
         ((TextView) findViewById(R.id.class_label)).setTextColor(fieldLabelColor);
         this.classEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.classEditText.setHintTextColor(primaryHintTextColor);
         
         ((TextView) findViewById(R.id.memo_label)).setTextColor(fieldLabelColor);
         this.memoEditText.setTextColor(PocketMoneyThemes.primaryEditTextColor());
+        this.memoEditText.setHintTextColor(primaryHintTextColor);
 
         // Theme the dividers for visibility in all themes
         int[] dividerIds = {R.id.divider1, R.id.divider2, R.id.divider3, R.id.divider4, R.id.divider5, R.id.divider6};
