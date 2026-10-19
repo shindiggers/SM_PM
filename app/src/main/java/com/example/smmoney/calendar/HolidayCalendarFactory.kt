@@ -13,14 +13,16 @@ object HolidayCalendarFactory {
      */
     fun getCalendarForJurisdiction(countryCode: String? = null): HolidayCalendar {
         val targetCountry = countryCode ?: Locale.getDefault().country
-        
+
         // Setup for future expansion:
-        // return when (targetCountry.uppercase()) {
-        //     "US" -> USFederalHolidayCalendar()
-        //     "FR" -> FrenchBankHolidayCalendar()
-        //     else -> UKBankHolidayCalendar()
-        // }
-        
-        return UKBankHolidayCalendar()
+        return when (targetCountry.uppercase()) {
+            "US" -> USFederalHolidayCalendar()
+            //     "FR" -> FrenchBankHolidayCalendar()
+            else -> UKBankHolidayCalendar()
+            // }
+
+            //return UKBankHolidayCalendar()
+        }
     }
 }
+
