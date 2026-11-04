@@ -59,7 +59,7 @@
             android:name="com.example.smmoney.views.accounts.AccountsEditActivity"
             android:configChanges="orientation"
             android:finishOnTaskLaunch="true"
-            android:label="@string/account_info" />
+            android:label="@string/ACCOUNT_INFO_TITLE" />
         <activity
             android:name="com.example.smmoney.views.lookups.LookupsListActivity"
             android:finishOnTaskLaunch="true" />

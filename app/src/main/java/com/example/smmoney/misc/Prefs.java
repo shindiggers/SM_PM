@@ -10,6 +10,7 @@ import android.widget.Toast;
 
 import androidx.preference.PreferenceManager;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 
@@ -63,7 +64,6 @@ public class Prefs {
     public static final String COLLAPSE_UNBUDGETED = "collapseUnbudgeted"; // ACCOUNTS VIEW state re accounts view. Type - maybe boolean?
     public static final String CREATED_ON = "createdon";
     private static final boolean DEBUGGING = true;
-    private static final String DEFAULTROUNDING = "prefscurrencydefaultrounding";
     public static final String DISPLAY_BUDGETPERIOD = "budgetPeriod";
     public static final String EDITTRANSACTION_SHOW_CATEGORY_FIELD = "prefsdisplayeditcategory";
     public static final String EDITTRANSACTION_SHOW_CLASS_FIELD = "prefsdisplayeditclass";
@@ -274,8 +274,8 @@ public class Prefs {
     public static void initialize() {
         if (!getBooleanPref(APP_FIRST_RUN)) {
             Database.populateDatabaseDefaults();
-            setPref(QIF_DATEFORMAT, Locales.kLOC_GENERAL_DEFAULT);
-            setPref(QIF_DATESEPARATOR, Locales.kLOC_GENERAL_DEFAULT);
+            setPref(QIF_DATEFORMAT, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
+            setPref(QIF_DATESEPARATOR, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
             String code = "USD";
             try {
                 code = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
@@ -286,14 +286,13 @@ public class Prefs {
                 setPref(HOMECURRENCYCODE, code);
                 Database.setHomeCurrency(code);
             }
-            setPref(DEFAULTROUNDING, DEBUGGING);
             setPref(MULTIPLECURRENCIES, false);
             setPref(UPDATEEXCHANGERATES, DEBUGGING);
             setPref(GROUPBYACCOUNTTYPE, false);
             setPref(ALLTRANSACTIONS, DEBUGGING);
             setPref(FILTERS, false);
             setPref(REPEATINGTRANSACTIONS, DEBUGGING);
-            setPref(EDITTRANSACTION_STARTING_FIELD, Locales.kLOC_GENERAL_NONE);
+            setPref(EDITTRANSACTION_STARTING_FIELD, SMMoney.getAppContext().getString(R.string.GENERAL_NONE));
             setPref(EDITTRANSACTION_SHOW_ID_FIELD, DEBUGGING);
             setPref(EDITTRANSACTION_SHOW_CLEARED_FIELD, DEBUGGING);
             setPref(EDITTRANSACTION_SHOW_CATEGORY_FIELD, DEBUGGING);
@@ -314,11 +313,11 @@ public class Prefs {
             setPref(AUTO_FILL, DEBUGGING);
             setPref(PASSWORD, "");
             setPref(PASSWORD_DELAY_LAST, new GregorianCalendar().getTimeInMillis());
-            setPref(PASSWORD_DELAY, Locales.kLOC_GENERAL_NONE);
+            setPref(PASSWORD_DELAY, SMMoney.getAppContext().getString(R.string.GENERAL_NONE));
             setPref(BALANCEONDATE, 0L);
             setPref(VIEWACCOUNTS, Enums.kViewAccountsAll/*0*/);
-            setPref(NEWESTTRANSACTIONFIRST, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
-            setPref(QIF_NUMBERFORMAT, Locales.kLOC_GENERAL_DEFAULT);
+            setPref(NEWESTTRANSACTIONFIRST, SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_ASCENDING));
+            setPref(QIF_NUMBERFORMAT, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
             setPref(QIF_MARKALLCLEARED, false);
             setPref(QIF_IMPORT_DUPS, DEBUGGING);
             setPref(QIF_EXPORT_SEPERATELY, false);
@@ -328,7 +327,7 @@ public class Prefs {
         }
         if (!getBooleanPref(APP_FIRST_RUN_U1)) {
             setPref(BALANCEONDATE, 0L);
-            setPref(NEWESTTRANSACTIONFIRST, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING);
+            setPref(NEWESTTRANSACTIONFIRST, SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_ASCENDING));
             setPref(VIEWACCOUNTS, Enums.kViewAccountsAll/*0*/);
             setPref(HOMECURRENCYCODE, "USD");
             String code = "USD";
@@ -363,7 +362,7 @@ public class Prefs {
             setPref(APP_FIRST_RUN_U1_11, DEBUGGING);
         }
         if (!getBooleanPref(APP_FIRST_RUN_U2_0)) {
-            setPref(BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
+            setPref(BUDGETSTARTDATE, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
             setPref(COLLAPSE_ASSETS, DEBUGGING);
             setPref(COLLAPSE_BANKS, DEBUGGING);
             setPref(COLLAPSE_CASH, DEBUGGING);

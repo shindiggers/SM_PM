@@ -13,10 +13,10 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.FilterClass;
@@ -110,11 +110,11 @@ public class BudgetsRowAdapter extends BaseAdapter {
     public Object getItem(int position) {
         int incomeSize = (this.incomeCategories == null || !getShowSection(this.showIncome)) ? 0 : this.incomeCategories.size();
         int expenseSize = (this.expenseCategories == null || !getShowSection(this.showExpense)) ? 0 : this.expenseCategories.size();
-        if (position == 0) return Locales.kLOC_BUDGETS_INCOME;
+        if (position == 0) return context.getString(R.string.BUDGETS_INCOME);
         if (this.incomeCategories != null && position < incomeSize + 1) return this.incomeCategories.get(position - 1);
-        if (position == incomeSize + 1) return Locales.kLOC_BUDGETS_EXPENSES;
+        if (position == incomeSize + 1) return context.getString(R.string.BUDGETS_EXPENSES);
         if (this.expenseCategories != null && position < (incomeSize + expenseSize) + 2) return this.expenseCategories.get((position - incomeSize) - 2);
-        if (position == (incomeSize + expenseSize) + 2) return Locales.kLOC_BUDGETS_NONBUDGETED;
+        if (position == (incomeSize + expenseSize) + 2) return context.getString(R.string.BUDGETS_NONBUDGETED);
         int unbudgetedIndex = ((position - incomeSize) - expenseSize) - 3;
         if (this.nonBudgetedCategories != null && unbudgetedIndex >= 0 && unbudgetedIndex < this.nonBudgetedCategories.size()) {
             return this.nonBudgetedCategories.get(unbudgetedIndex);
@@ -134,28 +134,28 @@ public class BudgetsRowAdapter extends BaseAdapter {
             String targetLabel;
             CharSequence sentence;
             
-            if (label.equals(Locales.kLOC_BUDGETS_INCOME)) {
+            if (label.equals(context.getString(R.string.BUDGETS_INCOME))) {
                 actual = totalIncomes();
                 target = budgetedIncomes();
                 diff = actual - target;
-                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
+                targetLabel = context.getString(R.string.BUDGET_LBL_BUDGETED);
                 header.setExpanded(getShowSection(this.showIncome));
-            } else if (label.equals(Locales.kLOC_BUDGETS_EXPENSES)) {
+            } else if (label.equals(context.getString(R.string.BUDGETS_EXPENSES))) {
                 actual = totalExpenses() * -1.0; 
                 target = Math.abs(budgetedExpenses());
                 diff = target - actual;
-                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
+                targetLabel = context.getString(R.string.BUDGET_LBL_BUDGETED);
                 header.setExpanded(getShowSection(this.showExpense));
             } else { // Unbudgeted
                 actual = totalNonBudgeted() * -1.0;
                 target = 0.0;
                 diff = target - actual;
-                targetLabel = Locales.kLOC_BUDGET_LBL_BUDGETED;
+                targetLabel = context.getString(R.string.BUDGET_LBL_BUDGETED);
                 header.setExpanded(getShowSection(this.showNonBudgeted));
             }
 
-            sentence = (diff >= 0) ? Locales.kLOC_BUDGET_LBL_AHEAD.replace("%1$s", formatAmount(diff)) : 
-                                     Locales.kLOC_BUDGET_LBL_BEHIND.replace("%1$s", formatAmount(diff));
+            sentence = (diff >= 0) ? context.getString(R.string.BUDGET_LBL_AHEAD).replace("%1$s", formatAmount(diff)) :
+                                     context.getString(R.string.BUDGET_LBL_BEHIND).replace("%1$s", formatAmount(diff));
             header.setData(label, actual, targetLabel, target, sentence.toString());
             return header;
         }
@@ -191,7 +191,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
             BudgetsRowHolder holder = (BudgetsRowHolder) view.getTag();
             FilterClass aFilter = new FilterClass();
             aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
-            aFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
+            aFilter.setDate(context.getString(R.string.FILTER_DATES_CUSTOM));
             aFilter.setDateFrom(BudgetsRowAdapter.this.startOfPeriod());
             aFilter.setDateTo(BudgetsRowAdapter.this.endOfPeriod());
             aFilter.setFilterName(holder.category.getCategory());
@@ -205,9 +205,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
     private OnClickListener getHeaderClickListener() {
         return view -> {
             String cat = ((BudgetsListHeaderHolder) view).label;
-            if (cat.equals(Locales.kLOC_BUDGETS_INCOME)) setShowSection(this.showIncome, !getShowSection(this.showIncome));
-            else if (cat.equals(Locales.kLOC_BUDGETS_EXPENSES)) setShowSection(this.showExpense, !getShowSection(this.showExpense));
-            else if (cat.equals(Locales.kLOC_BUDGETS_NONBUDGETED)) setShowSection(this.showNonBudgeted, !getShowSection(this.showNonBudgeted));
+            if (cat.equals(context.getString(R.string.BUDGETS_INCOME))) setShowSection(this.showIncome, !getShowSection(this.showIncome));
+            else if (cat.equals(context.getString(R.string.BUDGETS_EXPENSES))) setShowSection(this.showExpense, !getShowSection(this.showExpense));
+            else if (cat.equals(context.getString(R.string.BUDGETS_NONBUDGETED))) setShowSection(this.showNonBudgeted, !getShowSection(this.showNonBudgeted));
             BudgetsRowAdapter.this.notifyDataSetChanged();
         };
     }
@@ -287,7 +287,7 @@ public class BudgetsRowAdapter extends BaseAdapter {
     public static GregorianCalendar startOfPeriod(GregorianCalendar inputDate, int budgetPeriod) {
         String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
         GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
-        if (budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (budgetStartDateString.equalsIgnoreCase(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             budgetStartDate = new GregorianCalendar();
             budgetStartDate.set(1989, 0, 1, 0, 0, 0);
         }
@@ -363,8 +363,8 @@ public class BudgetsRowAdapter extends BaseAdapter {
     public GregorianCalendar endOfPeriod() {
         String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
         GregorianCalendar budgetStartDate = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
-        boolean firstOfMonth = budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT) || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
-        boolean endOfMonth = !budgetStartDateString.equalsIgnoreCase(Locales.kLOC_GENERAL_DEFAULT) && budgetStartDate.get(Calendar.DAY_OF_MONTH) == CalExt.endOfMonth(budgetStartDate).get(Calendar.DAY_OF_MONTH);
+        boolean firstOfMonth = budgetStartDateString.equalsIgnoreCase(context.getString(R.string.GENERAL_DEFAULT)) || budgetStartDate.get(Calendar.DAY_OF_MONTH) == 1;
+        boolean endOfMonth = !budgetStartDateString.equalsIgnoreCase(context.getString(R.string.GENERAL_DEFAULT)) && budgetStartDate.get(Calendar.DAY_OF_MONTH) == CalExt.endOfMonth(budgetStartDate).get(Calendar.DAY_OF_MONTH);
 
         return switch (this.currentPeriod) {
             case Enums.kBudgetPeriodDay -> CalExt.endOfDay(this.currentDate);
@@ -448,15 +448,15 @@ public class BudgetsRowAdapter extends BaseAdapter {
         }
 
         String narrative = switch (this.currentPeriod) {
-            case Enums.kBudgetPeriodDay -> Locales.kLOC_REPEATING_FREQUENCY_DAILY;
-            case Enums.kBudgetPeriodWeek -> Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
-            case Enums.kBudgetPeriodBiweekly -> Locales.kLOC_BUDGETS_BIWEEKLY;
-            case Enums.kBudgetPeriod4Weeks -> Locales.kLOC_BUDGETS_4WEEKS;
-            case Enums.kBudgetPeriodMonth -> Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
-            case Enums.kBudgetPeriodBimonthly -> Locales.kLOC_BUDGETS_BIMONTHLY;
-            case Enums.kBudgetPeriodQuarter -> Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY;
-            case Enums.kBudgetPeriodHalfYear -> Locales.kLOC_BUDGETS_HALFYEAR;
-            case Enums.kBudgetPeriodYear -> Locales.kLOC_REPEATING_FREQUENCY_YEARLY;
+            case Enums.kBudgetPeriodDay -> context.getString(R.string.REPEATING_FREQUENCY_DAILY);
+            case Enums.kBudgetPeriodWeek -> context.getString(R.string.REPEATING_FREQUENCY_WEEKLY);
+            case Enums.kBudgetPeriodBiweekly -> context.getString(R.string.BUDGETS_BIWEEKLY);
+            case Enums.kBudgetPeriod4Weeks -> context.getString(R.string.BUDGETS_4WEEKS);
+            case Enums.kBudgetPeriodMonth -> context.getString(R.string.REPEATING_FREQUENCY_MONTHLY);
+            case Enums.kBudgetPeriodBimonthly -> context.getString(R.string.BUDGETS_BIMONTHLY);
+            case Enums.kBudgetPeriodQuarter -> context.getString(R.string.REPEATING_FREQUENCY_QUARTERLY);
+            case Enums.kBudgetPeriodHalfYear -> context.getString(R.string.BUDGETS_HALFYEAR);
+            case Enums.kBudgetPeriodYear -> context.getString(R.string.REPEATING_FREQUENCY_YEARLY);
             default -> "";
         };
 

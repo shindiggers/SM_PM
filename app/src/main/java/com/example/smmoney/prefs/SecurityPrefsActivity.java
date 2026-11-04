@@ -12,7 +12,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
@@ -26,7 +26,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        setTitle(Locales.kLOC_PREFS_SECURITY);
+        setTitle(SMMoney.getAppContext().getString(R.string.PREFS_SECURITY));
         loadParentFragment(R.xml.prefs_security);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }
@@ -38,17 +38,17 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
         String[] delays = new String[]{
-                Locales.kLOC_GENERAL_NONE,
-                Locales.kLOC_PASSWORDDELAY1MIN,
-                Locales.kLOC_PASSWORDDELAY5MINS,
-                Locales.kLOC_PASSWORDDELAY10MINS,
-                Locales.kLOC_PASSWORDDELAY15MINS,
-                Locales.kLOC_PASSWORDDELAY30MINS,
-                Locales.kLOC_PASSWORDDELAY1HOUR,
-                Locales.kLOC_PASSWORDDELAY2HOURS,
-                Locales.kLOC_PASSWORDDELAY4HOURS,
-                Locales.kLOC_PASSWORDDELAY8HOURS,
-                Locales.kLOC_PASSWORDDELAY24HOURS
+                SMMoney.getAppContext().getString(R.string.GENERAL_NONE),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY1MIN),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY5MINS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY10MINS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY15MINS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY30MINS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY1HOUR),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY2HOURS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY4HOURS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY8HOURS),
+                SMMoney.getAppContext().getString(R.string.PASSWORDDELAY24HOURS)
         };
         ListPreference delayListPref = fragment.findPreference(Prefs.PASSWORD_DELAY);
         if (delayListPref != null) {
@@ -83,10 +83,10 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
         }
 
         AlertDialog dialog = new MaterialAlertDialogBuilder(this)
-                .setTitle(Locales.kLOC_PREFERENCES_PASSWORD_TITLE)
+                .setTitle(SMMoney.getAppContext().getString(R.string.PREFERENCES_PASSWORD_TITLE))
                 .setView(dialogView)
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, null) // Override onClick below to prevent auto-dismiss on error
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (d, which) -> d.dismiss())
+                .setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), null) // Override onClick below to prevent auto-dismiss on error
+                .setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), (d, which) -> d.dismiss())
                 .create();
 
         dialog.setOnShowListener(d -> {
@@ -96,7 +96,7 @@ public class SecurityPrefsActivity extends PocketMoneyPreferenceActivity {
                 String confirm = confirmEdit.getText() != null ? confirmEdit.getText().toString() : "";
 
                 if (!pass.equals(confirm)) {
-                    confirmLayout.setError(Locales.kLOC_PREFERENCES_PASSWORD_NOTMATCH);
+                    confirmLayout.setError(SMMoney.getAppContext().getString(R.string.PREFERENCES_PASSWORD_NOTMATCH));
                     return;
                 }
 

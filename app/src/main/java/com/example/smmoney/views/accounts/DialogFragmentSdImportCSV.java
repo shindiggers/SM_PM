@@ -8,7 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentSdImportCSV extends DialogFragment {
@@ -22,20 +23,20 @@ public class DialogFragmentSdImportCSV extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder;
         builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
-        builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
+        builder.setTitle(R.string.TOOLS_FILETRANSFERS);
         builder.setMessage("The file 'SMMoney.csv' should be placed in the folder '/Download/PocketMoneyBackup'");
-        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+        builder.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
             DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
             if (activity != null) {
-                activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_OK);
+                activity.onFinishSdImportCVSDialog(SMMoney.getAppContext().getString(R.string.GENERAL_OK));
             }
             dialog.dismiss();
             //AccountsActivity.this.importCSVFromSD();
         });
-        builder.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> {
+        builder.setNegativeButton(R.string.GENERAL_CANCEL, (dialog, whichButton) -> {
             DialogSdImportCSVListener activity = (DialogSdImportCSVListener) getActivity();
             if (activity != null) {
-                activity.onFinishSdImportCVSDialog(Locales.kLOC_GENERAL_CANCEL);
+                activity.onFinishSdImportCVSDialog(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL));
             }
             dialog.dismiss();
         });

@@ -36,7 +36,6 @@ import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.NoteEditor;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -155,7 +154,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
         loadCells();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLIT_TITLE);
+            getSupportActionBar().setTitle(R.string.EDIT_SPLIT_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -169,7 +168,7 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        MenuItem item = menu.add(0, MENU_SAVE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_SAVE));
         item.setIcon(R.drawable.ic_save_white_24dp);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
@@ -446,8 +445,8 @@ public class SplitsEditActivity extends PocketMoneyActivity {
 
     private void configureTransferControl() {
         switch (this.splitTransactionType) {
-            case Enums.kTransactionTypeTransferTo -> this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
-            case Enums.kTransactionTypeTransferFrom -> this.transToTitleTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+            case Enums.kTransactionTypeTransferTo -> this.transToTitleTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_FROM));
+            case Enums.kTransactionTypeTransferFrom -> this.transToTitleTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_TO));
             default -> {
             }
         }

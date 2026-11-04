@@ -37,9 +37,9 @@ import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.prefs.MainPrefsActivity;
@@ -82,7 +82,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                     Prefs.setPref(Prefs.BUDGETSTARTDATE, date);
                     reloadData();
                 } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                    Prefs.setPref(Prefs.BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
+                    Prefs.setPref(Prefs.BUDGETSTARTDATE, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
                     reloadData();
                 }
             }
@@ -108,7 +108,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         setContentView(layout);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_GENERAL_BUDGETS);
+            getSupportActionBar().setTitle(R.string.GENERAL_BUDGETS);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         }
     }
@@ -244,17 +244,21 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         }
         this.balanceBar.balanceAmountTextView.setTextColor(textColor);
 
+        boolean isPastPeriod = this.adapter != null && this.adapter.endOfPeriod() != null && this.adapter.endOfPeriod().before(new GregorianCalendar());
+
         if (savings >= 0.0d) {
             if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_SAVED);
+                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(R.string.BUDGETS_SAVED));
             } else {
-                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGET_LBL_BEATING_BY);
+                int stringRes = isPastPeriod ? R.string.BUDGET_LBL_BEAT_BY : R.string.BUDGET_LBL_BEATING_BY;
+                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(stringRes));
             }
         } else {
             if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGETS_DEFICIT);
+                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(R.string.BUDGETS_DEFICIT));
             } else {
-                this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_BUDGET_LBL_MISSING_BY);
+                int stringRes = isPastPeriod ? R.string.BUDGET_LBL_MISSED_BY : R.string.BUDGET_LBL_MISSING_BY;
+                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(stringRes));
             }
         }
         this.balanceBar.balanceTypeTextView.setTextColor(textColor);
@@ -315,9 +319,9 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
 
     private void deleteBudget(final CategoryClass cat) {
         Builder b = new Builder(this, PocketMoneyThemes.dialogTheme());
-        b.setTitle(Locales.kLOC_BUDGETCATEGORY_DELETE);
-        b.setMessage(Locales.kLOC_BUDGETCATEGORY_DELETE_BODY);
-        b.setPositiveButton(Locales.kLOC_BUDGETCATEGORY_DELETE_BUDGET, (dialog, which) -> {
+        b.setTitle(R.string.BUDGETCATEGORY_DELETE);
+        b.setMessage(R.string.BUDGETCATEGORY_DELETE_BODY);
+        b.setPositiveButton(R.string.BUDGETCATEGORY_DELETE_BUDGET, (dialog, which) -> {
             CategoryClass c = new CategoryClass(cat.categoryID);
             c.hydrate();
             c.setBudgetLimit(0.0d);
@@ -325,7 +329,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             c.saveToDatabase();
             BudgetsActivity.this.reloadData();
         });
-        b.setNegativeButton(Locales.kLOC_BUDGETCATEGORY_DELETE_CATBUD, (dialog, which) -> {
+        b.setNegativeButton(R.string.BUDGETCATEGORY_DELETE_CATBUD, (dialog, which) -> {
             CategoryClass c = new CategoryClass(cat.categoryID);
             c.hydrate();
             c.deleteFromDatabase();
@@ -335,11 +339,11 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_BUDGETS_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(0, MENU_SORT, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES);
-        menu.add(0, MENU_GOTODATE, 0, Locales.kLOC_TRANSACTIONS_OPTIONS_GOTO);
-        menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT);
+        menu.add(0, MENU_NEW, 0, SMMoney.getAppContext().getString(R.string.BUDGETS_NEW)).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, MENU_SORT, 0, SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_SORTON)).setIcon(R.drawable.ic_sort).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, MENU_PREFS, 0, SMMoney.getAppContext().getString(R.string.GENERAL_PREFERENCES));
+        menu.add(0, MENU_GOTODATE, 0, SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_GOTO));
+        menu.add(0, MENU_QUIT, 0, SMMoney.getAppContext().getString(R.string.GENERAL_QUIT));
         return true;
     }
 
@@ -412,9 +416,9 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         else directionGroup.check(R.id.sort_desc);
 
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_TRANSACTIONS_OPTIONS_SORTON)
+                .setTitle(R.string.TRANSACTIONS_OPTIONS_SORTON)
                 .setView(dialogView)
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+                .setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> {
                     int selectedPropertyId = propertyGroup.getCheckedRadioButtonId();
                     int newSort = getSortTypeFromId(selectedPropertyId);
 
@@ -425,7 +429,7 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
                     Prefs.setPref(Prefs.BUDGETS_SORT_ORDER_ASCENDING, newDir);
                     reloadData();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, null)
                 .show();
     }
 
@@ -442,8 +446,8 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         BudgetsRowHolder aHolder = (BudgetsRowHolder) v.getTag();
         Intent i = new Intent();
         i.putExtra("Category", aHolder.category);
-        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT).setIntent(i);
-        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_EDIT, 0, SMMoney.getAppContext().getString(R.string.GENERAL_EDIT)).setIntent(i);
+        menu.add(0, CMENU_DELETE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_DELETE)).setIntent(i);
     }
 
     public boolean onContextItemSelected(MenuItem item) {

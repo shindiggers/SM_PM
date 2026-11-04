@@ -76,7 +76,6 @@ import com.example.smmoney.importexport.ofx.ImportExportOFX;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -292,7 +291,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         setupView(layout);
         setResult(ACCOUNT_REQUEST_FILTER);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("SM Money");
+            getSupportActionBar().setTitle(R.string.app_name);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         }
 
@@ -306,10 +305,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     public static void displayLiteDialog(final Activity c) {
         AlertDialog.Builder builder = new AlertDialog.Builder(c, PocketMoneyThemes.dialogTheme());
-        builder.setTitle(Locales.kLOC_LITE_UPGRADE)
-                .setMessage(Locales.kLOC_LITE_UPGRADE_BODY_ANDROID)
+        builder.setTitle(SMMoney.getAppContext().getString(R.string.LITE_UPGRADE))
+                .setMessage(SMMoney.getAppContext().getString(R.string.LITE_UPGRADE_BODY_ANDROID))
                 .setCancelable(false)
-                .setPositiveButton(Locales.kLOC_LITE_BUYIT, (dialog, which) -> {
+                .setPositiveButton(SMMoney.getAppContext().getString(R.string.LITE_BUYIT), (dialog, which) -> {
                     String str;
                     if (AccountsActivity.IS_GOOGLE_MARKET) {
                         str = "http://market.android.com/details?id=com.catamount.pocketmoney";
@@ -318,7 +317,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                     }
                     c.startActivity(new Intent("android.intent.action.VIEW", Uri.parse(str)));
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, id) -> dialog.cancel());
+                .setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), (dialog, id) -> dialog.cancel());
         builder.create().show();
     }
 
@@ -356,10 +355,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
         if (!Prefs.getBooleanPref(Prefs.HINT_WELCOME) && (this.tipDialog == null || !this.tipDialog.isShowing())) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-            alert.setTitle(Locales.kLOC_TIP_WELCOME_TITLE);
+            alert.setTitle(SMMoney.getAppContext().getString(R.string.TIP_WELCOME_TITLE));
             alert.setCancelable(false);
-            alert.setMessage(Locales.kLOC_TIP_WELCOME);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            alert.setMessage(SMMoney.getAppContext().getString(R.string.TIP_WELCOME));
+            alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_WELCOME, true);
                 AccountsActivity.this.showMenuDialog();
                 dialog.dismiss();
@@ -368,12 +367,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
         if (Prefs.getBooleanPref(Prefs.HINT_WELCOME) && Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO) && !Prefs.getBooleanPref(Prefs.HINT_FIRSTNEWACCOUNT)) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-            alert.setTitle(Locales.kLOC_TIP_WELCOMEBACK_TITLE);
-            int i = R.string.kLOC_TIP_FIRST_TRANSACTION;
+            alert.setTitle(SMMoney.getAppContext().getString(R.string.TIP_WELCOMEBACK_TITLE));
+            int i = R.string.TIP_FIRST_TRANSACTION;
             Object[] objArr = new Object[ACCOUNT_REQUEST_FILTER];
             objArr[0] = this.adapter.getItemCount() > 0 ? this.adapter.getElements().get(0).getAccount() : "";
             alert.setMessage(getString(i, objArr));
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_FIRSTNEWACCOUNT, true);
                 dialog.dismiss();
             });
@@ -418,9 +417,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     private void reloadChartHeader() {
         if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeNetWorth) {
-            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 12, Locales.kLOC_CHARTS_NETWORTH, 12));
+            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 12, SMMoney.getAppContext().getString(R.string.CHARTS_NETWORTH), 12));
         } else if (Prefs.getIntPref(Prefs.SUMMARYCHARTS_CHARTTYPE) == Enums.kSumamryChartTypeCashFlow) {
-            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 6, Locales.kLOC_CHARTS_CASHFLOW, 6));
+            this.graphTitleTextView.setText(getResources().getQuantityString(R.plurals.charts_summary_title, 6, SMMoney.getAppContext().getString(R.string.CHARTS_CASHFLOW), 6));
         } else {
             this.graphTitleTextView.setText("");
         }
@@ -493,9 +492,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriQif);
                                     objArr = new Object[]{"QIF"};
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_SUBJECT, objArr));
                                     Object[] objArrEmailText = new Object[]{"QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailText));
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_BODY, objArrEmailText));
                                     AccountsActivity.this.startActivity(Intent.createChooser(emailIntent, "CHOOSE EMAIL CLIENT"));
                                     break;
                                 case EMAIL_TDF /*1*/:
@@ -506,9 +505,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriTxt);
                                     Object[] objArrEmailSubjectTDF = new Object[]{"TDF"};
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArrEmailSubjectTDF));
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_SUBJECT, objArrEmailSubjectTDF));
                                     Object[] objArrEmailTextTDF = new Object[]{"TDF", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextTDF));
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_BODY, objArrEmailTextTDF));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_CSV /*2*/:
@@ -519,9 +518,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailIntent.putExtra("android.intent.extra.STREAM", contentUriCsv);
                                     objArr = new Object[]{"CSV"};
-                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    emailIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_SUBJECT, objArr));
                                     Object[] objArrEmailTextCSV = new Object[]{"CSV", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
-                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextCSV));
+                                    emailIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_BODY, objArrEmailTextCSV));
                                     AccountsActivity.this.startActivity(emailIntent);
                                     break;
                                 case EMAIL_OFX /*3*/:
@@ -542,9 +541,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
                                     emailOfxIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                                     emailOfxIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, fileNames);
                                     objArr = new Object[]{"OFX/QFX"};
-                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, objArr));
+                                    emailOfxIntent.putExtra("android.intent.extra.SUBJECT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_SUBJECT, objArr));
                                     Object[] objArrEmailTextOFX = new Object[]{"OFX/QFX", CalExt.descriptionWithMediumDate(new GregorianCalendar())};
-                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, objArrEmailTextOFX));
+                                    emailOfxIntent.putExtra("android.intent.extra.TEXT", accountsActivity.getString(R.string.FILETRANSFERS_EMAIL_BODY, objArrEmailTextOFX));
                                     Log.i(TAG, "ACCOUNTS_ACTIVITY.JAVA: HANDLER - BEFORE START ACTIVTY CALLED");
                                     AccountsActivity.this.startActivity(emailOfxIntent);
                                     break;
@@ -560,7 +559,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                             AccountsActivity.this.progressDialog.setProgress(0);
                         }
                         AlertDialog alert = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme()).create();
-                        alert.setTitle("Error");
+                        alert.setTitle(R.string.GENERAL_ERROR);
                         alert.setMessage((String) msg.obj);
                         alert.setCancelable(false);
                         alert.setButton(-1, "OK", (dialog, id) -> dialog.dismiss());
@@ -710,13 +709,13 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     private void deleteAccount(final AccountClass account) {
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-        alert.setTitle(Locales.kLOC_ACCOUNT_DELETE);
-        alert.setMessage(Locales.kLOC_ACCOUNT_DELETE_BODY);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, whichButton) -> {
+        alert.setTitle(SMMoney.getAppContext().getString(R.string.ACCOUNT_DELETE));
+        alert.setMessage(SMMoney.getAppContext().getString(R.string.ACCOUNT_DELETE_BODY));
+        alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_DELETE), (dialog, whichButton) -> {
             AlertDialog.Builder alert1 = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme());
-            alert1.setTitle(Locales.kLOC_ACCOUNT_DELETE);
-            alert1.setMessage(Locales.kLOC_ACCOUNT_DELETE_CONFIRM);
-            CharSequence charSequence = Locales.kLOC_GENERAL_DELETE;
+            alert1.setTitle(SMMoney.getAppContext().getString(R.string.ACCOUNT_DELETE));
+            alert1.setMessage(SMMoney.getAppContext().getString(R.string.ACCOUNT_DELETE_CONFIRM));
+            CharSequence charSequence = SMMoney.getAppContext().getString(R.string.GENERAL_DELETE);
             alert1.setPositiveButton(charSequence, (dialog2, whichButton2) -> {
                 TransactionDB.deleteRecordsFromAccount(account.getAccount());
                 TransactionDB.deleteRepeatingRecordsFromAccount(account.getAccount());
@@ -726,10 +725,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 AccountsActivity.this.reloadData();
                 AccountsActivity.this.reloadBalanceBar();
             });
-            alert1.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, whichButton1) -> dialog1.cancel());
+            alert1.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), (dialog1, whichButton1) -> dialog1.cancel());
             alert1.show();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+        alert.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), (dialog, whichButton) -> dialog.cancel());
         alert.show();
     }
 
@@ -766,13 +765,13 @@ public class AccountsActivity extends PocketMoneyActivity implements
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle("Change Account Type?")
                 .setMessage(String.format("Do you want to change the account type for '%s' from %s to %s?", account.getAccount(), oldTypeName, newTypeName))
-                .setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> {
+                .setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_YES), (dialog, which) -> {
                     account.hydrate();
                     account.setType(newType);
                     account.saveToDatabase();
                     reloadData();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, which) -> {
+                .setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_NO), (dialog, which) -> {
                     reloadData(); // Snap back to original position/type
                 })
                 .setCancelable(false)
@@ -976,7 +975,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         this.cashFlowChartView = layout.findViewById(R.id.cashflowbarchart);
         this.moreChartsButton = layout.findViewById(R.id.morechartsbutton);
         this.moreChartsButton.setTextColor(PocketMoneyThemes.currentTintColor());
-        this.moreChartsButton.setText(Locales.kLOC_CHARTS_MORECHARTS);
+        this.moreChartsButton.setText(SMMoney.getAppContext().getString(R.string.CHARTS_MORECHARTS));
         this.moreChartsButton.setStrokeColor(ColorStateList.valueOf(PocketMoneyThemes.currentTintColor()));
         this.moreChartsButton.setStrokeWidth(2);
         this.moreChartsButton.setOnClickListener(v -> AccountsActivity.this.showReportsDialog());
@@ -1149,13 +1148,13 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     private void restoreFromSD() {
         AlertDialog.Builder alert2 = new AlertDialog.Builder(this.context, PocketMoneyThemes.dialogTheme());
-        alert2.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
-        alert2.setMessage(Locales.kLOC_TRANSFERS_RESTORE);
-        alert2.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, whichButton) -> {
+        alert2.setTitle(SMMoney.getAppContext().getString(R.string.TOOLS_RESTORE_SD));
+        alert2.setMessage(SMMoney.getAppContext().getString(R.string.TRANSFERS_RESTORE));
+        alert2.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_YES), (dialog, whichButton) -> {
             AlertDialog.Builder alert = new AlertDialog.Builder(AccountsActivity.this.context, PocketMoneyThemes.dialogTheme());
-            alert.setTitle(Locales.kLOC_TOOLS_RESTORE_SD);
-            alert.setMessage(Locales.kLOC_TRANSFERS_RESTORE_CONFIRM);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog2, whichButton2) -> {
+            alert.setTitle(SMMoney.getAppContext().getString(R.string.TOOLS_RESTORE_SD));
+            alert.setMessage(SMMoney.getAppContext().getString(R.string.TRANSFERS_RESTORE_CONFIRM));
+            alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_YES), (dialog2, whichButton2) -> {
                 Database.closeDBAndNullify();
                 Prefs.importDB(AccountsActivity.this);
                 Database.loadDatabasePreferences();
@@ -1163,10 +1162,10 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 AccountsActivity.this.reloadData();
                 AccountsActivity.this.reloadBalanceBar();
             });
-            alert.setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog1, whichButton1) -> dialog1.dismiss());
+            alert.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_NO), (dialog1, whichButton1) -> dialog1.dismiss());
             alert.show();
         });
-        alert2.setNegativeButton(Locales.kLOC_GENERAL_NO, (dialog, whichButton) -> dialog.dismiss());
+        alert2.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_NO), (dialog, whichButton) -> dialog.dismiss());
         alert2.show();
     }
 
@@ -1218,17 +1217,17 @@ public class AccountsActivity extends PocketMoneyActivity implements
         }
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", qifUris);
-        emailIntent.putExtra("android.intent.extra.SUBJECT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT, "QIF"));
-        emailIntent.putExtra("android.intent.extra.TEXT", getString(R.string.kLOC_FILETRANSFERS_EMAIL_BODY, "QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
+        emailIntent.putExtra("android.intent.extra.SUBJECT", getString(R.string.FILETRANSFERS_EMAIL_SUBJECT, "QIF"));
+        emailIntent.putExtra("android.intent.extra.TEXT", getString(R.string.FILETRANSFERS_EMAIL_BODY, "QIF", CalExt.descriptionWithMediumDate(new GregorianCalendar())));
         this.fileNames = fileNames;
         emailLauncher.launch(emailIntent);
     }
 
     private void backupToSD() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-        alert.setTitle(Locales.kLOC_TOOLS_BACKUP_SD);
+        alert.setTitle(SMMoney.getAppContext().getString(R.string.TOOLS_BACKUP_SD));
         alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+        alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), (dialog, whichButton) -> {
             String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
             File src = new File(Environment.getDataDirectory() + "/data/" + getPackageName() + "/databases/SMMoneyDB.sql");
             File dst = new File(pmExternalPath, "SMMoneyDB.sql");
@@ -1240,7 +1239,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 Toast.makeText(AccountsActivity.this, "Backup failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
+        alert.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), null);
         alert.show();
     }
 
@@ -1260,7 +1259,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putParcelableArrayListExtra("android.intent.extra.STREAM", ofxUris);
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney OFX/QFX File");
-        int i = R.string.kLOC_FILETRANSFERS_EMAIL_BODY;
+        int i = R.string.FILETRANSFERS_EMAIL_BODY;
         Object[] objArr = new Object[2];
         objArr[0] = "OFX/QFX";
         objArr[1] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
@@ -1331,9 +1330,9 @@ public class AccountsActivity extends PocketMoneyActivity implements
         emailIntent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         emailIntent.putExtra("android.intent.extra.STREAM", contentUri);
         emailIntent.putExtra("android.intent.extra.SUBJECT", "SMMoney Backup File");
-        int i = R.string.kLOC_FILETRANSFERS_EMAIL_SUBJECT;
+        int i = R.string.FILETRANSFERS_EMAIL_SUBJECT;
         Object[] objArr = new Object[ACCOUNT_REQUEST_BUDGET];
-        objArr[0] = Locales.kLOC_TOOLS_BACKUPFILES;
+        objArr[0] = SMMoney.getAppContext().getString(R.string.TOOLS_BACKUPFILES);
         objArr[ACCOUNT_REQUEST_FILTER] = CalExt.descriptionWithMediumDate(new GregorianCalendar());
         emailIntent.putExtra("android.intent.extra.TEXT", getString(i, objArr[0]));
         startActivity(emailIntent);
@@ -1341,12 +1340,12 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     public boolean onCreateOptionsMenu(Menu menu) {
         Log.d("ACCOUNTSACTIVITY", "Menu has just been opened");
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_ACCOUNT_NEW).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_PREFS, 0, Locales.kLOC_GENERAL_PREFERENCES).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_TRANSFER, 0, Locales.kLOC_TOOLS_FILETRANSFERS).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_VIEW, 0, Locales.kLOC_VIEW_OPTIONS).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_REPEATING, 0, Locales.kLOC_REPEATING_TRANSACTIONS).setIcon(R.drawable.abouticon);
-        menu.add(0, MENU_QUIT, 0, Locales.kLOC_GENERAL_QUIT).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_NEW, 0, SMMoney.getAppContext().getString(R.string.ACCOUNT_NEW)).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_PREFS, 0, SMMoney.getAppContext().getString(R.string.GENERAL_PREFERENCES)).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_TRANSFER, 0, SMMoney.getAppContext().getString(R.string.TOOLS_FILETRANSFERS)).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_VIEW, 0, SMMoney.getAppContext().getString(R.string.VIEW_OPTIONS)).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_REPEATING, 0, SMMoney.getAppContext().getString(R.string.REPEATING_TRANSACTIONS)).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_QUIT, 0, SMMoney.getAppContext().getString(R.string.GENERAL_QUIT)).setIcon(R.drawable.abouticon);
         return true;
     }
 
@@ -1422,29 +1421,35 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     private void showReportsDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("").setItems(new CharSequence[]{Locales.kLOC_TOOLS_ACCOUNTREPORT, Locales.kLOC_TOOLS_CATEGORYREPORT, Locales.kLOC_TOOLS_CLASSREPORT, Locales.kLOC_TOOLS_PAYEEREPORT}, (dialog, which) -> {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("").setItems(new CharSequence[]{
+                        SMMoney.getAppContext().getString(R.string.TOOLS_ACCOUNTREPORT),
+                        SMMoney.getAppContext().getString(R.string.TOOLS_CATEGORYREPORT),
+                        SMMoney.getAppContext().getString(R.string.TOOLS_CLASSREPORT),
+                        SMMoney.getAppContext().getString(R.string.TOOLS_PAYEEREPORT)
+                },
+                (dialog, which) -> {
             FilterClass f = new FilterClass();
             Intent i;
             switch (which) {
-                case 0 /*0 Locales.kLOC_TOOLS_ACCOUNTREPORT*/:
+                case 0 /*0 TOOLS_ACCOUNTREPORT*/:
                     AccountsReportDataSource ds = new AccountsReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds;
                     AccountsActivity.this.startActivity(i);
                     return;
-                case 1 /*1 Locales.kLOC_TOOLS_CATEGORYREPORT*/:
+                case 1 /*1 TOOLS_CATEGORYREPORT*/:
                     CategoryReportDataSource ds2 = new CategoryReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds2;
                     AccountsActivity.this.startActivity(i);
                     return;
-                case 2 /*2 Locales.kLOC_TOOLS_CLASSREPORT*/:
+                case 2 /*2 TOOLS_CLASSREPORT*/:
                     ClassReportDataSource ds3 = new ClassReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds3;
                     AccountsActivity.this.startActivity(i);
                     return;
-                case 3 /*3 Locales.kLOC_TOOLS_PAYEEREPORT*/:
+                case 3 /*3 TOOLS_PAYEEREPORT*/:
                     PayeeReportDataSource ds4 = new PayeeReportDataSource(f);
                     i = new Intent(AccountsActivity.this, ReportsActivity.class);
                     PMGlobal.datasource = ds4;
@@ -1762,7 +1767,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     @Override
     public void onFinishSdImportQIFDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+        if (okCancel.equals(SMMoney.getAppContext().getString(R.string.GENERAL_OK))) {
             // TODO: Test QIF import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_QIF);
         }
@@ -1770,7 +1775,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     @Override
     public void onFinishSdImportTDFDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+        if (okCancel.equals(SMMoney.getAppContext().getString(R.string.GENERAL_OK))) {
             // TODO: Test TDF import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_TDF);
         }
@@ -1778,7 +1783,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     @Override
     public void onFinishSdImportCVSDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+        if (okCancel.equals(SMMoney.getAppContext().getString(R.string.GENERAL_OK))) {
             // TODO: Test CSV import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_CSV);
         }
@@ -1786,7 +1791,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     @Override
     public void onFinishSdImportOFXDialog(String okCancel) {
-        if (okCancel.equals(Locales.kLOC_GENERAL_OK)) {
+        if (okCancel.equals(SMMoney.getAppContext().getString(R.string.GENERAL_OK))) {
             // TODO: Test OFX import with live data
             showWriteExternalStoraageStatePermission(PERMISSION_RESTORE_OFX);
         }

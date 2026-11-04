@@ -9,7 +9,7 @@ import android.text.style.ForegroundColorSpan;
 import android.widget.ListView;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyActivity;
@@ -20,7 +20,7 @@ public class MainPrefsActivity extends PocketMoneyActivity {
     public void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        setTitle(Locales.kLOC_PREFERENCES_TITLE);
+        setTitle(SMMoney.getAppContext().getString(R.string.PREFERENCES_TITLE));
         setContentView(R.layout.activity_main_prefs);
 
         ListView listView = findViewById(android.R.id.list);

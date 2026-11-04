@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.widget.TextView;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
@@ -23,7 +23,7 @@ public class ReportsPlaceholderActivity extends PocketMoneyActivity {
         setContentView(R.layout.placeholder_layout);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_GENERAL_REPORTS);
+            getSupportActionBar().setTitle(SMMoney.getAppContext().getString(R.string.GENERAL_REPORTS));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         }
 

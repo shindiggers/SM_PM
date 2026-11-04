@@ -5,11 +5,11 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.misc.TransactionTransferRetVals;
 import com.example.smmoney.records.AccountClass;
@@ -36,35 +36,44 @@ public class TransactionDB {
     private static String select_matching_statement = null;
 
     public static String[] transactionSortTypes() {
-        return new String[]{Locales.kLOC_GENERAL_DATE, Locales.kLOC_GENERAL_AMOUNT, Locales.kLOC_GENERAL_PAYEE, Locales.kLOC_GENERAL_CLASS, Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_GENERAL_NOTE, Locales.kLOC_GENERAL_ID, Locales.kLOC_GENERAL_CLEARED, Locales.kLOC_TRANSACTION_SORTDATEAMOUNT};
+        return new String[]{
+                SMMoney.getAppContext().getString(R.string.GENERAL_DATE),
+                SMMoney.getAppContext().getString(R.string.GENERAL_AMOUNT),
+                SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE),
+                SMMoney.getAppContext().getString(R.string.GENERAL_CLASS),
+                SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY),
+                SMMoney.getAppContext().getString(R.string.GENERAL_NOTE),
+                SMMoney.getAppContext().getString(R.string.GENERAL_ID),
+                SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED),
+                SMMoney.getAppContext().getString(R.string.TRANSACTION_SORTDATEAMOUNT)};
     }
 
     public static int transactionSortTypeFromString(String aType) {
-        if (aType.equals(Locales.kLOC_GENERAL_DATE)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DATE))) {
             return Enums.kTransactionsSortTypeDate /*0*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_AMOUNT)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_AMOUNT))) {
             return Enums.kTransactionsSortTypeAmount /*1*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_PAYEE)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE))) {
             return Enums.kTransactionsSortTypePayee /*2*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_CLASS)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_CLASS))) {
             return Enums.kTransactionsSortTypeClass /*3*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_CATEGORY)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY))) {
             return Enums.kTransactionsSortTypeCategory /*4*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_NOTE)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_NOTE))) {
             return Enums.kTransactionsSortTypeMemo /*5*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_ID)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_ID))) {
             return Enums.kTransactionsSortTypeID /*6*/;
         }
-        if (aType.equals(Locales.kLOC_GENERAL_CLEARED)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED))) {
             return Enums.kTransactionsSortTypeCleared /*7*/;
         }
-        if (aType.equals(Locales.kLOC_TRANSACTION_SORTDATEAMOUNT)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.TRANSACTION_SORTDATEAMOUNT))) {
             return Enums.kTransactionsSortTypeDateAmount /*8*/;
         }
         return Enums.kTransactionsSortTypeDate /*0*/;
@@ -73,7 +82,7 @@ public class TransactionDB {
     private static String queryWithFilterOrderByClause() {
         String orderString;
         String sortFieldString;
-        if (Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING)) {
+        if (Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_DESCENDING))) {
             orderString = "DESC";
         } else {
             orderString = "ASC";
@@ -183,15 +192,15 @@ public class TransactionDB {
         } else if (Enums.kViewAccountsNonZero/*1*/ == Prefs.getIntPref(Prefs.VIEWACCOUNTS)) {
             where = where.concat(" AND t.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005))");
         }
-        if (!(filter.getDate() == null || filter.getDate().isEmpty() || filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL))) {
-            if (filter.getDate().equals(Locales.kLOC_FILTER_DATES_RECENTLYCHANGED)) {
+        if (!(filter.getDate() == null || filter.getDate().isEmpty() || filter.getDate().equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL)))) {
+            if (filter.getDate().equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_RECENTLYCHANGED))) {
                 filter.allAccounts();
-            } else if (filter.getDate().equals(Locales.kLOC_FILTER_DATES_MODIFIEDTODAY)) {
+            } else if (filter.getDate().equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_MODIFIEDTODAY))) {
                 where = where.concat(" AND (t.timestamp >= " + (CalExt.beginningOfToday().getTimeInMillis() / 1000) + " AND t.timestamp <= " + (CalExt.endOfToday().getTimeInMillis() / 1000) + ")");
             } else {
                 long fromDate;
                 long toDate;
-                if (filter.getDate().equals(Locales.kLOC_FILTER_DATES_CUSTOM)) {
+                if (filter.getDate().equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM))) {
                     if (filter.getDateFrom() != null) {
                         fromDate = CalExt.beginningOfDay(filter.getDateFrom()).getTimeInMillis() / 1000;
                     } else {
@@ -223,21 +232,21 @@ public class TransactionDB {
         } else if (filter.getCleared() == Enums.kClearedUncleared /*0*/) {
             where = where.concat(" AND t.cleared = 0");
         }
-        if (!filter.getCategory().isEmpty() && !filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+        if (!filter.getCategory().isEmpty() && !filter.getCategory().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
             String category = filter.getCategory();
             if (category.contains("%")) {
                 where = where.concat(" AND s.categoryID LIKE " + Database.SQLFormat(category));
             } else {
-                String inClause = getInClause("s.categoryID", category, Locales.kLOC_FILTERS_UNFILED);
+                String inClause = getInClause("s.categoryID", category, SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
                 if (!inClause.isEmpty()) {
                     where = where.concat(" AND " + inClause);
                 }
             }
         }
-        if (filter.getClassName().isEmpty() || filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
+        if (filter.getClassName().isEmpty() || filter.getClassName().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES))) {
             return where;
         }
-        String inClause = getInClause("s.classID", filter.getClassName(), Locales.kLOC_FILTERS_UNFILED);
+        String inClause = getInClause("s.classID", filter.getClassName(), SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
         if (!inClause.isEmpty()) {
             where = where.concat(" AND " + inClause);
         }
@@ -320,7 +329,7 @@ public class TransactionDB {
         if (curs.getCount() == 0) {
             curs.close();
         } else {
-            boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
+            boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_DESCENDING));
             if (descending) {
                 curs.moveToLast();
             } else {
@@ -395,7 +404,7 @@ public class TransactionDB {
         if (curs.getCount() == 0) {
             curs.close();
         } else {
-            boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING);
+            boolean descending = Prefs.getStringPref(Prefs.NEWESTTRANSACTIONFIRST).equals(SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_DESCENDING));
             if (descending) {
                 curs.moveToLast();
             } else {
@@ -564,7 +573,7 @@ public class TransactionDB {
             transaction.setAccount(accountNameKey);
             transaction.setDate(lastDate);
             if (filter.getPayee() == null || filter.getPayee().isEmpty()) {
-                transaction.setPayee(Locales.kLOC_TOOLS_ROLLUP);
+                transaction.setPayee(SMMoney.getAppContext().getString(R.string.TOOLS_ROLLUP));
             } else {
                 transaction.setPayee(filter.getPayee());
             }
@@ -573,7 +582,7 @@ public class TransactionDB {
             clearedTransaction.setAccount(accountNameKey);
             clearedTransaction.setDate(lastDate);
             if (filter.getPayee() == null || filter.getPayee().isEmpty()) {
-                clearedTransaction.setPayee(Locales.kLOC_TOOLS_ROLLUP);
+                clearedTransaction.setPayee(SMMoney.getAppContext().getString(R.string.TOOLS_ROLLUP));
             } else {
                 clearedTransaction.setPayee(filter.getPayee());
             }
@@ -608,13 +617,13 @@ public class TransactionDB {
             }
             if (transaction.getNumberOfSplits() > 1 || transaction.getSubTotal() != 0.0d) {
                 transaction.getSplits().remove(0);
-                transaction.setMemo(Locales.kLOC_TOOLS_ROLLUP_NOTE);
+                transaction.setMemo(SMMoney.getAppContext().getString(R.string.TOOLS_ROLLUP_NOTE));
                 transaction.initType();
                 transaction.saveToDatabase();
             }
             if (clearedTransaction.getNumberOfSplits() > 1 || clearedTransaction.getSubTotal() != 0.0d) {
                 clearedTransaction.getSplits().remove(0);
-                clearedTransaction.setMemo(Locales.kLOC_TOOLS_ROLLUP_NOTE);
+                clearedTransaction.setMemo(SMMoney.getAppContext().getString(R.string.TOOLS_ROLLUP_NOTE));
                 clearedTransaction.initType();
                 clearedTransaction.saveToDatabase();
             }

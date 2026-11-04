@@ -19,7 +19,7 @@
             android:id="@+id/searcheditext"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:hint="@string/kLOC_TOOLS_SEARCH"
+            android:hint="@string/TOOLS_SEARCH"
             android:importantForAutofill="no"
             android:inputType="text"
             android:maxLines="1" />
@@ -40,7 +40,7 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:padding="0dp"
-                android:text="@string/kLOC_GENERAL_CLEARED_PENDING"
+                android:text="@string/GENERAL_CLEARED_PENDING"
                 android:textAppearance="?android:textAppearanceSmall"
                 app:cornerRadius="0dp" />
 
@@ -53,7 +53,7 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:padding="0dp"
-                android:text="@string/kLOC_GENERAL_CLEARED"
+                android:text="@string/GENERAL_CLEARED"
                 android:textAppearance="?android:textAppearanceSmall"
                 app:cornerRadius="0dp" />
 
@@ -66,7 +66,7 @@
                 android:insetTop="0dp"
                 android:insetBottom="0dp"
                 android:padding="0dp"
-                android:text="@string/kLOC_PREFERENCES_SHOW_ALL"
+                android:text="@string/PREFERENCES_SHOW_ALL"
                 android:textAppearance="?android:textAppearanceSmall"
                 app:cornerRadius="0dp" />
 

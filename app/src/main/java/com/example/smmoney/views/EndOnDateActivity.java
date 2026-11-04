@@ -17,8 +17,8 @@ import androidx.activity.OnBackPressedCallback;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.budgets.BudgetsDatePickerDialog;
@@ -42,8 +42,8 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         String previousDate = Objects.requireNonNull(getIntent().getExtras()).getString("Date");
         Log.d("ENDONDATEACTIVITY", "String previous date = " + previousDate);
         assert previousDate != null;
-        if (!previousDate.equals(Locales.kLOC_EDIT_REPEATING_ENDONNONE)) { //kLOC_EDIT_REPEATING_ENDONNONE = "No end Date"
-            Log.d("ENDONDATEACTIVITY", "String previousDate != " + Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+        if (!previousDate.equals(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE))) { //kLOC_EDIT_REPEATING_ENDONNONE = "No end Date"
+            Log.d("ENDONDATEACTIVITY", "String previousDate != " + SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
             this.prevDate = CalExt.dateFromDescriptionWithMediumDate(previousDate);
 
             this.theDate.setText(previousDate);
@@ -55,7 +55,7 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         attachListeners();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.kLOC_EDIT_REPEATING_ENDON);
+            getSupportActionBar().setTitle(R.string.EDIT_REPEATING_ENDON);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -79,7 +79,7 @@ public class EndOnDateActivity extends PocketMoneyActivity implements DatePicker
         ((TextView) findViewById(R.id.endon_label)).setTextColor(PocketMoneyThemes.fieldLabelColor());
 
         if (Objects.requireNonNull(getIntent().getExtras()).getBoolean(Prefs.BUDGETSTARTDATE)) {
-            ((TextView) findViewById(R.id.endon_label)).setText(Locales.kLOC_BUDGET_STARTDATE);
+            ((TextView) findViewById(R.id.endon_label)).setText(SMMoney.getAppContext().getString(R.string.BUDGET_STARTDATE));
         }
         this.theDate.setTextColor(PocketMoneyThemes.primaryCellTextColor());
         theDateIcon.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);

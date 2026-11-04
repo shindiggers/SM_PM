@@ -21,7 +21,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="start|center_vertical"
             android:layout_marginStart="10dp"
-            android:text="@string/kLOC_EDIT_FUTUREBALANCE_ENDONDATE" />
+            android:text="@string/EDIT_FUTUREBALANCE_ENDONDATE" />
 
         <CheckBox
             android:id="@+id/endondatecheckbox"

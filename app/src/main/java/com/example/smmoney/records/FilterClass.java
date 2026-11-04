@@ -6,12 +6,12 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.splits.SplitsActivity;
 
@@ -58,39 +58,39 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public static ArrayList<String> transactionTypes() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_GENERAL_WITHDRAWAL);
-        list.add(Locales.kLOC_GENERAL_DEPOSIT);
-        list.add(Locales.kLOC_GENERAL_TRANSFER);
-        list.add(Locales.kLOC_PREFERENCES_SHOW_ALL);
+        list.add(SMMoney.getAppContext().getString(R.string.GENERAL_WITHDRAWAL));
+        list.add(SMMoney.getAppContext().getString(R.string.GENERAL_DEPOSIT));
+        list.add(SMMoney.getAppContext().getString(R.string.GENERAL_TRANSFER));
+        list.add(SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL));
         return list;
     }
 
     public static ArrayList<String> clearedTypes() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_GENERAL_CLEARED);
-        list.add(Locales.kLOC_FILTER_UNCLEARED);
-        list.add(Locales.kLOC_FILTER_DOESNTMATTER);
+        list.add(SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_UNCLEARED));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DOESNTMATTER));
         return list;
     }
 
     public static ArrayList<String> dateRanges() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_FILTER_DATES_ALL);
-        list.add(Locales.kLOC_FILTER_DATES_CUSTOM);
-        list.add(Locales.kLOC_FILTER_DATES_MODIFIEDTODAY);
-        list.add(Locales.kLOC_FILTER_DATES_TODAY);
-        list.add(Locales.kLOC_FILTER_DATES_YESTERDAY);
-        list.add(Locales.kLOC_FILTER_DATES_LAST30DAYS);
-        list.add(Locales.kLOC_FILTER_DATES_LAST60DAYS);
-        list.add(Locales.kLOC_FILTER_DATES_LAST90DAYS);
-        list.add(Locales.kLOC_FILTER_DATES_THISWEEK);
-        list.add(Locales.kLOC_FILTER_DATES_LASTWEEK);
-        list.add(Locales.kLOC_FILTER_DATES_THISMONTH);
-        list.add(Locales.kLOC_FILTER_DATES_LASTMONTH);
-        list.add(Locales.kLOC_FILTER_DATES_THISQUARTER);
-        list.add(Locales.kLOC_FILTER_DATES_LASTQUARTER);
-        list.add(Locales.kLOC_FILTER_DATES_THISYEAR);
-        list.add(Locales.kLOC_FILTER_DATES_LASTYEAR);
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_MODIFIEDTODAY));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_TODAY));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_YESTERDAY));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST30DAYS));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST60DAYS));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST90DAYS));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISWEEK));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTWEEK));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISMONTH));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTMONTH));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISQUARTER));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTQUARTER));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISYEAR));
+        list.add(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTYEAR));
         return list;
     }
 
@@ -114,9 +114,9 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public void setClearedFromString(String aString) {
-        if (aString.equals(Locales.kLOC_GENERAL_CLEARED)) {
+        if (aString.equals(SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED))) {
             setCleared(Enums.kClearedCleared /*1*/);
-        } else if (aString.equals(Locales.kLOC_FILTER_UNCLEARED)) {
+        } else if (aString.equals(SMMoney.getAppContext().getString(R.string.FILTER_UNCLEARED))) {
             setCleared(Enums.kClearedUncleared/*0*/);
         } else {
             setCleared(Enums.kClearedDoesntMatter /*2*/);
@@ -125,18 +125,18 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public String clearedAsString() {
         return switch (getCleared()) {
-            case PocketMoneyThemes.kThemeBlack /*0*/ -> Locales.kLOC_FILTER_UNCLEARED;
-            case SplitsActivity.RESULT_CHANGED /*1*/ -> Locales.kLOC_GENERAL_CLEARED;
-            default -> Locales.kLOC_FILTER_DOESNTMATTER;
+            case PocketMoneyThemes.kThemeBlack /*0*/ -> SMMoney.getAppContext().getString(R.string.FILTER_UNCLEARED);
+            case SplitsActivity.RESULT_CHANGED /*1*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED);
+            default -> SMMoney.getAppContext().getString(R.string.FILTER_DOESNTMATTER);
         };
     }
 
     public void setTypeFromString(String aString) {
-        if (aString.equals(Locales.kLOC_GENERAL_WITHDRAWAL)) {
+        if (aString.equals(SMMoney.getAppContext().getString(R.string.GENERAL_WITHDRAWAL))) {
             setType(Enums.kTransactionTypeWithdrawal /*0*/);
-        } else if (aString.equals(Locales.kLOC_GENERAL_DEPOSIT)) {
+        } else if (aString.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEPOSIT))) {
             setType(Enums.kTransactionTypeDeposit /*1*/);
-        } else if (aString.equals(Locales.kLOC_GENERAL_TRANSFER)) {
+        } else if (aString.equals(SMMoney.getAppContext().getString(R.string.GENERAL_TRANSFER))) {
             setType(Enums.kTransactionTypeTransferFrom /*3*/);
         } else {
             setType(Enums.kTransactionTypeAll /*4*/);
@@ -145,11 +145,11 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     public String typeAsString() {
         return switch (getType()) {
-            case Enums.kTransactionTypeWithdrawal /*0*/ -> Locales.kLOC_GENERAL_WITHDRAWAL;
-            case Enums.kTransactionTypeDeposit /*1*/ -> Locales.kLOC_GENERAL_DEPOSIT; /*2*/
+            case Enums.kTransactionTypeWithdrawal /*0*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_WITHDRAWAL);
+            case Enums.kTransactionTypeDeposit /*1*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_DEPOSIT); /*2*/
             case Enums.kTransactionTypeTransferTo, Enums.kTransactionTypeTransferFrom /*3*/ ->
-                    Locales.kLOC_GENERAL_TRANSFER;
-            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+                    SMMoney.getAppContext().getString(R.string.GENERAL_TRANSFER);
+            default -> SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL);
         };
     }
 
@@ -203,52 +203,52 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     private double internalDateAsDateUsingFromDate(boolean isFromDate) {
-        if (Locales.kLOC_FILTER_DATES_ALL.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL).equals(this.date)) {
             return Enums.kDateRangeNone; /*0.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_TODAY.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_TODAY).equals(this.date)) {
             return Enums.kDateRangeToday; /*1.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_YESTERDAY.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_YESTERDAY).equals(this.date)) {
             return Enums.kDateRangeYesterday; /*2.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LAST30DAYS.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST30DAYS).equals(this.date)) {
             return Enums.kDateRangeLast30Days; /*15.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LAST60DAYS.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST60DAYS).equals(this.date)) {
             return Enums.kDateRangeLast60Days; /*16.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LAST90DAYS.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST90DAYS).equals(this.date)) {
             return Enums.kDateRangeLast90Days; /*17.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_THISWEEK.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISWEEK).equals(this.date)) {
             return Enums.kDateRangeCurrentWeek; /*3.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LASTWEEK.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTWEEK).equals(this.date)) {
             return Enums.kDateRangeLastWeek; /*4.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_THISMONTH.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISMONTH).equals(this.date)) {
             return Enums.kDateRangeCurrentMonth; /*5.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LASTMONTH.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTMONTH).equals(this.date)) {
             return Enums.kDateRangeLastMonth; /*6.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_THISQUARTER.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISQUARTER).equals(this.date)) {
             return Enums.kDateRangeCurrentQuarter; /*7.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LASTQUARTER.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTQUARTER).equals(this.date)) {
             return Enums.kDateRangeLastQuarter; /*8.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_THISYEAR.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISYEAR).equals(this.date)) {
             return Enums.kDateRangeCurrentYear; /*9.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_LASTYEAR.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTYEAR).equals(this.date)) {
             return Enums.kDateRangeLastYear; /*10.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_RECENTLYCHANGED.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_RECENTLYCHANGED).equals(this.date)) {
             return Enums.kDateRangeRecentChanges; /*11.0d*/
         }
-        if (Locales.kLOC_FILTER_DATES_MODIFIEDTODAY.equals(this.date)) {
+        if (SMMoney.getAppContext().getString(R.string.FILTER_DATES_MODIFIEDTODAY).equals(this.date)) {
             return Enums.kDateRangeModifiedToday; /*14.0d*/
         }
         if (isFromDate) {
@@ -274,28 +274,28 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
 
     private String dateStringFromDBDate(double internalDate) {
         return switch ((int) internalDate) {
-            case Enums.kDateRangeNone /*0*/ -> Locales.kLOC_FILTER_DATES_ALL;
-            case Enums.kDateRangeToday /*1*/ -> Locales.kLOC_FILTER_DATES_TODAY;
-            case Enums.kDateRangeYesterday /*2*/ -> Locales.kLOC_FILTER_DATES_YESTERDAY;
-            case Enums.kDateRangeCurrentWeek /*3*/ -> Locales.kLOC_FILTER_DATES_THISWEEK;
-            case Enums.kDateRangeLastWeek /*4*/ -> Locales.kLOC_FILTER_DATES_LASTWEEK;
-            case Enums.kDateRangeCurrentMonth /*5*/ -> Locales.kLOC_FILTER_DATES_THISMONTH;
-            case Enums.kDateRangeLastMonth /*6*/ -> Locales.kLOC_FILTER_DATES_LASTMONTH;
-            case Enums.kDateRangeCurrentQuarter /*7*/ -> Locales.kLOC_FILTER_DATES_THISQUARTER;
-            case Enums.kDateRangeLastQuarter /*8*/ -> Locales.kLOC_FILTER_DATES_LASTQUARTER;
-            case Enums.kDateRangeCurrentYear /*9*/ -> Locales.kLOC_FILTER_DATES_THISYEAR;
-            case Enums.kDateRangeLastYear /*10*/ -> Locales.kLOC_FILTER_DATES_LASTYEAR;
-            case Enums.kDateRangeRecentChanges /*11*/ -> Locales.kLOC_FILTER_DATES_RECENTLYCHANGED;
-            case Enums.kDateRangeModifiedToday /*14*/ -> Locales.kLOC_FILTER_DATES_MODIFIEDTODAY;
-            case Enums.kDateRangeLast30Days /*15*/ -> Locales.kLOC_FILTER_DATES_LAST30DAYS;
-            case Enums.kDateRangeLast60Days /*16*/ -> Locales.kLOC_FILTER_DATES_LAST60DAYS;
-            case Enums.kDateRangeLast90Days /*17*/ -> Locales.kLOC_FILTER_DATES_LAST90DAYS;
-            default -> Locales.kLOC_FILTER_DATES_CUSTOM;
+            case Enums.kDateRangeNone /*0*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL);
+            case Enums.kDateRangeToday /*1*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_TODAY);
+            case Enums.kDateRangeYesterday /*2*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_YESTERDAY);
+            case Enums.kDateRangeCurrentWeek /*3*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISWEEK);
+            case Enums.kDateRangeLastWeek /*4*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTWEEK);
+            case Enums.kDateRangeCurrentMonth /*5*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISMONTH);
+            case Enums.kDateRangeLastMonth /*6*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTMONTH);
+            case Enums.kDateRangeCurrentQuarter /*7*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISQUARTER);
+            case Enums.kDateRangeLastQuarter /*8*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTQUARTER);
+            case Enums.kDateRangeCurrentYear /*9*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISYEAR);
+            case Enums.kDateRangeLastYear /*10*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTYEAR);
+            case Enums.kDateRangeRecentChanges /*11*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_RECENTLYCHANGED);
+            case Enums.kDateRangeModifiedToday /*14*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_MODIFIEDTODAY);
+            case Enums.kDateRangeLast30Days /*15*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST30DAYS);
+            case Enums.kDateRangeLast60Days /*16*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST60DAYS);
+            case Enums.kDateRangeLast90Days /*17*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST90DAYS);
+            default -> SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM);
         };
     }
 
     public boolean isCustomDate() {
-        return Locales.kLOC_FILTER_DATES_CUSTOM.equals(this.date);
+        return SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM).equals(this.date);
     }
 
     public String customDateString() {
@@ -303,7 +303,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     }
 
     public boolean allAccounts() {
-        return getAccount() == null || getAccount().isEmpty() || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+        return getAccount() == null || getAccount().isEmpty() || this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
     }
 
     public String getDate() {
@@ -311,7 +311,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (this.date != null) {
             return this.date;
         }
-        return Locales.kLOC_FILTER_DATES_ALL;
+        return SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL);
     }
 
     public void setDateFrom(GregorianCalendar aDate) {
@@ -356,7 +356,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             if (this.date == null || !this.date.equals(aString)) {
                 this.dirty = true;
                 this.date = aString;
-                if (!this.date.isEmpty() && !this.date.equals(Locales.kLOC_FILTER_DATES_ALL)) {
+                if (!this.date.isEmpty() && !this.date.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL))) {
                     this.customFilter = true;
                 }
             }
@@ -373,7 +373,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (!this.account.equals(aString)) {
             this.account = aString;
             this.dirty = true;
-            if (this.account.isEmpty() || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+            if (this.account.isEmpty() || this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS))) {
                 this.customFilter = true;
             }
         }
@@ -389,7 +389,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             if (this.category == null || !this.category.equals(aString)) {
                 this.category = java.util.Objects.requireNonNullElse(aString, "");
                 this.dirty = true;
-                if (!this.category.isEmpty() && !this.category.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+                if (!this.category.isEmpty() && !this.category.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
                     this.customFilter = true;
                 }
             }
@@ -511,7 +511,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 col2 = col + 1;
                 long dateTo = (long) curs.getDouble(col);
                 if (12 == dateFrom && 13 == dateTo) {
-                    setDate(Locales.kLOC_FILTER_DATES_ALL);
+                    setDate(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL));
                 } else {
                     setDate(dateStringFromDBDate((double) dateFrom));
                 }
@@ -523,7 +523,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                     try {
                         int acctID = Integer.parseInt(accountVal);
                         if (acctID == -2) {
-                            setAccount(Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
+                            setAccount(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT));
                         } else {
                             setAccount(AccountClass.accountForID(acctID));
                         }
@@ -586,7 +586,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             if (this.className == null || !this.className.equals(aString)) {
                 this.className = java.util.Objects.requireNonNullElse(aString, "");
                 this.dirty = true;
-                if (!this.className.isEmpty() && !this.className.equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
+                if (!this.className.isEmpty() && !this.className.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES))) {
                     this.customFilter = true;
                 }
             }
@@ -628,7 +628,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
     public static ArrayList<FilterClass> query() {
         ArrayList<FilterClass> theList = new ArrayList<>();
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
-        String where = "deleted=0 AND filterName NOT IN (select account from accounts where deleted=0)  AND filterName <> '" + Locales.kLOC_FILTERS_ALL_ACCOUNTS + "'";
+        String where = "deleted=0 AND filterName NOT IN (select account from accounts where deleted=0)  AND filterName <> '" + SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS) + "'";
         String[] projection = new String[]{"filterID"};
         qb.setTables(Database.FILTERS_TABLE_NAME);
         Cursor curs = Database.query(qb, projection, where, null, null, null, "UPPER(filterName)");
@@ -653,11 +653,11 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             content.put("type", this.type);
             content.put("dateFrom", internalDateAsDateUsingFromDate(true));
             content.put("dateTo", internalDateAsDateUsingFromDate(false));
-            if (this.account.contains(";") || this.account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+            if (this.account.contains(";") || this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS))) {
                 content.put("accountID", this.account);
             } else {
                 int acctID = AccountClass.idForAccount(this.account);
-                if (this.account.equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+                if (this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT))) {
                     acctID = -2;
                 }
                 content.put("accountID", acctID);
@@ -684,46 +684,46 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         if (isFromDate) {
             cal = CalExt.beginningOfToday();
             cal.setLenient(true);
-            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
+            if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_TODAY))) {
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_YESTERDAY)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_YESTERDAY))) {
                 cal.add(Calendar.DAY_OF_YEAR, -1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST30DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST30DAYS))) {
                 cal.add(Calendar.DAY_OF_YEAR, -30);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST60DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST60DAYS))) {
                 cal.add(Calendar.DAY_OF_YEAR, -60);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST90DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST90DAYS))) {
                 cal.add(Calendar.DAY_OF_YEAR, -90);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISWEEK)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISWEEK))) {
                 cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTWEEK)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTWEEK))) {
                 cal.set(Calendar.DAY_OF_WEEK, cal.getFirstDayOfWeek());
                 cal.add(Calendar.DAY_OF_MONTH, -7);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISMONTH)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISMONTH))) {
                 cal.set(Calendar.DAY_OF_MONTH, 1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTMONTH)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTMONTH))) {
                 cal.set(Calendar.DAY_OF_MONTH, 1);
                 cal.add(Calendar.MONTH, -1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISYEAR)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISYEAR))) {
                 cal.set(Calendar.DAY_OF_YEAR, 1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTYEAR)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTYEAR))) {
                 cal.set(Calendar.DAY_OF_YEAR, 1);
                 cal.add(Calendar.YEAR, -1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISQUARTER)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISQUARTER))) {
                 cal.set(Calendar.MONTH, ((((cal.get(Calendar.MONTH) - 1) / 3) * 3) + 1) - 1);
                 cal.set(Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTQUARTER)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTQUARTER))) {
                 cal.set(Calendar.MONTH, ((((cal.get(Calendar.MONTH) - 1) / 3) * 3) + 1) - 1);
                 cal.add(Calendar.MONTH, -3);
                 cal.set(Calendar.DAY_OF_MONTH, cal.getMinimum(Calendar.DAY_OF_MONTH));
@@ -732,44 +732,44 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         } else {
             cal = CalExt.endOfToday();
             cal.setLenient(true);
-            if (fromDateString.equals(Locales.kLOC_FILTER_DATES_TODAY)) {
+            if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_TODAY))) {
                 cal.add(Calendar.DAY_OF_YEAR, 1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_YESTERDAY)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_YESTERDAY))) {
                 cal.add(Calendar.DAY_OF_YEAR, -1);
                 retDate = CalExt.endOfDay(cal).getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST30DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST30DAYS))) {
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST60DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST60DAYS))) {
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LAST90DAYS)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LAST90DAYS))) {
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISWEEK)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISWEEK))) {
                 cal.set(Calendar.DAY_OF_WEEK, ((cal.getFirstDayOfWeek() + 5) % 7) + 1);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTWEEK)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTWEEK))) {
                 cal.set(Calendar.DAY_OF_WEEK, ((cal.getFirstDayOfWeek() + 5) % 7) + 1);
                 cal.add(Calendar.DAY_OF_YEAR, -7);
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISMONTH)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISMONTH))) {
                 cal.set(Calendar.DAY_OF_MONTH, getMaxDayForMonth(cal));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTMONTH)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTMONTH))) {
                 cal.add(Calendar.MONTH, -1);
                 cal.set(Calendar.DAY_OF_MONTH, getMaxDayForMonth(cal));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISYEAR)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISYEAR))) {
                 cal.set(Calendar.DAY_OF_YEAR, getMaxDayForYear(cal.get(Calendar.YEAR)));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTYEAR)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTYEAR))) {
                 cal.add(Calendar.YEAR, -1);
                 cal.set(Calendar.DAY_OF_YEAR, getMaxDayForYear(cal.get(Calendar.YEAR)));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_THISQUARTER)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_THISQUARTER))) {
                 cal.set(Calendar.MONTH, ((((cal.get(Calendar.MONTH) - 1) / 3) * 3) + 3) - 1);
                 cal.set(Calendar.DAY_OF_MONTH, getMaxDayForMonth(cal));
                 retDate = cal.getTimeInMillis();
-            } else if (fromDateString.equals(Locales.kLOC_FILTER_DATES_LASTQUARTER)) {
+            } else if (fromDateString.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_LASTQUARTER))) {
                 cal.set(Calendar.MONTH, ((((cal.get(Calendar.MONTH) - 1) / 3) * 3) + 3) - 1);
                 cal.add(Calendar.MONTH, -3);
                 cal.set(Calendar.DAY_OF_MONTH, getMaxDayForMonth(cal));
@@ -824,7 +824,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             Log.e(SMMoney.TAG, "Exception in FilterClass updateWithXML", e);
         }
         if (0.0d == this.internalFromDate && 0.0d == this.internalToDate) {
-            setDate(Locales.kLOC_FILTER_DATES_ALL);
+            setDate(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL));
         } else {
             setDate(dateStringFromDBDate(this.internalFromDate));
         }

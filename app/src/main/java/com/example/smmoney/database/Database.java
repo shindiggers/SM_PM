@@ -12,7 +12,6 @@ import android.util.Log;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.ClassNameClass;
@@ -613,45 +612,45 @@ public class Database {
     public static void populateDatabaseDefaults() {
         int i = 0;
         String[] defaultCategories = new String[20];
-        defaultCategories[0] = Locales.kLOC_DEFAULTCATEGORIES1;
-        defaultCategories[1] = Locales.kLOC_DEFAULTCATEGORIES2;
-        defaultCategories[2] = Locales.kLOC_DEFAULTCATEGORIES3;
-        defaultCategories[3] = Locales.kLOC_DEFAULTCATEGORIES4;
-        defaultCategories[4] = Locales.kLOC_DEFAULTCATEGORIES5;
-        defaultCategories[5] = Locales.kLOC_DEFAULTCATEGORIES6;
-        defaultCategories[6] = Locales.kLOC_DEFAULTCATEGORIES7;
-        defaultCategories[7] = Locales.kLOC_DEFAULTCATEGORIES8;
-        defaultCategories[8] = Locales.kLOC_DEFAULTCATEGORIES9;
-        defaultCategories[9] = Locales.kLOC_DEFAULTCATEGORIES10;
-        defaultCategories[10] = Locales.kLOC_DEFAULTCATEGORIES11;
-        defaultCategories[11] = Locales.kLOC_DEFAULTCATEGORIES12;
-        defaultCategories[12] = Locales.kLOC_DEFAULTCATEGORIES13;
-        defaultCategories[13] = Locales.kLOC_DEFAULTCATEGORIES14;
-        defaultCategories[14] = Locales.kLOC_DEFAULTCATEGORIES15;
-        defaultCategories[15] = Locales.kLOC_DEFAULTCATEGORIES16;
-        defaultCategories[16] = Locales.kLOC_DEFAULTCATEGORIES17;
-        defaultCategories[17] = Locales.kLOC_DEFAULTCATEGORIES18;
-        defaultCategories[18] = Locales.kLOC_DEFAULTCATEGORIES19;
-        defaultCategories[19] = Locales.kLOC_DEFAULTCATEGORIES20;
-        if (CategoryClass.idForCategory(SMMoney.getAppContext().getString(R.string.kLOC_DEFAULTCATEGORIES1)) <= 0) {
+        defaultCategories[0] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES1);
+        defaultCategories[1] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES2);
+        defaultCategories[2] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES3);
+        defaultCategories[3] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES4);
+        defaultCategories[4] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES5);
+        defaultCategories[5] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES6);
+        defaultCategories[6] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES7);
+        defaultCategories[7] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES8);
+        defaultCategories[8] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES9);
+        defaultCategories[9] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES10);
+        defaultCategories[10] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES11);
+        defaultCategories[11] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES12);
+        defaultCategories[12] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES13);
+        defaultCategories[13] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES14);
+        defaultCategories[14] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES15);
+        defaultCategories[15] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES16);
+        defaultCategories[16] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES17);
+        defaultCategories[17] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES18);
+        defaultCategories[18] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES19);
+        defaultCategories[19] = SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES20);
+        if (CategoryClass.idForCategory(SMMoney.getAppContext().getString(R.string.DEFAULTCATEGORIES1)) <= 0) {
             int i2;
             int length = defaultCategories.length;
             for (i2 = 0; i2 < length; i2 += 1) {
                 CategoryClass.insertIntoDatabase(defaultCategories[i2]);
             }
             String[] defaultIDs = new String[5];
-            defaultIDs[0] = Locales.kLOC_DEFAULTIDS1;
-            defaultIDs[1] = Locales.kLOC_DEFAULTIDS2;
-            defaultIDs[2] = Locales.kLOC_DEFAULTIDS3;
-            defaultIDs[3] = Locales.kLOC_DEFAULTIDS4;
-            defaultIDs[4] = Locales.kLOC_DEFAULTIDS5;
+            defaultIDs[0] = SMMoney.getAppContext().getString(R.string.DEFAULTIDS1);
+            defaultIDs[1] = SMMoney.getAppContext().getString(R.string.DEFAULTIDS2);
+            defaultIDs[2] = SMMoney.getAppContext().getString(R.string.DEFAULTIDS3);
+            defaultIDs[3] = SMMoney.getAppContext().getString(R.string.DEFAULTIDS4);
+            defaultIDs[4] = SMMoney.getAppContext().getString(R.string.DEFAULTIDS5);
             length = defaultIDs.length;
             for (i2 = 0; i2 < length; i2 += 1) {
                 IDClass.insertIntoDatabase(defaultIDs[i2]);
             }
             String[] defaultClasses = new String[2];
-            defaultClasses[0] = Locales.kLOC_DEFAULTCLASSES1;
-            defaultClasses[1] = Locales.kLOC_DEFAULTCLASSES2;
+            defaultClasses[0] = SMMoney.getAppContext().getString(R.string.DEFAULTCLASSES1);
+            defaultClasses[1] = SMMoney.getAppContext().getString(R.string.DEFAULTCLASSES2);
             i2 = defaultClasses.length;
             while (i < i2) {
                 ClassNameClass.insertIntoDatabase(defaultClasses[i]);

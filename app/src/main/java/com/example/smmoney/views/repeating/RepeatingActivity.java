@@ -30,11 +30,11 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.FilterClass;
@@ -95,7 +95,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     private void setTitle() {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.REPEATING_TRANSACTIONS);
     }
 
     private void setupView() {
@@ -155,7 +155,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         paint.setColor(Color.WHITE);
                         paint.setTextSize(40);
                         paint.setAntiAlias(true);
-                        c.drawText(Locales.kLOC_GENERAL_EDIT, (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                        c.drawText(SMMoney.getAppContext().getString(R.string.GENERAL_EDIT), (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
 
                     } else if (dX < 0) { // Swipe Left (Delete)
                         paint.setColor(Color.parseColor("#F44336")); // Red
@@ -175,8 +175,8 @@ public class RepeatingActivity extends PocketMoneyActivity {
                         paint.setColor(Color.WHITE);
                         paint.setTextSize(40);
                         paint.setAntiAlias(true);
-                        float textWidth = paint.measureText(Locales.kLOC_GENERAL_DELETE);
-                        c.drawText(Locales.kLOC_GENERAL_DELETE, (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                        float textWidth = paint.measureText(SMMoney.getAppContext().getString(R.string.GENERAL_DELETE));
+                        c.drawText(SMMoney.getAppContext().getString(R.string.GENERAL_DELETE), (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
                     }
                 }
                 super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -202,8 +202,8 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
             AlertDialog.Builder b = new AlertDialog.Builder(RepeatingActivity.this, PocketMoneyThemes.dialogTheme());
             b.setView(container);
-            b.setTitle(Locales.kLOC_REPEATING_UPCOMING_MESSAGE);
-            b.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+            b.setTitle(R.string.REPEATING_UPCOMING_MESSAGE);
+            b.setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> {
                 try {
                     Prefs.setPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD, Integer.parseInt(textView.getText().toString()));
                     RepeatingActivity.this.reloadData();
@@ -211,7 +211,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     Log.e(com.example.smmoney.SMMoney.TAG, "NumberFormatException in RepeatingActivity upcoming period dialog", e);
                 }
             });
-            b.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
+            b.setNegativeButton(R.string.GENERAL_CANCEL, null);
             AlertDialog dialog = b.create();
             
             textView.requestFocus();
@@ -227,7 +227,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private void reloadBalanceBar() {
         ArrayList<RepeatingTransactionClass> repeatingTransactions = TransactionDB.queryAllRepeatingTransactions();
         int days = Prefs.getIntPref(Prefs.PREFS_REPEATING_UPCOMING_PERIOD);
-        String text = getResources().getQuantityString(R.plurals.repeating_upcoming_days, days, Locales.kLOC_REPEATING_UPCOMING_LABEL, days);
+        String text = getResources().getQuantityString(R.plurals.repeating_upcoming_days, days, SMMoney.getAppContext().getString(R.string.REPEATING_UPCOMING_LABEL), days);
         
         GregorianCalendar today = CalExt.beginningOfToday();
         GregorianCalendar upcomingEndDate = CalExt.endOfDay(CalExt.addDays((GregorianCalendar) today.clone(), days));
@@ -259,7 +259,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
         this.balanceBar.balanceAmountTextView.setText(CurrencyExt.amountAsCurrency(overdueAmount));
         this.balanceBar.secondBalanceTypeTextView.setText(text);
         this.balanceBar.secondBalanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
-        this.balanceBar.balanceTypeTextView.setText(Locales.kLOC_REPEATING_OVERDUE_LABEL);
+        this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(R.string.REPEATING_OVERDUE_LABEL));
         this.balanceBar.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
     }
 
@@ -273,8 +273,8 @@ public class RepeatingActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-        menu.add(0, MENU_PROCESS, 0, Locales.kLOC_REPEATING_PROCESSTODATE);
+        menu.add(0, MENU_NEW, 0, R.string.TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, MENU_PROCESS, 0, R.string.REPEATING_PROCESSTODATE);
         return true;
     }
 
@@ -307,16 +307,16 @@ public class RepeatingActivity extends PocketMoneyActivity {
 
     private void deleteRepeatingTransaction(final TransactionClass transaction) {
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_GENERAL_DELETE)
+                .setTitle(R.string.GENERAL_DELETE)
                 .setMessage("Are you sure you want to delete this repeating transaction?")
-                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                .setPositiveButton(R.string.GENERAL_DELETE, (dialog, which) -> {
                     if (transaction != null) {
                         new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
                         transaction.deleteFromDatabase();
                     }
                     reloadData();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, null)
                 .show();
     }
 

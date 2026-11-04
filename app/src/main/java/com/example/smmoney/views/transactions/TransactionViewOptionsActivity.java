@@ -7,8 +7,8 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.TransactionDB;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
@@ -43,7 +43,7 @@ public class TransactionViewOptionsActivity extends PocketMoneyPreferenceActivit
         this.sortOnListPref.setEntries(theStrings);
         this.sortOnListPref.setEntryValues(theStrings);
         this.sortOnListPref.setOnPreferenceChangeListener(getChangeListener());
-        String[] someStrings = new String[]{Locales.kLOC_TRANSACTIONS_OPTIONS_DESCENDING, Locales.kLOC_TRANSACTIONS_OPTIONS_ASCENDING};
+        String[] someStrings = new String[]{SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_DESCENDING), SMMoney.getAppContext().getString(R.string.TRANSACTIONS_OPTIONS_ASCENDING)};
         this.sortOrderPref.setEntries(someStrings);
         this.sortOrderPref.setEntryValues(someStrings);
         this.sortOrderPref.setOnPreferenceChangeListener(getChangeListener());

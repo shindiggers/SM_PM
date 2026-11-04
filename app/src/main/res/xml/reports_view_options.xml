@@ -10,12 +10,12 @@
         android:title="Chart Type" />
 
     <ListPreference
-        android:defaultValue="@string/kLOC_REPORTDISPLAY_ITEM"
+        android:defaultValue="@string/REPORTDISPLAY_ITEM"
         android:key="sortonreportsoptions"
         android:title="Sort On" />
 
     <ListPreference
-        android:defaultValue="@string/kLOC_TRANSACTIONS_OPTIONS_ASCENDING"
+        android:defaultValue="@string/TRANSACTIONS_OPTIONS_ASCENDING"
         android:key="directionreportsoptions"
         android:title="Sort Direction" />
 

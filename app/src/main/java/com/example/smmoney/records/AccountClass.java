@@ -13,12 +13,12 @@ import android.util.Xml;
 
 import androidx.annotation.NonNull;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.accounts.AccountTypeIconGridActivity;
 
@@ -651,38 +651,41 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     }
 
     public void setTypeFromString(String aType) {
-        if (aType.equals(Locales.kLOC_ACCOUNTTYPE_ASSET)) {
+        if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ASSET))) {
             setType(3);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_CASH)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CASH))) {
             setType(1);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_CHECKING)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CHECKING))) {
             setType(0);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_CREDITCARD)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITCARD))) {
             setType(2);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_CREDITLINE)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITLINE))) {
             setType(8);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_LIABILITY)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_LIABILITY))) {
             setType(4);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_MONEYMARKET)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_MONEYMARKET))) {
             setType(7);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_ONLINE)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ONLINE))) {
             setType(5);
-        } else if (aType.equals(Locales.kLOC_ACCOUNTTYPE_SAVINGS)) {
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_SAVINGS))) {
             setType(6);
+        } else if (aType.equals(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_INVESTMENT))) {
+            setType(Enums.kAccountTypeInvestment /*9*/);
         }
     }
 
     public String typeAsString() {
         return switch (getType()) {
-            case Enums.kAccountTypeChecking /*0*/ -> Locales.kLOC_ACCOUNTTYPE_CHECKING;
-            case Enums.kAccountTypeCreditCard /*2*/ -> Locales.kLOC_ACCOUNTTYPE_CREDITCARD;
-            case Enums.kAccountTypeAsset /*3*/ -> Locales.kLOC_ACCOUNTTYPE_ASSET;
-            case Enums.kAccountTypeLiability /*4*/ -> Locales.kLOC_ACCOUNTTYPE_LIABILITY;
-            case Enums.kAccountTypeOnline /*5*/ -> Locales.kLOC_ACCOUNTTYPE_ONLINE;
-            case Enums.kAccountTypeSavings /*6*/ -> Locales.kLOC_ACCOUNTTYPE_SAVINGS;
-            case Enums.kAccountTypeMoneyMarket /*7*/ -> Locales.kLOC_ACCOUNTTYPE_MONEYMARKET;
-            case Enums.kAccountTypeCreditLine /*8*/ -> Locales.kLOC_ACCOUNTTYPE_CREDITLINE;
-            default -> Locales.kLOC_ACCOUNTTYPE_CASH;
+            case Enums.kAccountTypeChecking /*0*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CHECKING);
+            case Enums.kAccountTypeCreditCard /*2*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITCARD);
+            case Enums.kAccountTypeAsset /*3*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ASSET);
+            case Enums.kAccountTypeLiability /*4*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_LIABILITY);
+            case Enums.kAccountTypeOnline /*5*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ONLINE);
+            case Enums.kAccountTypeSavings /*6*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_SAVINGS);
+            case Enums.kAccountTypeMoneyMarket /*7*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_MONEYMARKET);
+            case Enums.kAccountTypeCreditLine /*8*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITLINE);
+            case Enums.kAccountTypeInvestment /*9*/ -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_INVESTMENT);
+            default -> SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CASH);
         };
     }
 
@@ -858,15 +861,16 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
 
     public static ArrayList<String> accountTypes() {
         ArrayList<String> accountTypes = new ArrayList<>();
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_ASSET);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CASH);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CHECKING);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CREDITCARD);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_CREDITLINE);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_LIABILITY);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_MONEYMARKET);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_ONLINE);
-        accountTypes.add(Locales.kLOC_ACCOUNTTYPE_SAVINGS);
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ASSET));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CASH));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CHECKING));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITCARD));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_CREDITLINE));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_LIABILITY));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_MONEYMARKET));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_ONLINE));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_SAVINGS));
+        accountTypes.add(SMMoney.getAppContext().getString(R.string.ACCOUNTTYPE_INVESTMENT));
         Collections.sort(accountTypes);
         return accountTypes;
     }
@@ -882,6 +886,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                     this.iconFileName = "ic_visa.xml";
                     break;
                 case Enums.kAccountTypeAsset /*3*/:
+                case Enums.kAccountTypeInvestment /*9*/:
                     this.iconFileName = "asset.xml";
                     break;
                 case Enums.kAccountTypeLiability /*4*/:

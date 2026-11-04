@@ -14,7 +14,7 @@
             android:id="@+id/sort_by_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON"
+            android:text="@string/TRANSACTIONS_OPTIONS_SORTON"
             android:textAllCaps="true"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -31,7 +31,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_GENERAL_DATE" />
+                android:text="@string/GENERAL_DATE" />
 
             <RadioButton
                 android:id="@+id/sort_amount"
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_GENERAL_AMOUNT" />
+                android:text="@string/GENERAL_AMOUNT" />
 
             <RadioButton
                 android:id="@+id/sort_payee"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_GENERAL_PAYEE" />
+                android:text="@string/GENERAL_PAYEE" />
 
             <RadioButton
                 android:id="@+id/sort_class"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_GENERAL_CLASS" />
+                android:text="@string/GENERAL_CLASS" />
 
             <RadioButton
                 android:id="@+id/sort_category"
@@ -63,7 +63,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_GENERAL_CATEGORY" />
+                android:text="@string/GENERAL_CATEGORY" />
 
             <RadioButton
                 android:id="@+id/sort_date_amount"
@@ -71,7 +71,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_TRANSACTION_SORTDATEAMOUNT" />
+                android:text="@string/TRANSACTION_SORTDATEAMOUNT" />
         </RadioGroup>
 
         <View
@@ -85,7 +85,7 @@
             android:id="@+id/order_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_TRANSACTIONS_OPTIONS_SORTORDER"
+            android:text="@string/TRANSACTIONS_OPTIONS_SORTORDER"
             android:textAllCaps="true"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_BUDGET_LBL_ASCENDING" />
+                android:text="@string/BUDGET_LBL_ASCENDING" />
 
             <RadioButton
                 android:id="@+id/sort_desc"
@@ -110,7 +110,7 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:paddingBottom="8dp"
-                android:text="@string/kLOC_BUDGET_LBL_DESCENDING" />
+                android:text="@string/BUDGET_LBL_DESCENDING" />
         </RadioGroup>
 
     </LinearLayout>

@@ -9,7 +9,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.LaunchActivity;
@@ -21,7 +21,7 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        setTitle(Locales.kLOC_PREFS_VIEWOPTIONS);
+        setTitle(SMMoney.getAppContext().getString(R.string.PREFS_VIEWOPTIONS));
         loadParentFragment(R.xml.prefs_display_main);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }
@@ -74,7 +74,14 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
 
         ListPreference themes = fragment.findPreference(Prefs.THEME_COLOR);
         if (themes != null) {
-            String[] colors = new String[]{"Black", "Blue", Locales.kLOC_THEME_COLOR_GREEN, Locales.kLOC_THEME_COLOR_PURPLE, Locales.kLOC_THEME_COLOR_GRAY, Locales.kLOC_THEME_COLOR_COFFEE};
+            String[] colors = new String[]{
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_BLACK),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_BLUE),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_GREEN),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_PURPLE),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_GRAY),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_COFFEE),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_RUBY)};
             themes.setEntries(colors);
             themes.setEntryValues(colors);
             themes.setOnPreferenceChangeListener(getChangeListener());
@@ -93,15 +100,15 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
 
             DisplayOptionsPrefsActivity.this.runOnUiThread(() -> {
                 Builder alert = new Builder(DisplayOptionsPrefsActivity.this, PocketMoneyThemes.dialogTheme());
-                alert.setTitle(Locales.kLOC_GENERAL_RELAUNCH_APP);
-                alert.setMessage(Locales.kLOC_GENERAL_RELAUNCH_APP_THEME);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_QUIT, (dialog, whichButton) -> {
+                alert.setTitle(SMMoney.getAppContext().getString(R.string.GENERAL_RELAUNCH_APP));
+                alert.setMessage(SMMoney.getAppContext().getString(R.string.GENERAL_RELAUNCH_APP_THEME));
+                alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_QUIT), (dialog, whichButton) -> {
                     Intent i = new Intent(DisplayOptionsPrefsActivity.this, LaunchActivity.class);
                     i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     DisplayOptionsPrefsActivity.this.startActivity(i);
                     dialog.dismiss();
                 });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.dismiss());
+                alert.setNegativeButton(SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL), (dialog, whichButton) -> dialog.dismiss());
                 alert.show();
             });
             return true;

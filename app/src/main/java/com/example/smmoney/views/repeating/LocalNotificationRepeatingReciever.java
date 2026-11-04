@@ -52,13 +52,18 @@ public class LocalNotificationRepeatingReciever extends BroadcastReceiver {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         String channelId = "repeating_transactions";
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            NotificationChannel channel = new NotificationChannel(channelId, "Repeating Transactions", NotificationManager.IMPORTANCE_HIGH);
+            NotificationChannel channel = new NotificationChannel(channelId, context.getString(R.string.REPEATING_TRANSACTIONS), NotificationManager.IMPORTANCE_HIGH);
             notificationManager.createNotificationChannel(channel);
         }
 
+        boolean isOverdue = repeatingTransaction.isOverdueOnDate(new GregorianCalendar());
+        String notificationTitle = isOverdue
+                ? context.getString(R.string.REPEATING_OVERDUE_LABEL) + ": " + context.getString(R.string.REPEATING_NOTIFICATION_TITLE)
+                : context.getString(R.string.REPEATING_NOTIFICATION_TITLE);
+
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, channelId)
                 .setSmallIcon(R.drawable.ic_launcher_monochrome)
-                .setContentTitle((repeatingTransaction.isOverdueOnDate(new GregorianCalendar()) ? "OVERDUE " : "") + "Repeating Transaction Due")
+                .setContentTitle(notificationTitle)
                 .setContentText(newBody)
                 .setWhen(System.currentTimeMillis())
                 .setPriority(NotificationCompat.PRIORITY_HIGH)

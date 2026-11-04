@@ -6,11 +6,11 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.budgets.BudgetsRowAdapter;
 
@@ -97,44 +97,44 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static ArrayList<String> periods() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_REPEATING_FREQUENCY_DAILY);
-        list.add(Locales.kLOC_REPEATING_FREQUENCY_WEEKLY);
-        list.add(Locales.kLOC_REPEATING_FREQUENCY_MONTHLY);
-        list.add(Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY);
-        list.add(Locales.kLOC_REPEATING_FREQUENCY_YEARLY);
-        list.add(Locales.kLOC_BUDGETS_BIWEEKLY);
-        list.add(Locales.kLOC_BUDGETS_4WEEKS);
-        list.add(Locales.kLOC_BUDGETS_BIMONTHLY);
-        list.add(Locales.kLOC_BUDGETS_HALFYEAR);
+        list.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY));
+        list.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY));
+        list.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY));
+        list.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_QUARTERLY));
+        list.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY));
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_BIWEEKLY));
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_4WEEKS));
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_BIMONTHLY));
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_HALFYEAR));
         return list;
     }
 
     public String periodAsString() {
         return switch (getBudgetPeriod()) {
-            case Enums.kBudgetPeriodDay /*0*/ -> Locales.kLOC_REPEATING_FREQUENCY_DAILY;
-            case Enums.kBudgetPeriodWeek /*1*/ -> Locales.kLOC_REPEATING_FREQUENCY_WEEKLY;
-            case Enums.kBudgetPeriodMonth /*2*/ -> Locales.kLOC_REPEATING_FREQUENCY_MONTHLY;
-            case Enums.kBudgetPeriodQuarter /*3*/ -> Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY;
-            case Enums.kBudgetPeriodYear /*4*/ -> Locales.kLOC_REPEATING_FREQUENCY_YEARLY;
-            case Enums.kBudgetPeriodBiweekly /*5*/ -> Locales.kLOC_BUDGETS_BIWEEKLY;
-            case Enums.kBudgetPeriodBimonthly /*6*/ -> Locales.kLOC_BUDGETS_BIMONTHLY;
-            case Enums.kBudgetPeriodHalfYear /*7*/ -> Locales.kLOC_BUDGETS_HALFYEAR;
-            case Enums.kBudgetPeriod4Weeks /*8*/ -> Locales.kLOC_BUDGETS_4WEEKS;
+            case Enums.kBudgetPeriodDay /*0*/ -> SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY);
+            case Enums.kBudgetPeriodWeek /*1*/ -> SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY);
+            case Enums.kBudgetPeriodMonth /*2*/ -> SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY);
+            case Enums.kBudgetPeriodQuarter /*3*/ -> SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_QUARTERLY);
+            case Enums.kBudgetPeriodYear /*4*/ -> SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY);
+            case Enums.kBudgetPeriodBiweekly /*5*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_BIWEEKLY);
+            case Enums.kBudgetPeriodBimonthly /*6*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_BIMONTHLY);
+            case Enums.kBudgetPeriodHalfYear /*7*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_HALFYEAR);
+            case Enums.kBudgetPeriod4Weeks /*8*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_4WEEKS);
             default -> "";
         };
     }
 
     public void setPeriodFromString(String period) {
         ArrayList<String> periods = new ArrayList<>();
-        periods.add(Locales.kLOC_REPEATING_FREQUENCY_DAILY);
-        periods.add(Locales.kLOC_REPEATING_FREQUENCY_WEEKLY);
-        periods.add(Locales.kLOC_REPEATING_FREQUENCY_MONTHLY);
-        periods.add(Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY);
-        periods.add(Locales.kLOC_REPEATING_FREQUENCY_YEARLY);
-        periods.add(Locales.kLOC_BUDGETS_BIWEEKLY);
-        periods.add(Locales.kLOC_BUDGETS_BIMONTHLY);
-        periods.add(Locales.kLOC_BUDGETS_HALFYEAR);
-        periods.add(Locales.kLOC_BUDGETS_4WEEKS);
+        periods.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY));
+        periods.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_QUARTERLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.BUDGETS_BIWEEKLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.BUDGETS_BIMONTHLY));
+        periods.add(SMMoney.getAppContext().getString(R.string.BUDGETS_HALFYEAR));
+        periods.add(SMMoney.getAppContext().getString(R.string.BUDGETS_4WEEKS));
         for (int i = 0; i < periods.size(); i++) {
             if (periods.get(i).equalsIgnoreCase(period)) {
                 setBudgetPeriod(i);
@@ -157,8 +157,8 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static ArrayList<String> budgetTypes() {
         ArrayList<String> list = new ArrayList<>();
-        list.add(Locales.kLOC_BUDGETS_EXPENSES);
-        list.add(Locales.kLOC_BUDGETS_INCOME);
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_EXPENSES));
+        list.add(SMMoney.getAppContext().getString(R.string.BUDGETS_INCOME));
         return list;
     }
 
@@ -214,8 +214,8 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public String typeAsString() {
         return switch (getType()) {
-            case Enums.kCategoryExpense /*0*/ -> Locales.kLOC_BUDGETS_EXPENSES;
-            case Enums.kCategoryIncome /*1*/ -> Locales.kLOC_BUDGETS_INCOME;
+            case Enums.kCategoryExpense /*0*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_EXPENSES);
+            case Enums.kCategoryIncome /*1*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_INCOME);
             default -> "";
         };
     }

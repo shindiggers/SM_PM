@@ -8,8 +8,9 @@ import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
@@ -21,7 +22,17 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        CharSequence[] items = new CharSequence[]{Locales.kLOC_REPEATING_FREQUENCY_DAILY, Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_BUDGETS_BIWEEKLY, Locales.kLOC_BUDGETS_4WEEKS, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY, Locales.kLOC_BUDGETS_BIMONTHLY, Locales.kLOC_REPEATING_FREQUENCY_QUARTERLY, Locales.kLOC_BUDGETS_HALFYEAR, Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
+        CharSequence[] items = new CharSequence[]{
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_BIWEEKLY),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_4WEEKS),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_BIMONTHLY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_QUARTERLY),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_HALFYEAR),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY)
+        };
 
         int currentPref = Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD);
         int initialSelection = switch (currentPref) {
@@ -37,7 +48,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), PocketMoneyThemes.dialogTheme());
-        builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
+        builder.setTitle(R.string.BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, initialSelection, (dialog, which) -> {
                     int periodType = switch (which) {
                         case 1 -> Enums.kBudgetPeriodWeek;
@@ -55,7 +66,7 @@ public class BudgetsPeriodDialog extends AppCompatDialogFragment {
 
                     dialog.dismiss();
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton(R.string.GENERAL_CANCEL, (dialog, which) -> {
 
                 });
         return builder.create();

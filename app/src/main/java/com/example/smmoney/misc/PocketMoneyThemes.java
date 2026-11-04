@@ -30,19 +30,19 @@ public class PocketMoneyThemes {
 
 
     public static void setTheme(String themeStr) {
-        if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLACK)) {
+        if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_BLACK))) {
             theme = kThemeBlack;
-        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_BLUE)) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_BLUE))) {
             theme = kThemeBlue;
-        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_GREEN)) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_GREEN))) {
             theme = kThemeGreen;
-        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_PURPLE)) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_PURPLE))) {
             theme = kThemePurple;
-        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_GRAY)) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_GRAY))) {
             theme = kThemeGray;
-        } else if (themeStr.equals(Locales.kLOC_THEME_COLOR_COFFEE)) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_COFFEE))) {
             theme = kThemeCoffee;
-        } else if (themeStr.equals("Ruby")) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_RUBY))) {
             theme = kThemeRuby;
         } else if (themeStr.equals("White")) {
             theme = kThemeWhite;

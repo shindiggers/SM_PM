@@ -11,7 +11,7 @@ import android.widget.TextView;
 import androidx.activity.OnBackPressedCallback;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.CheckBoxTint;
@@ -27,7 +27,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.prefs_repeating);
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_REPEATING_TRANSACTIONS);
+            getSupportActionBar().setTitle(SMMoney.getAppContext().getString(R.string.REPEATING_TRANSACTIONS));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -44,7 +44,7 @@ public class RepeatingTransactionPrefsActivity extends PocketMoneyActivity {
         CheckBoxTint.colorCheckBox(this.postCheckBox);
         this.postEditText = findViewById(R.id.postedittext);
         this.postView = (LinearLayout) this.postEditText.getParent();
-        this.suffix = Locales.kLOC_PREFERENCES_DAYS;
+        this.suffix = SMMoney.getAppContext().getString(R.string.PREFERENCES_DAYS);
         setupViews();
     }
 

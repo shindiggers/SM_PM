@@ -4,9 +4,10 @@ import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -26,7 +27,7 @@ class ReportsRowHolder {
         this.expense.setText(this.report.expense.length() > PAYEE_NAME_LENGTH ? this.report.expense.substring(0, 19) : this.report.expense);
         
         
-        this.amount.setText(String.format(Locales.kLOC_REPORT_AMOUNT_FORMAT, 
+        this.amount.setText(String.format(SMMoney.getAppContext().getString(R.string.REPORT_AMOUNT_FORMAT),
                 amountString(), 
                 percentString(this.report.percent), 
                 this.report.count));

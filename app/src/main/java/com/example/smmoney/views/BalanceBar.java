@@ -66,7 +66,7 @@ public class BalanceBar extends FrameLayout {
         this.secondInnerLinearLayout.setGravity(Gravity.CENTER);
 
         this.balanceTypeTextView = new TextView(context);
-        this.balanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_CURRENT);
+        this.balanceTypeTextView.setText(R.string.SHOW_BALANCES_CURRENT);
         this.balanceTypeTextView.setGravity(Gravity.CENTER);
         this.balanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
         
@@ -93,7 +93,7 @@ public class BalanceBar extends FrameLayout {
         this.balanceView.addView(this.seperatorImage);
 
         this.secondBalanceTypeTextView = new TextView(context);
-        this.secondBalanceTypeTextView.setText(R.string.kLOC_SHOW_BALANCES_2NDLINE);
+        this.secondBalanceTypeTextView.setText(R.string.SHOW_BALANCES_2NDLINE);
         this.secondBalanceTypeTextView.setVisibility(GONE);
         this.secondBalanceTypeTextView.setGravity(Gravity.CENTER);
         this.secondBalanceTypeTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());

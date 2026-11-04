@@ -20,9 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.RepeatingTransactionClass;
@@ -51,7 +51,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
     private final ActivityResultLauncher<Intent> endOnLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
             if (result.getResultCode() != EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED) {
-                this.endOnTextView.setText(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+                this.endOnTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
             } else {
                 this.endOnTextView.setText(result.getData().getStringExtra("Date"));
             }
@@ -100,8 +100,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         loadViews();
         setupButtons();
         reloadData();
-        setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
-        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_EDIT_REPEATING_TITLE);
+        setTitle(R.string.EDIT_REPEATING_TITLE);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(R.string.EDIT_REPEATING_TITLE);
         getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
@@ -110,9 +110,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_REPEATING)) {
             Builder alert = new Builder(this, PocketMoneyThemes.dialogTheme());
-            alert.setTitle(Locales.kLOC_TIP_REEPEATING_TITLE);
-            alert.setMessage(Locales.kLOC_TIP_REEPEATING);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            alert.setTitle(R.string.TIP_REEPEATING_TITLE);
+            alert.setMessage(R.string.TIP_REEPEATING);
+            alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_REPEATING, true);
                 dialog.dismiss();
             });
@@ -260,10 +260,10 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         this.notifyDaysInAdvanceTextView.setText(String.valueOf(this.repeatingTransaction.getNotifyDaysInAdance()));
         switch (this.repeatingTransaction.getType()) {
             case Enums.repeatDaily /*1*/:
-                this.suffix = Locales.kLOC_REPEATING_FREQUENCY_DAYS;
+                this.suffix = SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAYS);
                 break;
             case Enums.repeatWeekly /*2*/:
-                this.suffix = Locales.kLOC_REPEATING_FREQUENCY_WEEKS;
+                this.suffix = SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKS);
                 ImageView[] checkMarks = new ImageView[]{this.sundayCheck, this.mondayCheck, this.tuesdayCheck, this.wednesdayCheck, this.thursdayCheck, this.fridayCheck, this.saturdayCheck};
                 int dow = 0;
                 boolean atLeastOneDaySet = false;
@@ -287,12 +287,12 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 }
                 break;
             case Enums.repeatMonthly /*3*/:
-                this.suffix = Locales.kLOC_REPEATING_FREQUENCY_MONTHS;
+                this.suffix = SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHS);
                 this.sundayTextView.setText(this.repeatingTransaction.repeatsOnDayOfMonthAsString());
                 this.mondayTextView.setText(this.repeatingTransaction.repeatsOnDateOfMonthAsString());
-                this.tuesdayTextView.setText(Locales.kLOC_REPEATING_LASTDAY_MONTH);
+                this.tuesdayTextView.setText(SMMoney.getAppContext().getString(R.string.REPEATING_LASTDAY_MONTH));
                 this.wednesdayTextView.setText(this.repeatingTransaction.repeatsOnLastOrdinalWeekdayAsString());
-                this.thursdayTextView.setText(Locales.kLOC_REPEATING_LASTWEEKDAY_MONTH);
+                this.thursdayTextView.setText(SMMoney.getAppContext().getString(R.string.REPEATING_LASTWEEKDAY_MONTH));
                 this.sundayCheck.setVisibility(View.GONE);
                 this.mondayCheck.setVisibility(View.GONE);
                 this.tuesdayCheck.setVisibility(View.GONE);
@@ -319,11 +319,11 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 this.sundayCheck.setVisibility(View.VISIBLE);
                 break;
             case Enums.repeatYearly /*4*/:
-                this.suffix = Locales.kLOC_REPEATING_FREQUENCY_YEARS;
+                this.suffix = SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARS);
                 break;
         }
         this.suffixTextView.setText(this.suffix);
-        this.endOnTextView.setText(this.repeatingTransaction.getEndDate() != null ? CalExt.descriptionWithMediumDate(this.repeatingTransaction.getEndDate()) : Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+        this.endOnTextView.setText(this.repeatingTransaction.getEndDate() != null ? CalExt.descriptionWithMediumDate(this.repeatingTransaction.getEndDate()) : SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
     }
 
     private void setupView() {
@@ -422,7 +422,7 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             this.repeatingTransaction.setFrequency(1);
         }
         String endOnText = this.endOnTextView.getText().toString();
-        this.repeatingTransaction.setEndDate(endOnText.equalsIgnoreCase(Locales.kLOC_EDIT_REPEATING_ENDONNONE) ? null : CalExt.dateFromDescriptionWithMediumDate(endOnText));
+        this.repeatingTransaction.setEndDate(endOnText.equalsIgnoreCase(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE)) ? null : CalExt.dateFromDescriptionWithMediumDate(endOnText));
         switch (this.repeatingTransaction.getType()) {
             case Enums.repeatWeekly /*2*/:
                 int dow = 0;

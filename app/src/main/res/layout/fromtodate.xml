@@ -13,7 +13,7 @@
         android:id="@+id/from_date_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/kLOC_EDIT_TRANSACTION_FROM"
+        android:text="@string/EDIT_TRANSACTION_FROM"
         android:textAppearance="?android:textAppearanceMedium"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -52,7 +52,7 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_FILTER_DATES_TODAY"
+            android:text="@string/FILTER_DATES_TODAY"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/any_date"
+            android:text="@string/ANY_DATE"
             app:cornerRadius="8dp" />
     </LinearLayout>
 
@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
-        android:text="@string/kLOC_EDIT_TRANSACTION_TO"
+        android:text="@string/EDIT_TRANSACTION_TO"
         android:textAppearance="?android:textAppearanceMedium"
         android:textStyle="bold"
         app:layout_constraintStart_toStartOf="parent"
@@ -110,7 +110,7 @@
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_FILTER_DATES_TODAY"
+            android:text="@string/FILTER_DATES_TODAY"
             app:cornerRadius="8dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -119,7 +119,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
-            android:text="@string/any_date"
+            android:text="@string/ANY_DATE"
             app:cornerRadius="8dp" />
     </LinearLayout>
 

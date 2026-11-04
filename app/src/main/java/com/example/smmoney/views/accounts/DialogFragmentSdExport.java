@@ -8,7 +8,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.R;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentSdExport extends DialogFragment {
@@ -23,7 +23,7 @@ public class DialogFragmentSdExport extends DialogFragment {
         AlertDialog.Builder builder;
         CharSequence[] items6 = new CharSequence[]{"QIF", "TDF", "CSV", "OFX/QFX"};
         builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
-        builder.setTitle(Locales.kLOC_TOOLS_EXPORT_SD);
+        builder.setTitle(R.string.TOOLS_EXPORT_SD);
         builder.setItems(items6, (dialog, item) -> {
             DialogSdExportListener activity = (DialogSdExportListener) getActivity();
             if (activity != null) {

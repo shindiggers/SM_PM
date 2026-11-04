@@ -45,11 +45,13 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.ui.res.stringResource
+import com.example.smmoney.R
+import com.example.smmoney.SMMoney
 import com.example.smmoney.database.AccountDB
 import com.example.smmoney.records.AccountClass
 import com.example.smmoney.misc.Prefs
 import com.example.smmoney.misc.Enums
-import com.example.smmoney.misc.Locales
 import com.example.smmoney.records.FilterClass
 import com.example.smmoney.views.transactions.TransactionsActivity
 import kotlinx.coroutines.Dispatchers
@@ -106,7 +108,7 @@ fun CreditCardSummaryList() {
     }
 
     if (summaries.isNotEmpty()) {
-        Text("Credit Card Summary", style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 16.dp))
+        Text(stringResource(R.string.CHARTS_CREDITCARD_SUMMARY), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(bottom = 16.dp))
         Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
             for (summary in summaries) {
                 CreditCardSummaryItem(summary)
@@ -235,7 +237,7 @@ fun NetWorthChart() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Net Worth", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f)) // Added weight so it shrinks if needed
+                Text(stringResource(R.string.CHARTS_NETWORTH), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f)) // Added weight so it shrinks if needed
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val periodText = when (currentPeriod) {
                         Enums.kBudgetPeriodQuarter -> "Quarterly"
@@ -261,28 +263,28 @@ fun NetWorthChart() {
                             onDismissRequest = { expandedPeriod = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Monthly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_MONTHLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodMonth
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Quarterly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_QUARTERLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodQuarter
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Half-Yearly") },
+                                text = { Text(stringResource(R.string.CHARTS_HALF_YEARLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodHalfYear
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Yearly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_YEARLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodYear
                                     expandedPeriod = false 
@@ -324,7 +326,7 @@ fun NetWorthChart() {
                         onClick = { showFilterDialog = true },
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp) // Minimum padding
                     ) {
-                        Text("Filter", maxLines = 1)
+                        Text(stringResource(R.string.TOOLS_FILTER), maxLines = 1)
                     }
                 }
             }
@@ -395,7 +397,7 @@ fun AccountFilterDialog(
 
     AlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text("Filter Accounts") },
+        title = { Text(stringResource(R.string.CHARTS_FILTER_ACCOUNTS)) },
         text = {
             Column {
                 Row(
@@ -405,10 +407,10 @@ fun AccountFilterDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TextButton(onClick = { selectedIds = allAccountIds }) {
-                        Text("Select All")
+                        Text(stringResource(R.string.CHARTS_SELECT_ALL))
                     }
                     TextButton(onClick = { selectedIds = emptySet() }) {
-                        Text("Deselect All")
+                        Text(stringResource(R.string.CHARTS_DESELECT_ALL))
                     }
                 }
                 LazyColumn(modifier = Modifier.weight(1f, fill = false)) {
@@ -450,12 +452,12 @@ fun AccountFilterDialog(
         },
         confirmButton = {
             TextButton(onClick = { onApply(selectedIds) }) {
-                Text("Apply")
+                Text(stringResource(R.string.GENERAL_APPLY))
             }
         },
         dismissButton = {
             TextButton(onClick = onDismiss) {
-                Text("Cancel")
+                Text(stringResource(R.string.GENERAL_CANCEL))
             }
         }
     )
@@ -515,7 +517,7 @@ fun CashFlowChart() {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text("Cash Flow", style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
+                Text(stringResource(R.string.CHARTS_CASHFLOW), style = MaterialTheme.typography.titleMedium, modifier = Modifier.weight(1f))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     val periodText = when (currentPeriod) {
                         Enums.kBudgetPeriodQuarter -> "Quarterly"
@@ -541,28 +543,28 @@ fun CashFlowChart() {
                             onDismissRequest = { expandedPeriod = false }
                         ) {
                             DropdownMenuItem(
-                                text = { Text("Monthly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_MONTHLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodMonth
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Quarterly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_QUARTERLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodQuarter
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Half-Yearly") },
+                                text = { Text(stringResource(R.string.CHARTS_HALF_YEARLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodHalfYear
                                     expandedPeriod = false 
                                 }
                             )
                             DropdownMenuItem(
-                                text = { Text("Yearly") },
+                                text = { Text(stringResource(R.string.REPEATING_FREQUENCY_YEARLY)) },
                                 onClick = { 
                                     currentPeriod = Enums.kBudgetPeriodYear
                                     expandedPeriod = false 
@@ -603,7 +605,7 @@ fun CashFlowChart() {
                         onClick = { showFilterDialog = true },
                         contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp)
                     ) {
-                        Text("Filter", maxLines = 1)
+                        Text(stringResource(R.string.TOOLS_FILTER), maxLines = 1)
                     }
                 }
             }
@@ -618,7 +620,7 @@ fun CashFlowChart() {
                     val filter = FilterClass()
                     
                     // Set Date Range
-                    filter.date = Locales.kLOC_FILTER_DATES_CUSTOM
+                    filter.date = SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM)
                     filter.dateFrom = clickedItem.fromDate
                     filter.dateTo = clickedItem.toDate
                     

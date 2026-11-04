@@ -17,7 +17,6 @@ import androidx.exifinterface.media.ExifInterface;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.PocketMoneyActivity;
 
@@ -38,7 +37,7 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
         setContentView(R.layout.photo_receipt_option);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_PHOTO_RECEIPT_TITLE);
+            getSupportActionBar().setTitle(R.string.PHOTO_RECEIPT_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -98,13 +97,13 @@ public class PhotoReceiptOptionsActivity extends PocketMoneyActivity {
         deleteTextView.setOnClickListener(v -> {
             AlertDialog.Builder b = new AlertDialog.Builder(PhotoReceiptOptionsActivity.this, PocketMoneyThemes.dialogTheme());
             b.setMessage("Are you sure you want to delete this picture?");
-            b.setPositiveButton(Locales.kLOC_GENERAL_YES, (dialog, which) -> {
+            b.setPositiveButton(R.string.GENERAL_YES, (dialog, which) -> {
                 Intent i = new Intent();
                 i.putExtra("imageName", PhotoReceiptOptionsActivity.this.imageName);
                 PhotoReceiptOptionsActivity.this.setResult(RESULT_DELETED, i);
                 PhotoReceiptOptionsActivity.this.finish();
             });
-            b.setNegativeButton(Locales.kLOC_GENERAL_NO, null);
+            b.setNegativeButton(R.string.GENERAL_NO, null);
             b.create().show();
         });
     }

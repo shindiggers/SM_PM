@@ -1,32 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- TODO: Add CheckBoxPreferences for "Red Withdrawals" and "Black Deposits" / amount color styling -->
+
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-    android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER">
+    android:title="@string/PREFS_VIEWOPTIONS_REGISTER">
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="prefsdisplayregisterid"
-        android:title="@string/kLOC_GENERAL_ID" />
+        android:title="@string/GENERAL_ID" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="prefsdisplayregistercategory"
-        android:title="@string/kLOC_GENERAL_CATEGORY" />
+        android:title="@string/GENERAL_CATEGORY" />
 
     <CheckBoxPreference
         android:defaultValue="true"
         android:key="prefsdisplayregisterdate"
-        android:title="@string/kLOC_GENERAL_DATE" />
+        android:title="@string/GENERAL_DATE" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="prefsdisplayregistermemo"
-        android:title="@string/kLOC_GENERAL_NOTE" />
+        android:title="@string/GENERAL_NOTE" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="prefsdisplayregisterclass"
-        android:title="@string/kLOC_GENERAL_CLASS" />
+        android:title="@string/GENERAL_CLASS" />
 
     <PreferenceCategory android:title="PLACEHOLDER">//todo: Entered this text to prevent red error.
         Work out what this is doing as it doesn't seem to appear in the preference screen
@@ -34,7 +36,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="prefsdisplayregistercurrentbalance"
-            android:title="@string/kLOC_SHOW_BALANCES_CURRENT" />
+            android:title="@string/SHOW_BALANCES_CURRENT" />
 
     </PreferenceCategory>
 
@@ -44,7 +46,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="prefsdisplayregistertruncateid"
-            android:title="@string/kLOC_TRUNCATE_ID" />
+            android:title="@string/TRUNCATE_ID" />
 
     </PreferenceCategory>
 
@@ -53,7 +55,7 @@
 
         <CheckBoxPreference
             android:key="prefsdisplayregisterforeignamount"
-            android:title="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
+            android:title="@string/EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT" />
 
     </PreferenceCategory>
 

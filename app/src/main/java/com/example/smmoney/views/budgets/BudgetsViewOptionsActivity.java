@@ -10,8 +10,8 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
@@ -30,8 +30,8 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
                         this.startOnDate.setSummary(data.getStringExtra("Date"));
                         Prefs.setPref(Prefs.BUDGETSTARTDATE, data.getStringExtra("Date"));
                     } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                        this.startOnDate.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
-                        Prefs.setPref(Prefs.BUDGETSTARTDATE, Locales.kLOC_GENERAL_DEFAULT);
+                        this.startOnDate.setSummary(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
+                        Prefs.setPref(Prefs.BUDGETSTARTDATE, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
                     }
                 }
             }
@@ -59,17 +59,21 @@ public class BudgetsViewOptionsActivity extends PocketMoneyPreferenceActivity {
 
     private String nameOfSortOnListPref(int sortOn) {
         return switch (sortOn) {
-            case Enums.kBudgetsSortTypeActual /*1*/ -> Locales.kLOC_BUDGETS_ACTUAL;
-            case Enums.kBudgetsSortTypeBudgeted /*2*/ -> Locales.kLOC_BUDGETS_BUDGETED;
-            case Enums.kBudgetsSortTypePercentage /*3*/ -> Locales.kLOC_BUDGETS_PERCENTAGE;
-            default -> Locales.kLOC_GENERAL_CATEGORY;
+            case Enums.kBudgetsSortTypeActual /*1*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_ACTUAL);
+            case Enums.kBudgetsSortTypeBudgeted /*2*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_BUDGETED);
+            case Enums.kBudgetsSortTypePercentage /*3*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_PERCENTAGE);
+            default -> SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY);
         };
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
         this.sortOnPref = fragment.findPreference("budgetsortonpref");
         this.startOnDate = fragment.findPreference("budgetStartDatePref");
-        this.sortOnPref.setEntries(new String[]{Locales.kLOC_GENERAL_CATEGORY, Locales.kLOC_BUDGETS_ACTUAL, Locales.kLOC_BUDGETS_BUDGETED, Locales.kLOC_BUDGETS_PERCENTAGE});
+        this.sortOnPref.setEntries(new String[]{
+                SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_ACTUAL),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_BUDGETED),
+                SMMoney.getAppContext().getString(R.string.BUDGETS_PERCENTAGE)});
         this.sortOnPref.setEntryValues(new String[]{"0", "1", "2", "3"});
         this.sortOnPref.setOnPreferenceChangeListener((preference, newValue) -> {
             int sortOn = Integer.parseInt((String) newValue);

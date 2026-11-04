@@ -67,7 +67,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@string/kLOC_LOOKUPS_POPUPLIST"
+                android:text="@string/LOOKUPS_POPUPLIST"
                 android:checked="true" />
 
             <RadioButton
@@ -75,7 +75,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="8dp"
-                android:text="@string/kLOC_LOOKUPS_EVERYWHERE" />
+                android:text="@string/LOOKUPS_EVERYWHERE" />
         </RadioGroup>
 
         <TextView
@@ -83,7 +83,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
-            android:text="@string/dialog_rename_lookup_helper_text"
+            android:text="@string/BUDGETS_DIALOG_RENAME_LOOKUP_HELPER_TEXT"
             android:textSize="12sp"
             android:alpha="0.7" />
 

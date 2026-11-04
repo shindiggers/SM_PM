@@ -4,29 +4,29 @@
     <ListPreference
         android:defaultValue="Black"
         android:key="themecolor"
-        android:title="@string/kLOC_INAPPPURCHASES_THEMESTITLE" />
+        android:title="@string/INAPPPURCHASES_THEMESTITLE" />
 
     <PreferenceCategory android:name="">
 
         <Preference
             android:key="AccountDisplayPrefs"
-            android:title="@string/kLOC_GENERAL_ACCOUNTS" />
+            android:title="@string/GENERAL_ACCOUNTS" />
 
         <Preference
             android:key="TransactionRegisterDisplayPrefs"
-            android:title="@string/kLOC_PREFS_VIEWOPTIONS_REGISTER" />
+            android:title="@string/PREFS_VIEWOPTIONS_REGISTER" />
 
         <Preference
             android:key="BudgetsPrefs"
-            android:title="@string/kLOC_GENERAL_BUDGETS" />
+            android:title="@string/GENERAL_BUDGETS" />
 
         <Preference
             android:key="EditTransactionPrefs"
-            android:title="@string/kLOC_EDIT_TRANSACTION_TITLE" />
+            android:title="@string/EDIT_TRANSACTION_TITLE" />
 
         <Preference
             android:key="ReportsPrefs"
-            android:title="@string/kLOC_GENERAL_REPORTS" />
+            android:title="@string/GENERAL_REPORTS" />
 
     </PreferenceCategory>
 
@@ -35,7 +35,7 @@
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="balancebarunified"
-            android:title="@string/kLOC_SAVE_BALANCES_BAR_UNIFIED" />
+            android:title="@string/SAVE_BALANCES_BAR_UNIFIED" />
 
     </PreferenceCategory>
 

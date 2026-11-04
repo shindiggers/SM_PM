@@ -13,8 +13,8 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
@@ -178,7 +178,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             }
 
             if (this.transaction.getNumberOfSplits() > 1) {
-                this.category.setText(Locales.kLOC_GENERAL_SPLITS);
+                this.category.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
             } else {
                 this.category.setText(this.transaction.getCategory());
             }

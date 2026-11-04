@@ -16,7 +16,6 @@ import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -145,7 +144,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             } else {
                 this.payee.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             }
-
+            // TODO: Add CheckBoxPreferences for "Red Withdrawals" and "Black Deposits" / amount color styling
             if (this.transaction.getType() == Enums.kTransactionTypeWithdrawal || this.transaction.getType() == Enums.kTransactionTypeTransferTo) {
                 this.amount.setText(this.transaction.subTotalAsCurrency());
                 this.amount.setTextColor(PocketMoneyThemes.redLabelColor());
@@ -166,7 +165,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             if (Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_CATEGORY_FIELD)) {
                 this.category.setTextColor(PocketMoneyThemes.alternateCellTextColor());
                 if (this.transaction.getNumberOfSplits() > 1) {
-                    categoryNotesString = Locales.kLOC_GENERAL_SPLITS;
+                    categoryNotesString = mContext.getString(R.string.GENERAL_SPLITS);
                 } else {
                     categoryNotesString = this.transaction.getCategory();
                 }

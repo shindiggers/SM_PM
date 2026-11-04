@@ -5,10 +5,10 @@ import android.database.CursorIndexOutOfBoundsException;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateClass;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 
@@ -62,7 +62,7 @@ public class AccountDB {
     }
 
     public static void setLastExportTimestampForAccount(String account) {
-        if (account.isEmpty() || account.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+        if (account.isEmpty() || account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS))) {
             Prefs.setPref(Prefs.LASTFULLEXPORT, System.currentTimeMillis());
             return;
         }
@@ -101,14 +101,12 @@ public class AccountDB {
 
     public static String totalWorthLabel(int type) {
         return switch (type) {
-            case Enums.kBalanceTypeFuture /*0*/ -> Locales.kLOC_SHOW_BALANCES_OVERALL;
-            case Enums.kBalanceTypeCleared /*1*/ -> Locales.kLOC_SHOW_BALANCES_CLEARED;
-            case Enums.kBalanceTypeCurrent /*2*/ -> Locales.kLOC_SHOW_BALANCES_CURRENT;
-            case Enums.kBalanceTypeAvailableFunds /*3*/ ->
-                    Locales.kLOC_SHOW_BALANCES_AVAILABLEFUNDS;
-            case Enums.kBalanceTypeAvailableCredit /*4*/ ->
-                    Locales.kLOC_SHOW_BALANCES_AVAILABLECREDIT;
-            case Enums.kBalanceTypeFiltered /*5*/ -> Locales.kLOC_TOOLS_FILTERED_BALANCE;
+            case Enums.kBalanceTypeFuture /*0*/ -> SMMoney.getAppContext().getString(R.string.SHOW_BALANCES_OVERALL);
+            case Enums.kBalanceTypeCleared /*1*/ -> SMMoney.getAppContext().getString(R.string.SHOW_BALANCES_CLEARED);
+            case Enums.kBalanceTypeCurrent /*2*/ -> SMMoney.getAppContext().getString(R.string.SHOW_BALANCES_CURRENT);
+            case Enums.kBalanceTypeAvailableFunds /*3*/ -> SMMoney.getAppContext().getString(R.string.SHOW_BALANCES_AVAILABLEFUNDS);
+            case Enums.kBalanceTypeAvailableCredit /*4*/ -> SMMoney.getAppContext().getString(R.string.SHOW_BALANCES_AVAILABLECREDIT);
+            case Enums.kBalanceTypeFiltered /*5*/ -> SMMoney.getAppContext().getString(R.string.TOOLS_FILTERED_BALANCE);
             default -> "";
         };
     }

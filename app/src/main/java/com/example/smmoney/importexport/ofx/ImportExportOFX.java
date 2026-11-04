@@ -5,10 +5,10 @@ import android.content.Context;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -44,7 +44,7 @@ public class ImportExportOFX {
     private void displayError(String error) {
         Builder builder = new Builder(SMMoney.getAppContext(), PocketMoneyThemes.dialogTheme());
         builder.setTitle(error);
-        builder.setPositiveButton(Locales.kLOC_GENERAL_OK, null);
+        builder.setPositiveButton(R.string.GENERAL_OK, null);
         builder.create().show();
     }
 

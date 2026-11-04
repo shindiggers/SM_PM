@@ -56,7 +56,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
+                    android:text="@string/EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:textSize="11sp" />
 
                 <EditText
@@ -136,7 +136,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="@string/kLOC_GENERAL_EXCHANGERATE"
+                    android:text="@string/GENERAL_EXCHANGERATE"
                     android:textSize="11sp" />
 
                 <EditText
@@ -211,7 +211,7 @@
                     android:layout_height="wrap_content"
                     android:paddingStart="4dp"
                     android:paddingEnd="4dp"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
+                    android:text="@string/EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT"
                     android:textSize="11sp" />
 
                 <EditText

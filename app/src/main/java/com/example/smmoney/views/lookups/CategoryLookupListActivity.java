@@ -18,7 +18,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AlertDialog;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.PayeeClass;
@@ -56,7 +56,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         if (this.payee.isEmpty()) {
             this.currentType = TYPE_ALL/*1*/;
             allButton.setChecked(true);
-            payeeButton.setText(Locales.kLOC_GENERAL_EMPTY_BRACKETS);
+            payeeButton.setText(SMMoney.getAppContext().getString(R.string.GENERAL_EMPTY_BRACKETS));
         }
         group.addOnButtonCheckedListener((tg, checkedId, isChecked) -> {
             if (isChecked && !CategoryLookupListActivity.this.progUpdate) {
@@ -101,7 +101,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
         setupView();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(this.isCategoryLookup ? Locales.kLOC_GENERAL_CATEGORY_TITLE : Locales.kLOC_GENERAL_PAYEE);
+            getSupportActionBar().setTitle(this.isCategoryLookup ? R.string.GENERAL_CATEGORY_TITLE : R.string.GENERAL_PAYEE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -127,14 +127,14 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
                 input.setText(originalString);
-                alert.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
+                alert.setTitle(R.string.LOOKUPS_RENAMEITEM);
                 alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
                     final String value = input.getText().toString().trim();
                     AlertDialog.Builder b = new AlertDialog.Builder(CategoryLookupListActivity.this, PocketMoneyThemes.dialogTheme());
-                    b.setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM);
-                    b.setMessage(Locales.kLOC_LOOKUPS_CHANGEBODY);
-                    CharSequence charSequence = Locales.kLOC_LOOKUPS_POPUPLIST;
+                    b.setTitle(R.string.LOOKUPS_RENAMEITEM);
+                    b.setMessage(R.string.LOOKUPS_CHANGEBODY);
+                    CharSequence charSequence = SMMoney.getAppContext().getString(R.string.LOOKUPS_POPUPLIST);
                     b.setPositiveButton(charSequence, (dialog2, which) -> {
                         if (CategoryLookupListActivity.this.isCategoryLookup) {
                             CategoryClass.renameFromToInDatabase(originalString, value, false);
@@ -143,7 +143,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                         }
                         CategoryLookupListActivity.this.reloadData();
                     });
-                    charSequence = Locales.kLOC_LOOKUPS_EVERYWHERE;
+                    charSequence = SMMoney.getAppContext().getString(R.string.LOOKUPS_EVERYWHERE);
                     //str = originalString; str already created above as final
                     b.setNegativeButton(charSequence, (dialog1, which) -> {
                         if (CategoryLookupListActivity.this.isCategoryLookup) {
@@ -155,7 +155,7 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                     });
                     b.create().show();
                 });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+                alert.setNegativeButton(R.string.GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
                 input.requestFocus();
                 return true;
@@ -172,13 +172,13 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
                 originalString = this.adapter.getItem(info.position);
                 alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
                 input = new EditText(this);
-                alert.setTitle(Locales.kLOC_ADDSUBCATEGORY);
+                alert.setTitle(R.string.ADDSUBCATEGORY);
                 alert.setView(input);
-                alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+                alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
                     CategoryClass.insertIntoDatabase(originalString + ":" + input.getText().toString().trim());
                     CategoryLookupListActivity.this.reloadData();
                 });
-                alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+                alert.setNegativeButton(R.string.GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
                 alert.show();
                 input.requestFocus();
                 return true;
@@ -194,10 +194,10 @@ public class CategoryLookupListActivity extends PocketMoneyActivity {
 
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
-        menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
-        menu.add(0, CMENU_EDIT, 0, Locales.kLOC_LOOKUPS_RENAMEITEM);
+        menu.add(0, CMENU_DELETE, 0, R.string.GENERAL_DELETE);
+        menu.add(0, CMENU_EDIT, 0, R.string.LOOKUPS_RENAMEITEM);
         if (this.isCategoryLookup) {
-            menu.add(0, CMENU_SUBCATEGORY, 0, Locales.kLOC_ADDSUBCATEGORY);
+            menu.add(0, CMENU_SUBCATEGORY, 0, R.string.ADDSUBCATEGORY);
         }
     }
 

@@ -29,9 +29,9 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -180,7 +180,7 @@ public class SplitsActivity extends PocketMoneyActivity {
         setResult(RESULT_NO_CHANGE);
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_EDIT_SPLITS_TITLE);
+            getSupportActionBar().setTitle(R.string.EDIT_SPLITS_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -243,7 +243,7 @@ public class SplitsActivity extends PocketMoneyActivity {
 
         alert.setTitle("Edit Total Value");
         alert.setView(input);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+        alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
             if (!value.isEmpty()) {
                 this.transaction.setSubTotal(CurrencyExt.amountFromString(value));
@@ -251,7 +251,7 @@ public class SplitsActivity extends PocketMoneyActivity {
                 reloadData();
             }
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null);
+        alert.setNegativeButton(R.string.GENERAL_CANCEL, null);
         alert.show();
     }
 
@@ -299,7 +299,7 @@ public class SplitsActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_SPLITS_NEW)
+        menu.add(0, MENU_NEW, 0, SMMoney.getAppContext().getString(R.string.SPLITS_NEW))
                 .setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;

@@ -1,7 +1,8 @@
 package com.example.smmoney.views.reports;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -18,14 +19,14 @@ public class ClassReportDataSource extends ReportDataSource {
     }
 
     public String title() {
-        return Locales.kLOC_GENERAL_CLASS;
+        return SMMoney.getAppContext().getString(R.string.GENERAL_CLASS);
     }
 
     public FilterClass newFilterBasedOnSelectedRow(String content) {
         FilterClass newFilter = this.filter.copy();
         addCurrentPeriodToFilter(newFilter);
-        if (Locales.kLOC_FILTERS_UNFILED.equals(content)) {
-            newFilter.setClassName(Locales.kLOC_FILTERS_UNFILED);
+        if (SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED).equals(content)) {
+            newFilter.setClassName(SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
         } else {
             newFilter.setClassName(content + "%");
         }
@@ -91,7 +92,7 @@ public class ClassReportDataSource extends ReportDataSource {
         Prefs.setPref(Prefs.VIEWACCOUNTS, oldAccountViewType);
         reportItem = scratchReport.get("");
         if (reportItem != null) {
-            reportItem.expense = Locales.kLOC_FILTERS_UNFILED;
+            reportItem.expense = SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED);
         }
         this.data = null;
         this.data = new ArrayList<>();

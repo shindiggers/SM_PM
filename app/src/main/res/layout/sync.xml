@@ -23,7 +23,7 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:padding="0dp"
-            android:text="@string/kLOC_DESKTOPSYNC_CLIENT"
+            android:text="@string/DESKTOPSYNC_CLIENT"
             app:cornerRadius="0dp" />
 
         <com.google.android.material.button.MaterialButton
@@ -35,7 +35,7 @@
             android:insetTop="0dp"
             android:insetBottom="0dp"
             android:padding="0dp"
-            android:text="@string/kLOC_DESKTOPSYNC_SERVER"
+            android:text="@string/DESKTOPSYNC_SERVER"
             app:cornerRadius="0dp" />
 
     </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -63,7 +63,7 @@
             android:layout_alignBaseline="@+id/ipaddress"
             android:layout_toStartOf="@+id/ipaddress"
             android:layout_marginEnd="10dp"
-            android:text="@string/kLOC_FILETRANSFERS_SERVERIP" />
+            android:text="@string/FILETRANSFERS_SERVERIP" />
 
         <TextView
             android:id="@+id/ipaddresstextview"
@@ -83,7 +83,7 @@
             android:layout_below="@+id/ipaddress"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
-            android:hint="@string/kLOC_FILETRANSFERS_PORT"
+            android:hint="@string/FILETRANSFERS_PORT"
             android:importantForAutofill="no"
             android:inputType="number"
             android:singleLine="true" />
@@ -94,7 +94,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/port"
             android:layout_alignEnd="@+id/iplabel"
-            android:text="@string/kLOC_FILETRANSFERS_PORT" />
+            android:text="@string/FILETRANSFERS_PORT" />
 
         <TextView
             android:id="@+id/instructions"
@@ -103,7 +103,7 @@
             android:layout_below="@+id/port"
             android:layout_marginTop="10dp"
             android:padding="10dp"
-            android:text="@string/kLOC_DESKTOPSYNC_DIRECTIONS" />
+            android:text="@string/DESKTOPSYNC_DIRECTIONS" />
 
         <Button
             android:id="@+id/syncbutton"
@@ -112,7 +112,7 @@
             android:layout_below="@+id/instructions"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:text="@string/kLOC_DESKTOPSYNC_SYNC" />
+            android:text="@string/DESKTOPSYNC_SYNC" />
 
         <TextView
             android:id="@+id/status"
@@ -121,7 +121,7 @@
             android:layout_below="@+id/syncbutton"
             android:layout_marginTop="10dp"
             android:padding="10dp"
-            android:text="@string/kLOC_DESKTOPSYNC_WAITINGSERVERID" />
+            android:text="@string/DESKTOPSYNC_WAITINGSERVERID" />
 
         <ProgressBar
             android:id="@+id/progressbar"
@@ -152,7 +152,7 @@
             android:layout_height="wrap_content"
             android:layout_alignBaseline="@+id/restorecheckbox"
             android:layout_alignEnd="@+id/iplabel"
-            android:text="@string/kLOC_DESKTOPSYNC_RESTOREFROMSERVER" />
+            android:text="@string/DESKTOPSYNC_RESTOREFROMSERVER" />
 
     </RelativeLayout>
 

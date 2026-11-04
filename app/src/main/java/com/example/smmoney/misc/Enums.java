@@ -61,9 +61,6 @@ public class Enums {
     public static final int kCategoryExpense = 0;
     public static final int kCategoryIncome = 1;
 
-    public static final int kChartTypeNegativePie = -1;
-    public static final int kChartTypePositivePie = 1;
-
     public static final int kClearedCleared = 1;
     public static final int kClearedDoesntMatter = 2;
     public static final int kClearedUncleared = 0;

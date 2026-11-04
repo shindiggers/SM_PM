@@ -4,6 +4,6 @@
     <ListPreference
         android:defaultValue="0"
         android:key="budgetsortonpref"
-        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON" />
+        android:title="@string/TRANSACTIONS_OPTIONS_SORTON" />
 
 </PreferenceScreen>

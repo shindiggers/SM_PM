@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1.0"
-        android:contentDescription="@string/receipt_image" />
+        android:contentDescription="@string/content_description_receipt_image" />
 
     <LinearLayout
         android:id="@+id/bottom_tool_bar"
@@ -28,14 +28,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="@string/kLOC_GENERAL_REPLACE"
+            android:text="@string/GENERAL_REPLACE"
             style="@style/Widget.MaterialComponents.Button" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/delete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_GENERAL_DELETE"
+            android:text="@string/GENERAL_DELETE"
             style="@style/Widget.MaterialComponents.Button" />
 
     </LinearLayout>

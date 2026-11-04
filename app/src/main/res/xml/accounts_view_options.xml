@@ -8,14 +8,14 @@
         android:defaultValue="0"
         android:key="prefsaccountsviewoptionsshowaccounts"
         android:persistent="false"
-        android:title="@string/kLOC_PREFERENCES_SHOW_ACCOUNTS_TITLE" />
+        android:title="@string/PREFERENCES_SHOW_ACCOUNTS_TITLE" />
 
-    <PreferenceCategory android:title="@string/kLOC_SHOW_BALANCES_OVERALL">
+    <PreferenceCategory android:title="@string/SHOW_BALANCES_OVERALL">
 
         <Preference
             android:key="prefsaccountsviewoptionsasofdate"
-            android:summary="@string/kLOC_EDIT_REPEATING_ENDONNONE"
-            android:title="@string/kLOC_GENERAL_ASOFDATE" />
+            android:summary="@string/EDIT_REPEATING_ENDONNONE"
+            android:title="@string/GENERAL_ASOFDATE" />
 
     </PreferenceCategory>
 

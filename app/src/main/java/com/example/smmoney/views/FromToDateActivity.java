@@ -12,8 +12,8 @@ import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 import com.google.android.material.button.MaterialButton;
@@ -34,7 +34,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         setupView();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_CUSTOM_DATE_RANGE);
+            getSupportActionBar().setTitle(SMMoney.getAppContext().getString(R.string.CUSTOM_DATE_RANGE_TITLE));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -111,7 +111,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
             validateRange();
         });
         fromNone.setOnClickListener(v -> {
-            fromDateButton.setText(Locales.kLOC_ANY_DATE);
+            fromDateButton.setText(SMMoney.getAppContext().getString(R.string.ANY_DATE));
             validateRange();
         });
         toToday.setOnClickListener(v -> {
@@ -119,7 +119,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
             validateRange();
         });
         toNone.setOnClickListener(v -> {
-            toDateButton.setText(Locales.kLOC_ANY_DATE);
+            toDateButton.setText(SMMoney.getAppContext().getString(R.string.ANY_DATE));
             validateRange();
         });
 
@@ -128,8 +128,8 @@ public class FromToDateActivity extends PocketMoneyActivity {
         if (bundle != null) {
             String from = bundle.getString("FromDate", "*");
             String to = bundle.getString("ToDate", "*");
-            this.fromDateButton.setText(from.equals("*") ? Locales.kLOC_ANY_DATE : from);
-            this.toDateButton.setText(to.equals("*") ? Locales.kLOC_ANY_DATE : to);
+            this.fromDateButton.setText(from.equals("*") ? SMMoney.getAppContext().getString(R.string.ANY_DATE) : from);
+            this.toDateButton.setText(to.equals("*") ? SMMoney.getAppContext().getString(R.string.ANY_DATE) : to);
         }
         validateRange();
     }
@@ -138,7 +138,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         String fromStr = this.fromDateButton.getText().toString();
         String toStr = this.toDateButton.getText().toString();
 
-        if (fromStr.equals(Locales.kLOC_ANY_DATE) || toStr.equals(Locales.kLOC_ANY_DATE)) {
+        if (fromStr.equals(SMMoney.getAppContext().getString(R.string.ANY_DATE)) || toStr.equals(SMMoney.getAppContext().getString(R.string.ANY_DATE))) {
             errorMessage.setVisibility(View.GONE);
             return true;
         }
@@ -160,8 +160,8 @@ public class FromToDateActivity extends PocketMoneyActivity {
             Intent i = new Intent();
             String from = this.fromDateButton.getText().toString();
             String to = this.toDateButton.getText().toString();
-            i.putExtra("FromDate", from.equals(Locales.kLOC_ANY_DATE) ? "*" : from);
-            i.putExtra("ToDate", to.equals(Locales.kLOC_ANY_DATE) ? "*" : to);
+            i.putExtra("FromDate", from.equals(SMMoney.getAppContext().getString(R.string.ANY_DATE)) ? "*" : from);
+            i.putExtra("ToDate", to.equals(SMMoney.getAppContext().getString(R.string.ANY_DATE)) ? "*" : to);
             setResult(FROMTODATE_RESULT_SELECTED, i);
             finish();
         } else {
@@ -173,7 +173,7 @@ public class FromToDateActivity extends PocketMoneyActivity {
         Button targetButton = isFromDate ? fromDateButton : toDateButton;
         GregorianCalendar theDate;
         String buttonText = targetButton.getText().toString();
-        if (buttonText.equals(Locales.kLOC_ANY_DATE)) {
+        if (buttonText.equals(SMMoney.getAppContext().getString(R.string.ANY_DATE))) {
             theDate = new GregorianCalendar();
         } else {
             theDate = CalExt.dateFromDescriptionWithMediumDate(buttonText);

@@ -16,7 +16,7 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.PocketMoneyActivity;
@@ -63,7 +63,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     }
 
     private void setTitle() {
-        Objects.requireNonNull(getSupportActionBar()).setTitle(Locales.kLOC_TOOLS_FILTERS);
+        Objects.requireNonNull(getSupportActionBar()).setTitle(SMMoney.getAppContext().getString(R.string.TOOLS_FILTERS));
     }
 
     @Override
@@ -84,8 +84,8 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         });
         this.currenctFilterView = findViewById(R.id.filtercurrent);
         this.currenctFilterView.setOnClickListener(v -> {
-            if (Objects.equals(FiltersMainActivity.this.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
-                FiltersMainActivity.this.filter.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+            if (Objects.equals(FiltersMainActivity.this.filter.getAccount(), SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT))) {
+                FiltersMainActivity.this.filter.setAccount(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
             }
             FiltersMainActivity.this.filter.setCustomFilter(true);
             FiltersMainActivity.this.filterSelected(FiltersMainActivity.this.filter);
@@ -125,7 +125,7 @@ public class FiltersMainActivity extends PocketMoneyActivity {
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_NEW, 0, Locales.kLOC_FILTER_NEW).setIcon(R.drawable.abouticon);
+        menu.add(0, MENU_NEW, 0, SMMoney.getAppContext().getString(R.string.FILTER_NEW)).setIcon(R.drawable.abouticon);
         return true;
     }
 
@@ -145,11 +145,11 @@ public class FiltersMainActivity extends PocketMoneyActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         Intent i = new Intent();
         i.putExtra("Filter", ((FilterRowHolder) v.getTag()).filter);
-        MenuItem item = menu.add(0, CMENU_EDIT, 0, Locales.kLOC_GENERAL_EDIT);
+        MenuItem item = menu.add(0, CMENU_EDIT, 0, R.string.GENERAL_EDIT);
         item.setIcon(R.drawable.abouticon);
         item.setIntent(i);
         if (v != this.currenctFilterView) {
-            item = menu.add(0, CMENU_DELETE, 0, Locales.kLOC_GENERAL_DELETE);
+            item = menu.add(0, CMENU_DELETE, 0, R.string.GENERAL_DELETE);
             item.setIcon(R.drawable.abouticon);
             item.setIntent(i);
         }

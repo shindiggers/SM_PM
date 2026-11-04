@@ -9,7 +9,7 @@ import android.widget.BaseAdapter;
 import android.widget.FrameLayout;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 
@@ -82,7 +82,7 @@ class FilterRowAdapter extends BaseAdapter {
     private OnClickListener getClickListener() {
         return v -> {
             FilterRowHolder vw = (FilterRowHolder) v.getTag();
-            if (Objects.equals(vw.filter.getAccount(), Locales.kLOC_FILTERS_CURRENT_ACCOUNT)) {
+            if (Objects.equals(vw.filter.getAccount(), SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT))) {
                 vw.filter.setAccount(FilterRowAdapter.this.filter.getAccount());
             }
             FilterRowAdapter.this.delegate.filterSelected(vw.filter);

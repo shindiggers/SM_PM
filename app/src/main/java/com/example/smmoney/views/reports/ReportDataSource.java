@@ -1,12 +1,13 @@
 package com.example.smmoney.views.reports;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.ColorExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -140,7 +141,7 @@ public abstract class ReportDataSource implements Serializable {
                     CalExt.descriptionWithMonth(startOfPeriod()) + " " + CalExt.descriptionWithYear(startOfPeriod()) + " - " + CalExt.descriptionWithMonth(endOfPeriod()) + " " + CalExt.descriptionWithYear(endOfPeriod());
             case Enums.kReportPeriodOneYear /*4*/ ->
                     CalExt.descriptionWithYear(this.currentDate);
-            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+            default -> SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL);
         };
     }
 
@@ -214,7 +215,7 @@ public abstract class ReportDataSource implements Serializable {
 
     TransactionClass[] transactionsFromDateToDate(GregorianCalendar fromDate, GregorianCalendar toDate) {
         FilterClass tempFilter = this.filter.copy();
-        tempFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
+        tempFilter.setDate(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM));
         tempFilter.setDateFrom(fromDate);
         tempFilter.setDateTo(toDate);
         return TransactionDB.queryWithFilterToCArray(tempFilter);
@@ -227,11 +228,11 @@ public abstract class ReportDataSource implements Serializable {
             modFilter.setDateFrom(this.filter.getDateFrom());
             modFilter.setDateTo(this.filter.getDateTo());
         } else {
-            modFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
+            modFilter.setDate(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM));
             modFilter.setDateFrom(startOfPeriod());
             modFilter.setDateTo(endOfPeriod());
         }
-        if (this.filter.getDate() != null && !this.filter.getDate().isEmpty() && !this.filter.getDate().equals(Locales.kLOC_FILTER_DATES_ALL)) {
+        if (this.filter.getDate() != null && !this.filter.getDate().isEmpty() && !this.filter.getDate().equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL))) {
             GregorianCalendar fromDate;
             GregorianCalendar toDate;
             if (this.filter.isCustomDate()) {
@@ -246,7 +247,7 @@ public abstract class ReportDataSource implements Serializable {
                 }
                 toDate.setTimeInMillis(FilterClass.convertFilterDateIsFromDate(str, false));
             }
-            modFilter.setDate(Locales.kLOC_FILTER_DATES_CUSTOM);
+            modFilter.setDate(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM));
             if (modFilter.getDateFrom() != null) {
                 fromDate = laterDate(modFilter.getDateFrom(), fromDate);
             }

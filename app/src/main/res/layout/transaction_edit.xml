@@ -56,7 +56,7 @@
                     android:layout_weight="1.0"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="@string/kLOC_GENERAL_WITHDRAWAL"
+                    android:text="@string/GENERAL_WITHDRAWAL"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -67,7 +67,7 @@
                     android:layout_weight="1.0"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="@string/kLOC_GENERAL_DEPOSIT"
+                    android:text="@string/GENERAL_DEPOSIT"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -78,7 +78,7 @@
                     android:layout_weight="1.0"
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
-                    android:text="@string/kLOC_GENERAL_TRANSFER"
+                    android:text="@string/GENERAL_TRANSFER"
                     android:textAllCaps="false"
                     app:cornerRadius="4dp" />
             </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -90,7 +90,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_DATE"
+                android:text="@string/GENERAL_DATE"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/radiogroup" />
 
@@ -144,7 +144,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_ACCOUNT"
+                android:text="@string/GENERAL_ACCOUNT"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider1" />
 
@@ -186,7 +186,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_PAYEE"
+                android:text="@string/GENERAL_PAYEE"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider2" />
 
@@ -196,7 +196,7 @@
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/kLOC_GENERAL_PAYEE"
+                android:hint="@string/GENERAL_PAYEE"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
                 android:textColorHint="@color/blue_theme_text_alt"
@@ -232,7 +232,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_CATEGORY"
+                android:text="@string/GENERAL_CATEGORY"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider3" />
 
@@ -254,7 +254,7 @@
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/kLOC_GENERAL_CATEGORY"
+                android:hint="@string/GENERAL_CATEGORY"
                 android:imeOptions="actionNext"
                 android:singleLine="true"
                 android:textColorHint="@color/blue_theme_text_alt"
@@ -267,7 +267,7 @@
                 android:layout_width="48dp"
                 android:layout_height="58dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/kLOC_EDIT_SPLITS_TITLE"
+                android:contentDescription="@string/EDIT_SPLITS_TITLE"
                 android:padding="12dp"
                 android:src="@drawable/ic_call_split_white_24dp"
                 app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
@@ -301,7 +301,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_AMOUNT"
+                android:text="@string/GENERAL_AMOUNT"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider4" />
 
@@ -311,7 +311,7 @@
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/kLOC_GENERAL_AMOUNT"
+                android:hint="@string/GENERAL_AMOUNT"
                 android:importantForAutofill="no"
                 android:inputType="numberDecimal"
                 android:singleLine="true"
@@ -336,7 +336,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:singleLine="true"
-                    android:text="@string/kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
+                    android:text="@string/EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT"
                     android:textSize="12sp" />
 
                 <TextView
@@ -376,7 +376,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_ID"
+                android:text="@string/GENERAL_ID"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider5" />
 
@@ -386,7 +386,7 @@
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/kLOC_GENERAL_ID"
+                android:hint="@string/GENERAL_ID"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:singleLine="true"
@@ -423,7 +423,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_CLEARED"
+                android:text="@string/GENERAL_CLEARED"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider6" />
 
@@ -452,7 +452,7 @@
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/kLOC_GENERAL_CLASS"
+                android:text="@string/GENERAL_CLASS"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider7" />
 
@@ -472,7 +472,7 @@
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/kLOC_GENERAL_CLASS"
+                android:hint="@string/GENERAL_CLASS"
                 android:imeOptions="actionNext"
                 android:inputType="text"
                 android:singleLine="true"
@@ -510,7 +510,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:gravity="start"
-                android:text="@string/kLOC_GENERAL_NOTE"
+                android:text="@string/GENERAL_NOTE"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider8" />
 
@@ -523,7 +523,7 @@
                 android:importantForAutofill="no"
                 android:gravity="top|start"
                 android:inputType="textMultiLine|textCapSentences|textAutoCorrect"
-                android:hint="@string/kLOC_GENERAL_NOTE"
+                android:hint="@string/GENERAL_NOTE"
                 android:minHeight="58dp"
                 app:layout_constraintEnd_toStartOf="@+id/camera_button"
                 app:layout_constraintStart_toEndOf="@id/memo_label"
@@ -565,7 +565,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/kLOC_GENERAL_DUPLICATE"
+                    android:text="@string/GENERAL_DUPLICATE"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -573,7 +573,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/kLOC_ACCOUNT_FEE_LABEL"
+                    android:text="@string/ACCOUNT_FEE_LABEL"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton
@@ -581,7 +581,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/kLOC_GENERAL_DELETE"
+                    android:text="@string/GENERAL_DELETE"
                     android:textAllCaps="false"
                     app:iconTint="@color/theme_red_label_color"
                     android:textColor="@color/theme_red_label_color" />
@@ -625,7 +625,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="15dp"
                 android:padding="3dp"
-                android:text="@string/kLOC_GENERAL_KEEP_CHANGE"
+                android:text="@string/GENERAL_KEEP_CHANGE"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textStyle="bold"
                 tools:textColor="@color/black_theme_text" />
@@ -637,7 +637,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="15dp"
                 android:padding="3dp"
-                android:text="@string/kLOC_GENERAL_CONTACTS"
+                android:text="@string/GENERAL_CONTACTS"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textStyle="bold"
                 android:visibility="gone"
@@ -651,7 +651,7 @@
                 android:layout_gravity="center_vertical"
                 android:layout_marginStart="15dp"
                 android:padding="3dp"
-                android:text="@string/kLOC_CHECKNUMBER_NEXT"
+                android:text="@string/CHECKNUMBER_NEXT"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textStyle="bold"
                 android:visibility="gone"

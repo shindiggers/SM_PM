@@ -25,7 +25,6 @@ import androidx.annotation.Nullable;
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -260,7 +259,7 @@ public class ReportsActivity extends PocketMoneyActivity implements ReportDialog
     private void loadBalanceBar() {
         double amount = this.datasource.expenseTotal();
         this.balanceAmountView.setText(this.datasource.expenseTotalAsString());
-        this.balanceLabelView.setText(Locales.kLOC_REPORT_EXPENSETOTAL);
+        this.balanceLabelView.setText(SMMoney.getAppContext().getString(R.string.REPORT_EXPENSETOTAL));
         if (amount < 0.0d) {
             this.balanceLabelView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());
             this.balanceAmountView.setTextColor(PocketMoneyThemes.redOnBlackLabelColor());

@@ -1,7 +1,8 @@
 package com.example.smmoney.views.reports;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -18,14 +19,14 @@ public class CategoryReportDataSource extends ReportDataSource {
     }
 
     public String title() {
-        return Locales.kLOC_GENERAL_CATEGORY;
+        return SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY);
     }
 
     public FilterClass newFilterBasedOnSelectedRow(String content) {
         FilterClass newFilter = this.filter.copy();
         addCurrentPeriodToFilter(newFilter);
-        if (Locales.kLOC_FILTERS_UNFILED.equals(content)) {
-            newFilter.setCategory(Locales.kLOC_FILTERS_UNFILED);
+        if (SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED).equals(content)) {
+            newFilter.setCategory(SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
         } else {
             // Use a wildcard to catch the category and all its subcategories
             // This works regardless of the "Group Subcategories" setting for the drill-down
@@ -114,7 +115,7 @@ public class CategoryReportDataSource extends ReportDataSource {
         Prefs.setPref(Prefs.VIEWACCOUNTS, oldAccountViewType);
         reportItem = scratchReport.get("");
         if (reportItem != null) {
-            reportItem.expense = Locales.kLOC_FILTERS_UNFILED;
+            reportItem.expense = SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED);
         }
         this.data = null;
         this.data = new ArrayList<>();

@@ -38,7 +38,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CATEGORY" />
+                    android:text="@string/GENERAL_CATEGORY" />
 
                 <TextView
                     android:id="@+id/categorytextview"
@@ -60,7 +60,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_CATEGORY"
+                    android:hint="@string/GENERAL_CATEGORY"
                     android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious"
                     android:inputType="textCapWords"
                     android:singleLine="true" />
@@ -85,7 +85,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
-                    android:text="@string/kLOC_BUDGETS_TYPE" />
+                    android:text="@string/BUDGETS_TYPE" />
 
                 <TextView
                     android:id="@+id/budgettexttextview"
@@ -104,7 +104,7 @@
                     android:background="@null"
                     android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     android:clickable="false"
-                    android:contentDescription="@string/kLOC_BUDGETS_TYPE" />
+                    android:contentDescription="@string/BUDGETS_TYPE" />
 
             </LinearLayout>
 
@@ -126,7 +126,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
-                    android:text="@string/kLOC_BUDGETS_PERIOD" />
+                    android:text="@string/BUDGETS_PERIOD" />
 
                 <TextView
                     android:id="@+id/periodtextview"
@@ -145,7 +145,7 @@
                     android:background="@null"
                     android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     android:clickable="false"
-                    android:contentDescription="@string/kLOC_BUDGETS_PERIOD" />
+                    android:contentDescription="@string/BUDGETS_PERIOD" />
 
             </LinearLayout>
 
@@ -165,7 +165,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="center_vertical"
-                    android:text="@string/kLOC_BUDGETS_AMOUNT" />
+                    android:text="@string/BUDGETS_AMOUNT" />
 
                 <EditText
                     android:id="@+id/budgetedittext"
@@ -174,7 +174,7 @@
                     android:layout_marginEnd="4dp"
                     android:layout_weight="1.0"
                     android:gravity="center_vertical"
-                    android:hint="@string/kLOC_GENERAL_AMOUNT"
+                    android:hint="@string/GENERAL_AMOUNT"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
                     android:singleLine="true" />
@@ -192,7 +192,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_BUDGETS_ROLLOVERS" />
+                    android:text="@string/BUDGETS_ROLLOVERS" />
 
                 <CheckBox
                     android:id="@+id/rollovercheckbox"
@@ -215,7 +215,7 @@
                     android:layout_marginStart="6dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_BUDGETS_TOTALSUBCATEGORY" />
+                    android:text="@string/BUDGETS_TOTALSUBCATEGORY" />
 
                 <CheckBox
                     android:id="@+id/includesubcategoriescheckbox"
@@ -238,7 +238,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
                 android:layout_marginEnd="10dp"
-                android:text="@string/kLOC_BUDGET_ENABLE_VARIABLE" />
+                android:text="@string/BUDGET_ENABLE_VARIABLE" />
 
             <FrameLayout
                 android:id="@+id/addbudgetcell"
@@ -254,14 +254,14 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|end"
                     android:layout_marginEnd="50dp"
-                    android:text="@string/kLOC_BUDGETS_NEW" />
+                    android:text="@string/BUDGETS_NEW" />
 
                 <ImageView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="50dp"
-                    android:contentDescription="@string/kLOC_BUDGETS_NEW"
+                    android:contentDescription="@string/BUDGETS_NEW"
                     android:src="@drawable/ic_add_circle_outline_white_24dp_svg" />
 
             </FrameLayout>
@@ -281,7 +281,7 @@
                     android:layout_gravity="start|center_vertical"
                     android:layout_marginStart="50dp"
                     android:gravity="center_vertical"
-                    android:text="@string/kLOC_GENERAL_DATE"
+                    android:text="@string/GENERAL_DATE"
                     tools:visibility="visible" />
 
                 <TextView
@@ -291,7 +291,7 @@
                     android:layout_gravity="end|center_vertical"
                     android:layout_marginEnd="50dp"
                     android:gravity="center_vertical"
-                    android:text="@string/kLOC_BUDGETS_AMOUNT"
+                    android:text="@string/BUDGETS_AMOUNT"
                     tools:visibility="visible" />
 
             </FrameLayout>

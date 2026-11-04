@@ -10,9 +10,9 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.EndOnDateActivity;
@@ -32,7 +32,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
                         this.asOfDatePref.setSummary(data.getStringExtra("Date"));
                         Prefs.setPref(Prefs.BALANCEONDATE, CalExt.dateFromDescriptionWithMediumDate(data.getStringExtra("Date")).getTimeInMillis());
                     } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                        this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+                        this.asOfDatePref.setSummary(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
                         Prefs.setPref(Prefs.BALANCEONDATE, 0L);
                     }
                 }
@@ -60,7 +60,7 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
             cal.setTimeInMillis(millis);
             this.asOfDatePref.setSummary(CalExt.descriptionWithMediumDate(cal));
         } else {
-            this.asOfDatePref.setSummary(Locales.kLOC_EDIT_REPEATING_ENDONNONE);
+            this.asOfDatePref.setSummary(SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
         }
         this.showAccountsListPref.setSummary(nameOfAccountListPref());
     }
@@ -71,16 +71,16 @@ public class AccountsViewOptionsActivity extends PocketMoneyPreferenceActivity {
 
     private String nameOfAccountListPref(int viewType) {
         return switch (viewType) {
-            case Enums.kViewAccountsNonZero /*1*/ -> Locales.kLOC_PREFERENCES_NON_ZERO;
-            case Enums.kViewAccountsTotalWorth /*2*/ -> Locales.kLOC_GENERAL_TOTALWORTH;
-            default -> Locales.kLOC_PREFERENCES_SHOW_ALL;
+            case Enums.kViewAccountsNonZero /*1*/ -> SMMoney.getAppContext().getString(R.string.PREFERENCES_NON_ZERO);
+            case Enums.kViewAccountsTotalWorth /*2*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_TOTALWORTH);
+            default -> SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL);
         };
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
         this.showAccountsListPref = fragment.findPreference("prefsaccountsviewoptionsshowaccounts");
         this.asOfDatePref = fragment.findPreference(Prefs.BALANCEONDATE);
-        String[] theStrings = new String[]{Locales.kLOC_PREFERENCES_SHOW_ALL, Locales.kLOC_PREFERENCES_NON_ZERO, Locales.kLOC_GENERAL_TOTALWORTH};
+        String[] theStrings = new String[]{SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL), SMMoney.getAppContext().getString(R.string.PREFERENCES_NON_ZERO), SMMoney.getAppContext().getString(R.string.GENERAL_TOTALWORTH)};
         this.showAccountsListPref.setEntries(theStrings);
         this.showAccountsListPref.setEntryValues(new String[]{"0", "1", "2"});
         this.showAccountsListPref.setValue(String.valueOf(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));

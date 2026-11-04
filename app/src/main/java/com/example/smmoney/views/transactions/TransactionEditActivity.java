@@ -45,12 +45,12 @@ import androidx.core.os.BundleCompat;
 import androidx.exifinterface.media.ExifInterface;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.misc.TransactionTransferRetVals;
@@ -356,7 +356,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         selectStartingCell();
         
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_EDIT_TRANSACTION_TITLE);
+            getSupportActionBar().setTitle(R.string.EDIT_TRANSACTION_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -635,7 +635,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                             .setTitle(R.string.dialog_discard_changes_title)
                             .setMessage(R.string.dialog_discard_changes_message)
                             .setPositiveButton(R.string.dialog_discard_changes_positive, (dialog, which) -> finish())
-                            .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                            .setNegativeButton(R.string.GENERAL_CANCEL, null)
                             .show();
                 } else {
                     finish();
@@ -704,11 +704,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (this.transaction != null && this.transaction.getTransactionID() == 0) {
             String thePref = Prefs.getStringPref(Prefs.EDITTRANSACTION_STARTING_FIELD);
 
-            if (Locales.kLOC_GENERAL_PAYEE.equals(thePref)) {
+            if (SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE).equals(thePref)) {
             this.payeeEditText.post(() -> this.payeeEditText.requestFocus());
-            } else if (Locales.kLOC_GENERAL_CATEGORY.equals(thePref)) {
+            } else if (SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY).equals(thePref)) {
             this.categoryEditText.post(() -> this.categoryEditText.requestFocus());
-            } else if (Locales.kLOC_GENERAL_AMOUNT.equals(thePref)) {
+            } else if (SMMoney.getAppContext().getString(R.string.GENERAL_AMOUNT).equals(thePref)) {
                 this.amountEditText.post(this::amountAction);
             } else {
                 getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
@@ -823,7 +823,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (this.transaction.getNumberOfSplits() > 1) {
             this.categoryEditText.setVisibility(View.GONE);
             this.categoryTextView.setVisibility(View.VISIBLE);
-            this.categoryTextView.setText(Locales.kLOC_GENERAL_SPLITS);
+            this.categoryTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
         } else {
             this.categoryEditText.setText(this.transaction.getCategory());
             this.categoryEditText.setVisibility(View.VISIBLE);
@@ -833,7 +833,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (this.transaction.multipleClassNames()) {
             this.classEditText.setVisibility(View.GONE);
             this.classTextView.setVisibility(View.VISIBLE);
-            this.classTextView.setText(Locales.kLOC_GENERAL_SPLITS);
+            this.classTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
         } else {
             this.classEditText.setText(this.transaction.getClassName());
             this.classEditText.setVisibility(View.VISIBLE);
@@ -963,21 +963,21 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void showDeleteConfirmDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_GENERAL_DELETE)
+                .setTitle(R.string.GENERAL_DELETE)
                 .setMessage("Are you sure you want to delete this transaction?")
-                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                .setPositiveButton(R.string.GENERAL_DELETE, (dialog, which) -> {
                     editTransactionDelete();
                     finish();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, null)
                 .show();
     }
 
     private void showDuplicateDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_DUPLICATE_TRANSACTION_TITLE)
-                .setNegativeButton(Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, (dialog, item) -> duplicateTransaction(false))
-                .setPositiveButton(Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME, (dialog, item) -> duplicateTransaction(true))
+                .setTitle(R.string.DUPLICATE_TRANSACTION_TITLE)
+                .setNegativeButton(R.string.DUPLICATE_TRANSACTION_EXISTING_TIME, (dialog, item) -> duplicateTransaction(false))
+                .setPositiveButton(R.string.DUPLICATE_TRANSACTION_PRESENT_TIME, (dialog, item) -> duplicateTransaction(true))
                 .show();
     }
 
@@ -1016,7 +1016,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         feeTrans.setSubTotal(Math.abs(this.transaction.getSubTotal()) * account.getFee() * -1.0d);
         feeTrans.setAmount(feeTrans.getSubTotal());
         feeTrans.setCurrencyCode(account.getCurrencyCode());
-        feeTrans.setCategory(Locales.kLOC_ACCOUNT_FEE_LABEL);
+        feeTrans.setCategory(SMMoney.getAppContext().getString(R.string.ACCOUNT_FEE_LABEL));
         feeTrans.initType();
         feeTrans.saveToDatabase();
         Toast.makeText(this, "Fee transaction added", Toast.LENGTH_SHORT).show();
@@ -1024,15 +1024,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void showFeeDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setMessage(Locales.kLOC_FEE_MISSING_ALERT)
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, null).show();
+                .setMessage(R.string.FEE_MISSING_ALERT)
+                .setPositiveButton(R.string.GENERAL_OK, null).show();
     }
 
     private void showCameraDialog(String replaceTarget) {
         this.imageToReplace = replaceTarget;
         new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle("Add Photo")
-                .setItems(new String[]{"Take Photo", "Choose from Gallery"}, (dialog, which) -> {
+                .setItems(new String[]{String.valueOf(R.string.IMAGE_TAKEPHOTO), String.valueOf(R.string.IMAGE_CHOOSEPHOTO)}, (dialog, which) -> {
                     if (which == 0) {
                         try {
                             File tempPhotoPath = new File(getExternalCacheDir(), "temp.jpg");
@@ -1045,26 +1045,26 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                         galleryLauncher.launch("image/*");
                     }
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> imageToReplace = null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, (dialog, which) -> imageToReplace = null)
                 .setOnCancelListener(dialog -> imageToReplace = null)
                 .show();
     }
 
     private void showNeedAccountDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setMessage(Locales.kLOC_EDIT_TRANSACTION_MISSINGACCOUNT)
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, null).show();
+                .setMessage(R.string.EDIT_TRANSACTION_MISSINGACCOUNT)
+                .setPositiveButton(R.string.GENERAL_OK, null).show();
     }
 
     private void showNeedRepeatingDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
                 .setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.")
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, null).show();
+                .setPositiveButton(R.string.GENERAL_OK, null).show();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE)
+        menu.add(0, MENU_SAVE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_SAVE))
                 .setIcon(R.drawable.ic_save_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
@@ -1214,7 +1214,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         record.setSubTotal(this.changeKept * -1.0d);
         record.setAmount(this.changeKept * -1.0d);
         record.setCurrencyCode(account.getCurrencyCode());
-        record.setCategory(Locales.kLOC_GENERAL_KEEP_CHANGE);
+        record.setCategory(SMMoney.getAppContext().getString(R.string.GENERAL_KEEP_CHANGE));
         record.setType(Enums.kTransactionTypeTransferFrom);
         record.setClassName(this.transaction.getClassName());
         record.initType();
@@ -1405,29 +1405,29 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (transaction.isWithdrawal()) {
             withdrawalButton.setChecked(true);
             this.payeeEditText.setEnabled(true);
-            this.payeeEditText.setHint(Locales.kLOC_GENERAL_PAYEE);
+            this.payeeEditText.setHint(SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE));
             if (this.payeeLabelTextView != null) {
-                this.payeeLabelTextView.setText(Locales.kLOC_GENERAL_PAYEE);
+                this.payeeLabelTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE));
             }
         } else if (transaction.isDeposit()) {
             depositButton.setChecked(true);
             this.payeeEditText.setEnabled(true);
-            this.payeeEditText.setHint(Locales.kLOC_GENERAL_PAYEE);
+            this.payeeEditText.setHint(SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE));
             if (this.payeeLabelTextView != null) {
-                this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_FROM);
+                this.payeeLabelTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_FROM));
             }
         } else if (transaction.isTransfer()) {
             transferButton.setChecked(true);
             this.payeeEditText.setEnabled(false);
             if (transaction.getType() == Enums.kTransactionTypeTransferFrom /*3*/) {
-                this.payeeEditText.setHint(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
+                this.payeeEditText.setHint(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_FROM));
                 if (this.payeeLabelTextView != null) {
-                    this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_FROM);
+                    this.payeeLabelTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_FROM));
                 }
             } else {
-                this.payeeEditText.setHint(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+                this.payeeEditText.setHint(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_TO));
                 if (this.payeeLabelTextView != null) {
-                    this.payeeLabelTextView.setText(Locales.kLOC_EDIT_TRANSACTION_TRANS_TO);
+                    this.payeeLabelTextView.setText(SMMoney.getAppContext().getString(R.string.EDIT_TRANSACTION_TRANS_TO));
                 }
             }
         }

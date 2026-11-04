@@ -14,9 +14,9 @@ import androidx.appcompat.widget.AppCompatCheckBox;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -42,13 +42,13 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
     private ArrayList<ArrayList<AccountClass>> sectionedAccounts = new ArrayList<>();
     
     private final String[] sectionedAccountStrings = new String[]{
-            Locales.kLOC_ACCOUNTSECTION_BANKS, 
-            Locales.kLOC_ACCOUNTSECTION_CASH, 
-            Locales.kLOC_ACCOUNTSECTION_CREDIT, 
-            Locales.kLOC_ACCOUNTSECTION_ASSETS, 
-            Locales.kLOC_ACCOUNTSECTION_LIABILITIES, 
-            Locales.kLOC_ACCOUNTSECTION_ONLINE, 
-            Locales.kLOC_FILTER_DATES_CUSTOM
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_BANKS),
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_CASH),
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_CREDIT),
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_ASSETS),
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_LIABILITIES),
+            SMMoney.getAppContext().getString(R.string.ACCOUNTSECTION_ONLINE),
+            SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM)
     };
     
     private final String[] showSectionedAccountsPrefs = new String[]{
@@ -160,13 +160,13 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
         // Custom rows
         if (Prefs.getBooleanPref(Prefs.ALLTRANSACTIONS)) {
-            items.add(AccountListItem.createCustom(Locales.kLOC_ALL_TRANSACTIONS));
+            items.add(AccountListItem.createCustom(SMMoney.getAppContext().getString(R.string.ALL_TRANSACTIONS)));
         }
         if (Prefs.getBooleanPref(Prefs.FILTERS)) {
-            items.add(AccountListItem.createCustom(Locales.kLOC_TOOLS_FILTERS));
+            items.add(AccountListItem.createCustom(SMMoney.getAppContext().getString(R.string.TOOLS_FILTERS)));
         }
         if (Prefs.getBooleanPref(Prefs.REPEATINGTRANSACTIONS)) {
-            items.add(AccountListItem.createCustom(Locales.kLOC_REPEATING_TRANSACTIONS));
+            items.add(AccountListItem.createCustom(SMMoney.getAppContext().getString(R.string.REPEATING_TRANSACTIONS)));
         }
         // notifyDataSetChanged() is appropriate here because calculateItems() completely rebuilds
         // the flattened view list (headers, accounts, and custom rows). Since sections can be
@@ -423,19 +423,19 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
             textView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
             itemView.setBackgroundResource(PocketMoneyThemes.primaryRowSelector());
             itemView.setOnClickListener(v -> {
-                if (label.equals(Locales.kLOC_REPEATING_TRANSACTIONS)) {
+                if (label.equals(SMMoney.getAppContext().getString(R.string.REPEATING_TRANSACTIONS))) {
                     mContext.startActivity(new Intent(mContext, RepeatingActivity.class));
-                } else if (label.equals(Locales.kLOC_ALL_TRANSACTIONS)) {
+                } else if (label.equals(SMMoney.getAppContext().getString(R.string.ALL_TRANSACTIONS))) {
                     Intent i = new Intent(mContext, TransactionsActivity.class);
                     FilterClass f = new FilterClass();
-                    f.setFilterName(Locales.kLOC_ALL_TRANSACTIONS);
-                    f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+                    f.setFilterName(SMMoney.getAppContext().getString(R.string.ALL_TRANSACTIONS));
+                    f.setAccount(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
                     i.putExtra("Filter", f);
                     mContext.startActivity(i);
-                } else if (label.equals(Locales.kLOC_TOOLS_FILTERS)) {
+                } else if (label.equals(SMMoney.getAppContext().getString(R.string.TOOLS_FILTERS))) {
                     Intent i = new Intent(mContext, FiltersMainActivity.class);
                     FilterClass f = new FilterClass();
-                    f.setAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+                    f.setAccount(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
                     i.putExtra("Filter", f);
                     i.putExtra("ONLY SAVED", 1);
                     if (mContext instanceof AccountsActivity) {

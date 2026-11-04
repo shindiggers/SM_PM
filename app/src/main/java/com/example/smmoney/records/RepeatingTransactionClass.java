@@ -11,12 +11,12 @@ import android.database.sqlite.SQLiteQueryBuilder;
 import android.util.Log;
 import android.util.Xml;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.views.repeating.LocalNotificationRepeatingReciever;
 
 import org.xml.sax.Attributes;
@@ -159,9 +159,13 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public static String[] types() {
-        return new String[]{Locales.kLOC_GENERAL_NONE, Locales.kLOC_REPEATING_FREQUENCY_DAILY,
-                Locales.kLOC_REPEATING_FREQUENCY_WEEKLY, Locales.kLOC_REPEATING_FREQUENCY_MONTHLY,
-                Locales.kLOC_REPEATING_FREQUENCY_YEARLY};
+        return new String[]{
+                SMMoney.getAppContext().getString(R.string.GENERAL_NONE),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY)
+        };
     }
 
     public String typeAsString() {
@@ -192,18 +196,18 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
 
     public String typeEveryAsString() {
         if (Enums.repeatWeekly == this.type && this.frequency == 2) {
-            return Locales.kLOC_BUDGETS_BIWEEKLY;
+            return SMMoney.getAppContext().getString(R.string.BUDGETS_BIWEEKLY);
         }
         if (Enums.repeatWeekly == this.type && 2 < this.frequency) {
-            return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_WEEKLY; // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
+            return this.frequency + "-" + SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY); // type 2 = weekly therefore if frequency < 2 this returns "Weekly"
         }
         if (Enums.repeatMonthly == this.type && 2 == this.frequency) {
-            return Locales.kLOC_BUDGETS_BIMONTHLY; // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
+            return SMMoney.getAppContext().getString(R.string.BUDGETS_BIMONTHLY); // type 3 = monthly therefore if frequency = 2 this returns "Bi-monthly"
         }
         if (Enums.repeatMonthly != this.type || 2 >= this.frequency) {
             return types()[this.type]; // type 3 = weekly thereofore if type is not monthly OR frequency > 2 this returns whatever 'type' is. That could be type = 0 = "None"; type = 1 = "Daily"; type = 4 = "Yearly"
         }
-        return this.frequency + "-" + Locales.kLOC_REPEATING_FREQUENCY_MONTHLY; // default if none of other conditions are met = "Monthly"
+        return this.frequency + "-" + SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY); // default if none of other conditions are met = "Monthly"
     }
 
     public void setSendLocalNotifications(boolean send) {
@@ -569,9 +573,9 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (getTransaction() == null) {
             return "";
         }
-        String retVal = Locales.kLOC_REPEATING_MONTHLYDAY;
+        String retVal = SMMoney.getAppContext().getString(R.string.REPEATING_MONTHLYDAY);
         String[] weekDays = new DateFormatSymbols().getWeekdays();
-        String[] weekOrdinals = Locales.kLOC_WEEK_ORDINALS.split(" ");
+        String[] weekOrdinals = SMMoney.getAppContext().getString(R.string.WEEK_ORDINALS).split(" ");
         String weekDayName = weekDays[getTransaction().getDate().get(Calendar.DAY_OF_WEEK)];
         @SuppressWarnings("UnusedAssignment") String weekOrdinal = "";
         if (weekOrdinals.length > getTransaction().getDate().get(Calendar.DAY_OF_WEEK_IN_MONTH) - 1) {
@@ -586,7 +590,7 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (getTransaction() == null) {
             return "";
         }
-        return Locales.kLOC_REPEATING_MONTHLYDATE.replace("^x", Locales.kLOC_DAY_ORDINALS.split(" ")[getTransaction().getDate().get(Calendar.DAY_OF_MONTH) - 1]);
+        return SMMoney.getAppContext().getString(R.string.REPEATING_MONTHLYDATE).replace("^x", SMMoney.getAppContext().getString(R.string.DAY_ORDINALS).split(" ")[getTransaction().getDate().get(Calendar.DAY_OF_MONTH) - 1]);
     }
 
     public String repeatsOnLastOrdinalWeekdayAsString() {
@@ -594,8 +598,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
             return "";
         }
         String[] daysOfWeek = new DateFormatSymbols().getWeekdays();
-        String[] weekOrdinals = Locales.kLOC_WEEK_ORDINALS.split(" ");
-        return Locales.kLOC_REPEATING_MONTHLYDAY.replace("^w", weekOrdinals[weekOrdinals.length - 1]).replace("^d", daysOfWeek[getTransaction().getDate().get(Calendar.DAY_OF_WEEK)]);
+        String[] weekOrdinals = SMMoney.getAppContext().getString(R.string.WEEK_ORDINALS).split(" ");
+        return SMMoney.getAppContext().getString(R.string.REPEATING_MONTHLYDAY).replace("^w", weekOrdinals[weekOrdinals.length - 1]).replace("^d", daysOfWeek[getTransaction().getDate().get(Calendar.DAY_OF_WEEK)]);
     }
 
     public boolean showDateOfMonth() {

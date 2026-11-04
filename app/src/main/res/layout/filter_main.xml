@@ -20,7 +20,7 @@
             android:layout_marginStart="10dp"
             android:gravity="start|center_vertical"
             android:minHeight="58dp"
-            android:text="@string/kLOC_FILTERS_RESET" />
+            android:text="@string/FILTERS_RESET" />
 
     </FrameLayout>
 
@@ -38,7 +38,7 @@
             android:layout_marginStart="10dp"
             android:gravity="start|center_vertical"
             android:minHeight="40dp"
-            android:text="@string/kLOC_FILTERS_CURRENT" />
+            android:text="@string/FILTERS_CURRENT" />
 
         <ImageView
             android:id="@+id/filtercurrentedit"
@@ -65,7 +65,7 @@
             android:layout_gravity="start|center_vertical"
             android:layout_marginStart="10dp"
             android:gravity="start|center_vertical"
-            android:text="@string/kLOC_FILTERS_USERDEFINED" />
+            android:text="@string/FILTERS_USERDEFINED" />
 
     </FrameLayout>
 

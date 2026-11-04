@@ -24,11 +24,11 @@ import androidx.core.content.IntentCompat;
 import androidx.core.os.ConfigurationCompat;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.NoteEditor;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -36,7 +36,6 @@ import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.views.CheckBoxTint;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
-import com.example.smmoney.views.splits.SplitsActivity;
 
 import java.util.Locale;
 
@@ -115,7 +114,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         setupButtons();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_ACCOUNT_INFO_TITLE);
+            getSupportActionBar().setTitle(SMMoney.getAppContext().getString(R.string.ACCOUNT_INFO_TITLE));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -129,7 +128,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE)
+        menu.add(0, MENU_SAVE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_SAVE))
                 .setIcon(R.drawable.ic_save_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
@@ -149,8 +148,8 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         super.onResume();
         if (!Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_INFO)) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-            alert.setMessage(Locales.kLOC_TIP_ACCOUNT_INFO);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            alert.setMessage(SMMoney.getAppContext().getString(R.string.TIP_ACCOUNT_INFO));
+            alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_ACCOUNT_INFO, true);
                 dialog.dismiss();
             });
@@ -445,7 +444,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     public void lookupExchangeRateCallback(final double rate) {
         runOnUiThread(() -> {
             if (rate == 0.0d) {
-                AccountsEditActivity.this.exchangeRate.setText(Locales.kLOC_EXCHANGERATE_DEFAULT_RATE);
+                AccountsEditActivity.this.exchangeRate.setText(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_DEFAULT_RATE));
                 return;
             }
 
@@ -463,16 +462,16 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
                 // Auto-update is OFF: Show the decision dialog
                 String currentRateStr = AccountsEditActivity.this.exchangeRate.getText().toString();
                 new AlertDialog.Builder(AccountsEditActivity.this, PocketMoneyThemes.dialogTheme())
-                        .setTitle(Locales.kLOC_GENERAL_EXCHANGERATE)
-                        .setMessage(String.format(Locales.kLOC_EXCHANGERATE_DIALOG_MESSAGE,
+                        .setTitle(SMMoney.getAppContext().getString(R.string.GENERAL_EXCHANGERATE))
+                        .setMessage(String.format(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_DIALOG_MESSAGE),
                                 AccountsEditActivity.this.currency.getText().toString(),
                                 formattedRate,
                                 currentRateStr))
-                        .setPositiveButton(Locales.kLOC_EXCHANGERATE_DIALOG_USE_SPOT, (dialog, which) -> {
+                        .setPositiveButton(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_DIALOG_USE_SPOT), (dialog, which) -> {
                             AccountsEditActivity.this.exchangeRate.setText(formattedRate);
                             AccountsEditActivity.this.exchangeRate.invalidate();
                         })
-                        .setNegativeButton(Locales.kLOC_EXCHANGERATE_DIALOG_KEEP_CURRENT, null)
+                        .setNegativeButton(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_DIALOG_KEEP_CURRENT), null)
                         .show();
             }
         });
@@ -482,7 +481,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         return view -> {
             Intent i;
             switch ((Integer) view.getTag()) {
-                case SplitsActivity.RESULT_CHANGED /*1*/:
+                case LookupsListActivity.ACCOUNT_TYPE_LOOKUP /*1*/:
                     i = new Intent(AccountsEditActivity.this, LookupsListActivity.class);
                     i.putExtra("type", 1);
                     typeLauncher.launch(i);

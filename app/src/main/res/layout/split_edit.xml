@@ -58,7 +58,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:padding="0dp"
-                    android:text="@string/kLOC_GENERAL_WITHDRAWAL"
+                    android:text="@string/GENERAL_WITHDRAWAL"
                     android:textAppearance="?android:textAppearanceMedium" />
 
                 <com.google.android.material.button.MaterialButton
@@ -70,7 +70,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:padding="0dp"
-                    android:text="@string/kLOC_GENERAL_DEPOSIT"
+                    android:text="@string/GENERAL_DEPOSIT"
                     android:textAppearance="?android:textAppearanceMedium" />
 
                 <com.google.android.material.button.MaterialButton
@@ -82,7 +82,7 @@
                     android:insetTop="0dp"
                     android:insetBottom="0dp"
                     android:padding="0dp"
-                    android:text="@string/kLOC_GENERAL_TRANSFER"
+                    android:text="@string/GENERAL_TRANSFER"
                     android:textAppearance="?android:textAppearanceMedium" />
 
             </com.google.android.material.button.MaterialButtonToggleGroup>
@@ -101,7 +101,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
+                    android:text="@string/EDIT_TRANSACTION_TRANS_TO"
                     app:layout_constraintTop_toBottomOf="@id/radiogroup"
                     app:layout_constraintStart_toStartOf="parent" />
 
@@ -111,7 +111,7 @@
                     android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
                     android:gravity="start|center_vertical"
-                    android:hint="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
+                    android:hint="@string/EDIT_TRANSACTION_TRANS_TO"
                     android:singleLine="true"
                     app:layout_constraintEnd_toStartOf="@+id/transtoto_drop_down"
                     app:layout_constraintStart_toEndOf="@+id/transtolabel"
@@ -124,7 +124,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@null"
                     android:clickable="false"
-                    android:contentDescription="@string/kLOC_EDIT_TRANSACTION_TRANS_TO"
+                    android:contentDescription="@string/EDIT_TRANSACTION_TRANS_TO"
                     android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/transtolabel" />
@@ -149,7 +149,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CATEGORY"
+                    android:text="@string/GENERAL_CATEGORY"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/transtolabel" />
 
@@ -158,7 +158,7 @@
                     android:layout_width="0dp"
                     android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/kLOC_GENERAL_CATEGORY"
+                    android:hint="@string/GENERAL_CATEGORY"
                     android:inputType="textCapWords"
                     android:singleLine="true"
                     app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
@@ -197,7 +197,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_AMOUNT"
+                    android:text="@string/GENERAL_AMOUNT"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/category_label" />
 
@@ -206,7 +206,7 @@
                     android:layout_width="0dp"
                     android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/kLOC_GENERAL_AMOUNT"
+                    android:hint="@string/GENERAL_AMOUNT"
                     android:importantForAutofill="no"
                     android:inputType="numberDecimal"
                     app:layout_constraintEnd_toStartOf="@+id/amount_xrate_text_view"
@@ -230,7 +230,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@null"
                     android:clickable="false"
-                    android:contentDescription="@string/kLOC_GENERAL_EXCHANGERATE"
+                    android:contentDescription="@string/GENERAL_EXCHANGERATE"
                     android:src="@drawable/ic_foreign_exchange"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@id/amount_label" />
@@ -252,7 +252,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_CLASS"
+                    android:text="@string/GENERAL_CLASS"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/amount_label" />
 
@@ -261,7 +261,7 @@
                     android:layout_width="0dp"
                     android:layout_height="58dp"
                     android:layout_marginEnd="4dp"
-                    android:hint="@string/kLOC_GENERAL_CLASS"
+                    android:hint="@string/GENERAL_CLASS"
                     android:inputType="textCapWords"
                     android:singleLine="true"
                     app:layout_constraintEnd_toStartOf="@+id/class_drop_down"
@@ -275,7 +275,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@null"
                     android:clickable="false"
-                    android:contentDescription="@string/kLOC_FILTERS_ALL_CLASSES"
+                    android:contentDescription="@string/FILTERS_ALL_CLASSES"
                     android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="@+id/class_label" />
@@ -299,7 +299,7 @@
                     android:layout_marginStart="16dp"
                     android:layout_marginEnd="10dp"
                     android:gravity="start|center_vertical"
-                    android:text="@string/kLOC_GENERAL_NOTE"
+                    android:text="@string/GENERAL_NOTE"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/class_label" />
 

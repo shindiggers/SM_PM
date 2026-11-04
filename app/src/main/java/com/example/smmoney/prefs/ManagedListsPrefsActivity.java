@@ -7,7 +7,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 import com.example.smmoney.views.lookups.LookupsListActivity;
@@ -18,7 +18,7 @@ public class ManagedListsPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        setTitle(Locales.kLOC_PREFS_MANAGEDLISTS);
+        setTitle(SMMoney.getAppContext().getString(R.string.PREFS_MANAGEDLISTS));
         loadParentFragment(R.xml.prefs_display_managed_lists);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }

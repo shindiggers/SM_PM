@@ -13,8 +13,8 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
@@ -87,26 +87,17 @@ public abstract class PocketMoneyActivity extends AppCompatActivity {
     }
 
     private long getDelayLongFromDelayPref(String theString) {
-        if (Locales.kLOC_GENERAL_NONE.equals(theString)) return 0;
-        if (Locales.kLOC_PASSWORDDELAY1MIN.equals(theString)) return 60000;
-        if (Locales.kLOC_PASSWORDDELAY5MINS.equals(theString))
-            return 300000;
-        if (Locales.kLOC_PASSWORDDELAY10MINS.equals(theString))
-            return 600000;
-        if (Locales.kLOC_PASSWORDDELAY15MINS.equals(theString))
-            return 900000;
-        if (Locales.kLOC_PASSWORDDELAY30MINS.equals(theString))
-            return 1800000;
-        if (Locales.kLOC_PASSWORDDELAY1HOUR.equals(theString))
-            return 3600000;
-        if (Locales.kLOC_PASSWORDDELAY2HOURS.equals(theString))
-            return 7200000;
-        if (Locales.kLOC_PASSWORDDELAY4HOURS.equals(theString))
-            return 14400000;
-        if (Locales.kLOC_PASSWORDDELAY8HOURS.equals(theString))
-            return 28800000;
-        if (Locales.kLOC_PASSWORDDELAY24HOURS.equals(theString))
-            return 86400000;
+        if (SMMoney.getAppContext().getString(R.string.GENERAL_NONE).equals(theString)) return 0;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY1MIN).equals(theString)) return 60000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY5MINS).equals(theString)) return 300000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY10MINS).equals(theString)) return 600000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY15MINS).equals(theString)) return 900000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY30MINS).equals(theString)) return 1800000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY1HOUR).equals(theString)) return 3600000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY2HOURS).equals(theString)) return 7200000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY4HOURS).equals(theString)) return 14400000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY8HOURS).equals(theString)) return 28800000;
+        if (SMMoney.getAppContext().getString(R.string.PASSWORDDELAY24HOURS).equals(theString)) return 86400000;
         return 0;
     }
 

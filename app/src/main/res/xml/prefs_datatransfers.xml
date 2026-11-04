@@ -2,13 +2,13 @@
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="DataTransferPrefs"
-    android:title="@string/kLOC_PREFS_DATATRANFER">
+    android:title="@string/PREFS_DATATRANFER">
 
     <ListPreference
         android:defaultValue="0"
         android:key="prefsdatatransferstransfermode"
         android:summary="SDCard"
-        android:title="@string/kLOC_FILETRANSFERS_MODE" />
+        android:title="@string/FILETRANSFERS_MODE" />
 
     <ListPreference
         android:defaultValue="0"
@@ -23,7 +23,7 @@
             android:defaultValue="ISO-8859-1"
             android:key="prefsdatatransfersfileencoding"
             android:summary="Western (ISO Latin 1)"
-            android:title="@string/kLOC_PREFERENCES_ENCODING" />
+            android:title="@string/PREFERENCES_ENCODING" />
 
     </PreferenceCategory>
 
@@ -32,7 +32,7 @@
 
         <Preference
             android:key="prefsdatatransfersqifoptions"
-            android:title="@string/kLOC_QIFOPTIONS_TITLE" />
+            android:title="@string/QIFOPTIONS_TITLE" />
 
     </PreferenceCategory>
 

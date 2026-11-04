@@ -19,12 +19,12 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.transition.TransitionManager;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -117,7 +117,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         loadCells();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_GENERAL_EXCHANGERATE);
+            getSupportActionBar().setTitle(R.string.GENERAL_EXCHANGERATE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -261,13 +261,13 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     }
 
     private void updateInstructionalText() {
-        String foreignLabel = Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT;
-        String rateLabel = Locales.kLOC_GENERAL_EXCHANGERATE;
-        String accountLabel = Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT;
+        String foreignLabel = SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT);
+        String rateLabel = SMMoney.getAppContext().getString(R.string.GENERAL_EXCHANGERATE);
+        String accountLabel = SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT);
         String instruction = switch (currentCalculatedField) {
-            case FOREIGN -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, rateLabel, accountLabel, foreignLabel);
-            case RATE -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, foreignLabel, accountLabel, rateLabel);
-            case ACCOUNT -> String.format(Locales.kLOC_EXCHANGERATE_INSTRUCTION, foreignLabel, rateLabel, accountLabel);
+            case FOREIGN -> String.format(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_INSTRUCTION), rateLabel, accountLabel, foreignLabel);
+            case RATE -> String.format(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_INSTRUCTION), foreignLabel, accountLabel, rateLabel);
+            case ACCOUNT -> String.format(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_INSTRUCTION), foreignLabel, rateLabel, accountLabel);
         };
         this.statusTextView.setText(instruction);
     }
@@ -305,8 +305,8 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
         this.row3CurrencyTextView.setText(isSwapped ? foreignCurrency : accountCurrency);
         TextView l1 = findViewById(R.id.foreign_amount_label);
         TextView l3 = findViewById(R.id.account_amount_label);
-        l1.setText(isSwapped ? Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT : Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT);
-        l3.setText(isSwapped ? Locales.kLOC_EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT : Locales.kLOC_EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT);
+        l1.setText(isSwapped ? SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT) : SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT));
+        l3.setText(isSwapped ? SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT) : SMMoney.getAppContext().getString(R.string.EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT));
         findViewById(R.id.currency_picker_arrow).setVisibility(isSwapped ? View.GONE : View.VISIBLE);
         findViewById(R.id.account_currency_picker_arrow).setVisibility(isSwapped ? View.VISIBLE : View.GONE);
         programaticUpdate = false;
@@ -332,7 +332,7 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     private void fetchHistoricalRate() {
         if (this.transaction == null || currentCalculatedField == CalculatedField.RATE) return;
         String dateStr = new SimpleDateFormat("yyyy-MM-dd", Locale.US).format(this.transaction.getDate().getTime());
-        this.statusTextView.setText(String.format(Locales.kLOC_EXCHANGERATE_FETCHING_RATE, dateStr));
+        this.statusTextView.setText(String.format(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_FETCHING_RATE), dateStr));
         executor.execute(() -> new ExchangeRateClass(false, this)
                 .lookupExchangeRate(dateStr, this.foreignCurrency, this.accountCurrency, null));
     }
@@ -356,10 +356,10 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
                 performCalculation();
                 loadCells();
                 updateInstructionalText();
-                Toast.makeText(this, Locales.kLOC_EXCHANGERATE_RATE_UPDATED, Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, R.string.EXCHANGERATE_RATE_UPDATED, Toast.LENGTH_SHORT).show();
             } else {
-                this.statusTextView.setText(Locales.kLOC_EXCHANGERATE_FETCH_FAILED);
-                Toast.makeText(this, Locales.kLOC_EXCHANGERATE_FETCH_ERROR, Toast.LENGTH_SHORT).show();
+                this.statusTextView.setText(SMMoney.getAppContext().getString(R.string.EXCHANGERATE_FETCH_FAILED));
+                Toast.makeText(this, R.string.EXCHANGERATE_FETCH_ERROR, Toast.LENGTH_SHORT).show();
             }
         });
     }

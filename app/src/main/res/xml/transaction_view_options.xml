@@ -5,13 +5,13 @@
     is doing as it doesn't seem to appear in the preference screen
 
     <ListPreference
-        android:defaultValue="@string/kLOC_GENERAL_DATE"
+        android:defaultValue="@string/GENERAL_DATE"
         android:key="prefstransactionviewoptionssorton"
-        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTON" />
+        android:title="@string/TRANSACTIONS_OPTIONS_SORTON" />
 
     <ListPreference
-        android:defaultValue="@string/kLOC_TRANSACTIONS_OPTIONS_ASCENDING"
+        android:defaultValue="@string/TRANSACTIONS_OPTIONS_ASCENDING"
         android:key="prefstransactionviewoptionssortorder"
-        android:title="@string/kLOC_TRANSACTIONS_OPTIONS_SORTORDER" />
+        android:title="@string/TRANSACTIONS_OPTIONS_SORTORDER" />
 
 </PreferenceScreen>

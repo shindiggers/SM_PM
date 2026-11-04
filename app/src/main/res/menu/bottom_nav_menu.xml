@@ -3,17 +3,17 @@
     <item
         android:id="@+id/nav_accounts"
         android:icon="@drawable/ic_accounts"
-        android:title="@string/kLOC_GENERAL_ACCOUNTS" />
+        android:title="@string/GENERAL_ACCOUNTS" />
     <item
         android:id="@+id/nav_budgets"
         android:icon="@drawable/ic_budgets"
-        android:title="@string/kLOC_GENERAL_BUDGETS" />
+        android:title="@string/GENERAL_BUDGETS" />
     <item
         android:id="@+id/nav_charts"
         android:icon="@drawable/ic_charts"
-        android:title="@string/kLOC_CHARTS_MORECHARTS" />
+        android:title="@string/CHARTS_MORECHARTS" />
     <item
         android:id="@+id/nav_reports"
         android:icon="@drawable/ic_reports"
-        android:title="@string/kLOC_GENERAL_REPORTS" />
+        android:title="@string/GENERAL_REPORTS" />
 </menu>

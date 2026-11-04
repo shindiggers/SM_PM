@@ -23,8 +23,8 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 import java.text.DecimalFormatSymbols;
@@ -158,7 +158,7 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
             
             if (v instanceof Button btn) {
                 btn.setTextColor(isNext ? Color.WHITE : textColor);
-                if (isNext) btn.setText(Locales.kLOC_GENERAL_NEXT);
+                if (isNext) btn.setText(SMMoney.getAppContext().getString(R.string.GENERAL_NEXT));
             } else if (v instanceof ImageButton imgBtn) {
                 imgBtn.setColorFilter(textColor, PorterDuff.Mode.SRC_IN);
             }

@@ -6,13 +6,13 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.CategoryClass;
@@ -99,15 +99,15 @@ public class ImportExportQIF {
     }
 
     public static String[] dateFormats() {
-        return new String[]{Locales.kLOC_GENERAL_DEFAULT, "mm/dd'yy", "mm/dd'yyyy", "mm/dd/yy", "mm/dd/yyyy", "dd/mm'yy", "dd/mm'yyyy", "dd/mm/yy", "dd/mm/yyyy", "yyyy/mm/dd"};
+        return new String[]{SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT), "mm/dd'yy", "mm/dd'yyyy", "mm/dd/yy", "mm/dd/yyyy", "dd/mm'yy", "dd/mm'yyyy", "dd/mm/yy", "dd/mm/yyyy", "yyyy/mm/dd"};
     }
 
     public static String[] dateSeparators() {
-        return new String[]{Locales.kLOC_GENERAL_DEFAULT, "/", ".", "-"};
+        return new String[]{SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT), "/", ".", "-"};
     }
 
     public static String[] numberFormats() {
-        return new String[]{Locales.kLOC_GENERAL_DEFAULT, "1,000.00", "1.000,00", "1'000.00", "1'000,00", "1 000,00"};
+        return new String[]{SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT), "1,000.00", "1.000,00", "1'000.00", "1'000,00", "1 000,00"};
     }
 
     private String filename() {
@@ -173,14 +173,14 @@ public class ImportExportQIF {
             }
             act.getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "Import Complete"));
             if (this.invalidQIF) {
-                displayError(Locales.kLOC_QIF_TYPEENCODINGERROR);
+                displayError(SMMoney.getAppContext().getString(R.string.QIF_TYPEENCODINGERROR));
             } else if (this.qifOld) {
                 AccountDB.setLastExportTimestampForAccount(this.accountNameBeingImported);
             } else {
-                AccountDB.setLastExportTimestampForAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+                AccountDB.setLastExportTimestampForAccount(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
             }
         } catch (Exception e) {
-            displayError(Locales.kLOC_QIF_TYPEENCODINGERROR + "\n\n" + e.getMessage());
+            displayError(SMMoney.getAppContext().getString(R.string.QIF_TYPEENCODINGERROR) + "\n\n" + e.getMessage());
         }
     }
 
@@ -454,7 +454,7 @@ public class ImportExportQIF {
 
     private DecimalFormat getNumberFormatter() {
         String numberFormat = Prefs.getStringPref(Prefs.QIF_NUMBERFORMAT);
-        if (numberFormat.isEmpty() || numberFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (numberFormat.isEmpty() || numberFormat.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             numberFormat = "1,000.00";
         }
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();
@@ -594,7 +594,7 @@ public class ImportExportQIF {
         String dateSeparator = Prefs.getStringPref(Prefs.QIF_DATESEPARATOR);
         SimpleDateFormat dateFormatter = new SimpleDateFormat("", java.util.Locale.getDefault());
         
-        if (dateSeparator.isEmpty() || dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (dateSeparator.isEmpty() || dateSeparator.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             Matcher matcher = Pattern.compile("\\W").matcher(new SimpleDateFormat("", java.util.Locale.getDefault()).toPattern());
             dateSeparator = matcher.find() ? matcher.group(0) : "/";
         }
@@ -602,7 +602,7 @@ public class ImportExportQIF {
             dateSeparator = "/";
         }
         
-        if (!dateFormat.isEmpty() && !dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (!dateFormat.isEmpty() && !dateFormat.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             final String pattern = dateFormat.replace("/", dateSeparator).replace("mm", "MM").replace("'", "''");
             if (dateFormat.equals("mm/dd'yy") || dateFormat.equals("mm/dd'yyyy")) {
                 dateFormatter.applyPattern(pattern);
@@ -909,11 +909,11 @@ public class ImportExportQIF {
         String dateSeparator = Prefs.getStringPref(Prefs.QIF_DATESEPARATOR);
         SimpleDateFormat dateFormatter = new SimpleDateFormat("", java.util.Locale.getDefault());
         
-        if (dateSeparator.isEmpty() || dateSeparator.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (dateSeparator.isEmpty() || dateSeparator.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             dateSeparator = "/";
         }
         
-        if (dateFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (dateFormat.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             dateFormatter.applyPattern("MM/dd/yy");
         } else {
             final String pattern = dateFormat.replace("/", dateSeparator).replace("mm", "MM").replace("'", "''");

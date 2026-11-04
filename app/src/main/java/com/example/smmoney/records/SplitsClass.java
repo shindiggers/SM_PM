@@ -4,10 +4,11 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteQueryBuilder;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 
 import java.io.Serializable;
@@ -95,7 +96,7 @@ public class SplitsClass implements Serializable {
             if (this.category != null && this.category.equals(aString)) {
                 return;
             }
-            if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+            if (aString == null || !aString.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
                 this.dirty = true;
                 this.category = aString;
             }
@@ -112,7 +113,7 @@ public class SplitsClass implements Serializable {
             if (this.className != null && this.className.equals(aString)) {
                 return;
             }
-            if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
+            if (aString == null || !aString.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES))) {
                 this.dirty = true;
                 this.className = aString;
             }
@@ -143,7 +144,7 @@ public class SplitsClass implements Serializable {
             if (this.transferToAccount != null && this.transferToAccount.equals(aString)) {
                 return;
             }
-            if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+            if (aString == null || !aString.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS))) {
                 this.dirty = true;
                 this.transferToAccount = aString;
             }

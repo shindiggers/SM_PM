@@ -12,9 +12,9 @@ import android.os.Bundle;
 import androidx.core.os.BundleCompat;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.RepeatingTransactionClass;
 
@@ -35,7 +35,7 @@ public class LocalNotificationAlertActivitiy extends Activity {
         
         LocalNotificationAlertActivitiy.this.repeatingTransaction.postAndAdvanceTransaction(LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getSubTotal(), gregorianCalendar);
     };
-    private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{Locales.kLOC_DUPLICATE_TRANSACTION_EXISTING_TIME, Locales.kLOC_DUPLICATE_TRANSACTION_PRESENT_TIME}, LocalNotificationAlertActivitiy.this.postMenuListener);
+    private final OnClickListener mainPostListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{SMMoney.getAppContext().getString(R.string.DUPLICATE_TRANSACTION_EXISTING_TIME), SMMoney.getAppContext().getString(R.string.DUPLICATE_TRANSACTION_PRESENT_TIME)}, LocalNotificationAlertActivitiy.this.postMenuListener);
     private final OnClickListener snoozeMenuListener = (dialog, which) -> {
         String transferToAccount;
         int hours = switch (which) {
@@ -49,10 +49,11 @@ public class LocalNotificationAlertActivitiy extends Activity {
         };
         GregorianCalendar newDate = CalExt.addHours(LocalNotificationAlertActivitiy.this.date, hours);
         Intent intent = new Intent(LocalNotificationAlertActivitiy.this.context, LocalNotificationRepeatingReciever.class);
-        String body = Locales.kLOC_REPEATING_NOTIFY_DUE;
+        String body = SMMoney.getAppContext().getString(R.string.REPEATING_NOTIFY_DUE);
+        // TODO: 28/10/2026 Sort out the comments below - do as part of modernising the notifications functionality
         //<string name="kLOC_REPEATING_NOTIFY_DUE">%1$sRepeating Transaction due\n%2$s %3$s➜%4$s</string>
         //noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
-        body.replaceFirst("%1$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.isOverdueOnDate(newDate) ? Locales.kLOC_REPEATING_OVERDUE : "");
+        body.replaceFirst("%1$s", LocalNotificationAlertActivitiy.this.repeatingTransaction.isOverdueOnDate(newDate) ? SMMoney.getAppContext().getString(R.string.REPEATING_OVERDUE) : "");
         // noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
         body.replaceFirst("%2$s", CalExt.descriptionWithMediumDate(LocalNotificationAlertActivitiy.this.repeatingTransaction.getTransaction().getDate()));
         // noinspection RegExpUnexpectedAnchor,ResultOfMethodCallIgnored
@@ -72,7 +73,7 @@ public class LocalNotificationAlertActivitiy extends Activity {
         ((AlarmManager) LocalNotificationAlertActivitiy.this.context.getSystemService(ALARM_SERVICE)).set(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), PendingIntent.getBroadcast(LocalNotificationAlertActivitiy.this.context, LocalNotificationAlertActivitiy.this.repeatingTransaction.repeatingID, intent, PendingIntent.FLAG_UPDATE_CURRENT));
     };
     private RepeatingTransactionClass repeatingTransaction;
-    private final OnClickListener mainSnoozeListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{Locales.kLOC_PASSWORDDELAY1HOUR, Locales.kLOC_PASSWORDDELAY2HOURS, Locales.kLOC_PASSWORDDELAY4HOURS, Locales.kLOC_PASSWORDDELAY8HOURS, Locales.kLOC_REPEATING_ONE_DAY, Locales.kLOC_REPEATING_TWO_DAYS}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
+    private final OnClickListener mainSnoozeListener = (dialog, which) -> new Builder(LocalNotificationAlertActivitiy.this.context, PocketMoneyThemes.dialogTheme()).setItems(new CharSequence[]{context.getString(R.string.PASSWORDDELAY1HOUR), context.getString(R.string.PASSWORDDELAY2HOURS), context.getString(R.string.PASSWORDDELAY4HOURS), context.getString(R.string.PASSWORDDELAY8HOURS), context.getString(R.string.REPEATING_ONE_DAY), context.getString(R.string.REPEATING_TWO_DAYS)}, LocalNotificationAlertActivitiy.this.snoozeMenuListener);
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,13 +89,13 @@ public class LocalNotificationAlertActivitiy extends Activity {
         String amount = extras.getString("amount");
         String body = extras.getString("body");
         if (body != null && amount != null && !amount.isEmpty() && !body.contains(amount)) {
-            body = body + "\n" + Locales.kLOC_GENERAL_AMOUNT + ": " + amount;
+            body = body + "\n" + SMMoney.getAppContext().getString(R.string.GENERAL_AMOUNT) + ": " + amount;
         }
         Builder builder = new Builder(this.context, PocketMoneyThemes.dialogTheme());
         builder.setMessage(body);
-        builder.setPositiveButton("Post", this.mainPostListener);
-        builder.setNegativeButton("Snooze", this.mainSnoozeListener);
-        builder.setNeutralButton("Okay", this.mainOkayListener);
+        builder.setPositiveButton(R.string.REPEATING_NOTIFY_POST, this.mainPostListener);
+        builder.setNegativeButton(R.string.REPEATING_NOTIFY_SNOOZE, this.mainSnoozeListener);
+        builder.setNeutralButton(R.string.GENERAL_OK, this.mainOkayListener);
         builder.create().show();
     }
 

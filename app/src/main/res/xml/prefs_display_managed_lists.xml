@@ -6,7 +6,7 @@
 
         <CheckBoxPreference
             android:key="prefsmanagedlistsautoadd"
-            android:title="@string/kLOC_PREFERENCES_AUTOADD_TITLE" />
+            android:title="@string/PREFERENCES_AUTOADD_TITLE" />
 
     </PreferenceCategory>
 
@@ -14,19 +14,19 @@
 
         <Preference
             android:key="PayeeManagedListsPref"
-            android:title="@string/kLOC_GENERAL_PAYEE_TITLE" />
+            android:title="@string/GENERAL_PAYEE_TITLE" />
 
         <Preference
             android:key="CategoryManagedListsPref"
-            android:title="@string/kLOC_GENERAL_CATEGORY_TITLE" />
+            android:title="@string/GENERAL_CATEGORY_TITLE" />
 
         <Preference
             android:key="ClassManagedListsPref"
-            android:title="@string/kLOC_GENERAL_CLASSES" />
+            android:title="@string/GENERAL_CLASSES" />
 
         <Preference
             android:key="IDManagedListsPref"
-            android:title="@string/kLOC_GENERAL_ID_TITLE" />
+            android:title="@string/GENERAL_ID_TITLE" />
 
     </PreferenceCategory>
 

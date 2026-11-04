@@ -7,13 +7,13 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -127,7 +127,7 @@ public class ImportExportTDF {
             db.endTransaction();
         }
         act.getHandler().sendMessage(Message.obtain(((HandlerActivity) this.context).getHandler(), 5, "Import Complete"));
-        AccountDB.setLastExportTimestampForAccount(Locales.kLOC_FILTERS_ALL_ACCOUNTS);
+        AccountDB.setLastExportTimestampForAccount(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
     }
 
     private void importTransaction(String[] tokens) {
@@ -330,7 +330,7 @@ public class ImportExportTDF {
     @NonNull
     private DecimalFormat getNumberFormatter() {
         String numberFormat = Prefs.getStringPref(Prefs.QIF_NUMBERFORMAT);
-        if (numberFormat.isEmpty() || numberFormat.equals(Locales.kLOC_GENERAL_DEFAULT)) {
+        if (numberFormat.isEmpty() || numberFormat.equals(SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT))) {
             numberFormat = "1,000.00";
         }
         DecimalFormatSymbols formatSymbols = new DecimalFormatSymbols();

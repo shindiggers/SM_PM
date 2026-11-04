@@ -271,7 +271,7 @@ public class AccountTypeIconGridActivity extends PocketMoneyActivity {
         gridview.setAdapter(new ImageAdapter(this));
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("Select Icon");
+            getSupportActionBar().setTitle(R.string.SELECT_ICON);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

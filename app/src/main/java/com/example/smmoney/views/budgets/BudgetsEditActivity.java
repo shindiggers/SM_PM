@@ -26,9 +26,9 @@ import androidx.activity.result.contract.ActivityResultContracts;
 
 import androidx.annotation.NonNull;
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
@@ -227,7 +227,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         loadCells();
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_BUDGETS_EDIT_TITLE);
+            getSupportActionBar().setTitle(R.string.BUDGETS_EDIT_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -241,7 +241,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        MenuItem item = menu.add(0, MENU_SAVE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_SAVE));
         item.setIcon(R.drawable.ic_save_white_24dp);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
@@ -349,9 +349,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
             save();
             finish();
         } else {
-            CharSequence[] items = new CharSequence[]{Locales.kLOC_LOOKUPS_POPUPLIST, Locales.kLOC_LOOKUPS_EVERYWHERE};
+            CharSequence[] items = new CharSequence[]{SMMoney.getAppContext().getString(R.string.LOOKUPS_POPUPLIST), SMMoney.getAppContext().getString(R.string.LOOKUPS_EVERYWHERE)};
             Builder builder = new Builder(this, PocketMoneyThemes.dialogTheme());
-            builder.setTitle(Locales.kLOC_LOOKUPS_CHANGEBODY);
+            builder.setTitle(SMMoney.getAppContext().getString(R.string.LOOKUPS_CHANGEBODY));
             builder.setItems(items, (dialog, item) -> {
                 int catID = CategoryClass.idForCategory(BudgetsEditActivity.this.category.getCategory());
                 int oldCatID = CategoryClass.idForCategory(BudgetsEditActivity.this.oldCategory);
@@ -403,14 +403,14 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         Builder alert = new Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
         input.setText(CurrencyExt.amountAsString(this.selectedBudgetItem.getBudgetLimit()));
-        alert.setTitle(Locales.kLOC_BUDGETS_AMOUNT);
+        alert.setTitle(R.string.BUDGETS_AMOUNT);
         alert.setView(input);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+        alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
             BudgetsEditActivity.this.selectedBudgetItem.setBudgetLimit(CurrencyExt.amountFromString(value));
             BudgetsEditActivity.this.reloadData();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+        alert.setNegativeButton(R.string.GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
     }
 
@@ -436,7 +436,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         super.onCreateContextMenu(menu, v, menuInfo);
         Intent i = new Intent();
         i.putExtra("BudgetItem", (CategoryBudgetClass) v.getTag());
-        menu.add(0, CMENU_DELETE/*1*/, 0, Locales.kLOC_GENERAL_DELETE).setIntent(i);
+        menu.add(0, CMENU_DELETE/*1*/, 0, SMMoney.getAppContext().getString(R.string.GENERAL_DELETE)).setIntent(i);
     }
 
     @Override

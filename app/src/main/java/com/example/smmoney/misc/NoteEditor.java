@@ -41,7 +41,7 @@ public class NoteEditor extends PocketMoneyActivity {
         }
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_ACCOUNT_NOTES_LABEL);
+            getSupportActionBar().setTitle(getString(R.string.ACCOUNT_NOTES_LABEL));
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }

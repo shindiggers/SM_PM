@@ -9,6 +9,7 @@ import android.util.Xml;
 
 import androidx.annotation.NonNull;
 
+import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.Database;
@@ -16,7 +17,6 @@ import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.misc.TransactionTransferRetVals;
 import com.example.smmoney.views.desktopsync.PocketMoneySyncClass;
@@ -148,7 +148,7 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             if (this.account != null && this.account.equals(aString)) {
                 return;
             }
-            if (aString == null || !aString.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS)) {
+            if (aString == null || !aString.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS))) {
                 this.dirty = true;
                 this.account = aString;
             }

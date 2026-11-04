@@ -8,7 +8,7 @@ import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
@@ -19,7 +19,7 @@ public class DataTransfersPrefsActivity extends PocketMoneyPreferenceActivity {
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(PocketMoneyThemes.preferenceScreenTheme());
         super.onCreate(savedInstanceState);
-        setTitle(Locales.kLOC_PREFS_DATATRANFER);
+        setTitle(SMMoney.getAppContext().getString(R.string.PREFS_DATATRANFER));
         loadParentFragment(R.xml.prefs_datatransfers);
         getWindow().setBackgroundDrawableResource(PocketMoneyThemes.primaryRowSelector());
     }

@@ -44,7 +44,7 @@
         android:layout_marginStart="8dp"
         android:gravity="start|center_vertical"
         android:singleLine="true"
-        android:text="@string/kLOC_GENERAL_PAYEE"
+        android:text="@string/GENERAL_PAYEE"
         app:layout_constraintBottom_toTopOf="@+id/categorytextview"
         app:layout_constraintEnd_toStartOf="@+id/amounttextview"
         app:layout_constraintStart_toEndOf="@+id/datetextview"
@@ -58,7 +58,7 @@
         android:layout_marginStart="8dp"
         android:gravity="start|center_vertical"
         android:singleLine="true"
-        android:text="@string/kLOC_GENERAL_CATEGORY"
+        android:text="@string/GENERAL_CATEGORY"
         android:textSize="12sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/runningtotaltextview"
@@ -74,7 +74,7 @@
         android:gravity="end|center_vertical"
         android:maxWidth="100dp"
         android:singleLine="true"
-        android:text="@string/kLOC_GENERAL_AMOUNT"
+        android:text="@string/GENERAL_AMOUNT"
         app:layout_constraintBaseline_toBaselineOf="@+id/payeetextview"
         app:layout_constraintEnd_toStartOf="@+id/postbutton" />
 

@@ -23,7 +23,6 @@ import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.CheckBoxTint;
@@ -64,7 +63,7 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
         this.wakelock = ((PowerManager) Objects.requireNonNull(getSystemService(POWER_SERVICE))).newWakeLock(26, "PocketMoneySyncActivity:DoNotDimScreen");
 
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(Locales.kLOC_DESKTOPSYNC_TITLE);
+            getSupportActionBar().setTitle(R.string.DESKTOPSYNC_TITLE);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -263,20 +262,20 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     private void reloadData() {
         this.portEditText.setText(String.valueOf(Prefs.getIntPref(Prefs.PMSYNC_PORT)));
         if (this.clientRadioButton.isChecked()) {
-            this.syncButton.setText(this.pocketmoneySync == null ? Locales.kLOC_DESKTOPSYNC_SYNC : Locales.kLOC_DESKTOPSYNC_STOP);
+            this.syncButton.setText(this.pocketmoneySync == null ? SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SYNC) : SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_STOP));
             this.ipaddressEditText.setText(Prefs.getStringPref(Prefs.PMSYNC_IP));
             this.ipaddressEditText.setVisibility(View.VISIBLE);
             this.ipaddressTextView.setVisibility(View.INVISIBLE);
-            this.descriptionTextView.setText(Locales.kLOC_DESKTOPSYNC_DIRECTIONS);
+            this.descriptionTextView.setText(SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_DIRECTIONS));
             this.restoreTextView.setVisibility(View.VISIBLE);
             this.restoreCheckBox.setVisibility(View.VISIBLE);
             return;
         }
-        this.syncButton.setText(this.pocketmoneySync == null ? Locales.kLOC_DESKTOPSYNC_START : Locales.kLOC_DESKTOPSYNC_STOP);
+        this.syncButton.setText(this.pocketmoneySync == null ? SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_START) : SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_STOP));
         this.ipaddressTextView.setText(this.myIP);
         this.ipaddressEditText.setVisibility(View.INVISIBLE);
         this.ipaddressTextView.setVisibility(View.VISIBLE);
-        this.descriptionTextView.setText(Locales.kLOC_SYNCSERVER_DIRECTIONS);
+        this.descriptionTextView.setText(SMMoney.getAppContext().getString(R.string.SYNCSERVER_DIRECTIONS));
         this.restoreTextView.setVisibility(View.INVISIBLE);
         this.restoreCheckBox.setVisibility(View.INVISIBLE);
     }
@@ -315,74 +314,74 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                 status = "";
                 break;
             case Enums.kDesktopSyncStateInitialized /*2*/:
-                status = Locales.kLOC_DESKTOPSYNC_CLIENTINIT;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_CLIENTINIT);
                 this.progressBar.setProgress(5);
                 break;
             case Enums.kDesktopSyncStateConnecting /*3*/:
-                status = Locales.kLOC_DESKTOPSYNC_CONNECTINGSERVER;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_CONNECTINGSERVER);
                 this.spinningWheel.setVisibility(View.VISIBLE);
                 this.progressBar.setVisibility(View.VISIBLE);
                 this.progressBar.setProgress(5);
                 break;
             case Enums.kDesktopSyncStateClientConnected /*4*/:
-                status = Locales.kLOC_DESKTOPSYNC_WAITINGSERVERID;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_WAITINGSERVERID);
                 this.progressBar.setVisibility(View.VISIBLE);
                 this.progressBar.setProgress(10);
                 break;
             case Enums.kDesktopSyncStateServerAuthenticated /*5*/:
-                status = Locales.kLOC_DESKTOPSYNC_CONNECTEDSENDCHANGES;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_CONNECTEDSENDCHANGES);
                 this.progressBar.setProgress(10);
                 break;
             case Enums.kDesktopSyncStateServerInitialized /*6*/:
-                status = Locales.kLOC_DESKTOPSYNC_SERVERINIT;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SERVERINIT);
                 break;
             case Enums.kDesktopSyncStateServerListening /*7*/:
-                status = Locales.kLOC_DESKTOPSYNC_WAITINGCLIENTCONNECT;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_WAITINGCLIENTCONNECT);
                 this.spinningWheel.setVisibility(View.VISIBLE);
                 this.progressBar.setVisibility(View.INVISIBLE);
                 this.progressBar.setProgress(0);
                 break;
             case Enums.kDesktopSyncStateServerConnected /*8*/:
-                status = Locales.kLOC_DESKTOPSYNC_CONNECTEDSENDSID;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_CONNECTEDSENDSID);
                 this.progressBar.setVisibility(View.VISIBLE);
                 this.progressBar.setProgress(10);
                 break;
             case Enums.kDesktopSyncStateSendingSyncVersion /*9*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENDSYNCVERSION;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENDSYNCVERSION);
                 this.progressBar.setProgress(15);
                 break;
             case Enums.kDesktopSyncStateSentSyncVersion /*10*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENTSYNCVERSION;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENTSYNCVERSION);
                 this.progressBar.setProgress(isClient ? 20 : 15);
                 break;
             case Enums.kDesktopSyncStateReceivingSyncVersion /*13*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVINGSYNCVERSION;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVINGSYNCVERSION);
                 break;
             case Enums.kDesktopSyncStateSyncVersionReceived /*14*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVEDSYNCVERSION;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVEDSYNCVERSION);
                 this.progressBar.setProgress(isClient ? 15 : 18);
                 break;
             case Enums.kDesktopSyncStateSyncVersionProcessed /*16*/:
-                status = Locales.kLOC_DESKTOPSYNC_SYNCVERSIONPROCESSED;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SYNCVERSIONPROCESSED);
                 this.progressBar.setProgress(isClient ? 18 : 20);
                 break;
             case Enums.kDesktopSyncStateSendingUDID /*17*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENDINGUDID;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENDINGUDID);
                 break;
             case Enums.kDesktopSyncStateSentUDID /*18*/:
 
-                status = getString(R.string.kLOC_DESKTOPSYNC_SENTUDID, SMMoney.getID());
+                status = getString(R.string.DESKTOPSYNC_SENTUDID, SMMoney.getID());
                 this.progressBar.setProgress(isClient ? 60 : 25);
                 break;
             case Enums.kDesktopSyncStateReceivingUDID /*21*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVINGUDID;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVINGUDID);
                 break;
             case Enums.kDesktopSyncStateUDIDReceived /*22*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVEDUDUD;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVEDUDUD);
                 this.progressBar.setProgress(isClient ? 25 : 60);
                 break;
             case Enums.kDesktopSyncStateUDIDProcessed /*24*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENTRECENTCHANGES;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENTRECENTCHANGES);
                 this.progressBar.setProgress(isClient ? 27 : 62);
                 break;
             case Enums.kDesktopSyncStateSendPhotos /*30*/:
@@ -393,48 +392,48 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
             case Enums.kDesktopSyncStateReceivingPhoto /*35*/:
             case Enums.kDesktopSyncStatePhotoReceived /*36*/:
             case Enums.kDesktopSyncStatePhotoProcessed /*37*/:
-                status = Locales.kLOC_INPPURCHASES_PHOTOTITLE + " : " + this.photoCount;
+                status = SMMoney.getAppContext().getString(R.string.INAPPPURCHASES_PHOTOTITLE) + " : " + this.photoCount;
                 break;
             case Enums.kDesktopSyncStateSendingRecentChanges /*46*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENDINGRECENTCHANGES;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENDINGRECENTCHANGES);
                 this.progressBar.setProgress(isClient ? 65 : 75);
                 break;
             case Enums.kDesktopSyncStateSentRecentChanges /*47*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECENTCHANGEDSENT;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECENTCHANGEDSENT);
                 this.progressBar.setProgress(isClient ? 45 : 80);
                 break;
             case Enums.kDesktopSyncStateReceivingRecentChanges /*50*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVINGRECENTCHANGES;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVINGRECENTCHANGES);
                 this.progressBar.setProgress(isClient ? 30 : 65);
                 break;
             case Enums.kDesktopSyncStateRecentChangesReceived /*51*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVEDRECENTCHANGES;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVEDRECENTCHANGES);
                 this.progressBar.setProgress(isClient ? 70 : 40);
                 break;
             case Enums.kDesktopSyncStateRecentChangesProcessed /*53*/:
-                status = Locales.kLOC_DESKTOPSYNC_CHANGESPROCESSED;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_CHANGESPROCESSED);
                 this.progressBar.setProgress(isClient ? 80 : 50);
                 break;
             case Enums.kDesktopSyncStateSendingACK /*54*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENDINGACK;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENDINGACK);
                 break;
             case Enums.kDesktopSyncStateSentACK /*55*/:
-                status = Locales.kLOC_DESKTOPSYNC_SENTACK;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENTACK);
                 this.progressBar.setProgress(isClient ? 90 : 55);
                 break;
             case Enums.kDesktopSyncStateReceivingACK /*58*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVINGACK;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVINGACK);
                 break;
             case Enums.kDesktopSyncStateACKReceived /*59*/:
-                status = Locales.kLOC_DESKTOPSYNC_RECEIVEDACK;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RECEIVEDACK);
                 this.progressBar.setProgress(isClient ? 50 : 85);
                 break;
             case Enums.kDesktopSyncStateACKProcessed /*61*/:
-                status = Locales.kLOC_DESKTOPSYNC_ACKPROCESSED;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_ACKPROCESSED);
                 this.progressBar.setProgress(isClient ? 55 : 90);
                 break;
             case Enums.kDesktopSyncStateDisconnected /*67*/:
-                status = Locales.kLOC_DESKTOPSYNC_SYNCCOMPLETE;
+                status = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SYNCCOMPLETE);
                 this.progressBar.setProgress(100);
                 break;
         }
@@ -442,16 +441,16 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     public void showNoHostDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("Hostname Error").setMessage("Could Not Find Server").setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle("Hostname Error").setMessage("Could Not Find Server").setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> {
             PocketMoneySyncActivity.this.stopSyncing();
             dialog.dismiss();
         }).show();
     }
 
     public void showFirstUdidClientDialog() {
-        CharSequence[] items = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_RESTOREFROMSERVER, Locales.kLOC_DESKTOPSYNC_SYNC, Locales.kLOC_GENERAL_CANCEL};
+        CharSequence[] items = new CharSequence[]{SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_RESTOREFROMSERVER), SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SYNC), SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL)};
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
+                .setTitle(getString(R.string.DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
                 .setCancelable(false)
                 .setItems(items, (dialog, item) -> {
                     switch (item) {
@@ -459,12 +458,12 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
                             AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this, PocketMoneyThemes.dialogTheme());
                             ab.setTitle("Are you sure?");
                             ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
-                            ab.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog2, which) -> {
+                            ab.setPositiveButton(R.string.GENERAL_OK, (dialog2, which) -> {
                                 PocketMoneySyncActivity.this.firstSyncToUDIDAction = Enums.kDesktopSyncFirstSyncActionRestoreFromServer/*2*/;
                                 dialog2.dismiss();
                                 PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(PocketMoneySyncActivity.this.firstSyncToUDIDAction);
                             });
-                            ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, which) -> {
+                            ab.setNegativeButton(R.string.GENERAL_CANCEL, (dialog1, which) -> {
                                 PocketMoneySyncActivity.this.stopSyncing();
                                 PocketMoneySyncActivity.this.pocketmoneySync.firstUDIDSyncAction(-1);
                             });
@@ -485,9 +484,9 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     public void showFirstUdidServerDialog() {
-        CharSequence[] items2 = new CharSequence[]{Locales.kLOC_DESKTOPSYNC_SENDDATA, Locales.kLOC_GENERAL_CANCEL};
+        CharSequence[] items2 = new CharSequence[]{SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_SENDDATA), SMMoney.getAppContext().getString(R.string.GENERAL_CANCEL)};
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(getString(R.string.kLOC_DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
+                .setTitle(getString(R.string.DESKTOPSYNC_UDIDFIRSTSEEN, this.syncUdid))
                 .setCancelable(false)
                 .setItems(items2, (dialog, item) -> {
                     switch (item) {
@@ -506,33 +505,33 @@ public class PocketMoneySyncActivity extends PocketMoneyActivity {
     }
 
     public void showOpenConnectionDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(Locales.kLOC_DESKTOPSYNC_TITLE).setMessage(Locales.kLOC_DESKTOPSYNC_CONNECTIONOPEN).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(R.string.DESKTOPSYNC_TITLE).setMessage(R.string.DESKTOPSYNC_CONNECTIONOPEN).setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showRestoreDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setMessage(Locales.KLOC_TOOLS_DELETERESTORE_BODY).setPositiveButton(Locales.KLOC_TOOLS_DELETERESTORE, (dialog, which) -> {
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setMessage(R.string.TOOLS_DELETERESTORE_BODY).setPositiveButton(R.string.TOOLS_DELETERESTORE, (dialog, which) -> {
             AlertDialog.Builder ab = new AlertDialog.Builder(PocketMoneySyncActivity.this, PocketMoneyThemes.dialogTheme());
             ab.setTitle("Are you sure?");
             ab.setMessage("This will destroy all your SMMoney data on your device. Are you sure you want to overwrite the data on your device with the data from the server?");
-            ab.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog2, which2) -> {
+            ab.setPositiveButton(R.string.GENERAL_OK, (dialog2, which2) -> {
                 PocketMoneySyncActivity.this.startSyncing();
                 PocketMoneySyncActivity.this.reloadData();
             });
-            ab.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog1, which1) -> dialog1.dismiss());
+            ab.setNegativeButton(R.string.GENERAL_CANCEL, (dialog1, which1) -> dialog1.dismiss());
             ab.create().show();
-        }).setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show();
+        }).setNegativeButton(R.string.GENERAL_CANCEL, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showRepeatingWarningDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(Locales.kLOC_REPEATING_TRANSACTIONS).setMessage(Locales.kLOC_REPEATING_TRANSACTIONS_DISABLED).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(R.string.REPEATING_TRANSACTIONS).setMessage(R.string.REPEATING_TRANSACTIONS_DISABLED).setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showUpgradeDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setMessage(Locales.kLOC_DESKTOPSYNC_SYNVVERSIONINCOMPATIBLE).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setMessage(R.string.DESKTOPSYNC_SYNVVERSIONINCOMPATIBLE).setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     public void showWifiDialog() {
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_TITLE).setMessage(Locales.kLOC_ERROR_NO_NETWORK_CONNECTION_MSG).setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
+        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme()).setTitle(R.string.ERROR_NO_NETWORK_CONNECTION_TITLE).setMessage(R.string.ERROR_NO_NETWORK_CONNECTION_MSG).setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> dialog.dismiss()).show();
     }
 
     private static ArrayList<String> getLocalIpAddresses() throws SocketException {

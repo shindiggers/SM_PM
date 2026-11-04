@@ -16,8 +16,8 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CalExt;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.records.FilterClass;
 import com.example.smmoney.views.FromToDateActivity;
@@ -57,7 +57,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
                     this.accountsTextView.setText(selection);
                     break;
                 case LookupsListActivity.FILTER_DATES /*10*/:
-                    if (selection != null && selection.contains(Locales.kLOC_FILTER_DATES_CUSTOM)) {
+                    if (selection != null && selection.contains(SMMoney.getAppContext().getString(R.string.FILTER_DATES_CUSTOM))) {
                         Intent i = new Intent(this, FromToDateActivity.class);
                         i.putExtra("FromDate", this.filter.getDateFrom() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateFrom()) : "*");
                         i.putExtra("ToDate", this.filter.getDateTo() != null ? CalExt.descriptionWithMediumDate(this.filter.getDateTo()) : "*");
@@ -110,7 +110,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
         setupButtons();
 
         if (getSupportActionBar() != null) {
-            String title = (this.filter.filterID == 0) ? Locales.kLOC_FILTER_NEW : Locales.kLOC_TOOLS_FILTER_EDIT;
+            String title = (this.filter.filterID == 0) ? SMMoney.getAppContext().getString(R.string.FILTER_NEW) : SMMoney.getAppContext().getString(R.string.TOOLS_FILTER_EDIT);
             getSupportActionBar().setTitle(title);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -125,7 +125,7 @@ public class FilterEditActivity extends PocketMoneyActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        MenuItem item = menu.add(0, MENU_SAVE, 0, Locales.kLOC_GENERAL_SAVE);
+        MenuItem item = menu.add(0, MENU_SAVE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_SAVE));
         item.setIcon(R.drawable.ic_save_white_24dp);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
@@ -239,15 +239,15 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.idEditText.setText(this.filter.getCheckNumber());
         this.transactionTypeTextView.setText(this.filter.typeAsString());
         TextView textView = this.accountsTextView;
-        CharSequence account = (this.filter.getAccount() == null || this.filter.getAccount().isEmpty()) ? Locales.kLOC_FILTERS_ALL_ACCOUNTS : this.filter.getAccount();
+        CharSequence account = (this.filter.getAccount() == null || this.filter.getAccount().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS) : this.filter.getAccount();
         textView.setText(account);
         this.datesTextView.setText(this.filter.isCustomDate() ? this.filter.customDateString() : this.filter.getDate());
         this.clearedTextView.setText(this.filter.clearedAsString());
         EditText editText = this.classesTextView;
-        account = (this.filter.getClassName() == null || this.filter.getClassName().isEmpty()) ? Locales.kLOC_FILTERS_ALL_CLASSES : this.filter.getClassName();
+        account = (this.filter.getClassName() == null || this.filter.getClassName().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES) : this.filter.getClassName();
         editText.setText(account);
         editText = this.categoriesTextView;
-        account = (this.filter.getCategory() == null || this.filter.getCategory().isEmpty()) ? Locales.kLOC_FILTERS_ALL_CATEGORIES : this.filter.getCategory();
+        account = (this.filter.getCategory() == null || this.filter.getCategory().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES) : this.filter.getCategory();
         editText.setText(account);
     }
 
@@ -260,10 +260,10 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.filter.setClearedFromString(this.clearedTextView.getText().toString());
         this.filter.setCategory(this.categoriesTextView.getText().toString());
         this.filter.setClassName(this.classesTextView.getText().toString());
-        if (this.filter.getCategory().equals(Locales.kLOC_FILTERS_ALL_CATEGORIES)) {
+        if (this.filter.getCategory().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
             this.filter.setCategory("");
         }
-        if (this.filter.getClassName().equals(Locales.kLOC_FILTERS_ALL_CLASSES)) {
+        if (this.filter.getClassName().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES))) {
             this.filter.setClassName("");
         }
     }

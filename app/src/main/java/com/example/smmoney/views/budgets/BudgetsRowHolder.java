@@ -7,9 +7,9 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
@@ -41,7 +41,7 @@ public class BudgetsRowHolder {
     private void formatAmount(TextView view, double amount) {
         String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(amount)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(amount));
         if (amount < 0) {
-            view.setText(String.format(Locales.kLOC_FORMAT_PARENTHESES, text));
+            view.setText(String.format(SMMoney.getAppContext().getString(R.string.FORMAT_PARENTHESES), text));
         } else {
             view.setText(text);
         }
@@ -81,9 +81,9 @@ public class BudgetsRowHolder {
         // 4. Update Variance Label
         String varText = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(variance)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(variance));
         if (variance < 0) {
-            this.varianceTextView.setText(String.format(Locales.kLOC_FORMAT_BEHIND, varText));
+            this.varianceTextView.setText(String.format(SMMoney.getAppContext().getString(R.string.FORMAT_BEHIND), varText));
         } else {
-            this.varianceTextView.setText(String.format(Locales.kLOC_FORMAT_AHEAD, varText));
+            this.varianceTextView.setText(String.format(SMMoney.getAppContext().getString(R.string.FORMAT_AHEAD), varText));
         }
         this.varianceTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
 

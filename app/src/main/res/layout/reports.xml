@@ -35,7 +35,7 @@
                     android:layout_height="50dp"
                     android:layout_gravity="center_vertical"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/earlier_period"
+                    android:contentDescription="@string/content_description_earlier_period"
                     android:src="@drawable/ic_left_arrow" />
 
                 <Button
@@ -51,7 +51,7 @@
                     android:layout_height="50dp"
                     android:layout_gravity="end|center_vertical"
                     android:scaleType="fitCenter"
-                    android:contentDescription="@string/later_period"
+                    android:contentDescription="@string/content_description_later_period"
                     android:src="@drawable/ic_right_arrow" />
 
             </FrameLayout>
@@ -126,7 +126,7 @@
             android:id="@+id/balance_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/kLOC_REPORT_EXPENSETOTAL"
+            android:text="@string/REPORT_EXPENSETOTAL"
             android:textStyle="bold" />
 
         <TextView

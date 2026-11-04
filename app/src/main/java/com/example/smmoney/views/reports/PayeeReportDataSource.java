@@ -1,8 +1,9 @@
 package com.example.smmoney.views.reports;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
 import com.example.smmoney.records.FilterClass;
@@ -19,7 +20,7 @@ public class PayeeReportDataSource extends ReportDataSource {
     }
 
     public String title() {
-        return Locales.kLOC_GENERAL_PAYEE;
+        return SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE);
     }
 
     public FilterClass newFilterBasedOnSelectedRow(String content) {

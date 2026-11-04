@@ -8,8 +8,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
 
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.Enums;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 
@@ -20,11 +21,17 @@ public class ReportDialog extends AppCompatDialogFragment {
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        CharSequence[] items = new CharSequence[]{Locales.kLOC_REPORTS_ONEMONTH, Locales.kLOC_REPORTS_TWOMONTHS, Locales.kLOC_REPORTS_THREEMONTHS, Locales.kLOC_REPORTS_SIXMONTHS, Locales.kLOC_REPORTS_ONEYEAR, Locales.kLOC_PREFERENCES_SHOW_ALL};
+        CharSequence[] items = new CharSequence[]{
+                SMMoney.getAppContext().getString(R.string.REPORTS_ONEMONTH),
+                SMMoney.getAppContext().getString(R.string.REPORTS_TWOMONTHS),
+                SMMoney.getAppContext().getString(R.string.REPORTS_THREEMONTHS),
+                SMMoney.getAppContext().getString(R.string.REPORTS_SIXMONTHS),
+                SMMoney.getAppContext().getString(R.string.REPORTS_ONEYEAR),
+                SMMoney.getAppContext().getString(R.string.PREFERENCES_SHOW_ALL)};
 
         int theme = PocketMoneyThemes.dialogTheme();
         AlertDialog.Builder builder = new AlertDialog.Builder(requireActivity(), theme);
-        builder.setTitle(Locales.kLOC_BUDGETS_PERIOD)
+        builder.setTitle(R.string.BUDGETS_PERIOD)
                 .setSingleChoiceItems(items, Prefs.getIntPref(Prefs.REPORTS_PERIOD), (dialog, which) -> {
                     int periodType = switch (which) {
                         case Enums.kReportPeriodOneMonth /*0*/ -> Enums.kReportPeriodOneMonth;
@@ -42,7 +49,7 @@ public class ReportDialog extends AppCompatDialogFragment {
 
 
                 })
-                .setNegativeButton("Cancel", (dialog, which) -> {
+                .setNegativeButton(R.string.GENERAL_CANCEL, (dialog, which) -> {
 
                 });
         return builder.create();

@@ -8,7 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.smmoney.misc.Locales;
+import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.PocketMoneyThemes;
 
 public class DialogFragmentFileTransfer extends DialogFragment {
@@ -23,11 +24,11 @@ public class DialogFragmentFileTransfer extends DialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         AlertDialog.Builder builder;
         CharSequence[] items = new CharSequence[3];
-        items[0] = Locales.kLOC_TOOLS_FILETRANSFERS_EMAIL;
-        items[1] = Locales.kLOC_TOOLS_FILETRANSFERS_SDCARD;
-        items[2] = Locales.kLOC_DESKTOPSYNC_TITLE;
+        items[0] = SMMoney.getAppContext().getString(R.string.TOOLS_FILETRANSFERS_EMAIL);
+        items[1] = SMMoney.getAppContext().getString(R.string.FILETRANSFERS_SDCARD);
+        items[2] = SMMoney.getAppContext().getString(R.string.DESKTOPSYNC_TITLE);
         builder = new AlertDialog.Builder(getActivity(), PocketMoneyThemes.dialogTheme());
-        builder.setTitle(Locales.kLOC_TOOLS_FILETRANSFERS);
+        builder.setTitle(R.string.TOOLS_FILETRANSFERS);
         builder.setItems(items, (dialog, item) -> {
             DialogFileTransferListener activity = (DialogFileTransferListener) getActivity();
             if (activity != null) {

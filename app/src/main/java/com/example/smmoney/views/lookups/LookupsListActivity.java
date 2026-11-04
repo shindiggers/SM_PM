@@ -28,9 +28,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
+import com.example.smmoney.SMMoney;
 import com.google.android.material.snackbar.Snackbar;
 import com.example.smmoney.database.AccountDB;
-import com.example.smmoney.misc.Locales;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
@@ -49,7 +49,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private static final int ACCOUNT_LOOKUP = 3;
     public static final int ACCOUNT_LOOKUP_TRANS = 17;
     public static final int ACCOUNT_LOOKUP_WITH_NONE = 18;
-    private static final int ACCOUNT_TYPE_LOOKUP = 1;
+    public static final int ACCOUNT_TYPE_LOOKUP = 1;
     public static final int BUDGET_PERIOD = 20;
     public static final int BUDGET_TYPE = 19;
     public static final int CATEGORY_LOOKUP = 5;
@@ -116,9 +116,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
         super.onResume();
         if (this.currentType == ACCOUNT_TYPE_LOOKUP && !Prefs.getBooleanPref(Prefs.HINT_ACCOUNT_TYPE_OPTIONS)) {
             AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-            alert.setTitle(Locales.kLOC_ACCOUNTTYPES_URL_TITLE);
-            alert.setMessage(Locales.kLOC_ACCOUNTTYPES_URL_BODY);
-            alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+            alert.setTitle(R.string.ACCOUNTTYPES_URL_TITLE);
+            alert.setMessage(R.string.ACCOUNTTYPES_URL_BODY);
+            alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
                 Prefs.setPref(Prefs.HINT_ACCOUNT_TYPE_OPTIONS, true);
                 dialog.dismiss();
             });
@@ -185,7 +185,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                             paint.setColor(Color.WHITE);
                             paint.setTextSize(40);
                             paint.setAntiAlias(true);
-                            c.drawText(Locales.kLOC_GENERAL_EDIT, (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                            c.drawText(SMMoney.getAppContext().getString(R.string.GENERAL_EDIT), (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
 
                         } else if (dX < 0) { // Swipe Left (Delete)
                             paint.setColor(Color.parseColor("#F44336")); // Red
@@ -205,8 +205,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
                             paint.setColor(Color.WHITE);
                             paint.setTextSize(40);
                             paint.setAntiAlias(true);
-                            float textWidth = paint.measureText(Locales.kLOC_GENERAL_DELETE);
-                            c.drawText(Locales.kLOC_GENERAL_DELETE, (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                            float textWidth = paint.measureText(SMMoney.getAppContext().getString(R.string.GENERAL_DELETE));
+                            c.drawText(SMMoney.getAppContext().getString(R.string.GENERAL_DELETE), (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
                         }
                     }
                     super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
@@ -253,10 +253,10 @@ public class LookupsListActivity extends PocketMoneyActivity {
     }
 
     private boolean isAllItem(String item) {
-        return item.equals(Locales.kLOC_FILTERS_ALL_ACCOUNTS) ||
-               item.equals(Locales.kLOC_FILTERS_ALL_CATEGORIES) ||
-               item.equals(Locales.kLOC_FILTERS_ALL_CLASSES) ||
-               item.equals(Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
+        return item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS)) ||
+               item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES)) ||
+               item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES)) ||
+               item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT));
     }
 
     private void setupList() {
@@ -290,8 +290,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 break;
             case FILTER_ACCOUNTS /*9*/:
                 this.theStrings = queryForAccounts();
-                this.theStrings.add(0, Locales.kLOC_FILTERS_ALL_ACCOUNTS);
-                this.theStrings.add(0, Locales.kLOC_FILTERS_CURRENT_ACCOUNT);
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS));
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT));
                 break;
             case FILTER_DATES /*10*/:
                 Bundle bundle = getIntent().getExtras();
@@ -308,13 +308,13 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 break;
             case FILTER_CATEGORIES /*14*/:
                 this.theStrings = CategoryClass.allCategoryNamesInDatabase();
-                this.theStrings.add(0, Locales.kLOC_FILTERS_UNFILED);
-                this.theStrings.add(0, Locales.kLOC_FILTERS_ALL_CATEGORIES);
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES));
                 break;
             case FILTER_CLASSES /*15*/:
                 this.theStrings = ClassNameClass.allClassNamesInDatabase();
-                this.theStrings.add(0, Locales.kLOC_FILTERS_UNFILED);
-                this.theStrings.add(0, Locales.kLOC_FILTERS_ALL_CLASSES);
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_UNFILED));
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES));
                 break;
             case REPEAT_TYPE /*16*/:
                 this.theStrings = new ArrayList<>();
@@ -327,7 +327,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 break;
             case ACCOUNT_LOOKUP_WITH_NONE /*18*/:
                 this.theStrings = queryForAccounts();
-                this.theStrings.add(0, Locales.kLOC_GENERAL_NONE);
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.GENERAL_NONE));
                 break;
             case BUDGET_TYPE /*19*/:
                 this.theStrings = CategoryClass.budgetTypes();
@@ -364,7 +364,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
     private void preCheckItems() {
         String currentSelection = getIntent().getStringExtra("currentSelection");
-        if (currentSelection == null || currentSelection.isEmpty() || currentSelection.equals(Locales.kLOC_FILTER_DATES_ALL)) {
+        if (currentSelection == null || currentSelection.isEmpty() || currentSelection.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL))) {
             // Default check "All" items if nothing selected
             for (int i = 0; i < this.theStrings.size(); i++) {
                 if (isAllItem(this.theStrings.get(i))) {
@@ -412,30 +412,30 @@ public class LookupsListActivity extends PocketMoneyActivity {
     public String getTypeAsString() {
         return switch (this.currentType) {
             case ACCOUNT_TYPE_LOOKUP, FILTER_TRANSACTION_TYPE, REPEAT_TYPE, BUDGET_TYPE /*19*/ ->
-                    Locales.kLOC_ACCOUNT_TYPE_LABEL;
+                    SMMoney.getAppContext().getString(R.string.ACCOUNT_TYPE_TITLE);
             case ACCOUNT_LOOKUP, ACCOUNT_LOOKUP_TRANS, FILTER_ACCOUNTS,
-                 ACCOUNT_LOOKUP_WITH_NONE /*18*/ -> Locales.kLOC_GENERAL_ACCOUNTS;
-            case PAYEE_LOOKUP, FILTER_PAYEES /*11*/ -> Locales.kLOC_GENERAL_PAYEE_TITLE;
+                 ACCOUNT_LOOKUP_WITH_NONE /*18*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_ACCOUNTS);
+            case PAYEE_LOOKUP, FILTER_PAYEES /*11*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE_TITLE);
             case CATEGORY_LOOKUP, FILTER_CATEGORIES /*14*/ ->
-                    Locales.kLOC_GENERAL_CATEGORY_TITLE;
-            case CLASS_LOOKUP, FILTER_CLASSES /*15*/ -> Locales.kLOC_GENERAL_CLASSES;
-            case ID_LOOKUP, FILTER_IDS /*12*/ -> Locales.kLOC_GENERAL_ID_TITLE;
-            case FILTER_DATES /*10*/ -> Locales.kLOC_FILTER_DATES;
-            case FILTER_CLEARED /*13*/ -> Locales.kLOC_GENERAL_CLEARED;
-            case BUDGET_PERIOD /*20*/ -> Locales.kLOC_BUDGETS_PERIOD;
+                    SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY_TITLE);
+            case CLASS_LOOKUP, FILTER_CLASSES /*15*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_CLASSES);
+            case ID_LOOKUP, FILTER_IDS /*12*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_ID_TITLE);
+            case FILTER_DATES /*10*/ -> SMMoney.getAppContext().getString(R.string.FILTER_DATES);
+            case FILTER_CLEARED /*13*/ -> SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED);
+            case BUDGET_PERIOD /*20*/ -> SMMoney.getAppContext().getString(R.string.BUDGETS_PERIOD);
             default -> "Select item";
         };
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
         if (this.isMultiSelect) {
-            menu.add(0, 2 /* MENU_DONE */, 0, Locales.kLOC_GENERAL_DONE).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+            menu.add(0, 2 /* MENU_DONE */, 0, R.string.GENERAL_DONE).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         }
         if (this.currentType != PAYEE_LOOKUP && this.currentType != CATEGORY_LOOKUP && this.currentType != CLASS_LOOKUP && this.currentType != ID_LOOKUP) {
             return this.isMultiSelect;
         }
         int MENU_ADD = 1;
-        menu.add(0, MENU_ADD, 0, Locales.kLOC_TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, MENU_ADD, 0, R.string.TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
@@ -459,9 +459,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
         final int theItem = this.currentType;
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
-        alert.setTitle(Locales.kLOC_TRANSACTION_NEW);
+        alert.setTitle(R.string.TRANSACTION_NEW);
         alert.setView(input);
-        alert.setPositiveButton(Locales.kLOC_GENERAL_OK, (dialog, whichButton) -> {
+        alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
             if (value.isEmpty()) return;
             switch (theItem) {
@@ -480,7 +480,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             }
             LookupsListActivity.this.reloadData();
         });
-        alert.setNegativeButton(Locales.kLOC_GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
+        alert.setNegativeButton(R.string.GENERAL_CANCEL, (dialog, whichButton) -> dialog.cancel());
         alert.show();
         return true;
     }
@@ -513,18 +513,18 @@ public class LookupsListActivity extends PocketMoneyActivity {
         
         scopePopup.setTextColor(textColor);
         scopePopup.setButtonTintList(tint);
-        scopePopup.setText(Locales.kLOC_LOOKUPS_POPUPLIST);
+        scopePopup.setText(SMMoney.getAppContext().getString(R.string.LOOKUPS_POPUPLIST));
         
         scopeEverywhere.setTextColor(textColor);
         scopeEverywhere.setButtonTintList(tint);
-        scopeEverywhere.setText(Locales.kLOC_LOOKUPS_EVERYWHERE);
+        scopeEverywhere.setText(SMMoney.getAppContext().getString(R.string.LOOKUPS_EVERYWHERE));
         
-        helperText.setText(getString(R.string.dialog_rename_lookup_helper_text));
+        helperText.setText(getString(R.string.BUDGETS_DIALOG_RENAME_LOOKUP_HELPER_TEXT));
 
         AlertDialog dialog = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_LOOKUPS_RENAMEITEM)
+                .setTitle(R.string.LOOKUPS_RENAMEITEM)
                 .setView(dialogView)
-                .setPositiveButton(Locales.kLOC_GENERAL_OK, (d, which) -> {
+                .setPositiveButton(R.string.GENERAL_OK, (d, which) -> {
                     String value = input.getText().toString().trim();
                     if (value.isEmpty()) return;
                     
@@ -546,7 +546,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                     }
                     reloadData();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, null)
                 .create();
 
         // Ensure keyboard and focus are handled when dialog is shown
@@ -567,9 +567,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
     private void deleteItem(int position) {
         String value = this.theStrings.get(position);
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setTitle(Locales.kLOC_GENERAL_DELETE)
-                .setMessage(Locales.kLOC_GENERAL_DELETE + " '" + value + "'?")
-                .setPositiveButton(Locales.kLOC_GENERAL_DELETE, (dialog, which) -> {
+                .setTitle(R.string.GENERAL_DELETE)
+                .setMessage((R.string.GENERAL_DELETE) + " '" + value + "'?")
+                .setPositiveButton(R.string.GENERAL_DELETE, (dialog, which) -> {
                     switch (this.currentType) {
                         case PAYEE_LOOKUP /*4*/:
                             new PayeeClass(PayeeClass.idForPayee(value)).deleteFromDatabase();
@@ -586,7 +586,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
                     }
                     reloadData();
                 })
-                .setNegativeButton(Locales.kLOC_GENERAL_CANCEL, null)
+                .setNegativeButton(R.string.GENERAL_CANCEL, null)
                 .show();
     }
 
