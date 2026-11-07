@@ -66,6 +66,7 @@ import com.example.smmoney.records.ClassNameClass;
 import com.example.smmoney.records.IDClass;
 import com.example.smmoney.records.PayeeClass;
 import com.example.smmoney.records.RepeatingTransactionClass;
+import com.example.smmoney.records.SplitsClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.BalanceBar;
 import com.example.smmoney.views.CheckBoxTint;
@@ -903,9 +904,6 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         return list;
     }
 
-    private void saveAction() {
-        saveAction(true, false);
-    }
 
     private void saveAction(boolean updateSeries, boolean cascadeSubsequent) {
         TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
@@ -1170,23 +1168,79 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void includeFeeAction() {
         Log.d(TAG, "includeFeeAction() called");
+
+        // Commit current UI values (amountEditText, payee, category, etc.) into this.transaction
+        getCells();
+
         AccountClass account = AccountDB.recordFor(this.transaction.getAccount());
         if (account == null || account.getFee() <= 0.0d) {
             showFeeDialog();
             return;
         }
-        if (this.transaction.transactionID == 0) {
-            saveAction();
+
+        double baseAmount = Math.abs(this.transaction.getSubTotal());
+        if (baseAmount <= 0.0d) {
+            Toast.makeText(this, "Please enter a transaction amount first", Toast.LENGTH_SHORT).show();
+            return;
         }
-        TransactionClass feeTrans = new TransactionClass();
-        feeTrans.setAccount(this.transaction.getAccount());
-        feeTrans.setSubTotal(Math.abs(this.transaction.getSubTotal()) * account.getFee() * -1.0d);
-        feeTrans.setAmount(feeTrans.getSubTotal());
-        feeTrans.setCurrencyCode(account.getCurrencyCode());
-        feeTrans.setCategory(SMMoney.getAppContext().getString(R.string.ACCOUNT_FEE_LABEL));
-        feeTrans.initType();
-        feeTrans.saveToDatabase();
-        Toast.makeText(this, "Fee transaction added", Toast.LENGTH_SHORT).show();
+
+        double feeAmount;
+        if (account.getFixedPercent() == Enums.kFeeTypePercent) {
+            feeAmount = baseAmount * (account.getFee() / 100.0d);
+        } else {
+            feeAmount = Math.abs(account.getFee());
+        }
+
+        if (feeAmount <= 0.0d) {
+            Toast.makeText(this, "Fee calculation resulted in 0.00", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Round fee to 2 decimal places
+        feeAmount = Math.round(feeAmount * 100.0d) / 100.0d;
+
+        // Check if a fee split already exists in this transaction
+        String feeCategory = SMMoney.getAppContext().getString(R.string.ACCOUNT_FEE_LABEL);
+        for (SplitsClass s : this.transaction.getSplits()) {
+            if (feeCategory.equalsIgnoreCase(s.getCategory())) {
+                Toast.makeText(this, "Fee split already exists on this transaction", Toast.LENGTH_SHORT).show();
+                return;
+            }
+        }
+
+        // If the transaction has only 1 split so far, ensure its category & memo match the main fields
+        // and keep its amount as the original base expense/deposit
+        boolean isExpense = (this.transaction.getType() == 0 || this.transaction.getType() == 2 || this.transaction.getSubTotal() < 0);
+        double signedBaseAmount = isExpense ? -baseAmount : baseAmount;
+
+        if (this.transaction.getNumberOfSplits() <= 1) {
+            SplitsClass firstSplit = this.transaction.getSplits().get(0);
+            firstSplit.setAmount(signedBaseAmount);
+            firstSplit.setCategory(this.transaction.getCategory());
+            firstSplit.setMemo(this.transaction.getMemo());
+            firstSplit.setClassName(this.transaction.getClassName());
+            firstSplit.setCurrencyCode(this.transaction.getCurrencyCode());
+        }
+
+        // A fee is an expense (negative split in terms of account balance impact)
+        double signedFee = -feeAmount;
+
+        SplitsClass feeSplit = new SplitsClass();
+        feeSplit.setAmount(signedFee);
+        feeSplit.setCategory(feeCategory);
+        feeSplit.setMemo(SMMoney.getAppContext().getString(R.string.kLOC_FEE_CATEGORY));
+        feeSplit.setCurrencyCode(account.getCurrencyCode());
+        feeSplit.setXrate(1.0d);
+
+        this.transaction.addSplit(feeSplit);
+        double newSubTotal = this.transaction.getSplitsTotal();
+        this.transaction.setSubTotal(newSubTotal);
+        this.transaction.dirty = true;
+
+        reloadData();
+        reloadBalanceBar();
+
+        Toast.makeText(this, "Fee split added (" + CurrencyExt.amountAsCurrency(feeAmount, account.getCurrencyCode()) + ")", Toast.LENGTH_SHORT).show();
     }
 
     private void showFeeDialog() {

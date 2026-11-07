@@ -192,6 +192,9 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
             CurrencyKeyboard.this.editText = theEdit;
             if (hasFocus) {
                 CurrencyKeyboard.this.show();
+                if (theEdit.getText() != null) {
+                    theEdit.setSelection(theEdit.getText().length());
+                }
                 if (r != null) {
                     r.run();
                 }
@@ -202,9 +205,16 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         });
         
         theEdit.setOnTouchListener((v, event) -> {
-            v.requestFocus();
-            CurrencyKeyboard.this.show();
-            return true;
+            if (event.getAction() == android.view.MotionEvent.ACTION_UP) {
+                if (!v.hasFocus()) {
+                    v.requestFocus();
+                    if (theEdit.getText() != null) {
+                        theEdit.setSelection(theEdit.getText().length());
+                    }
+                }
+                CurrencyKeyboard.this.show();
+            }
+            return false;
         });
     }
 

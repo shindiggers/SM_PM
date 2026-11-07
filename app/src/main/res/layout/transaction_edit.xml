@@ -573,7 +573,7 @@
                     style="@style/Widget.MaterialComponents.Button.TextButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/ACCOUNT_FEE_LABEL"
+                    android:text="@string/ACTION_FEE_BUTTON"
                     android:textAllCaps="false" />
 
                 <com.google.android.material.button.MaterialButton

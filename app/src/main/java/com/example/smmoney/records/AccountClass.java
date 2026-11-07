@@ -360,10 +360,31 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     }
 
     public void setFeeFromString(String str) {
-        setFee(numberFromString(str));
+        if (str == null || str.trim().isEmpty()) {
+            setFee(0.0d);
+            return;
+        }
+        if (getFixedPercent() == Enums.kFeeTypePercent) {
+            try {
+                String cleaned = str.replace("%", "").trim();
+                setFee(Double.parseDouble(cleaned));
+            } catch (Exception e) {
+                setFee(numberFromString(str));
+            }
+        } else {
+            setFee(numberFromString(str));
+        }
     }
 
     public String feeAsString() {
+        if (getFixedPercent() == Enums.kFeeTypePercent) {
+            double f = getFee();
+            if (f == (long) f) {
+                return String.format(java.util.Locale.US, "%d", (long) f);
+            } else {
+                return String.format(java.util.Locale.US, "%.2f", f);
+            }
+        }
         return formatAmountAsCurrency(getFee());
     }
 
@@ -413,14 +434,14 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return CurrencyExt.exchangeRateAsString(getExchangeRate());
     }
 
-    private void setFixedPercent(int value) {
+    public void setFixedPercent(int value) {
         if (this.fixedPercent != value) {
             this.dirty = true;
             this.fixedPercent = value;
         }
     }
 
-    private int getFixedPercent() {
+    public int getFixedPercent() {
         hydrate();
         return this.fixedPercent;
     }
@@ -1014,6 +1035,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             content.put("iconFileName", this.iconFileName);
             content.put("url", this.url);
             content.put("fee", this.fee);
+            content.put("fixedPercent", this.fixedPercent);
             content.put("limitAmount", this.limit);
             content.put("noLimit", this.noLimit);
             content.put("totalWorth", this.totalWorth);

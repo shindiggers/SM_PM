@@ -138,6 +138,9 @@
     <string name="DUPLICATE_TRANSACTION_PRESENT_TIME">Use today\'s date</string>
     <string name="TRANSACTION_NEW">New Transaction</string>
     <string name="ACCOUNT_FEE_LABEL">Fee</string>
+    <string name="ACTION_FEE_BUTTON">+ Fee</string>
+    <string name="FEE_TYPE_FIXED">Fixed</string>
+    <string name="FEE_TYPE_PERCENT">%</string>
     <string name="EDIT_TRANSACTION_FROM">From</string>
     <string name="DUPLICATE_TRANSACTION_TITLE">Duplicate Transaction</string>
     <string name="FEE_MISSING_ALERT">You have not filled out the transaction fee information for this account.</string>

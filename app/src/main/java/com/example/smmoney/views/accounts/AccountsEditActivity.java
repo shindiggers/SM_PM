@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -87,6 +88,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private EditText exchangeRate;
     private EditText expires;
     private EditText fee;
+    private Spinner feeTypeSpinner;
     private ImageView icon;
     private int iconResourceID;
     private EditText institution;
@@ -264,6 +266,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.phone = findViewById(R.id.phone);
         this.website = findViewById(R.id.website);
         this.fee = findViewById(R.id.fee);
+        this.feeTypeSpinner = findViewById(R.id.fee_type_spinner);
         this.limit = findViewById(R.id.limit);
         this.checkNumber = findViewById(R.id.checknumber);
         this.notes = findViewById(R.id.notestextview);
@@ -300,6 +303,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.phone.setText(this.account.getPhone());
         this.website.setText(this.account.getUrl());
         this.fee.setText(this.account.feeAsString());
+        setupFeeTypeSpinner();
         this.limit.setText(this.account.limitAsString());
         this.checkNumber.setText(this.account.getCheckNumber());
         setNotesText(this.account.getNotes());
@@ -313,6 +317,57 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         
         this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this);
         this.icon.setImageResource(this.iconResourceID);
+    }
+
+    private void setupFeeTypeSpinner() {
+        if (this.feeTypeSpinner == null) return;
+        String[] feeTypes = new String[]{
+                getString(R.string.FEE_TYPE_FIXED),
+                getString(R.string.FEE_TYPE_PERCENT)
+        };
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, feeTypes);
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        this.feeTypeSpinner.setAdapter(adapter);
+
+        boolean isPercent = this.account.getFixedPercent() == Enums.kFeeTypePercent;
+        this.feeTypeSpinner.setSelection(isPercent ? 1 : 0);
+        updateFeeHintAndDisplay(isPercent);
+
+        this.feeTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                boolean percentSelected = (position == 1);
+                updateFeeHintAndDisplay(percentSelected);
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {}
+        });
+    }
+
+    private void updateFeeHintAndDisplay(boolean isPercent) {
+        String currentText = this.fee.getText().toString().trim();
+        if (isPercent) {
+            this.fee.setHint("0.00");
+            if (!currentText.isEmpty()) {
+                double val = CurrencyExt.amountFromString(currentText);
+                if (val == 0.0d) {
+                    this.fee.setText("");
+                } else if (val == (long) val) {
+                    this.fee.setText(String.format(java.util.Locale.US, "%d", (long) val));
+                } else {
+                    this.fee.setText(String.format(java.util.Locale.US, "%.2f", val));
+                }
+            }
+        } else {
+            this.fee.setHint(this.account.formatAmountAsCurrency(0.0d));
+            if (!currentText.isEmpty()) {
+                double val = CurrencyExt.amountFromString(currentText);
+                if (val != 0.0d) {
+                    this.fee.setText(this.account.formatAmountAsCurrency(val));
+                }
+            }
+        }
     }
 
     private void setupCreditCardSpinners() {
@@ -387,6 +442,9 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             this.account.setInstitution(this.institution.getText().toString());
             this.account.setPhone(this.phone.getText().toString());
             this.account.setUrl(this.website.getText().toString());
+            if (this.feeTypeSpinner != null) {
+                this.account.setFixedPercent(this.feeTypeSpinner.getSelectedItemPosition() == 1 ? Enums.kFeeTypePercent : Enums.kFeeTypeFixed);
+            }
             this.account.setFeeFromString(this.fee.getText().toString());
             this.account.setLimitFromString(this.limit.getText().toString());
             this.account.setCheckNumber(this.checkNumber.getText().toString());
