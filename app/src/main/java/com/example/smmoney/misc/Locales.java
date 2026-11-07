@@ -27,11 +27,6 @@ public class Locales {
     public static final String kLOC_EDIT_SPLITS_ADJUST = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_SPLITS_ADJUST);
     public static final String kLOC_EDIT_SPLITS_REMAINDER = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_SPLITS_REMAINDER);
     public static final String kLOC_EDIT_SPLITS_SPLITOTAL = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_SPLITS_SPLITOTAL);
-    public static final String kLOC_EDIT_TRANSACTION_CHANGE_AMOUNT = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_CHANGE_AMOUNT);
-    public static final String kLOC_EDIT_TRANSACTION_CHANGE_BOTH = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_CHANGE_BOTH);
-    public static final String kLOC_EDIT_TRANSACTION_CHANGE_DATE = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_CHANGE_DATE);
-    public static final String kLOC_EDIT_TRANSACTION_CHANGE_INFO = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_CHANGE_INFO);
-    public static final String kLOC_EDIT_TRANSACTION_CHANGE_THIS = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_CHANGE_THIS);
     public static final String kLOC_EDIT_TRANSACTION_EDITOTHEREND = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_EDITOTHEREND);
     public static final String kLOC_EDIT_TRANSACTION_MISSINGREPEATING = SMMoney.getAppContext().getString(R.string.kLOC_EDIT_TRANSACTION_MISSINGREPEATING);
     public static final String kLOC_ERROR_EMAIL_NOT_SUPPORTED = SMMoney.getAppContext().getString(R.string.kLOC_ERROR_EMAIL_NOT_SUPPORTED);
@@ -70,7 +65,6 @@ public class Locales {
     public static final String kLOC_PREFERENCES_SCROLLWHILEEDITING = SMMoney.getAppContext().getString(R.string.kLOC_PREFERENCES_SCROLLWHILEEDITING);
     public static final String kLOC_PREFERENCES_USE_LAST_DATE = SMMoney.getAppContext().getString(R.string.kLOC_PREFERENCES_USE_LAST_DATE);
     public static final String kLOC_REPEATING_FREQUENCY_ONCE = SMMoney.getAppContext().getString(R.string.kLOC_REPEATING_FREQUENCY_ONCE);
-    public static final String kLOC_REPEATING_FREQUENCY_QUARTERS = SMMoney.getAppContext().getString(R.string.kLOC_REPEATING_FREQUENCY_QUARTERS);
     public static final String kLOC_REPEATING_NOTIFY_SKIP = SMMoney.getAppContext().getString(R.string.kLOC_REPEATING_NOTIFY_SKIP);
     public static final String kLOC_REPEATING_POST_MESSAGE = SMMoney.getAppContext().getString(R.string.kLOC_REPEATING_POST_MESSAGE);
     public static final String kLOC_REPEATING_TRANSACTIONS_MONTHLY = SMMoney.getAppContext().getString(R.string.kLOC_REPEATING_TRANSACTIONS_MONTHLY);

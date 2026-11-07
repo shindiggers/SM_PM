@@ -14,12 +14,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.database.AccountDB;
+import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
+import com.example.smmoney.records.RepeatingTransactionClass;
 import com.example.smmoney.records.TransactionClass;
 import com.example.smmoney.views.CheckBoxTint;
 
@@ -30,6 +32,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     private ArrayList<TransactionClass> elements = new ArrayList<>();
     private final Context mContext;
     private final LayoutInflater mInflater;
+    private ArrayList<RepeatingTransactionClass> activeRepeatingSchedules = null;
 
     public TransactionRecyclerViewAdapter(Context context) {
         this.mContext = context;
@@ -39,6 +42,7 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
     @SuppressLint("NotifyDataSetChanged")
     public void setElements(ArrayList<TransactionClass> aList) {
         this.elements = aList;
+        this.activeRepeatingSchedules = TransactionDB.queryAllRepeatingTransactionsIncludingDeleted();
         // Full refresh is appropriate as the entire list is replaced
         notifyDataSetChanged();
     }
@@ -87,6 +91,45 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
         final CheckBox selected;
         final View therow;
 
+        private boolean isRepeatingInstance(TransactionClass trans) {
+            if (activeRepeatingSchedules == null || activeRepeatingSchedules.isEmpty() || trans == null) {
+                return false;
+            }
+            for (RepeatingTransactionClass rt : activeRepeatingSchedules) {
+                if (rt.getTransaction() != null) {
+                    TransactionClass template = rt.getTransaction();
+
+                    // 1. Direct match (Regular transactions and originating side of transfers)
+                    boolean directMatch = template.getAccount() != null && template.getAccount().equalsIgnoreCase(trans.getAccount()) &&
+                            template.getPayee() != null && template.getPayee().equalsIgnoreCase(trans.getPayee()) &&
+                            Math.abs(template.getSubTotal() - trans.getSubTotal()) < 0.001;
+
+                    // 2. Transfer counterpart match (Destination side of a repeating transfer)
+                    boolean transferMatch = false;
+                    if (!directMatch && (trans.isTransfer() || template.isTransfer())) {
+                        String transAccount = trans.getAccount();
+                        String transTransferTo = trans.getTransferToAccount();
+                        String tmplAccount = template.getAccount();
+                        String tmplTransferTo = template.getTransferToAccount();
+
+                        if (transAccount != null && transAccount.equalsIgnoreCase(tmplTransferTo) &&
+                            transTransferTo != null && transTransferTo.equalsIgnoreCase(tmplAccount)) {
+                            // Opposite signs for opposite sides of the transfer
+                            if (Math.abs(Math.abs(template.getSubTotal()) - Math.abs(trans.getSubTotal())) < 0.001 ||
+                                Math.abs(template.getSubTotal() + trans.getSubTotal()) < 0.001) {
+                                transferMatch = true;
+                            }
+                        }
+                    }
+
+                    if ((directMatch || transferMatch) && rt.matchesHistoricalOccurrence(trans.getDate())) {
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
+
         TransactionViewHolder(View v) {
             super(v);
             therow = v.findViewById(R.id.therow);
@@ -127,7 +170,11 @@ public class TransactionRecyclerViewAdapter extends RecyclerView.Adapter<Transac
             // Ported logic from TransactionRowHolder.setTransaction
             if (willDisplay(Prefs.getBooleanPref(Prefs.TRANSACTIONS_SHOW_DATE_FIELD), this.date)) {
                 this.date.setText(CalExt.descriptionWithShortDate(this.transaction.getDate()).replaceFirst("197", "7").replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4"));
-                this.date.setTextColor(PocketMoneyThemes.alternateCellTextColor());
+                if (this.transaction.isRepeatingTransaction || isRepeatingInstance(this.transaction)) {
+                    this.date.setTextColor(0xFFFF9800); // Orange highlight for repeating transactions
+                } else {
+                    this.date.setTextColor(PocketMoneyThemes.alternateCellTextColor());
+                }
             }
 
             if (this.transaction.getType() != Enums.kTransactionTypeTransferFrom && this.transaction.getType() != Enums.kTransactionTypeTransferTo) {

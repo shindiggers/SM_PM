@@ -142,6 +142,16 @@
     <string name="DUPLICATE_TRANSACTION_TITLE">Duplicate Transaction</string>
     <string name="FEE_MISSING_ALERT">You have not filled out the transaction fee information for this account.</string>
     <string name="EDIT_TRANSACTION_MISSINGACCOUNT">The account must be selected before you can save a transaction.</string>
+    <string name="EDIT_TRANSACTION_CHANGE_DATE">Change the date of the transaction and repeating event, or change the date of only this transaction?</string>
+    <string name="EDIT_TRANSACTION_CHANGE_AMOUNT">Change the amount of the transaction and repeating event, or change the amount of only this transaction?</string>
+    <string name="EDIT_TRANSACTION_CHANGE_INFO">Change the information of the transaction and repeating event, or change the information of only this transaction?</string>
+    <string name="EDIT_TRANSACTION_CHANGE_THIS">This item only</string>
+    <string name="EDIT_TRANSACTION_CHANGE_THIS_AND_SUBSEQUENT">This &amp; subsequent</string>
+    <string name="EDIT_TRANSACTION_SUBSEQUENT_PROMPT">Update this transaction only, or update this transaction, subsequent posted transactions (%1$d), and future repeats?</string>
+    <plurals name="edit_transaction_subsequent_cleared_warning">
+        <item quantity="one">\n\nWarning: %1$d subsequent transaction is already marked as cleared. Please verify your reconciliations.</item>
+        <item quantity="other">\n\nWarning: %1$d subsequent transactions are already marked as cleared. Please verify your reconciliations.</item>
+    </plurals>
     <string name="GENERAL_KEEP_CHANGE">Keep the Change</string>
     <string name="permission_explanation_message">SM Money will now request permission to access photos, media and files on your device. \n\nWe will only use this permission to store a temporary copy of your data so that it can be emailed securely.\n\nClick OK and you will be able to make your permission choice.</string>
     <string name="permission_dialog_title">Photos, media and files permission</string>
@@ -166,7 +176,7 @@
     <string name="REPEATING_FREQUENCY_MONTHLY">Monthly</string>
     <string name="REPEATING_FREQUENCY_MONTHS">Month(s)</string>
     <string name="REPEATING_FREQUENCY_QUARTERLY">Quarterly</string>
-    <string name="kLOC_REPEATING_FREQUENCY_QUARTERS">Quarter(s)</string>
+    <string name="REPEATING_FREQUENCY_QUARTERS">Quarter(s)</string>
     <string name="REPEATING_FREQUENCY_YEARLY">Yearly</string>
     <string name="DAY_ORDINALS">1st 2nd 3rd 4th 5th 6th 7th 8th 9th 10th 11th 12th 13th 14th 15th 16th 17th 18th 19th 20th 21st 22nd 23rd 24th 25th 26th 27th 28th 29th 30th 31st</string>
     <string name="WEEK_ORDINALS">1st 2nd 3rd 4th last</string>
@@ -185,6 +195,9 @@
     <string name="EDIT_REPEATING_ENDON">End On</string>
     <string name="REPEATING_NOTIFY_SNOOZE">Snooze</string>
     <string name="REPEATING_NOTIFY_POST">Post</string>
+    <string name="REPEATING_DELETE_CONFIRM">Are you sure you want to delete this repeating transaction?</string>
+    <string name="REPEATING_TOAST_POSTED">Transaction posted</string>
+    <string name="REPEATING_TOAST_PROCESSED_TO_DATE">Process to date completed</string>
 
     <!-- =================================================================== -->
     <!--  SPLITS                                                             -->
@@ -771,7 +784,6 @@
 
     <string name="kLOC_EDIT_TRANSACTION_EDITOTHEREND">The other end of this transfer has splits associated with it, so you must edit this transfer from the parent transaction.</string>
     <string name="kLOC_GENERAL_TRANSACTION">Transaction</string>
-    <string name="kLOC_EDIT_TRANSACTION_CHANGE_DATE">Change the date of the transaction and repeating event, or change the date of only this transaction?</string>
     <string name="kLOC_OFX_TYPEENCODINGERROR">Unknown error processing the OFX/QFX file. Please contact support%1$scatamount.com.</string>
     <string name="kLOC_BUDGETS_UNBUDGETEDITEMS">Unbudgeted items</string>
     <string name="kLOC_BUDGETS_STARTDATE">Start date</string>
@@ -798,14 +810,10 @@
     <string name="kLOC_PREFERENCES_CLEAR_SPLITS">Clear Splits on Autocomplete</string>
     <string name="kLOC_TIP_PMSYNC">Two things are needed to sync your data together a client and a server.\n\nThe server can be another iOS device running PocketMoney or the desktop version of PocketMoney (OS X, Windows, or Linux).\n\n1. Start up the Server. If you are syncing between two iOS devices, then you will need to purchase PocketMoney Sync Server which is available through the in-app-purchase process.\n\n2. On the client enter the server ip address and port, then tap Sync. \n\n* The first sync could take a while depending on how much data you have and is best done when you are on a Wi-Fi network. After the initial sync, future syncs will happen fairly quickly.\n\nRepeating Transactions:\nIf you use repeating transactions, then you need to decide which device is going to be your main device. This device should be considered your &quot;server&quot;. When the sync is complete the Post Scheduled Transaction will be turned OFF because having multiple copies of PocketMoney all processing all the repeating transactions will be messy.\n\nRestore from</string>
     <string name="kLOC_REPEATING_NOTIFY_SKIP">Skip</string>
-    <string name="kLOC_EDIT_TRANSACTION_CHANGE_AMOUNT">Change the amount of the transaction and repeating event, or change the date of only this transaction?</string>
     <string name="kLOC_REPEATING_FREQUENCY_ONCE">One Time Only</string>
     <string name="kLOC_REPEATING_POST_MESSAGE">Post this transaction?\n%1$s %2$s&#10142;%3$s</string>
     <string name="kLOC_BUDGET_ROLLOVER">Rollover</string>
     <string name="kLOC_BUDGET_NEW_BUDGET">New Budget</string>
-    <string name="kLOC_EDIT_TRANSACTION_CHANGE_INFO">Change the information of the transaction and repeating event, or change the information of only this transaction?</string>
-    <string name="kLOC_EDIT_TRANSACTION_CHANGE_BOTH">Both</string>
-    <string name="kLOC_EDIT_TRANSACTION_CHANGE_THIS">This item only</string>
     <string name="_0_hint">0</string>
     <string name="_0_0_report_balance_placeholder">$0.0</string>
     <string name="splits_transfer_to_account"><![CDATA[<]]>%1$s<![CDATA[>]]></string>

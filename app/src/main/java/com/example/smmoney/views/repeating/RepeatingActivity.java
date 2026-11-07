@@ -122,6 +122,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     // Edit
                     Intent intent = new Intent(RepeatingActivity.this, TransactionEditActivity.class);
                     intent.putExtra("Transaction", transaction);
+                    intent.putExtra("isRepeating", true);
                     editLauncher.launch(intent);
                     adapter.notifyItemChanged(position);
                 } else if (direction == ItemTouchHelper.LEFT) {
@@ -292,6 +293,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                     TransactionClass trans = new TransactionClass();
                     trans.isRepeatingTransaction = true;
                     i.putExtra("Transaction", trans);
+                    i.putExtra("isRepeating", true);
                     editLauncher.launch(i);
                     return true;
                 }
@@ -308,7 +310,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
     private void deleteRepeatingTransaction(final TransactionClass transaction) {
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(R.string.GENERAL_DELETE)
-                .setMessage("Are you sure you want to delete this repeating transaction?")
+                .setMessage(R.string.REPEATING_DELETE_CONFIRM)
                 .setPositiveButton(R.string.GENERAL_DELETE, (dialog, which) -> {
                     if (transaction != null) {
                         new RepeatingTransactionClass(transaction.transactionID, false).deleteFromDatabase();
@@ -336,7 +338,7 @@ public class RepeatingActivity extends PocketMoneyActivity {
                                 Log.e(com.example.smmoney.SMMoney.TAG, "Exception in RepeatingActivity runOnUiThread (wakeLock.release)", e);
                             }
                             RepeatingActivity.this.reloadData();
-                            Toast.makeText(RepeatingActivity.this, "Process to date Completed", Toast.LENGTH_LONG).show();
+                            Toast.makeText(RepeatingActivity.this, R.string.REPEATING_TOAST_PROCESSED_TO_DATE, Toast.LENGTH_LONG).show();
                             RepeatingActivity.this.isProcessingToDate = false;
                         });
                     }

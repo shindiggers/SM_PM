@@ -44,8 +44,14 @@ import androidx.core.content.FileProvider;
 import androidx.core.os.BundleCompat;
 import androidx.exifinterface.media.ExifInterface;
 
+import android.database.Cursor;
+import android.database.sqlite.SQLiteQueryBuilder;
+
+import java.util.Objects;
+
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
+import com.example.smmoney.database.Database;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.database.TransactionDB;
 import com.example.smmoney.misc.CalExt;
@@ -117,6 +123,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private MaterialButton transferButton;
     private MaterialButton withdrawalButton;
     private String imageToReplace = null;
+    private TransactionClass initialSnapshot = null;
+    private boolean isEditingRepeatingTemplate = false;
 
     private final OnTimeSetListener mTimeSetListener = (view, hourOfDay, minute) -> {
         GregorianCalendar date = transaction.getDate();
@@ -341,12 +349,17 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             this.transaction = BundleCompat.getSerializable(extras, "Transaction", TransactionClass.class);
+            this.isEditingRepeatingTemplate = extras.getBoolean("isRepeating", false);
         }
         
         if (this.transaction == null) {
             this.transaction = new TransactionClass();
         }
+        if (this.transaction.isRepeatingTransaction || this.transaction.getType() == Enums.kTransactionTypeRepeating) {
+            this.isEditingRepeatingTemplate = true;
+        }
         this.transaction.hydrate();
+        this.initialSnapshot = this.transaction.copy();
         this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
         this.repeatingTransaction.hydrate();
 
@@ -354,9 +367,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         setupButtons();
         reloadData();
         selectStartingCell();
+
+        // Ensure newly loaded transaction is marked clean initially
+        this.transaction.dirty = false;
         
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(R.string.EDIT_TRANSACTION_TITLE);
+            int titleRes = this.isEditingRepeatingTemplate
+                    ? R.string.EDIT_REPEATING_TITLE
+                    : R.string.EDIT_TRANSACTION_TITLE;
+            getSupportActionBar().setTitle(titleRes);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -630,7 +649,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                     return;
                 }
 
-                if (transaction.dirty) {
+                getCells();
+                boolean genuinelyChanged = hasGenuineChanges();
+                if (genuinelyChanged) {
                     new Builder(TransactionEditActivity.this, PocketMoneyThemes.dialogTheme())
                             .setTitle(R.string.dialog_discard_changes_title)
                             .setMessage(R.string.dialog_discard_changes_message)
@@ -642,6 +663,44 @@ public class TransactionEditActivity extends PocketMoneyActivity {
                 }
             }
         });
+    }
+
+    private boolean hasGenuineChanges() {
+        if (this.initialSnapshot == null || this.transaction == null) {
+            return this.transaction != null && this.transaction.dirty;
+        }
+        if (this.initialSnapshot.getDate() != null && this.transaction.getDate() != null &&
+                CalExt.daysBetween(this.initialSnapshot.getDate(), this.transaction.getDate()) != 0) {
+            return true;
+        }
+        if (Math.abs(this.initialSnapshot.getSubTotal() - this.transaction.getSubTotal()) > 0.001) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getAccount(), this.transaction.getAccount())) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getPayee(), this.transaction.getPayee())) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getCategory(), this.transaction.getCategory())) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getClassName(), this.transaction.getClassName())) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getMemo(), this.transaction.getMemo())) {
+            return true;
+        }
+        if (!Objects.equals(this.initialSnapshot.getCheckNumber(), this.transaction.getCheckNumber())) {
+            return true;
+        }
+        if (this.initialSnapshot.getCleared() != this.transaction.getCleared()) {
+            return true;
+        }
+        if (this.initialSnapshot.getType() != this.transaction.getType()) {
+            return true;
+        }
+        return this.initialSnapshot.getNumberOfSplits() != this.transaction.getNumberOfSplits();
     }
 
     private void accountAction() {
@@ -755,89 +814,197 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (transaction.getAccount() == null || transaction.getAccount().isEmpty()) {
             showNeedAccountDialog();
         } else if (!transaction.isRepeatingTransaction || repeatingTransaction.isRepeating()) {
-            saveAction();
-            finish();
+            checkRepeatingSeriesChangeBeforeSave();
         } else {
             showNeedRepeatingDialog();
         }
     }
 
+    private void checkRepeatingSeriesChangeBeforeSave() {
+        // If editing directly from the repeating transactions screen, save without prompts
+        if (this.isEditingRepeatingTemplate || this.transaction.isRepeatingTransaction || this.transaction.getType() == Enums.kTransactionTypeRepeating) {
+            saveAction(true, false);
+            finish();
+            return;
+        }
+
+        // If this is an existing transaction linked to a recurring schedule, and something changed
+        if (this.transaction.getTransactionID() != 0 && this.repeatingTransaction != null && this.repeatingTransaction.repeatingID != 0 && this.initialSnapshot != null) {
+            boolean dateChanged = this.initialSnapshot.getDate() != null && this.transaction.getDate() != null &&
+                    CalExt.daysBetween(this.initialSnapshot.getDate(), this.transaction.getDate()) != 0;
+            boolean amountChanged = Math.abs(this.initialSnapshot.getSubTotal() - this.transaction.getSubTotal()) > 0.001;
+            boolean payeeChanged = !Objects.equals(this.initialSnapshot.getPayee(), this.transaction.getPayee());
+            boolean categoryChanged = !Objects.equals(this.initialSnapshot.getCategory(), this.transaction.getCategory());
+
+            if (dateChanged || amountChanged || payeeChanged || categoryChanged) {
+                // Find any subsequent posted transactions in the series
+                ArrayList<TransactionClass> subsequentList = findSubsequentSeriesTransactions();
+                int subsequentCount = subsequentList.size();
+                int clearedCount = 0;
+                for (TransactionClass t : subsequentList) {
+                    if (t.getCleared()) clearedCount++;
+                }
+
+                String message;
+                if (subsequentCount > 0) {
+                    message = getString(R.string.EDIT_TRANSACTION_SUBSEQUENT_PROMPT, subsequentCount);
+                    if (clearedCount > 0) {
+                        message += getResources().getQuantityString(R.plurals.edit_transaction_subsequent_cleared_warning, clearedCount, clearedCount);
+                    }
+                } else {
+                    int messageRes = dateChanged ? R.string.EDIT_TRANSACTION_CHANGE_DATE
+                            : (amountChanged ? R.string.EDIT_TRANSACTION_CHANGE_AMOUNT : R.string.EDIT_TRANSACTION_CHANGE_INFO);
+                    message = getString(messageRes);
+                }
+
+                new androidx.appcompat.app.AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                        .setMessage(message)
+                        .setPositiveButton(R.string.EDIT_TRANSACTION_CHANGE_THIS_AND_SUBSEQUENT, (dialog, which) -> {
+                            saveAction(true, true);
+                            finish();
+                        })
+                        .setNegativeButton(R.string.EDIT_TRANSACTION_CHANGE_THIS, (dialog, which) -> {
+                            saveAction(false, false);
+                            finish();
+                        })
+                        .setNeutralButton(R.string.GENERAL_CANCEL, null)
+                        .show();
+                return;
+            }
+        }
+        saveAction(true, false);
+        finish();
+    }
+
+    private ArrayList<TransactionClass> findSubsequentSeriesTransactions() {
+        ArrayList<TransactionClass> list = new ArrayList<>();
+        if (this.repeatingTransaction == null || this.initialSnapshot == null || this.initialSnapshot.getDate() == null) {
+            return list;
+        }
+
+        int accountId = AccountDB.uniqueID(this.initialSnapshot.getAccount());
+        long minDateSec = (CalExt.beginningOfDay(this.initialSnapshot.getDate()).getTimeInMillis() / 1000) + 86400; // strictly after current day
+
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        qb.setTables(Database.TRANSACTIONS_TABLE_NAME);
+        String selection = "deleted=0 AND type<>5 AND accountID=" + accountId + " AND date>=" + minDateSec +
+                " AND payee=" + Database.SQLFormat(this.initialSnapshot.getPayee()) +
+                " AND subTotal=" + this.initialSnapshot.getSubTotal();
+
+        Cursor curs = Database.query(qb, new String[]{"transactionID"}, selection, null, null, null, "date ASC");
+        while (curs != null && curs.moveToNext()) {
+            TransactionClass trans = new TransactionClass(curs.getInt(0));
+            trans.hydrate();
+            if (this.repeatingTransaction.matchesHistoricalOccurrence(trans.getDate())) {
+                list.add(trans);
+            }
+        }
+        if (curs != null) curs.close();
+        return list;
+    }
+
     private void saveAction() {
+        saveAction(true, false);
+    }
+
+    private void saveAction(boolean updateSeries, boolean cascadeSubsequent) {
         TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
 
         // Always save the current transaction to the register first.
-        // This ensures the entry the user is currently editing actually appears in the list.
         boolean originalRepeatingFlag = this.transaction.isRepeatingTransaction;
         this.transaction.isRepeatingTransaction = false;
         this.transaction.saveToDatabase();
         
         saveUpdateTransferFromOriginalRecord(originalRecord, this.transaction);
 
-        // Restore the flag so we know if we need to set up a repeating schedule
+        // Restore the flag
         this.transaction.isRepeatingTransaction = originalRepeatingFlag;
 
-        // If repeating is active, handle the master template and schedule
-        if (this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID != 0) {
+        // If cascading to subsequent transactions
+        if (cascadeSubsequent) {
+            cascadeChangesToSubsequentTransactions();
+        }
+
+        // If repeating is active and user wants to update the series
+        if (updateSeries && (this.transaction.isRepeatingTransaction || this.repeatingTransaction.repeatingID != 0)) {
             saveRepeatingTransaction();
         }
         keepTheChangeUpdate();
     }
 
+    private void cascadeChangesToSubsequentTransactions() {
+        ArrayList<TransactionClass> subsequents = findSubsequentSeriesTransactions();
+        for (TransactionClass sub : subsequents) {
+            TransactionClass oldSub = sub.copy();
+            sub.setPayee(this.transaction.getPayee());
+            sub.setCategory(this.transaction.getCategory());
+            sub.setClassName(this.transaction.getClassName());
+            sub.setMemo(this.transaction.getMemo());
+            sub.setSubTotal(this.transaction.getSubTotal());
+            sub.setAmount(this.transaction.getAmount());
+            sub.saveToDatabase();
+            saveUpdateTransferFromOriginalRecord(oldSub, sub);
+        }
+    }
+
     private void loadCells() {
         this.programaticUpdate = true;
-        setType();
-        this.programaticUpdate = false;
-        
-        this.dateTextView.setText(CalExt.descriptionWithMediumDate(this.transaction.getDate()));
-        if (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating()) {
-            this.dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-            this.repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
-        } else {
-            int green = 0xFF00FF00;
-            this.dateTextView.setTextColor(green); // Green for repeating
-            this.repeatingImageView.setColorFilter(green, PorterDuff.Mode.SRC_IN);
-        }
+        try {
+            setType();
+            
+            this.dateTextView.setText(CalExt.descriptionWithMediumDate(this.transaction.getDate()));
+            if (this.repeatingTransaction == null || !this.repeatingTransaction.isRepeating()) {
+                this.dateTextView.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+                this.repeatingImageView.setColorFilter(PocketMoneyThemes.fieldLabelColor(), PorterDuff.Mode.SRC_IN);
+            } else {
+                int green = 0xFF00FF00;
+                this.dateTextView.setTextColor(green); // Green for repeating
+                this.repeatingImageView.setColorFilter(green, PorterDuff.Mode.SRC_IN);
+            }
 
-        if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
-            this.timeTextView.setVisibility(View.VISIBLE);
-            this.timeTextView.setText(CalExt.descriptionWithShortTime(this.transaction.getDate()));
-        } else {
-            this.timeTextView.setVisibility(View.GONE);
-        }
+            if (Prefs.getBooleanPref(Prefs.SHOWTIME)) {
+                this.timeTextView.setVisibility(View.VISIBLE);
+                this.timeTextView.setText(CalExt.descriptionWithShortTime(this.transaction.getDate()));
+            } else {
+                this.timeTextView.setVisibility(View.GONE);
+            }
 
-        this.accountTextView.setText(this.transaction.getAccount());
-        
-        if (this.transaction.isTransfer()) {
-            this.payeeEditText.setText(this.transaction.getTransferToAccount());
-        } else {
-            this.payeeEditText.setText(this.transaction.getPayee());
-        }
+            this.accountTextView.setText(this.transaction.getAccount());
+            
+            if (this.transaction.isTransfer()) {
+                this.payeeEditText.setText(this.transaction.getTransferToAccount());
+            } else {
+                this.payeeEditText.setText(this.transaction.getPayee());
+            }
 
-        loadAmountXrateValues();
-        updateAmountFieldTextColor();
-        
-        this.idEditText.setText(this.transaction.getCheckNumber());
-        this.clearedCheckBox.setChecked(this.transaction.getCleared());
-        this.memoEditText.setText(this.transaction.getMemo());
+            loadAmountXrateValues();
+            updateAmountFieldTextColor();
+            
+            this.idEditText.setText(this.transaction.getCheckNumber());
+            this.clearedCheckBox.setChecked(this.transaction.getCleared());
+            this.memoEditText.setText(this.transaction.getMemo());
 
-        if (this.transaction.getNumberOfSplits() > 1) {
-            this.categoryEditText.setVisibility(View.GONE);
-            this.categoryTextView.setVisibility(View.VISIBLE);
-            this.categoryTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
-        } else {
-            this.categoryEditText.setText(this.transaction.getCategory());
-            this.categoryEditText.setVisibility(View.VISIBLE);
-            this.categoryTextView.setVisibility(View.GONE);
-        }
+            if (this.transaction.getNumberOfSplits() > 1) {
+                this.categoryEditText.setVisibility(View.GONE);
+                this.categoryTextView.setVisibility(View.VISIBLE);
+                this.categoryTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
+            } else {
+                this.categoryEditText.setText(this.transaction.getCategory());
+                this.categoryEditText.setVisibility(View.VISIBLE);
+                this.categoryTextView.setVisibility(View.GONE);
+            }
 
-        if (this.transaction.multipleClassNames()) {
-            this.classEditText.setVisibility(View.GONE);
-            this.classTextView.setVisibility(View.VISIBLE);
-            this.classTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
-        } else {
-            this.classEditText.setText(this.transaction.getClassName());
-            this.classEditText.setVisibility(View.VISIBLE);
-            this.classTextView.setVisibility(View.GONE);
+            if (this.transaction.multipleClassNames()) {
+                this.classEditText.setVisibility(View.GONE);
+                this.classTextView.setVisibility(View.VISIBLE);
+                this.classTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
+            } else {
+                this.classEditText.setText(this.transaction.getClassName());
+                this.classEditText.setVisibility(View.VISIBLE);
+                this.classTextView.setVisibility(View.GONE);
+            }
+        } finally {
+            this.programaticUpdate = false;
         }
 
         // Update Camera Button Thumbnail
@@ -1143,15 +1310,37 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
             if (repeatingChangedLocal != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating && 
                 dateChangedLocal != Enums.DateChangeTypeSeparateTransactionFromRepeating) {
-                // UPDATE TEMPLATE
+                // ARCHIVE OLD TEMPLATE: If updating an existing series, preserve previous template as soft-deleted
+                // so that historical transactions before this date retain their orange highlight
+                if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
+                    TransactionClass oldTemplate = this.repeatingTransaction.getTransaction();
+                    TransactionClass archivedTemplate = oldTemplate.copy();
+                    archivedTemplate.setType(Enums.kTransactionTypeRepeating);
+                    archivedTemplate.setDeleted(true);
+                    archivedTemplate.saveToDatabase();
+
+                    RepeatingTransactionClass archivedSchedule = new RepeatingTransactionClass(this.repeatingTransaction.repeatingID);
+                    archivedSchedule.hydrate();
+                    archivedSchedule.repeatingID = 0; // insert new archive record
+                    archivedSchedule.setTransactionID(archivedTemplate.getTransactionID());
+                    archivedSchedule.setDeleted(true);
+                    // Cap archive occurrence at the day before the edited transaction date
+                    if (this.transaction.getDate() != null) {
+                        GregorianCalendar archiveEnd = (GregorianCalendar) this.transaction.getDate().clone();
+                        archiveEnd.add(Calendar.DAY_OF_MONTH, -1);
+                        archivedSchedule.setEndDate(archiveEnd);
+                    }
+                    archivedSchedule.dirty = true;
+                    archivedSchedule.saveToDatabase();
+
+                    // Delete the old template from active service
+                    oldTemplate.deleteFromDatabase();
+                }
+
+                // UPDATE LIVE TEMPLATE
                 // We create a fresh template copy (Type 5) linked to the repeating metadata
                 TransactionClass template = this.transaction.copy();
                 template.isRepeatingTransaction = true;
-                
-                // If updating an existing series, delete the old template record first
-                if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
-                    this.repeatingTransaction.getTransaction().deleteFromDatabase();
-                }
                 
                 this.repeatingTransaction.setTransaction(null);
                 this.repeatingTransaction.setTransaction(template);

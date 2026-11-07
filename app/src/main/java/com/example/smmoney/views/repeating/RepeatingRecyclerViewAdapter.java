@@ -42,7 +42,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
                     );
                     holder.repeatingTransaction.saveToDatabase();
                     
-                    Toast.makeText(mContext, "Transaction posted", Toast.LENGTH_LONG).show();
+                    Toast.makeText(mContext, R.string.REPEATING_TOAST_POSTED, Toast.LENGTH_LONG).show();
 
                     // Refresh the whole screen (balances, list re-ordering etc.)
                     if (mContext instanceof RepeatingActivity) {
@@ -129,6 +129,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             therow.setOnClickListener(v1 -> {
                 Intent i = new Intent(mContext, TransactionEditActivity.class);
                 i.putExtra("Transaction", transaction);
+                i.putExtra("isRepeating", true);
                 if (mContext instanceof RepeatingActivity) {
                     ((RepeatingActivity) mContext).launchEdit(i);
                 } else {

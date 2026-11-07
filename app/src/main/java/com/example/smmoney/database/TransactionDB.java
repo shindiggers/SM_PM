@@ -737,7 +737,7 @@ public class TransactionDB {
             i = curs.getInt(0);                                                                             // gets the transactionID of the line produced by the DB query
             RepeatingTransactionClass repeatingTransaction = new RepeatingTransactionClass(curs.getInt(1)); //get the repeatingID from the database query and pass it to the constructor of the RepeatingTransaction class to make a new RT object
             repeatingTransaction.hydrate();                                                                            //populates the repeatingTransaction with all the RT fields from the database (via a further query on the RepeatingTransactions table using the repeatingID
-            if (repeatingTransaction.repeatsOnDate(aTransaction.getDate())) {                                          //gets the date of the passed in transaction (ie the date it is recorded). Then, checks if the repeatingTransaction repeats on that date. If it does then the next code block is executed, otherwise not
+            if (repeatingTransaction.matchesHistoricalOccurrence(aTransaction.getDate())) {                           //checks if the repeatingTransaction matches this historical or current transaction date
                 TransactionClass transactionClass = new TransactionClass(i);                                           //creates a new transactionClass object with a transactionID of i
                 transactionClass.hydrate();                                                                            //populates the new transactionClass object with the rest of the info from the database for the 'i'th transaction
                 if (transactionClass.getNumberOfSplits() == aTransaction.getNumberOfSplits()) {                        //checks if the 'i'th transaction has the same number of splits as the passed in transaction
@@ -861,6 +861,19 @@ public class TransactionDB {
         String[] projection = new String[]{"repeatingID"};
         qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
         Cursor curs = Database.query(qb, projection, "deleted=0", null, null, null, null);
+        while (curs.moveToNext()) {
+            array.add(new RepeatingTransactionClass(curs.getInt(0)));
+        }
+        curs.close();
+        return array;
+    }
+
+    public static ArrayList<RepeatingTransactionClass> queryAllRepeatingTransactionsIncludingDeleted() {
+        ArrayList<RepeatingTransactionClass> array = new ArrayList<>();
+        SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+        String[] projection = new String[]{"repeatingID"};
+        qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
+        Cursor curs = Database.query(qb, projection, null, null, null, null, null);
         while (curs.moveToNext()) {
             array.add(new RepeatingTransactionClass(curs.getInt(0)));
         }

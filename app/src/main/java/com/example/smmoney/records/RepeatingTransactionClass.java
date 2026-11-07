@@ -50,6 +50,15 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     private int startOfWeek;                                    // DATABASE FIELD DON'T KNOW EXACTLY WHAT THIS DOES - todo: establish how this is used
     private TransactionClass transaction;                       // TransactionClass object (see TransactionClass.java for member variables and methods)
     private int transactionID;                                  // DATABASE FIELD Foreign key to link repeating transaciton to a transaction in the Transaction Database
+
+    public void setTransactionID(int id) {
+        this.transactionID = id;
+    }
+
+    @SuppressWarnings("unused") //getter not currently used in code but retained for symmetry with corresponding setter method
+    public int getTransactionID() {
+        return this.transactionID;
+    }
     private int type;                                           // DATABASE FIELD records the repeating transaction type 0=none, 1=daily, 2=weekly, 3=monthly, 4=yearly, 5=once
 
     public RepeatingTransactionClass() {
@@ -131,11 +140,24 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
     }
 
     public RepeatingTransactionClass(TransactionClass aTransaction) {
+        // 1. If aTransaction is already the template transaction (type 5), lookup by its ID
         if (aTransaction.transactionID != 0) {
-            this.transactionID = aTransaction.transactionID;
-        } else {
-            this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction);
+            SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
+            qb.setTables(Database.REPEATINGTRANSACTIONS_TABLE_NAME);
+            Cursor curs = Database.query(qb, new String[]{"repeatingID"}, "transactionID=" + aTransaction.transactionID, null, null, null, null);
+            if (curs != null && curs.getCount() != 0) {
+                curs.moveToFirst();
+                this.repeatingID = curs.getInt(0);
+                this.transactionID = aTransaction.transactionID;
+                curs.close();
+                this.dirty = false;
+                return;
+            }
+            if (curs != null) curs.close();
         }
+
+        // 2. Otherwise (e.g. posted register transaction), resolve by recurring schedule fingerprint
+        this.transactionID = TransactionDB.getRepeatingTransactionFor(aTransaction);
         if (this.transactionID == 0) {
             TransactionDB.fixRepeatingTransactionsThatDontRepeatOnDate();
             aTransaction.hydrated = false;
@@ -720,6 +742,105 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 return false;
             case Enums.repeatingOnce /*5*/:
                 return cal.equals(startDate);
+            default:
+                return false;
+        }
+    }
+
+    /**
+     * Checks if a Transaction matches the recurrence pattern of this repeating schedule,
+     * supporting past/historic occurrences where cal is prior to the template's current next-post date.
+     *
+     * @param cal Gregorian Calendar object representing the transaction date
+     * @return boolean true if cal fits the recurring schedule
+     */
+    public boolean matchesHistoricalOccurrence(GregorianCalendar cal) {
+        if (getTransaction() == null || cal == null) {
+            return false;
+        }
+        GregorianCalendar templateDate = CalExt.beginningOfDay(getTransaction().getDate());
+        cal = CalExt.beginningOfDay(cal);
+
+        // If an end date is set, any occurrence strictly after the end date cannot belong to this schedule
+        if (getEndDate() != null && cal.after(CalExt.beginningOfDay(getEndDate()))) {
+            return false;
+        }
+
+        int freq = Math.max(1, getFrequency());
+
+        switch (getType()) {
+            case Enums.repeatNone /*0*/:
+                return false;
+
+            case Enums.repeatDaily /*1*/:
+                // Daily: check if difference in days is divisible by frequency
+                return Math.abs(CalExt.daysBetween(templateDate, cal)) % freq == 0;
+
+            case Enums.repeatWeekly /*2*/:
+                // Weekly:
+                // 1. Check if the day of week matches the bitmask (Sunday=1 -> bit 0, Monday=2 -> bit 1, etc.)
+                int dayOfWeek = cal.get(Calendar.DAY_OF_WEEK); // 1 (Sunday) to 7 (Saturday)
+                boolean onDayOfWeek = ((1 << (dayOfWeek - 1)) & getRepeatOn()) != 0;
+                if (!onDayOfWeek) {
+                    return false;
+                }
+                // 2. If frequency is 1 (every week), any matching weekday matches
+                if (freq == 1) {
+                    return true;
+                }
+                // If frequency > 1 (e.g. every 2 weeks), compare the calendar week offset relative to template
+                GregorianCalendar startOfWeekTemplate = CalExt.beginningOfWeek(templateDate);
+                GregorianCalendar startOfWeekCal = CalExt.beginningOfWeek(cal);
+                long weekDiff = Math.abs(startOfWeekCal.getTimeInMillis() - startOfWeekTemplate.getTimeInMillis()) / (7L * 86400000L);
+                return weekDiff % freq == 0;
+
+            case Enums.repeatMonthly /*3*/:
+                int diffMonths = (cal.get(Calendar.YEAR) - templateDate.get(Calendar.YEAR)) * 12 +
+                        (cal.get(Calendar.MONTH) - templateDate.get(Calendar.MONTH));
+                if (Math.abs(diffMonths) % freq != 0) {
+                    return false;
+                }
+                switch (getRepeatOn()) {
+                    case Enums.monthlyDayOfMonth /*0*/:
+                        // e.g. 2nd Tuesday of the month
+                        return cal.get(Calendar.DAY_OF_WEEK) == templateDate.get(Calendar.DAY_OF_WEEK) &&
+                                cal.get(Calendar.DAY_OF_WEEK_IN_MONTH) == templateDate.get(Calendar.DAY_OF_WEEK_IN_MONTH);
+                    case Enums.monthlyDateInMonth /*1*/:
+                        // e.g. the 15th of the month (or clamped to month-end for shorter months)
+                        if (cal.get(Calendar.DAY_OF_MONTH) == templateDate.get(Calendar.DAY_OF_MONTH)) {
+                            return true;
+                        }
+                        int lastDay = cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                        return templateDate.get(Calendar.DAY_OF_MONTH) > lastDay && cal.get(Calendar.DAY_OF_MONTH) == lastDay;
+                    case Enums.monthlyLastDayOfMonth /*2*/:
+                        return isLastDay(cal);
+                    case Enums.monthlyLastWeekDayOfMonth /*3*/:
+                        return isLastWeekday(cal);
+                    case Enums.monthlyLastOrdinalWeekdayOfMonth /*4*/:
+                        return isLastOrdinalWeekday(cal);
+                    default:
+                        return false;
+                }
+
+            case Enums.repeatYearly /*4*/:
+                int diffYears = cal.get(Calendar.YEAR) - templateDate.get(Calendar.YEAR);
+                if (Math.abs(diffYears) % freq != 0) {
+                    return false;
+                }
+                if (cal.get(Calendar.MONTH) == templateDate.get(Calendar.MONTH)) {
+                    if (cal.get(Calendar.DAY_OF_MONTH) == templateDate.get(Calendar.DAY_OF_MONTH)) {
+                        return true;
+                    }
+                    // Handle leap-year Feb 29 on non-leap years
+                    return templateDate.get(Calendar.MONTH) == Calendar.FEBRUARY &&
+                            templateDate.get(Calendar.DAY_OF_MONTH) == 29 &&
+                            cal.get(Calendar.DAY_OF_MONTH) == cal.getActualMaximum(Calendar.DAY_OF_MONTH);
+                }
+                return false;
+
+            case Enums.repeatingOnce /*5*/:
+                return cal.equals(templateDate);
+
             default:
                 return false;
         }
