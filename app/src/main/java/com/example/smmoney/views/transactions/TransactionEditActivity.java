@@ -1304,53 +1304,46 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             }
             this.repeatingTransaction.deleteFromDatabase();
         } else {
-            // Future logic: Set these values via a dialog to separate a transaction from its series
-            int repeatingChangedLocal = 0; 
-            int dateChangedLocal = 0;
+            // ARCHIVE OLD TEMPLATE: If updating an existing series, preserve previous template as soft-deleted
+            // so that historical transactions before this date retain their orange highlight
+            if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
+                TransactionClass oldTemplate = this.repeatingTransaction.getTransaction();
+                TransactionClass archivedTemplate = oldTemplate.copy();
+                archivedTemplate.setType(Enums.kTransactionTypeRepeating);
+                archivedTemplate.setDeleted(true);
+                archivedTemplate.saveToDatabase();
 
-            if (repeatingChangedLocal != Enums.RepeatingChangeTypeSeparateTransactionFromRepeating && 
-                dateChangedLocal != Enums.DateChangeTypeSeparateTransactionFromRepeating) {
-                // ARCHIVE OLD TEMPLATE: If updating an existing series, preserve previous template as soft-deleted
-                // so that historical transactions before this date retain their orange highlight
-                if (!isNewSeries && this.repeatingTransaction.getTransaction() != null) {
-                    TransactionClass oldTemplate = this.repeatingTransaction.getTransaction();
-                    TransactionClass archivedTemplate = oldTemplate.copy();
-                    archivedTemplate.setType(Enums.kTransactionTypeRepeating);
-                    archivedTemplate.setDeleted(true);
-                    archivedTemplate.saveToDatabase();
-
-                    RepeatingTransactionClass archivedSchedule = new RepeatingTransactionClass(this.repeatingTransaction.repeatingID);
-                    archivedSchedule.hydrate();
-                    archivedSchedule.repeatingID = 0; // insert new archive record
-                    archivedSchedule.setTransactionID(archivedTemplate.getTransactionID());
-                    archivedSchedule.setDeleted(true);
-                    // Cap archive occurrence at the day before the edited transaction date
-                    if (this.transaction.getDate() != null) {
-                        GregorianCalendar archiveEnd = (GregorianCalendar) this.transaction.getDate().clone();
-                        archiveEnd.add(Calendar.DAY_OF_MONTH, -1);
-                        archivedSchedule.setEndDate(archiveEnd);
-                    }
-                    archivedSchedule.dirty = true;
-                    archivedSchedule.saveToDatabase();
-
-                    // Delete the old template from active service
-                    oldTemplate.deleteFromDatabase();
+                RepeatingTransactionClass archivedSchedule = new RepeatingTransactionClass(this.repeatingTransaction.repeatingID);
+                archivedSchedule.hydrate();
+                archivedSchedule.repeatingID = 0; // insert new archive record
+                archivedSchedule.setTransactionID(archivedTemplate.getTransactionID());
+                archivedSchedule.setDeleted(true);
+                // Cap archive occurrence at the day before the edited transaction date
+                if (this.transaction.getDate() != null) {
+                    GregorianCalendar archiveEnd = (GregorianCalendar) this.transaction.getDate().clone();
+                    archiveEnd.add(Calendar.DAY_OF_MONTH, -1);
+                    archivedSchedule.setEndDate(archiveEnd);
                 }
+                archivedSchedule.dirty = true;
+                archivedSchedule.saveToDatabase();
 
-                // UPDATE LIVE TEMPLATE
-                // We create a fresh template copy (Type 5) linked to the repeating metadata
-                TransactionClass template = this.transaction.copy();
-                template.isRepeatingTransaction = true;
-                
-                this.repeatingTransaction.setTransaction(null);
-                this.repeatingTransaction.setTransaction(template);
-                this.repeatingTransaction.dirty = true;
-                this.repeatingTransaction.saveToDatabase();
-                this.repeatingTransaction.setupNotification(getApplicationContext());
-                
-                if (isNewSeries) {
-                    TransactionDB.addRepeatingTransactions();
-                }
+                // Delete the old template from active service
+                oldTemplate.deleteFromDatabase();
+            }
+
+            // UPDATE LIVE TEMPLATE
+            // We create a fresh template copy (Type 5) linked to the repeating metadata
+            TransactionClass template = this.transaction.copy();
+            template.isRepeatingTransaction = true;
+
+            this.repeatingTransaction.setTransaction(null);
+            this.repeatingTransaction.setTransaction(template);
+            this.repeatingTransaction.dirty = true;
+            this.repeatingTransaction.saveToDatabase();
+            this.repeatingTransaction.setupNotification(getApplicationContext());
+
+            if (isNewSeries) {
+                TransactionDB.addRepeatingTransactions();
             }
         }
     }

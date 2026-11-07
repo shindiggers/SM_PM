@@ -44,7 +44,7 @@ public class PocketMoneyThemes {
             theme = kThemeCoffee;
         } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_RUBY))) {
             theme = kThemeRuby;
-        } else if (themeStr.equals("White")) {
+        } else if (themeStr.equals(SMMoney.getAppContext().getString(R.string.THEME_COLOR_WHITE))) {
             theme = kThemeWhite;
         }
     }
@@ -107,7 +107,8 @@ public class PocketMoneyThemes {
             case kThemeBlue -> R.layout.theme_simple_list_blue;
             case kThemeGreen -> R.layout.theme_simple_list_green;
             case kThemePurple, kThemeRuby -> R.layout.theme_simple_list_purple;
-            case kThemeGray, kThemeWhite -> R.layout.theme_simple_list_gray;
+            case kThemeGray -> R.layout.theme_simple_list_gray;
+            case kThemeWhite -> R.layout.theme_simple_list_white;
             case kThemeCoffee -> R.layout.theme_simple_list_coffee;
             default -> R.layout.theme_simple_list_black;
         };

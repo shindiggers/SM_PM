@@ -1,14 +1,6 @@
 package com.example.smmoney.misc;
 
 public class Enums {
-    public static final int DateChangeTypeNone = 0;
-    public static final int DateChangeTypeSeparateTransactionFromRepeating = 1;
-    public static final int DateChangeTypeUpdateRepeating = 2;
-
-    public static final int RepeatingChangeTypeNone = 0;
-    public static final int RepeatingChangeTypeSeparateTransactionFromRepeating = 1;
-    public static final int RepeatingChangeTypeUpdateRepeating = 2;
-
     public static final int ReportsSortDirectionAscending = 0;
     public static final int ReportsSortDirectionDescending = 1;
 

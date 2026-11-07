@@ -81,7 +81,8 @@ public class DisplayOptionsPrefsActivity extends PocketMoneyPreferenceActivity {
                     SMMoney.getAppContext().getString(R.string.THEME_COLOR_PURPLE),
                     SMMoney.getAppContext().getString(R.string.THEME_COLOR_GRAY),
                     SMMoney.getAppContext().getString(R.string.THEME_COLOR_COFFEE),
-                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_RUBY)};
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_RUBY),
+                    SMMoney.getAppContext().getString(R.string.THEME_COLOR_WHITE)};
             themes.setEntries(colors);
             themes.setEntryValues(colors);
             themes.setOnPreferenceChangeListener(getChangeListener());
