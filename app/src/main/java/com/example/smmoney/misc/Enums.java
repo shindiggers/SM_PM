@@ -87,11 +87,7 @@ public class Enums {
     public static final int kDesktopSyncStateACKReceived = 59;
     public static final int kDesktopSyncStateClientConnected = 4;
     public static final int kDesktopSyncStateConnecting = 3;
-    public static final int kDesktopSyncStateConnectionLost = 68;
-    public static final int kDesktopSyncStateDisconnected = 67;
-    public static final int kDesktopSyncStateDisconnecting = 66;
     public static final int kDesktopSyncStateError = 69;
-    public static final int kDesktopSyncStateIdle = 1;
     public static final int kDesktopSyncStateInitialized = 2;
     public static final int kDesktopSyncStateNone = 0;
     public static final int kDesktopSyncStatePhotoACKHeaderReceived = 41;
@@ -100,20 +96,12 @@ public class Enums {
     public static final int kDesktopSyncStatePhotoHeaderReceived = 34;
     public static final int kDesktopSyncStatePhotoProcessed = 37;
     public static final int kDesktopSyncStatePhotoReceived = 36;
-    public static final int kDesktopSyncStateProcessingACK = 60;
-    public static final int kDesktopSyncStateProcessingChanges = 52;
-    public static final int kDesktopSyncStateProcessingPhotoACK = 44;
-    public static final int kDesktopSyncStateProcessingSyncVersion = 15;
-    public static final int kDesktopSyncStateReceivingACK = 58;
-    public static final int kDesktopSyncStateReceivingACKHeader = 56;
     public static final int kDesktopSyncStateReceivingPhoto = 35;
     public static final int kDesktopSyncStateReceivingPhotoACK = 42;
     public static final int kDesktopSyncStateReceivingPhotoACKHeader = 40;
     public static final int kDesktopSyncStateReceivingPhotoHeader = 33;
     public static final int kDesktopSyncStateReceivingRecentChanges = 50;
     public static final int kDesktopSyncStateReceivingRecentChangesHeader = 48;
-    public static final int kDesktopSyncStateReceivingSyncVersion = 13;
-    public static final int kDesktopSyncStateReceivingSyncVersionHeader = 11;
     public static final int kDesktopSyncStateReceivingUDID = 21;
     public static final int kDesktopSyncStateReceivingUDIDHeader = 19;
     public static final int kDesktopSyncStateRecentChangesHeaderReceived = 49;
@@ -142,16 +130,12 @@ public class Enums {
     public static final int kDesktopSyncStateSyncVersionProcessed = 16;
     public static final int kDesktopSyncStateSyncVersionReceived = 14;
 
-    public static final int kDesktopSyncStateTriggerDataAvailable = 1;
     public static final int kDesktopSyncStateTriggerManual = 3;
-    public static final int kDesktopSyncStateTriggerNone = 0;
-    public static final int kDesktopSyncStateTriggerSpaceAvailable = 2;
 
     public static final int kDesktopSyncStateUDIDHeaderReceived = 20;
     public static final int kDesktopSyncStateUDIDProcessed = 24;
     public static final int kDesktopSyncStateUDIDProcessing = 23;
     public static final int kDesktopSyncStateUDIDReceived = 22;
-    public static final int kDesktopSyncStateUnchanged = 70;
 
     public static final int kFeeTypeFixed = 0;
     public static final int kFeeTypePercent = 1;
@@ -161,9 +145,6 @@ public class Enums {
     public static final int kModifyEitherEnd = 2;
     public static final int kModifyOtherEndOnly = 0;
     public static final int kModifyThisEndOnly = 1;
-
-    public static final int kPocketMoneySyncClient = 0;
-    public static final int kPocketMoneySyncServer = 1;
 
     public static final int kReportDisplayAmount = 0;
     public static final int kReportDisplayCount = 2;
@@ -184,8 +165,6 @@ public class Enums {
     public static final int kReportsSortOnAmount = 1;
     public static final int kReportsSortOnCount = 2;
     public static final int kReportsSortOnItem = 0;
-
-    public static final int kSIZEHEADERSIZE = 4;
 
     public static final int kSumamryChartMoreCharts = 2;
     public static final int kSumamryChartTypeCashFlow = 1;

@@ -287,7 +287,6 @@
 
     <string name="EXCHANGERATE_WORKSHEET_FOREIGNAMOUNT">Foreign Amount</string>
 
-    <string name="kLOC_EXCHANGERATE_CHANGE_ACCOUNT_AMOUNT">Change\nAccount Amount</string>
 
     <string name="EXCHANGERATE_WORKSHEET_ACCOUNTAMOUNT">Account Amount</string>
 
@@ -296,11 +295,6 @@
     <string name="EXCHANGERATE_FETCH_FAILED">Failed to fetch rate.</string>
     <string name="EXCHANGERATE_RATE_UPDATED">Rate updated</string>
     <string name="EXCHANGERATE_INSTRUCTION">Enter %1$s and %2$s to calculate %3$s.</string>
-    <string name="kLOC_GENERAL_CURRENCYANDEXCHANGERATE">Currency &amp; Exchange Rate</string>
-    <string name="kLOC_EXCHANGERATE_WORKSHEET_INVERT">1/x</string>
-    <string name="kLOC_CURRENCYEXCHANGE_SYMBOL">Currency Symbol</string>
-    <string name="kLOC_CURRENCYEXCHANGE_PREFIXSYMBOL">Prefix Symbol</string>
-    <string name="kLOC_CURRENCYEXCHANGE_DECIMALPLACES">Decimal Places</string>
 
 
     <!-- =================================================================== -->
