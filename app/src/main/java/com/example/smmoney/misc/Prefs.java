@@ -133,6 +133,9 @@ public class Prefs {
     public static final String TRANSACTIONS_SORTON = "prefstransactionviewoptionssorton";
     public static final String TRANSACTIONS_TRUNCATE_ID = "prefsdisplayregistertruncateid";
     public static final String TRANSACTIONS_UNLINK_ID_FIELD = "prefsdisplayeditunlink";
+    public static final String USE_LAST_DATE = "prefsuselastdate";
+    public static final String LAST_SAVED_TRANSACTION_DATE = "lastsavedtransactiondate";
+    public static final String CAT_ABOVE_PAYEE = "prefsdispplayeditcatposition";
     public static final String TRANSFERTYPE = "prefsdatatransferstransfermode";
     public static final String UPDATEEXCHANGERATES = "prefscurrencyupdatexrates"; // update f/x rates or no. Type: boolean
     public static final String VIEWACCOUNTS = "prefsaccountsviewoptionsshowaccounts";
@@ -219,7 +222,11 @@ public class Prefs {
     }
 
     public static boolean getBooleanPref(String thePref) {
-        return getSharedPrefs().getBoolean(thePref, false);
+        return getBooleanPref(thePref, false);
+    }
+
+    public static boolean getBooleanPref(String thePref, boolean defaultValue) {
+        return getSharedPrefs().getBoolean(thePref, defaultValue);
     }
 
     // Suppress ApplySharedPref: commit() is used intentionally so critical string prefs (e.g. theme changes,
@@ -301,6 +308,8 @@ public class Prefs {
             setPref(SHOWTIME, false);
             setPref(TRANSACTIONS_SHOW_TRANSTOANDTO_FIELD, false);
             setPref(TRANSACTIONS_UNLINK_ID_FIELD, false);
+            setPref(USE_LAST_DATE, false);
+            setPref(CAT_ABOVE_PAYEE, false);
             setPref(ALTBALANCETYPE, false);
             setPref(REPORTS_GROUPSUBCATEGORIES, DEBUGGING);
             setPref(TRANSACTIONS_SHOW_ID_FIELD, DEBUGGING);

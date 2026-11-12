@@ -21,8 +21,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import androidx.core.content.ContextCompat;
+import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.constraintlayout.widget.ConstraintSet;
+import java.util.List;
+import java.util.Arrays;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.CheckBox;
@@ -116,6 +125,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     private AutoCompleteTextView payeeEditText;
     private TextView payeeLabelTextView;
     private boolean programaticUpdate;
+    private boolean isCategoryFilteredByPayee = false;
+    private boolean isPayeeFilteredByCategory = false;
+    private boolean isClassFilteredByPayee = false;
+    private boolean isIdFilteredByPayee = false;
     private ImageView repeatingImageView;
     private RepeatingTransactionClass repeatingTransaction;
     private TextView timeTextView;
@@ -172,6 +185,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             }
             this.transaction.dirty = true;
             reloadData();
+            onPayeeEntered(selection);
         }
     });
 
@@ -181,6 +195,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.transaction.setCategory(selection);
             this.transaction.dirty = true;
             reloadData();
+            onCategoryEntered(selection);
         }
     });
 
@@ -353,8 +368,17 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.isEditingRepeatingTemplate = extras.getBoolean("isRepeating", false);
         }
         
+        boolean isNew = (this.transaction == null || this.transaction.getTransactionID() == 0);
         if (this.transaction == null) {
             this.transaction = new TransactionClass();
+        }
+        if (isNew && !this.isEditingRepeatingTemplate && Prefs.getBooleanPref(Prefs.USE_LAST_DATE)) {
+            long lastDate = Prefs.getLongPref(Prefs.LAST_SAVED_TRANSACTION_DATE);
+            if (lastDate > 0) {
+                GregorianCalendar cal = new GregorianCalendar();
+                cal.setTimeInMillis(lastDate);
+                this.transaction.setDate(cal);
+            }
         }
         if (this.transaction.isRepeatingTransaction || this.transaction.getType() == Enums.kTransactionTypeRepeating) {
             this.isEditingRepeatingTemplate = true;
@@ -366,6 +390,8 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
         setContentView(R.layout.transaction_edit);
         setupButtons();
+        applyCategoryPositionPreference();
+        applyFieldVisibilities();
         reloadData();
         selectStartingCell();
 
@@ -555,8 +581,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         ((ImageView) findViewById(R.id.split_button)).setColorFilter(fieldLabelColor, srcIn);
         ((ImageView) findViewById(R.id.camera_button)).setColorFilter(fieldLabelColor, srcIn);
 
-        ((MaterialButton) findViewById(R.id.duplicate_button)).setTextColor(tintColor);
-        ((MaterialButton) findViewById(R.id.fee_button)).setTextColor(tintColor);
+        MaterialButton dupBtn = findViewById(R.id.duplicate_button);
+        MaterialButton feeBtn = findViewById(R.id.fee_button);
+        dupBtn.setTextColor(tintColor);
+        dupBtn.setStrokeColor(ColorStateList.valueOf(tintColor));
+        feeBtn.setTextColor(tintColor);
+        feeBtn.setStrokeColor(ColorStateList.valueOf(tintColor));
 
         TextWatcher dirtyWatcher = new TextWatcher() {
             public void afterTextChanged(Editable s) { if (!programaticUpdate) transaction.dirty = true; }
@@ -570,6 +600,58 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.categoryEditText.addTextChangedListener(dirtyWatcher);
         this.classEditText.addTextChangedListener(dirtyWatcher);
 
+        // When the user starts typing in Category, expand adapter to all categories so typing searches everything
+        this.categoryEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void afterTextChanged(Editable s) {
+                if (isCategoryFilteredByPayee && !programaticUpdate && !s.toString().isEmpty()) {
+                    isCategoryFilteredByPayee = false;
+                    int textColor = PocketMoneyThemes.primaryCellTextColor();
+                    categoryEditText.setAdapter(createThemedAdapter(CategoryClass.allCategoryNamesInDatabase(), textColor));
+                }
+            }
+        });
+
+        // Symmetrically for Payee when filtered by Category
+        this.payeeEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void afterTextChanged(Editable s) {
+                if (isPayeeFilteredByCategory && !programaticUpdate && !s.toString().isEmpty()) {
+                    isPayeeFilteredByCategory = false;
+                    int textColor = PocketMoneyThemes.primaryCellTextColor();
+                    payeeEditText.setAdapter(createThemedAdapter(PayeeClass.allPayeesInDatabase(), textColor));
+                }
+            }
+        });
+
+        // Expand Class adapter to all classes on typing if it was filtered
+        this.classEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void afterTextChanged(Editable s) {
+                if (isClassFilteredByPayee && !programaticUpdate && !s.toString().isEmpty()) {
+                    isClassFilteredByPayee = false;
+                    int textColor = PocketMoneyThemes.primaryCellTextColor();
+                    classEditText.setAdapter(createThemedAdapter(ClassNameClass.allClassNamesInDatabase(), textColor));
+                }
+            }
+        });
+
+        // Expand ID adapter to all IDs on typing if it was filtered
+        this.idEditText.addTextChangedListener(new TextWatcher() {
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void afterTextChanged(Editable s) {
+                if (isIdFilteredByPayee && !programaticUpdate && !s.toString().isEmpty()) {
+                    isIdFilteredByPayee = false;
+                    int textColor = PocketMoneyThemes.primaryCellTextColor();
+                    idEditText.setAdapter(createThemedAdapter(IDClass.allCategoriesInDatabase(), textColor));
+                }
+            }
+        });
+
         CurrencyKeyboard currencyKeyboard = findViewById(R.id.keyboardView);
         currencyKeyboard.setEditText(this.amountEditText, () -> {
             if (amountEditText.hasFocus()) {
@@ -581,6 +663,10 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             }
             saveAmountXrates();
             loadAmountXrateValues();
+        });
+        currencyKeyboard.setNextAction(() -> {
+            currencyKeyboard.hide();
+            focusNextField(amountEditText);
         });
 
         LinearLayout keyboardToolBar = findViewById(R.id.keyboard_toolbar);
@@ -596,17 +682,57 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             categoryLauncher.launch(i);
         });
 
-        if (Prefs.getBooleanPref(Prefs.AUTO_FILL)) {
-            this.categoryEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, CategoryClass.allCategoryNamesInDatabase()));
-            this.payeeEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, PayeeClass.allPayeesInDatabase()));
-            this.idEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, IDClass.allCategoriesInDatabase()));
-            this.classEditText.setAdapter(new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, ClassNameClass.allClassNamesInDatabase()));
-        }
-        
-        this.categoryEditText.setThreshold(2);
-        this.payeeEditText.setThreshold(2);
-        this.idEditText.setThreshold(2);
-        this.classEditText.setThreshold(2);
+        setupAutoCompleteAdapters();
+
+        this.payeeEditText.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            onPayeeEntered(selected);
+        });
+
+        this.categoryEditText.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            onCategoryEntered(selected);
+        });
+
+        this.classEditText.setOnItemClickListener((parent, view, position, id) -> {
+            focusNextField(classEditText);
+        });
+
+        this.idEditText.setOnItemClickListener((parent, view, position, id) -> {
+            focusNextField(idEditText);
+        });
+
+        this.payeeEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                onPayeeEntered(payeeEditText.getText().toString());
+                return true;
+            }
+            return false;
+        });
+
+        this.categoryEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                onCategoryEntered(categoryEditText.getText().toString());
+                return true;
+            }
+            return false;
+        });
+
+        this.classEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                focusNextField(classEditText);
+                return true;
+            }
+            return false;
+        });
+
+        this.idEditText.setOnEditorActionListener((v, actionId, event) -> {
+            if (actionId == EditorInfo.IME_ACTION_NEXT) {
+                focusNextField(idEditText);
+                return true;
+            }
+            return false;
+        });
 
         this.payeeEditText.setOnFocusChangeListener((v, hasFocus) -> {
             if (hasFocus) {
@@ -761,18 +887,20 @@ public class TransactionEditActivity extends PocketMoneyActivity {
     }
 
     private void selectStartingCell() {
-        if (this.transaction != null && this.transaction.getTransactionID() == 0) {
+        if (this.transaction != null && this.transaction.getTransactionID() == 0 && !this.isEditingRepeatingTemplate) {
             String thePref = Prefs.getStringPref(Prefs.EDITTRANSACTION_STARTING_FIELD);
 
             if (SMMoney.getAppContext().getString(R.string.GENERAL_PAYEE).equals(thePref)) {
-            this.payeeEditText.post(() -> this.payeeEditText.requestFocus());
+                this.payeeEditText.post(() -> this.payeeEditText.requestFocus());
             } else if (SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY).equals(thePref)) {
-            this.categoryEditText.post(() -> this.categoryEditText.requestFocus());
-            } else if (SMMoney.getAppContext().getString(R.string.GENERAL_AMOUNT).equals(thePref)) {
-                this.amountEditText.post(this::amountAction);
+                this.categoryEditText.post(() -> this.categoryEditText.requestFocus());
             } else {
-                getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+                // Default for new transactions: auto-focus Amount and bring up the CurrencyKeyboard
+                this.amountEditText.post(this::amountAction);
             }
+        } else {
+            // Existing transaction or repeating template: do not auto-focus any field
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
     }
 
@@ -912,6 +1040,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         boolean originalRepeatingFlag = this.transaction.isRepeatingTransaction;
         this.transaction.isRepeatingTransaction = false;
         this.transaction.saveToDatabase();
+        if (this.transaction.getDate() != null) {
+            Prefs.setPref(Prefs.LAST_SAVED_TRANSACTION_DATE, this.transaction.getDate().getTimeInMillis());
+        }
         
         saveUpdateTransferFromOriginalRecord(originalRecord, this.transaction);
 
@@ -982,23 +1113,25 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.clearedCheckBox.setChecked(this.transaction.getCleared());
             this.memoEditText.setText(this.transaction.getMemo());
 
+            boolean showCategoryPref = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CATEGORY_FIELD, true);
             if (this.transaction.getNumberOfSplits() > 1) {
                 this.categoryEditText.setVisibility(View.GONE);
-                this.categoryTextView.setVisibility(View.VISIBLE);
+                this.categoryTextView.setVisibility(showCategoryPref ? View.VISIBLE : View.GONE);
                 this.categoryTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
             } else {
                 this.categoryEditText.setText(this.transaction.getCategory());
-                this.categoryEditText.setVisibility(View.VISIBLE);
+                this.categoryEditText.setVisibility(showCategoryPref ? View.VISIBLE : View.GONE);
                 this.categoryTextView.setVisibility(View.GONE);
             }
 
+            boolean showClassPref = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLASS_FIELD, true);
             if (this.transaction.multipleClassNames()) {
                 this.classEditText.setVisibility(View.GONE);
-                this.classTextView.setVisibility(View.VISIBLE);
+                this.classTextView.setVisibility(showClassPref ? View.VISIBLE : View.GONE);
                 this.classTextView.setText(SMMoney.getAppContext().getString(R.string.GENERAL_SPLITS));
             } else {
                 this.classEditText.setText(this.transaction.getClassName());
-                this.classEditText.setVisibility(View.VISIBLE);
+                this.classEditText.setVisibility(showClassPref ? View.VISIBLE : View.GONE);
                 this.classTextView.setVisibility(View.GONE);
             }
         } finally {
@@ -1228,7 +1361,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         SplitsClass feeSplit = new SplitsClass();
         feeSplit.setAmount(signedFee);
         feeSplit.setCategory(feeCategory);
-        feeSplit.setMemo(SMMoney.getAppContext().getString(R.string.kLOC_FEE_CATEGORY));
+        feeSplit.setMemo(SMMoney.getAppContext().getString(R.string.FEE_CATEGORY));
         feeSplit.setCurrencyCode(account.getCurrencyCode());
         feeSplit.setXrate(1.0d);
 
@@ -1604,6 +1737,268 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         Intent i = new Intent(this, SplitsActivity.class);
         i.putExtra("Transaction", this.transaction);
         splitsLauncher.launch(i);
+    }
+
+    private void setupAutoCompleteAdapters() {
+        if (!Prefs.getBooleanPref(Prefs.AUTO_FILL)) return;
+
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+        int bgColor = PocketMoneyThemes.groupTableViewBackgroundColor();
+        Drawable popupBg = ContextCompat.getDrawable(this, R.drawable.bg_dropdown_popup);
+        if (popupBg instanceof GradientDrawable gd) {
+            gd.setColor(bgColor);
+            gd.setStroke((int) (1 * getResources().getDisplayMetrics().density), PocketMoneyThemes.fieldLabelColor() & 0x66FFFFFF);
+        }
+
+        AutoCompleteTextView[] views = {categoryEditText, payeeEditText, idEditText, classEditText};
+        for (AutoCompleteTextView view : views) {
+            view.setThreshold(1);
+            if (popupBg != null && popupBg.getConstantState() != null) {
+                view.setDropDownBackgroundDrawable(popupBg.getConstantState().newDrawable().mutate());
+            }
+            view.setDropDownVerticalOffset((int) (4 * getResources().getDisplayMetrics().density));
+        }
+
+        payeeEditText.setAdapter(createThemedAdapter(PayeeClass.allPayeesInDatabase(), textColor));
+        categoryEditText.setAdapter(createThemedAdapter(CategoryClass.allCategoryNamesInDatabase(), textColor));
+        classEditText.setAdapter(createThemedAdapter(ClassNameClass.allClassNamesInDatabase(), textColor));
+        idEditText.setAdapter(createThemedAdapter(IDClass.allCategoriesInDatabase(), textColor));
+    }
+
+    private ArrayAdapter<String> createThemedAdapter(List<String> items, int textColor) {
+        return new ArrayAdapter<>(this, R.layout.dropdown_item_themed, items) {
+            @NonNull
+            @Override
+            public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+                View v = super.getView(position, convertView, parent);
+                if (v instanceof TextView tv) {
+                    tv.setTextColor(textColor);
+                }
+                return v;
+            }
+        };
+    }
+
+    private void applyCategoryPositionPreference() {
+        if (!Prefs.getBooleanPref(Prefs.CAT_ABOVE_PAYEE)) return;
+
+        ConstraintLayout layout = findViewById(R.id.outter_layout);
+        if (layout == null) return;
+
+        ConstraintSet set = new ConstraintSet();
+        set.clone(layout);
+
+        // When Category is above Payee:
+        // Category connects below Amount divider (divider3)
+        set.connect(R.id.category_label, ConstraintSet.TOP, R.id.divider3, ConstraintSet.BOTTOM);
+        // Divider 5 (under Category) stays below category_label
+        set.connect(R.id.divider5, ConstraintSet.TOP, R.id.category_label, ConstraintSet.BOTTOM);
+        // Payee connects below Divider 5
+        set.connect(R.id.payeelabeltextview, ConstraintSet.TOP, R.id.divider5, ConstraintSet.BOTTOM);
+        // Divider 4 (under Payee) stays below payeelabeltextview
+        set.connect(R.id.divider4, ConstraintSet.TOP, R.id.payeelabeltextview, ConstraintSet.BOTTOM);
+        // Class connects below Divider 4
+        set.connect(R.id.class_label, ConstraintSet.TOP, R.id.divider4, ConstraintSet.BOTTOM);
+
+        set.applyTo(layout);
+    }
+
+    private void applyFieldVisibilities() {
+        // Category Row
+        boolean showCategory = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CATEGORY_FIELD, true);
+        int catVis = showCategory ? View.VISIBLE : View.GONE;
+        findViewById(R.id.category_label).setVisibility(catVis);
+        this.categoryEditText.setVisibility(catVis);
+        findViewById(R.id.split_button).setVisibility(catVis);
+        findViewById(R.id.category_drop_down).setVisibility(catVis);
+        findViewById(R.id.divider5).setVisibility(catVis);
+
+        // Class Row
+        boolean showClass = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLASS_FIELD, true);
+        int classVis = showClass ? View.VISIBLE : View.GONE;
+        findViewById(R.id.class_label).setVisibility(classVis);
+        this.classEditText.setVisibility(classVis);
+        findViewById(R.id.class_drop_down).setVisibility(classVis);
+        findViewById(R.id.divider6).setVisibility(classVis);
+
+        // ID Row
+        boolean showId = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_ID_FIELD, true);
+        int idVis = showId ? View.VISIBLE : View.GONE;
+        findViewById(R.id.id_label).setVisibility(idVis);
+        this.idEditText.setVisibility(idVis);
+        findViewById(R.id.id_drop_down).setVisibility(idVis);
+        findViewById(R.id.divider7).setVisibility(idVis);
+
+        // Memo Row
+        boolean showMemo = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_MEMO_FIELD, true);
+        int memoVis = showMemo ? View.VISIBLE : View.GONE;
+        findViewById(R.id.memo_label).setVisibility(memoVis);
+        this.memoEditText.setVisibility(memoVis);
+        findViewById(R.id.camera_button).setVisibility(memoVis);
+        findViewById(R.id.divider8).setVisibility(memoVis);
+
+        // Cleared Row
+        boolean showCleared = Prefs.getBooleanPref(Prefs.EDITTRANSACTION_SHOW_CLEARED_FIELD, true);
+        int clearedVis = showCleared ? View.VISIBLE : View.GONE;
+        findViewById(R.id.cleared_label).setVisibility(clearedVis);
+        this.clearedCheckBox.setVisibility(clearedVis);
+        findViewById(R.id.divider9).setVisibility(clearedVis);
+    }
+
+    private List<View> getFieldNavigationOrder() {
+        boolean catAbovePayee = Prefs.getBooleanPref(Prefs.CAT_ABOVE_PAYEE);
+        if (catAbovePayee) {
+            return Arrays.asList(amountEditText, categoryEditText, payeeEditText, classEditText, idEditText, memoEditText);
+        } else {
+            return Arrays.asList(amountEditText, payeeEditText, categoryEditText, classEditText, idEditText, memoEditText);
+        }
+    }
+
+    private void focusNextField(View current) {
+        List<View> chain = getFieldNavigationOrder();
+        int currentIndex = chain.indexOf(current);
+        if (currentIndex < 0) return;
+
+        for (int i = currentIndex + 1; i < chain.size(); i++) {
+            View candidate = chain.get(i);
+            if (candidate.getVisibility() == View.VISIBLE && candidate.isEnabled()) {
+                candidate.requestFocus();
+                if (candidate instanceof EditText et) {
+                    et.setSelection(et.getText().length());
+                    InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                    if (imm != null) imm.showSoftInput(et, 0);
+                }
+                if (candidate == classEditText) {
+                    showClassSuggestionsIfAvailable();
+                } else if (candidate == idEditText) {
+                    showIdSuggestionsIfAvailable();
+                }
+                return;
+            }
+        }
+    }
+
+    private void showClassSuggestionsIfAvailable() {
+        if (!Prefs.getBooleanPref(Prefs.AUTO_FILL)) return;
+        String payee = payeeEditText.getText().toString().trim();
+        ArrayList<String> payeeClasses = ClassNameClass.allClassesInDatabaseForPayee(payee);
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+
+        if (!payeeClasses.isEmpty()) {
+            isClassFilteredByPayee = true;
+            classEditText.setAdapter(createThemedAdapter(payeeClasses, textColor));
+        } else {
+            isClassFilteredByPayee = false;
+            ArrayList<String> allClasses = ClassNameClass.allClassNamesInDatabase();
+            if (allClasses.isEmpty()) return;
+            classEditText.setAdapter(createThemedAdapter(allClasses, textColor));
+        }
+
+        classEditText.post(() -> {
+            if (classEditText.hasFocus()) {
+                classEditText.showDropDown();
+            }
+        });
+    }
+
+    private void showIdSuggestionsIfAvailable() {
+        if (!Prefs.getBooleanPref(Prefs.AUTO_FILL)) return;
+        String payee = payeeEditText.getText().toString().trim();
+        ArrayList<String> payeeIDs = IDClass.allIDsInDatabaseForPayee(payee);
+        int textColor = PocketMoneyThemes.primaryCellTextColor();
+
+        if (!payeeIDs.isEmpty()) {
+            isIdFilteredByPayee = true;
+            idEditText.setAdapter(createThemedAdapter(payeeIDs, textColor));
+        } else {
+            isIdFilteredByPayee = false;
+            ArrayList<String> allIDs = IDClass.allCategoriesInDatabase();
+            if (allIDs.isEmpty()) return;
+            idEditText.setAdapter(createThemedAdapter(allIDs, textColor));
+        }
+
+        idEditText.post(() -> {
+            if (idEditText.hasFocus()) {
+                idEditText.showDropDown();
+            }
+        });
+    }
+
+    private void onPayeeEntered(String payee) {
+        if (payee != null && !payee.trim().isEmpty()) {
+            this.transaction.setPayee(payee);
+        }
+        boolean catAbovePayee = Prefs.getBooleanPref(Prefs.CAT_ABOVE_PAYEE);
+        if (catAbovePayee) {
+            // Category was already above payee -> advance to next field after payee
+            focusNextField(payeeEditText);
+        } else {
+            // Standard order: Payee -> Category (if category is visible)
+            if (categoryEditText.getVisibility() == View.VISIBLE) {
+                categoryEditText.requestFocus();
+                categoryEditText.setSelection(categoryEditText.getText().length());
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null) imm.showSoftInput(categoryEditText, 0);
+                
+                // Show strictly the payee's previous categories first
+                int textColor = PocketMoneyThemes.primaryCellTextColor();
+                if (payee != null && !payee.trim().isEmpty()) {
+                    ArrayList<String> payeeCats = CategoryClass.allCategoryNamesInDatabaseForPayee(payee.trim());
+                    if (!payeeCats.isEmpty()) {
+                        isCategoryFilteredByPayee = true;
+                        categoryEditText.setAdapter(createThemedAdapter(payeeCats, textColor));
+                        categoryEditText.post(() -> {
+                            if (categoryEditText.hasFocus()) {
+                                categoryEditText.showDropDown();
+                            }
+                        });
+                        return;
+                    }
+                }
+                isCategoryFilteredByPayee = false;
+                categoryEditText.setAdapter(createThemedAdapter(CategoryClass.allCategoryNamesInDatabase(), textColor));
+            } else {
+                focusNextField(payeeEditText);
+            }
+        }
+    }
+
+    private void onCategoryEntered(String category) {
+        if (category != null && !category.trim().isEmpty()) {
+            this.transaction.setCategory(category);
+        }
+        boolean catAbovePayee = Prefs.getBooleanPref(Prefs.CAT_ABOVE_PAYEE);
+        if (catAbovePayee) {
+            // Category is above payee -> advance to Payee (if visible)
+            if (payeeEditText.getVisibility() == View.VISIBLE) {
+                payeeEditText.requestFocus();
+                payeeEditText.setSelection(payeeEditText.getText().length());
+                InputMethodManager imm = (InputMethodManager) getSystemService(INPUT_METHOD_SERVICE);
+                if (imm != null) imm.showSoftInput(payeeEditText, 0);
+
+                int textColor = PocketMoneyThemes.primaryCellTextColor();
+                if (category != null && !category.trim().isEmpty()) {
+                    ArrayList<String> catPayees = PayeeClass.allPayeesInDatabaseForCategory(category.trim());
+                    if (!catPayees.isEmpty()) {
+                        isPayeeFilteredByCategory = true;
+                        payeeEditText.setAdapter(createThemedAdapter(catPayees, textColor));
+                        payeeEditText.post(() -> {
+                            if (payeeEditText.hasFocus()) {
+                                payeeEditText.showDropDown();
+                            }
+                        });
+                        return;
+                    }
+                }
+                isPayeeFilteredByCategory = false;
+                payeeEditText.setAdapter(createThemedAdapter(PayeeClass.allPayeesInDatabase(), textColor));
+            } else {
+                focusNextField(categoryEditText);
+            }
+        } else {
+            // Standard order: Category entered -> advance to next visible field after Category
+            focusNextField(categoryEditText);
+        }
     }
 
     private void editTextDidFinishChanging(int code) {

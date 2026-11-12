@@ -87,6 +87,8 @@ public class Enums {
     public static final int kDesktopSyncStateACKReceived = 59;
     public static final int kDesktopSyncStateClientConnected = 4;
     public static final int kDesktopSyncStateConnecting = 3;
+    public static final int kDesktopSyncStateDisconnected = 67;
+    public static final int kDesktopSyncStateDisconnecting = 66;
     public static final int kDesktopSyncStateError = 69;
     public static final int kDesktopSyncStateInitialized = 2;
     public static final int kDesktopSyncStateNone = 0;
@@ -96,12 +98,14 @@ public class Enums {
     public static final int kDesktopSyncStatePhotoHeaderReceived = 34;
     public static final int kDesktopSyncStatePhotoProcessed = 37;
     public static final int kDesktopSyncStatePhotoReceived = 36;
+    public static final int kDesktopSyncStateReceivingACK = 58;
     public static final int kDesktopSyncStateReceivingPhoto = 35;
     public static final int kDesktopSyncStateReceivingPhotoACK = 42;
     public static final int kDesktopSyncStateReceivingPhotoACKHeader = 40;
     public static final int kDesktopSyncStateReceivingPhotoHeader = 33;
     public static final int kDesktopSyncStateReceivingRecentChanges = 50;
     public static final int kDesktopSyncStateReceivingRecentChangesHeader = 48;
+    public static final int kDesktopSyncStateReceivingSyncVersion = 13;
     public static final int kDesktopSyncStateReceivingUDID = 21;
     public static final int kDesktopSyncStateReceivingUDIDHeader = 19;
     public static final int kDesktopSyncStateRecentChangesHeaderReceived = 49;

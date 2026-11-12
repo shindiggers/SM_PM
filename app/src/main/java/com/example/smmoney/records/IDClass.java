@@ -232,6 +232,25 @@ public class IDClass extends PocketMoneyRecordClass {
         return array;
     }
 
+    public static ArrayList<String> allIDsInDatabaseForPayee(String payee) {
+        ArrayList<String> array = new ArrayList<>();
+        if (payee == null || payee.trim().isEmpty()) {
+            return array;
+        }
+        String sql = "SELECT DISTINCT checkNumber FROM transactions WHERE deleted = 0 AND checkNumber != '' AND checkNumber IS NOT NULL AND payee = ?";
+        Cursor c = Database.rawQuery(sql, new String[]{payee.trim()});
+        if (c != null) {
+            while (c.moveToNext()) {
+                String val = c.getString(0);
+                if (val != null && !val.trim().isEmpty()) {
+                    array.add(val.trim());
+                }
+            }
+            c.close();
+        }
+        return array;
+    }
+
     @SuppressWarnings("unused")
     public static String closestRecordMatchForInDatabase(String aClass) {
         String aClassName = null;

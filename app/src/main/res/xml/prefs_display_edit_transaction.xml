@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:title="@string/EDIT_TRANSACTION_TITLE">
 
     <ListPreference
@@ -9,6 +10,11 @@
         android:title="@string/TRANSACTIONS_OPTIONS_STARTEDIT" />
 
     <PreferenceCategory>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="prefsuselastdate"
+            android:title="@string/kLOC_PREFERENCES_USE_LAST_DATE"
+            app:singleLineTitle="false" />
         <CheckBoxPreference
             android:key="prefsmanagedlistsautofill"
             android:title="@string/PREFERENCES_AUTOFILL" />

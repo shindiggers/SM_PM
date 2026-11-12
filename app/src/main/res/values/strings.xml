@@ -141,6 +141,7 @@
     <string name="ACTION_FEE_BUTTON">+ Fee</string>
     <string name="FEE_TYPE_FIXED">Fixed</string>
     <string name="FEE_TYPE_PERCENT">%</string>
+    <string name="FEE_CATEGORY">Service Fee</string>
     <string name="EDIT_TRANSACTION_FROM">From</string>
     <string name="DUPLICATE_TRANSACTION_TITLE">Duplicate Transaction</string>
     <string name="FEE_MISSING_ALERT">You have not filled out the transaction fee information for this account.</string>
@@ -730,8 +731,6 @@
     <string name="kLOC_GENERAL_DATETIME_TITLE">Date &amp; Time</string>
     <string name="kLOC_GENERAL_BALANCE">Balance</string>
     <string name="kLOC_CHECKNUMBER_UPDATE_IT">The next scheduled check number is .\n\nDo you want to use i as the next check number instead?</string>
-    <string name="kLOC_FEE_INCLUDE_LABEL">Include Fee</string>
-    <string name="kLOC_FEE_CATEGORY">Service Fee</string>
     <string name="kLOC_OVERLIMIT_ALERT_TITLE">Exceeded Credit Limit</string>
     <string name="kLOC_OVERLIMIT_ALERT_BODY">Warning! You have exceeded your specified credit limit of %1$s on your %2$s account.</string>
     <string name="kLOC_OVERDRAWN_ALERT_TITLE">Below Minimum Balance</string>

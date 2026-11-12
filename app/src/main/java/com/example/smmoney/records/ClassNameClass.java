@@ -246,6 +246,25 @@ public class ClassNameClass extends PocketMoneyRecordClass {
         return array;
     }
 
+    public static ArrayList<String> allClassesInDatabaseForPayee(String payee) {
+        ArrayList<String> array = new ArrayList<>();
+        if (payee == null || payee.trim().isEmpty()) {
+            return array;
+        }
+        String sql = "SELECT DISTINCT s.classID FROM splits s INNER JOIN transactions t ON s.transactionID = t.transactionID WHERE s.classID != '' AND s.classID IS NOT NULL AND t.deleted = 0 AND t.payee = ?";
+        Cursor c = Database.rawQuery(sql, new String[]{payee.trim()});
+        if (c != null) {
+            while (c.moveToNext()) {
+                String val = c.getString(0);
+                if (val != null && !val.trim().isEmpty()) {
+                    array.add(val.trim());
+                }
+            }
+            c.close();
+        }
+        return array;
+    }
+
     @SuppressWarnings("unused")
     public static int countOfClassInDatabase(String aClass) {
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();

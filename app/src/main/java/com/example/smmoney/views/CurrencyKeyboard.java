@@ -32,6 +32,7 @@ import java.text.DecimalFormatSymbols;
 public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener {
     private Context context;
     private EditText editText;
+    private Runnable nextAction;
     private View toolbar;
     private boolean toolbarEnabled = true;
 
@@ -89,6 +90,10 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
         } else if (id == R.id.key_hide) {
             hide();
         } else if (id == R.id.key_next) {
+            if (this.nextAction != null) {
+                this.nextAction.run();
+                return;
+            }
             View next = this.editText.focusSearch(FOCUS_DOWN);
             if (next != null) {
                 next.requestFocus();
@@ -174,6 +179,10 @@ public class CurrencyKeyboard extends FrameLayout implements View.OnKeyListener 
 
     private char decimalSeparator() {
         return new DecimalFormatSymbols().getDecimalSeparator();
+    }
+
+    public void setNextAction(Runnable nextAction) {
+        this.nextAction = nextAction;
     }
 
     @SuppressLint("ClickableViewAccessibility")

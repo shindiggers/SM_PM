@@ -179,121 +179,6 @@
                 app:layout_constraintStart_toStartOf="@id/account_label"
                 app:layout_constraintTop_toBottomOf="@id/account_label" />
 
-            <!-- Payee Row -->
-            <TextView
-                android:id="@+id/payeelabeltextview"
-                android:layout_width="85dp"
-                android:layout_height="58dp"
-                android:layout_marginStart="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/GENERAL_PAYEE"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider2" />
-
-            <AutoCompleteTextView
-                android:id="@+id/payeetextview"
-                android:layout_width="0dp"
-                android:layout_height="58dp"
-                android:background="@null"
-                android:gravity="center_vertical"
-                android:hint="@string/GENERAL_PAYEE"
-                android:imeOptions="actionNext"
-                android:singleLine="true"
-                android:textColorHint="@color/blue_theme_text_alt"
-                app:layout_constraintEnd_toStartOf="@+id/payee_drop_down"
-                app:layout_constraintStart_toEndOf="@id/payeelabeltextview"
-                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
-
-            <ImageButton
-                android:id="@+id/payee_drop_down"
-                android:layout_width="48dp"
-                android:layout_height="58dp"
-                android:layout_marginEnd="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/content_description_open_payee_pick_list"
-                android:padding="12dp"
-                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
-
-            <View
-                android:id="@+id/divider3"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
-                app:layout_constraintStart_toStartOf="@id/payeelabeltextview"
-                app:layout_constraintTop_toBottomOf="@id/payeelabeltextview" />
-
-            <!-- Category Row -->
-            <TextView
-                android:id="@+id/category_label"
-                android:layout_width="85dp"
-                android:layout_height="58dp"
-                android:layout_marginStart="16dp"
-                android:gravity="start|center_vertical"
-                android:text="@string/GENERAL_CATEGORY"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider3" />
-
-            <TextView
-                android:id="@+id/categorytextview"
-                android:layout_width="0dp"
-                android:layout_height="58dp"
-                android:gravity="center_vertical"
-                android:visibility="gone"
-                app:layout_constraintEnd_toStartOf="@+id/split_button"
-                app:layout_constraintStart_toEndOf="@id/category_label"
-                app:layout_constraintTop_toTopOf="@id/category_label"
-                tools:text="Category Name"
-                tools:visibility="visible" />
-
-            <AutoCompleteTextView
-                android:id="@+id/categoryedittext"
-                android:layout_width="0dp"
-                android:layout_height="58dp"
-                android:background="@null"
-                android:gravity="center_vertical"
-                android:hint="@string/GENERAL_CATEGORY"
-                android:imeOptions="actionNext"
-                android:singleLine="true"
-                android:textColorHint="@color/blue_theme_text_alt"
-                app:layout_constraintEnd_toStartOf="@+id/split_button"
-                app:layout_constraintStart_toEndOf="@id/category_label"
-                app:layout_constraintTop_toTopOf="@id/category_label" />
-
-            <ImageButton
-                android:id="@+id/split_button"
-                android:layout_width="48dp"
-                android:layout_height="58dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/EDIT_SPLITS_TITLE"
-                android:padding="12dp"
-                android:src="@drawable/ic_call_split_white_24dp"
-                app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
-                app:layout_constraintTop_toTopOf="@id/category_label" />
-
-            <ImageButton
-                android:id="@+id/category_drop_down"
-                android:layout_width="48dp"
-                android:layout_height="58dp"
-                android:layout_marginEnd="8dp"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/transaction_edit_open_category_pick_list"
-                android:padding="12dp"
-                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/category_label" />
-
-            <View
-                android:id="@+id/divider4"
-                android:layout_width="0dp"
-                android:layout_height="1dp"
-                android:background="?android:attr/listDivider"
-                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
-                app:layout_constraintStart_toStartOf="@id/category_label"
-                app:layout_constraintTop_toBottomOf="@id/category_label" />
-
             <!-- Amount Row -->
             <TextView
                 android:id="@+id/amount_label"
@@ -303,7 +188,7 @@
                 android:gravity="start|center_vertical"
                 android:text="@string/GENERAL_AMOUNT"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider4" />
+                app:layout_constraintTop_toBottomOf="@id/divider2" />
 
             <EditText
                 android:id="@+id/amountedittext"
@@ -361,7 +246,7 @@
                 app:layout_constraintTop_toTopOf="@id/amount_label" />
 
             <View
-                android:id="@+id/divider5"
+                android:id="@+id/divider3"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
@@ -369,81 +254,120 @@
                 app:layout_constraintStart_toStartOf="@id/amount_label"
                 app:layout_constraintTop_toBottomOf="@id/amount_label" />
 
-            <!-- ID Row -->
+            <!-- Payee Row -->
             <TextView
-                android:id="@+id/id_label"
+                android:id="@+id/payeelabeltextview"
                 android:layout_width="85dp"
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/GENERAL_ID"
+                android:text="@string/GENERAL_PAYEE"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider5" />
+                app:layout_constraintTop_toBottomOf="@id/divider3" />
 
             <AutoCompleteTextView
-                android:id="@+id/idedittext"
+                android:id="@+id/payeetextview"
                 android:layout_width="0dp"
                 android:layout_height="58dp"
                 android:background="@null"
                 android:gravity="center_vertical"
-                android:hint="@string/GENERAL_ID"
+                android:hint="@string/GENERAL_PAYEE"
                 android:imeOptions="actionNext"
-                android:inputType="text"
                 android:singleLine="true"
                 android:textColorHint="@color/blue_theme_text_alt"
-                app:layout_constraintEnd_toStartOf="@+id/id_drop_down"
-                app:layout_constraintStart_toEndOf="@id/id_label"
-                app:layout_constraintTop_toTopOf="@id/id_label" />
+                app:layout_constraintEnd_toStartOf="@+id/payee_drop_down"
+                app:layout_constraintStart_toEndOf="@id/payeelabeltextview"
+                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
 
             <ImageButton
-                android:id="@+id/id_drop_down"
+                android:id="@+id/payee_drop_down"
                 android:layout_width="48dp"
                 android:layout_height="58dp"
                 android:layout_marginEnd="8dp"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/transaction_edit_open_id_pick_list"
+                android:contentDescription="@string/content_description_open_payee_pick_list"
                 android:padding="12dp"
                 android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/id_label" />
+                app:layout_constraintTop_toTopOf="@id/payeelabeltextview" />
 
             <View
-                android:id="@+id/divider6"
+                android:id="@+id/divider4"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="@id/divider_barrier"
-                app:layout_constraintStart_toStartOf="@id/id_label"
-                app:layout_constraintTop_toBottomOf="@id/id_label" />
+                app:layout_constraintStart_toStartOf="@id/payeelabeltextview"
+                app:layout_constraintTop_toBottomOf="@id/payeelabeltextview" />
 
-            <!-- Cleared Row -->
+            <!-- Category Row -->
             <TextView
-                android:id="@+id/cleared_label"
+                android:id="@+id/category_label"
                 android:layout_width="85dp"
                 android:layout_height="58dp"
                 android:layout_marginStart="16dp"
                 android:gravity="start|center_vertical"
-                android:text="@string/GENERAL_CLEARED"
+                android:text="@string/GENERAL_CATEGORY"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider6" />
+                app:layout_constraintTop_toBottomOf="@id/divider4" />
 
-            <CheckBox
-                android:id="@+id/clearedcheckbox"
+            <TextView
+                android:id="@+id/categorytextview"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:gravity="center_vertical"
+                android:visibility="gone"
+                app:layout_constraintEnd_toStartOf="@+id/split_button"
+                app:layout_constraintStart_toEndOf="@id/category_label"
+                app:layout_constraintTop_toTopOf="@id/category_label"
+                tools:text="Category Name"
+                tools:visibility="visible" />
+
+            <AutoCompleteTextView
+                android:id="@+id/categoryedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/GENERAL_CATEGORY"
+                android:imeOptions="actionNext"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/split_button"
+                app:layout_constraintStart_toEndOf="@id/category_label"
+                app:layout_constraintTop_toTopOf="@id/category_label" />
+
+            <ImageButton
+                android:id="@+id/split_button"
                 android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:layout_marginEnd="0dp"
-                app:layout_constraintBottom_toBottomOf="@id/cleared_label"
+                android:layout_height="58dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/EDIT_SPLITS_TITLE"
+                android:padding="12dp"
+                android:src="@drawable/ic_call_split_white_24dp"
+                app:layout_constraintEnd_toStartOf="@+id/category_drop_down"
+                app:layout_constraintTop_toTopOf="@id/category_label" />
+
+            <ImageButton
+                android:id="@+id/category_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_category_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/cleared_label" />
+                app:layout_constraintTop_toTopOf="@id/category_label" />
 
             <View
-                android:id="@+id/divider7"
+                android:id="@+id/divider5"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="@id/divider_barrier"
-                app:layout_constraintStart_toStartOf="@id/cleared_label"
-                app:layout_constraintTop_toBottomOf="@id/cleared_label" />
+                app:layout_constraintStart_toStartOf="@id/category_label"
+                app:layout_constraintTop_toBottomOf="@id/category_label" />
 
             <!-- Class Row -->
             <TextView
@@ -454,7 +378,7 @@
                 android:gravity="start|center_vertical"
                 android:text="@string/GENERAL_CLASS"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider7" />
+                app:layout_constraintTop_toBottomOf="@id/divider5" />
 
             <TextView
                 android:id="@+id/classtextview"
@@ -494,13 +418,60 @@
                 app:layout_constraintTop_toTopOf="@id/class_label" />
 
             <View
-                android:id="@+id/divider8"
+                android:id="@+id/divider6"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/class_label"
                 app:layout_constraintTop_toBottomOf="@id/class_label" />
+
+            <!-- ID Row -->
+            <TextView
+                android:id="@+id/id_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/GENERAL_ID"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider6" />
+
+            <AutoCompleteTextView
+                android:id="@+id/idedittext"
+                android:layout_width="0dp"
+                android:layout_height="58dp"
+                android:background="@null"
+                android:gravity="center_vertical"
+                android:hint="@string/GENERAL_ID"
+                android:imeOptions="actionNext"
+                android:inputType="text"
+                android:singleLine="true"
+                android:textColorHint="@color/blue_theme_text_alt"
+                app:layout_constraintEnd_toStartOf="@+id/id_drop_down"
+                app:layout_constraintStart_toEndOf="@id/id_label"
+                app:layout_constraintTop_toTopOf="@id/id_label" />
+
+            <ImageButton
+                android:id="@+id/id_drop_down"
+                android:layout_width="48dp"
+                android:layout_height="58dp"
+                android:layout_marginEnd="8dp"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/transaction_edit_open_id_pick_list"
+                android:padding="12dp"
+                android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/id_label" />
+
+            <View
+                android:id="@+id/divider7"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
+                app:layout_constraintStart_toStartOf="@id/id_label"
+                app:layout_constraintTop_toBottomOf="@id/id_label" />
 
             <!-- Memo Row (Inline) -->
             <TextView
@@ -512,7 +483,7 @@
                 android:gravity="start"
                 android:text="@string/GENERAL_NOTE"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider8" />
+                app:layout_constraintTop_toBottomOf="@id/divider7" />
 
             <EditText
                 android:id="@+id/memoedittext"
@@ -527,7 +498,7 @@
                 android:minHeight="58dp"
                 app:layout_constraintEnd_toStartOf="@+id/camera_button"
                 app:layout_constraintStart_toEndOf="@id/memo_label"
-                app:layout_constraintTop_toBottomOf="@id/divider8" />
+                app:layout_constraintTop_toBottomOf="@id/divider7" />
 
             <ImageButton
                 android:id="@+id/camera_button"
@@ -542,13 +513,42 @@
                 app:layout_constraintTop_toTopOf="@id/memoedittext" />
 
             <View
-                android:id="@+id/divider9"
+                android:id="@+id/divider8"
                 android:layout_width="0dp"
                 android:layout_height="1dp"
                 android:background="?android:attr/listDivider"
                 app:layout_constraintEnd_toEndOf="@id/divider_barrier"
                 app:layout_constraintStart_toStartOf="@id/memo_label"
                 app:layout_constraintTop_toBottomOf="@id/memoedittext" />
+
+            <!-- Cleared Row -->
+            <TextView
+                android:id="@+id/cleared_label"
+                android:layout_width="85dp"
+                android:layout_height="58dp"
+                android:layout_marginStart="16dp"
+                android:gravity="start|center_vertical"
+                android:text="@string/GENERAL_CLEARED"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider8" />
+
+            <CheckBox
+                android:id="@+id/clearedcheckbox"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:layout_marginEnd="0dp"
+                app:layout_constraintBottom_toBottomOf="@id/cleared_label"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="@id/cleared_label" />
+
+            <View
+                android:id="@+id/divider9"
+                android:layout_width="0dp"
+                android:layout_height="1dp"
+                android:background="?android:attr/listDivider"
+                app:layout_constraintEnd_toEndOf="@id/divider_barrier"
+                app:layout_constraintStart_toStartOf="@id/cleared_label"
+                app:layout_constraintTop_toBottomOf="@id/cleared_label" />
 
             <!-- Advanced Actions -->
             <LinearLayout
@@ -562,28 +562,33 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/duplicate_button"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/GENERAL_DUPLICATE"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/fee_button"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/ACTION_FEE_BUTTON"
-                    android:textAllCaps="false" />
+                    android:textAllCaps="false"
+                    app:cornerRadius="8dp" />
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/delete_button"
-                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/GENERAL_DELETE"
                     android:textAllCaps="false"
-                    app:iconTint="@color/theme_red_label_color"
+                    app:cornerRadius="8dp"
+                    app:strokeColor="@color/theme_red_label_color"
                     android:textColor="@color/theme_red_label_color" />
             </LinearLayout>
 
