@@ -129,6 +129,80 @@
     <color name="black">#000000</color>
     <color name="white">#FFFFFF</color>
 
+    <!-- Card Colors per theme -->
+    <color name="black_theme_card_background">#262626</color>
+    <color name="black_theme_card_stroke">#3D3D3D</color>
+    <color name="black_theme_card_divider">#555555</color>
+    <color name="black_theme_card_text">#E6E6E6</color>
+    <color name="black_theme_card_text_secondary">#A1A1A1</color>
+
+    <color name="white_theme_card_background">#FFFFFF</color>
+    <color name="white_theme_card_stroke">#D2D2D2</color>
+    <color name="white_theme_card_divider">#BDBDBD</color>
+    <color name="white_theme_card_text">#000000</color>
+    <color name="white_theme_card_text_secondary">#757575</color>
+
+    <color name="blue_theme_card_background">#F0F4F8</color>
+    <color name="blue_theme_card_stroke">#8CA4BA</color>
+    <color name="blue_theme_card_divider">#8CA4BA</color>
+    <color name="blue_theme_card_text">#1A2E4C</color>
+    <color name="blue_theme_card_text_secondary">#4A627E</color>
+
+    <color name="green_theme_card_background">#F5F8F2</color>
+    <color name="green_theme_card_stroke">#7D9D5D</color>
+    <color name="green_theme_card_divider">#7D9D5D</color>
+    <color name="green_theme_card_text">#223812</color>
+    <color name="green_theme_card_text_secondary">#4D7033</color>
+
+    <color name="purple_theme_card_background">#FAF0F5</color>
+    <color name="purple_theme_card_stroke">#D8AAB9</color>
+    <color name="purple_theme_card_divider">#B58797</color>
+    <color name="purple_theme_card_text">#3E162B</color>
+    <color name="purple_theme_card_text_secondary">#7D375D</color>
+
+    <color name="coffee_theme_card_background">#F5EFE0</color>
+    <color name="coffee_theme_card_stroke">#C4B48A</color>
+    <color name="coffee_theme_card_divider">#A69265</color>
+    <color name="coffee_theme_card_text">#3D2409</color>
+    <color name="coffee_theme_card_text_secondary">#734A1B</color>
+
+    <color name="ruby_theme_card_background">#FDF0F3</color>
+    <color name="ruby_theme_card_stroke">#EAA2B8</color>
+    <color name="ruby_theme_card_divider">#D47A95</color>
+    <color name="ruby_theme_card_text">#4A0A1E</color>
+    <color name="ruby_theme_card_text_secondary">#8C1D42</color>
+
+    <color name="gray_theme_card_background">#EEEEEE</color>
+    <color name="gray_theme_card_stroke">#BDBDBD</color>
+    <color name="gray_theme_card_divider">#9E9E9E</color>
+    <color name="gray_theme_card_text">#212121</color>
+    <color name="gray_theme_card_text_secondary">#616161</color>
+
+    <!-- Budget Row Text Colors per theme -->
+    <color name="black_theme_budget_row_text">#E6E6E6</color>
+    <color name="black_theme_budget_row_variance">#B0B0B0</color>
+
+    <color name="white_theme_budget_row_text">#212121</color>
+    <color name="white_theme_budget_row_variance">#616161</color>
+
+    <color name="blue_theme_budget_row_text">#1A2E4C</color>
+    <color name="blue_theme_budget_row_variance">#324F85</color>
+
+    <color name="green_theme_budget_row_text">#223812</color>
+    <color name="green_theme_budget_row_variance">#4D7033</color>
+
+    <color name="purple_theme_budget_row_text">#3E162B</color>
+    <color name="purple_theme_budget_row_variance">#7D375D</color>
+
+    <color name="coffee_theme_budget_row_text">#3D2409</color>
+    <color name="coffee_theme_budget_row_variance">#734A1B</color>
+
+    <color name="ruby_theme_budget_row_text">#4A0A1E</color>
+    <color name="ruby_theme_budget_row_variance">#8C1D42</color>
+
+    <color name="gray_theme_budget_row_text">#212121</color>
+    <color name="gray_theme_budget_row_variance">#616161</color>
+
     <!-- Budget Progress Beam Colors -->
     <color name="budget_beam_cyan">#00B0FF</color>
     <color name="budget_beam_deep_teal">#00796B</color>

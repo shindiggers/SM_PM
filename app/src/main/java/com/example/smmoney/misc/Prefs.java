@@ -45,7 +45,6 @@ public class Prefs {
     public static final String BUDGETHIDEZEROSACTUALS = "budgetHideZeros"; // BUDGET PREFS hide if amount = 0 Type: boolean
     public static final String BUDGETINCLUDETRANSFERS = "budgetIncludeTransfers"; // BUDGET PREFS incl both sides of xfer Type: boolean
     public static final String BUDGETINCLUDEUNBUDGETED = "budgetIncludeUnbudgeted"; // BUDGET PREFS incl unbudgeted cat in total Type: boolean
-    public static final String BUDGETSAVEDBEAT = "savedBeatBudgetDisplay";
     public static final String BUDGETSHOWALLACCOUNTS = "budgetShowAllAccounts"; // BUDGET PREFS show all a/cs in budget? Tpye: booleaan
     public static final String BUDGETSHOWCENTS = "budgetShowCents"; // BUDGET PREFS show decimal in budget. Type: boolean
     public static final String BUDGETSHOWUNBUDGETED = "budgetShowUnbudgeted";

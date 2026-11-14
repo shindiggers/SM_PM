@@ -1,16 +1,15 @@
 package com.example.smmoney.views.budgets;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.RelativeSizeSpan;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
@@ -28,7 +27,10 @@ import java.util.Comparator;
 import java.util.GregorianCalendar;
 import java.util.List;
 
-public class BudgetsRowAdapter extends BaseAdapter {
+public class BudgetsRowAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    public static final int TYPE_HEADER = 0;
+    public static final int TYPE_ROW = 1;
+
     private double getVariance(CategoryClass c, boolean isUnbudgeted) {
         double spent;
         if (c.getType() == Enums.kCategoryExpense || isUnbudgeted) {
@@ -99,12 +101,18 @@ public class BudgetsRowAdapter extends BaseAdapter {
         this.currentPeriod = Prefs.getIntPref(Prefs.DISPLAY_BUDGETPERIOD);
     }
 
-    public int getCount() {
+    @Override
+    public int getItemCount() {
         int count = 3;
         if (this.incomeCategories != null && getShowSection(this.showIncome)) count += this.incomeCategories.size();
         if (this.expenseCategories != null && getShowSection(this.showExpense)) count += this.expenseCategories.size();
         if (Prefs.getBooleanPref(Prefs.BUDGETSHOWUNBUDGETED) && this.nonBudgetedCategories != null && getShowSection(this.showNonBudgeted)) count += this.nonBudgetedCategories.size();
         return count;
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return (getItem(position) instanceof String) ? TYPE_HEADER : TYPE_ROW;
     }
 
     public Object getItem(int position) {
@@ -122,18 +130,33 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return null;
     }
 
+    @Override
     public long getItemId(int position) { return position; }
 
-    public View getView(int position, View convertView, ViewGroup parent) {
-        Object cat = getItem(position);
-        if (cat instanceof String label) {
+    @NonNull
+    @Override
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        if (viewType == TYPE_HEADER) {
             BudgetsListHeaderHolder header = new BudgetsListHeaderHolder(this.context);
+            header.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+            return new BudgetsListHeaderViewHolder(header);
+        } else {
+            View convertView = this.inflater.inflate(R.layout.budgets_row, parent, false);
+            return new BudgetsRowHolder(convertView);
+        }
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        Object item = getItem(position);
+        if (holder instanceof BudgetsListHeaderViewHolder headerHolder && item instanceof String label) {
+            BudgetsListHeaderHolder header = headerHolder.headerHolder;
             header.setOnClickListener(getHeaderClickListener());
-            
+
             double actual, target, diff;
             String targetLabel;
             CharSequence sentence;
-            
+
             if (label.equals(context.getString(R.string.BUDGETS_INCOME))) {
                 actual = totalIncomes();
                 target = budgetedIncomes();
@@ -157,27 +180,17 @@ public class BudgetsRowAdapter extends BaseAdapter {
             sentence = (diff >= 0) ? context.getString(R.string.BUDGET_LBL_AHEAD).replace("%1$s", formatAmount(diff)) :
                                      context.getString(R.string.BUDGET_LBL_BEHIND).replace("%1$s", formatAmount(diff));
             header.setData(label, actual, targetLabel, target, sentence.toString());
-            return header;
-        }
+        } else if (holder instanceof BudgetsRowHolder rowHolder && item instanceof CategoryClass cat) {
+            rowHolder.therow.setTag(rowHolder);
+            rowHolder.therow.setOnClickListener(getRowClickListener(rowHolder));
 
-        BudgetsRowHolder holder;
-        if (convertView == null || convertView.getTag() == null || !(convertView.getTag() instanceof BudgetsRowHolder)) {
-            convertView = this.inflater.inflate(R.layout.budgets_row, parent, false);
-            holder = new BudgetsRowHolder(convertView);
-            convertView.setOnClickListener(getRowClickListener());
-            ((Activity) this.context).registerForContextMenu(convertView);
-            convertView.setTag(holder);
-        } else {
-            holder = (BudgetsRowHolder) convertView.getTag();
+            // Identify unbudgeted items by position in list
+            int incomeSize = (this.incomeCategories == null || !getShowSection(this.showIncome)) ? 0 : this.incomeCategories.size();
+            int expenseSize = (this.expenseCategories == null || !getShowSection(this.showExpense)) ? 0 : this.expenseCategories.size();
+            boolean isUnbudgeted = position > (incomeSize + expenseSize + 2);
+
+            rowHolder.setCategory(cat, isUnbudgeted);
         }
-        
-        // Identify unbudgeted items by their position in the list
-        int incomeSize = (this.incomeCategories == null || !getShowSection(this.showIncome)) ? 0 : this.incomeCategories.size();
-        int expenseSize = (this.expenseCategories == null || !getShowSection(this.showExpense)) ? 0 : this.expenseCategories.size();
-        boolean isUnbudgeted = position > (incomeSize + expenseSize + 2);
-        
-        holder.setCategory((CategoryClass) cat, isUnbudgeted);
-        return convertView;
     }
 
     private String formatAmount(double amount) {
@@ -185,10 +198,9 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return (amount < 0) ? "(" + text + ")" : text;
     }
 
-    private OnClickListener getRowClickListener() {
+    private View.OnClickListener getRowClickListener(BudgetsRowHolder holder) {
         return view -> {
             Intent i = new Intent(BudgetsRowAdapter.this.context, TransactionsActivity.class);
-            BudgetsRowHolder holder = (BudgetsRowHolder) view.getTag();
             FilterClass aFilter = new FilterClass();
             aFilter.setCategory(holder.category.getCategory() + (holder.category.getIncludeSubcategories() ? "%" : ""));
             aFilter.setDate(context.getString(R.string.FILTER_DATES_CUSTOM));
@@ -202,16 +214,20 @@ public class BudgetsRowAdapter extends BaseAdapter {
         };
     }
 
-    private OnClickListener getHeaderClickListener() {
+    private View.OnClickListener getHeaderClickListener() {
         return view -> {
             String cat = ((BudgetsListHeaderHolder) view).label;
             if (cat.equals(context.getString(R.string.BUDGETS_INCOME))) setShowSection(this.showIncome, !getShowSection(this.showIncome));
             else if (cat.equals(context.getString(R.string.BUDGETS_EXPENSES))) setShowSection(this.showExpense, !getShowSection(this.showExpense));
             else if (cat.equals(context.getString(R.string.BUDGETS_NONBUDGETED))) setShowSection(this.showNonBudgeted, !getShowSection(this.showNonBudgeted));
+            // Toggling section expansion inserts/removes an entire section of rows and updates the header state
+            // and item count/positions throughout the adapter, so a full data set update is appropriate here.
+            //noinspection NotifyDataSetChanged
             BudgetsRowAdapter.this.notifyDataSetChanged();
         };
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void reloadData() {
         boolean hideZeroActuals = Prefs.getBooleanPref(Prefs.BUDGETHIDEZEROSACTUALS);
         GregorianCalendar start = startOfPeriod();
@@ -439,15 +455,34 @@ public class BudgetsRowAdapter extends BaseAdapter {
         return ((double) (today.getTimeInMillis() - start)) / ((double) (end - start));
     }
 
-    CharSequence rangeOfPeriodAsString() {
-        String range;
+    String getFormattedPeriodRange() {
+        GregorianCalendar start = startOfPeriod();
+        GregorianCalendar end = endOfPeriod();
+
         if (this.currentPeriod == Enums.kBudgetPeriodDay) {
-            range = CalExt.descriptionWithMediumDate(this.currentDate);
-        } else {
-            range = CalExt.descriptionWithMediumDate(startOfPeriod()) + " ~ " + CalExt.descriptionWithMediumDate(endOfPeriod());
+            return CalExt.descriptionWithMediumDate(this.currentDate);
         }
 
-        String narrative = switch (this.currentPeriod) {
+        String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
+        boolean isDefaultAnchor = budgetStartDateString.equalsIgnoreCase(context.getString(R.string.GENERAL_DEFAULT));
+
+        // Format clean titles when aligned with calendar units
+        if (isDefaultAnchor || (start.get(Calendar.DAY_OF_MONTH) == 1)) {
+            if (this.currentPeriod == Enums.kBudgetPeriodMonth) {
+                return new java.text.SimpleDateFormat("MMMM yyyy", java.util.Locale.getDefault()).format(start.getTime());
+            } else if (this.currentPeriod == Enums.kBudgetPeriodYear) {
+                return String.valueOf(start.get(Calendar.YEAR));
+            } else if (this.currentPeriod == Enums.kBudgetPeriodQuarter) {
+                int quarter = (start.get(Calendar.MONTH) / 3) + 1;
+                return "Q" + quarter + " " + start.get(Calendar.YEAR);
+            }
+        }
+
+        return CalExt.descriptionWithMediumDate(start) + " – " + CalExt.descriptionWithMediumDate(end);
+    }
+
+    String getFormattedAnchorSummary() {
+        String freq = switch (this.currentPeriod) {
             case Enums.kBudgetPeriodDay -> context.getString(R.string.REPEATING_FREQUENCY_DAILY);
             case Enums.kBudgetPeriodWeek -> context.getString(R.string.REPEATING_FREQUENCY_WEEKLY);
             case Enums.kBudgetPeriodBiweekly -> context.getString(R.string.BUDGETS_BIWEEKLY);
@@ -460,12 +495,44 @@ public class BudgetsRowAdapter extends BaseAdapter {
             default -> "";
         };
 
-        SpannableStringBuilder builder = new SpannableStringBuilder();
-        builder.append(range);
-        builder.append("\n");
-        int start = builder.length();
-        builder.append(narrative);
-        builder.setSpan(new RelativeSizeSpan(0.7f), start, builder.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        return builder;
+        String budgetStartDateString = Prefs.getStringPref(Prefs.BUDGETSTARTDATE);
+        boolean isDefault = budgetStartDateString.isEmpty() || budgetStartDateString.equalsIgnoreCase(context.getString(R.string.GENERAL_DEFAULT));
+
+        if (isDefault) {
+            String defaultLabel = switch (this.currentPeriod) {
+                case Enums.kBudgetPeriodMonth -> context.getString(R.string.BUDGET_ANCHOR_CALENDAR_MONTH);
+                case Enums.kBudgetPeriodQuarter -> context.getString(R.string.BUDGET_ANCHOR_CALENDAR_QUARTER);
+                case Enums.kBudgetPeriodHalfYear, Enums.kBudgetPeriodYear -> context.getString(R.string.BUDGET_ANCHOR_CALENDAR_YEAR);
+                default -> context.getString(R.string.BUDGET_ANCHOR_CALENDAR_DEFAULT);
+            };
+            return freq + " • " + defaultLabel;
+        }
+
+        GregorianCalendar date = CalExt.dateFromDescriptionWithMediumDate(budgetStartDateString);
+        if (this.currentPeriod == Enums.kBudgetPeriodMonth) {
+            int day = date.get(Calendar.DAY_OF_MONTH);
+            String suffix = getDayOfMonthSuffix(day);
+            return freq + " • " + context.getString(R.string.BUDGET_ANCHOR_SUMMARY_MONTHLY_CUSTOM, day, suffix);
+        } else if (this.currentPeriod == Enums.kBudgetPeriodWeek || this.currentPeriod == Enums.kBudgetPeriodBiweekly || this.currentPeriod == Enums.kBudgetPeriod4Weeks) {
+            String dayName = new java.text.SimpleDateFormat("EEE", java.util.Locale.getDefault()).format(date.getTime());
+            return freq + " • " + context.getString(R.string.BUDGET_ANCHOR_SUMMARY_WEEKLY_CUSTOM, dayName);
+        } else {
+            String shortDate = new java.text.SimpleDateFormat("d MMM", java.util.Locale.getDefault()).format(date.getTime());
+            return freq + " • " + context.getString(R.string.BUDGET_ANCHOR_SUMMARY_CUSTOM_DATE, shortDate);
+        }
+    }
+
+    private String getDayOfMonthSuffix(int n) {
+        if (n >= 11 && n <= 13) return "th";
+        return switch (n % 10) {
+            case 1 -> "st";
+            case 2 -> "nd";
+            case 3 -> "rd";
+            default -> "th";
+        };
+    }
+
+    CharSequence rangeOfPeriodAsString() {
+        return getFormattedPeriodRange() + "\n" + getFormattedAnchorSummary();
     }
 }

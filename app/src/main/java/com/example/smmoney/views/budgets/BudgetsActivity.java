@@ -11,19 +11,15 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.util.TypedValue;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.DatePicker;
 import android.widget.FrameLayout.LayoutParams;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -33,7 +29,6 @@ import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.core.app.ActivityOptionsCompat;
-import androidx.core.os.BundleCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.example.smmoney.R;
@@ -45,23 +40,18 @@ import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.prefs.MainPrefsActivity;
 import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
-import com.example.smmoney.views.BalanceBar;
-import com.example.smmoney.views.EndOnDateActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.accounts.AccountsActivity;
 import com.example.smmoney.views.charts.ChartsActivity;
 import com.example.smmoney.views.reports.ReportsPlaceholderActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.android.material.button.MaterialButton;
 
 import java.util.GregorianCalendar;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPeriodDialog.BudgetsDialogListner, DatePickerDialog.OnDateSetListener {
-    private final int CMENU_DELETE = 3;
-    private final int CMENU_EDIT = 1;
+public class BudgetsActivity extends PocketMoneyActivity implements BudgetScheduleDialog.ScheduleDialogListener, BudgetsPeriodDialog.BudgetsDialogListner, DatePickerDialog.OnDateSetListener {
     private final int MENU_GOTODATE = 3;
     private final int MENU_NEW = 1;
     private final int MENU_PREFS = 2;
@@ -74,29 +64,32 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             result -> reloadData()
     );
 
-    private final ActivityResultLauncher<Intent> startDatePickerLauncher = registerForActivityResult(
-            new ActivityResultContracts.StartActivityForResult(),
-            result -> {
-                if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_DATESELECTED && result.getData() != null) {
-                    String date = result.getData().getStringExtra("Date");
-                    Prefs.setPref(Prefs.BUDGETSTARTDATE, date);
-                    reloadData();
-                } else if (result.getResultCode() == EndOnDateActivity.ENDONDATE_RESULT_NODATESELECTED) {
-                    Prefs.setPref(Prefs.BUDGETSTARTDATE, SMMoney.getAppContext().getString(R.string.GENERAL_DEFAULT));
-                    reloadData();
-                }
-            }
-    );
-
     private BudgetsRowAdapter adapter;
-    private BalanceBar balanceBar;
     private ProgressBar reloadProgressBar;
-    private ListView theList;
+    private androidx.recyclerview.widget.RecyclerView theList;
     private BottomNavigationView bottomNav;
     private View progressiBeamBar;
-    private MaterialButton periodButton;
-    private TextView startDateDisplay;
+    private TextView periodDateRangeDisplay;
+    private TextView periodAnchorDisplay;
+    private ImageView btnToday;
     private WakeLock wakeLock;
+
+    // Summary Card Views
+    private TextView actualIncomeValue;
+    private TextView actualIncomeLabel;
+    private TextView incomeVarianceValue;
+    private TextView budgetIncomeValue;
+    private TextView budgetIncomeLabel;
+    private TextView actualExpenseValue;
+    private TextView actualExpenseLabel;
+    private TextView expenseVarianceValue;
+    private TextView budgetExpenseValue;
+    private TextView budgetExpenseLabel;
+    private TextView actualNetValue;
+    private TextView actualNetLabel;
+    private TextView netVarianceValue;
+    private TextView budgetNetValue;
+    private TextView budgetNetLabel;
 
     @Override
     @SuppressLint("InflateParams")
@@ -131,21 +124,18 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         int fieldLabelColor = PocketMoneyThemes.fieldLabelColor();
         ImageView leftArrow = layout.findViewById(R.id.lefttarrow);
         ImageView rightArrow = layout.findViewById(R.id.rightarrow);
+        this.btnToday = layout.findViewById(R.id.btn_today);
         leftArrow.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
         rightArrow.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
-        this.periodButton = layout.findViewById(R.id.periodbutton);
-        this.periodButton.setOnClickListener(v -> openBudgetPeriodDialog());
-        
-        this.startDateDisplay = layout.findViewById(R.id.start_date_display);
-        OnClickListener startDateListener = v -> {
-            Intent anIntent = new Intent(BudgetsActivity.this, EndOnDateActivity.class);
-            anIntent.putExtra("Date", BudgetsActivity.this.startDateDisplay.getText().toString());
-            anIntent.putExtra(Prefs.BUDGETSTARTDATE, true);
-            startDatePickerLauncher.launch(anIntent);
-        };
-        this.startDateDisplay.setOnClickListener(startDateListener);
-        layout.findViewById(R.id.start_date_icon).setOnClickListener(startDateListener);
-        layout.findViewById(R.id.start_date_label).setOnClickListener(startDateListener);
+        this.btnToday.setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
+
+        this.periodDateRangeDisplay = layout.findViewById(R.id.period_date_range_display);
+        this.periodAnchorDisplay = layout.findViewById(R.id.period_anchor_display);
+        this.periodDateRangeDisplay.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+        androidx.core.widget.TextViewCompat.setCompoundDrawableTintList(this.periodDateRangeDisplay, ColorStateList.valueOf(fieldLabelColor));
+
+        View periodContainer = layout.findViewById(R.id.period_anchor_container);
+        periodContainer.setOnClickListener(v -> openBudgetPeriodDialog());
 
         leftArrow.setOnClickListener(v -> {
             BudgetsActivity.this.adapter.previousPeriod();
@@ -155,24 +145,48 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
             BudgetsActivity.this.adapter.nextPeriod();
             BudgetsActivity.this.reloadData();
         });
-        this.balanceBar = layout.findViewById(R.id.balancebar);
-        this.balanceBar.nextButton.setOnClickListener(v -> {
-            Prefs.setPref(Prefs.BUDGETSAVEDBEAT, Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0 ? 1 : 0);
-            BudgetsActivity.this.reloadData();
-        });
-        this.balanceBar.previousButton.setOnClickListener(v -> {
-            Prefs.setPref(Prefs.BUDGETSAVEDBEAT, Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0 ? 1 : 0);
+        this.btnToday.setOnClickListener(v -> {
+            BudgetsActivity.this.adapter.currentDate = new GregorianCalendar();
             BudgetsActivity.this.reloadData();
         });
 
+        // Initialize Summary Card views and theme colors
+        com.google.android.material.card.MaterialCardView summaryCard = layout.findViewById(R.id.budget_summary_card);
+        if (summaryCard != null) {
+            summaryCard.setCardBackgroundColor(PocketMoneyThemes.cardBackgroundColor());
+            summaryCard.setStrokeColor(PocketMoneyThemes.cardStrokeColor());
+        }
+
+        View summaryDivider = layout.findViewById(R.id.summary_divider);
+        if (summaryDivider != null) {
+            summaryDivider.setBackgroundColor(PocketMoneyThemes.cardDividerColor());
+        }
+
+        this.actualIncomeValue = layout.findViewById(R.id.summary_actual_income_value);
+        this.actualIncomeLabel = layout.findViewById(R.id.summary_actual_income_label);
+        this.incomeVarianceValue = layout.findViewById(R.id.summary_income_variance_value);
+        this.budgetIncomeValue = layout.findViewById(R.id.summary_budget_income_value);
+        this.budgetIncomeLabel = layout.findViewById(R.id.summary_budget_income_label);
+        this.actualExpenseValue = layout.findViewById(R.id.summary_actual_expense_value);
+        this.actualExpenseLabel = layout.findViewById(R.id.summary_actual_expense_label);
+        this.expenseVarianceValue = layout.findViewById(R.id.summary_expense_variance_value);
+        this.budgetExpenseValue = layout.findViewById(R.id.summary_budget_expense_value);
+        this.budgetExpenseLabel = layout.findViewById(R.id.summary_budget_expense_label);
+        this.actualNetValue = layout.findViewById(R.id.summary_actual_net_value);
+        this.actualNetLabel = layout.findViewById(R.id.summary_actual_net_label);
+        this.netVarianceValue = layout.findViewById(R.id.summary_net_variance_value);
+        this.budgetNetValue = layout.findViewById(R.id.summary_budget_net_value);
+        this.budgetNetLabel = layout.findViewById(R.id.summary_budget_net_label);
+
         this.reloadProgressBar = layout.findViewById(R.id.reloadprogressbar);
         this.theList = layout.findViewById(R.id.the_list);
-        this.theList.setItemsCanFocus(true);
+        this.theList.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this));
         this.theList.setVerticalScrollBarEnabled(false);
         this.adapter = new BudgetsRowAdapter(this);
         this.theList.setAdapter(this.adapter);
         this.theList.setFocusable(false);
         this.theList.setVisibility(View.INVISIBLE);
+        setupSwipeActions();
         
         this.bottomNav = layout.findViewById(R.id.bottom_navigation);
         this.bottomNav.setSelectedItemId(R.id.nav_budgets);
@@ -184,12 +198,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         this.progressiBeamBar = layout.findViewById(R.id.progressbar);
         layout.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
         this.theList.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
-        ((ImageView) layout.findViewById(R.id.start_date_icon)).setColorFilter(fieldLabelColor, PorterDuff.Mode.SRC_IN);
-        ((TextView) layout.findViewById(R.id.start_date_label)).setTextColor(fieldLabelColor);
-        this.startDateDisplay.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        this.periodButton.setTextColor(PocketMoneyThemes.primaryCellTextColor());
-        this.periodButton.setBackgroundTintList(ColorStateList.valueOf(PocketMoneyThemes.highlightColor()));
-        this.periodButton.setCornerRadius((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 2.0f, getResources().getDisplayMetrics()));
     }
 
     private boolean handleBottomNavigation(int itemId) {
@@ -216,52 +224,82 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         return Prefs.getBooleanPref(Prefs.BUDGETSHOWCENTS);
     }
 
-    private void loadBalanceBar() {
-        double savings;
+    private void loadSummaryCard() {
+        if (this.adapter == null || this.actualIncomeValue == null) return;
+
+        boolean showCents = showCents();
+
+        // Income
+        double actualIncome = this.adapter.totalIncomes();
         double budgetedIncome = this.adapter.budgetedIncomes();
-        double budgetedExpense = this.adapter.budgetedExpenses();
-        double totalIncome = this.adapter.totalIncomes();
-        double totalExpense = this.adapter.totalExpenses();
-        if (totalExpense != 0.0d) {
-            totalExpense *= -1.0d;
-        }
-        if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-            savings = totalIncome - totalExpense;
-            if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDEUNBUDGETED)) {
-                savings += this.adapter.totalNonBudgeted();
-            }
-        } else {
-            savings = (totalIncome - budgetedIncome) + (budgetedExpense - totalExpense);
-        }
-        
-        String text = showCents() ? CurrencyExt.amountAsCurrency(Math.abs(savings)) : CurrencyExt.amountAsCurrencyWithoutCents(Math.abs(savings));
-        int textColor = PocketMoneyThemes.balanceBarTextViewColor();
-        
-        if (savings < 0.0d) {
-            this.balanceBar.balanceAmountTextView.setText(String.format("(%s)", text));
-        } else {
-            this.balanceBar.balanceAmountTextView.setText(text);
-        }
-        this.balanceBar.balanceAmountTextView.setTextColor(textColor);
+        double incomeVariance = actualIncome - budgetedIncome;
 
-        boolean isPastPeriod = this.adapter != null && this.adapter.endOfPeriod() != null && this.adapter.endOfPeriod().before(new GregorianCalendar());
-
-        if (savings >= 0.0d) {
-            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(R.string.BUDGETS_SAVED));
-            } else {
-                int stringRes = isPastPeriod ? R.string.BUDGET_LBL_BEAT_BY : R.string.BUDGET_LBL_BEATING_BY;
-                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(stringRes));
-            }
-        } else {
-            if (Prefs.getIntPref(Prefs.BUDGETSAVEDBEAT) == 0) {
-                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(R.string.BUDGETS_DEFICIT));
-            } else {
-                int stringRes = isPastPeriod ? R.string.BUDGET_LBL_MISSED_BY : R.string.BUDGET_LBL_MISSING_BY;
-                this.balanceBar.balanceTypeTextView.setText(SMMoney.getAppContext().getString(stringRes));
-            }
+        // Expenses
+        double actualExpense = Math.abs(this.adapter.totalExpenses());
+        if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDEUNBUDGETED)) {
+            actualExpense += Math.abs(this.adapter.totalNonBudgeted());
         }
-        this.balanceBar.balanceTypeTextView.setTextColor(textColor);
+        double budgetedExpense = Math.abs(this.adapter.budgetedExpenses());
+        double expenseVariance = budgetedExpense - actualExpense; // Positive means under budget (ahead)
+
+        // Net Totals (Surplus / Deficit)
+        double actualNet = actualIncome - actualExpense;
+        double budgetedNet = budgetedIncome - budgetedExpense;
+        double netVariance = (actualIncome - budgetedIncome) + (budgetedExpense - actualExpense);
+
+        // Theme colors
+        int cardTextColor = PocketMoneyThemes.cardTextColor();
+        int cardTextSecondaryColor = PocketMoneyThemes.cardTextSecondaryColor();
+        int positiveColor = 0xFF2E7D32; // Green
+        int negativeColor = PocketMoneyThemes.redLabelColor();
+
+        // Apply secondary label colors
+        this.actualIncomeLabel.setTextColor(cardTextSecondaryColor);
+        this.budgetIncomeLabel.setTextColor(cardTextSecondaryColor);
+        this.actualExpenseLabel.setTextColor(cardTextSecondaryColor);
+        this.budgetExpenseLabel.setTextColor(cardTextSecondaryColor);
+
+        // Bind Row 1: Income
+        this.actualIncomeValue.setText(formatCurrency(actualIncome, showCents));
+        this.actualIncomeValue.setTextColor(cardTextColor);
+        this.budgetIncomeValue.setText(formatCurrency(budgetedIncome, showCents));
+        this.budgetIncomeValue.setTextColor(cardTextColor);
+        bindVariance(this.incomeVarianceValue, incomeVariance, showCents, positiveColor, negativeColor);
+
+        // Bind Row 2: Expenses
+        this.actualExpenseValue.setText(formatCurrency(actualExpense, showCents));
+        this.actualExpenseValue.setTextColor(cardTextColor);
+        this.budgetExpenseValue.setText(formatCurrency(budgetedExpense, showCents));
+        this.budgetExpenseValue.setTextColor(cardTextColor);
+        bindVariance(this.expenseVarianceValue, expenseVariance, showCents, positiveColor, negativeColor);
+
+        // Bind Row 3: Net (Surplus / Deficit)
+        this.actualNetValue.setText(formatCurrency(Math.abs(actualNet), showCents));
+        this.actualNetValue.setTextColor(actualNet >= 0.0 ? positiveColor : negativeColor);
+        this.actualNetLabel.setText(actualNet >= 0.0 ? R.string.BUDGET_SUMMARY_ACTUAL_SURPLUS : R.string.BUDGET_SUMMARY_ACTUAL_DEFICIT);
+        this.actualNetLabel.setTextColor(cardTextColor);
+
+        this.budgetNetValue.setText(formatCurrency(Math.abs(budgetedNet), showCents));
+        this.budgetNetValue.setTextColor(budgetedNet >= 0.0 ? positiveColor : negativeColor);
+        this.budgetNetLabel.setText(budgetedNet >= 0.0 ? R.string.BUDGET_SUMMARY_BUDGET_SURPLUS : R.string.BUDGET_SUMMARY_BUDGET_DEFICIT);
+        this.budgetNetLabel.setTextColor(cardTextColor);
+
+        bindVariance(this.netVarianceValue, netVariance, showCents, positiveColor, negativeColor);
+    }
+
+    private void bindVariance(TextView view, double variance, boolean showCents, int posColor, int negColor) {
+        String formattedAmount = formatCurrency(Math.abs(variance), showCents);
+        if (variance >= 0.0) {
+            view.setText(getString(R.string.BUDGET_SUMMARY_AHEAD, formattedAmount));
+            view.setTextColor(posColor);
+        } else {
+            view.setText(getString(R.string.BUDGET_SUMMARY_BEHIND, formattedAmount));
+            view.setTextColor(negColor);
+        }
+    }
+
+    private String formatCurrency(double amount, boolean showCents) {
+        return showCents ? CurrencyExt.amountAsCurrency(amount) : CurrencyExt.amountAsCurrencyWithoutCents(amount);
     }
 
     private void reloadData() {
@@ -278,10 +316,18 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     private void reloadDataCallBack() {
-        this.periodButton.setText(this.adapter.rangeOfPeriodAsString());
-        this.startDateDisplay.setText(Prefs.getStringPref(Prefs.BUDGETSTARTDATE));
-        
-        loadBalanceBar();
+        if (this.periodDateRangeDisplay != null) {
+            this.periodDateRangeDisplay.setText(this.adapter.getFormattedPeriodRange());
+        }
+        if (this.periodAnchorDisplay != null) {
+            this.periodAnchorDisplay.setText(this.adapter.getFormattedAnchorSummary());
+        }
+
+        if (this.btnToday != null) {
+            this.btnToday.setVisibility(this.adapter.isCurrentPeriod() ? View.GONE : View.VISIBLE);
+        }
+
+        loadSummaryCard();
         this.reloadProgressBar.setVisibility(View.INVISIBLE);
         this.theList.setVisibility(View.VISIBLE);
         
@@ -315,6 +361,97 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         Intent i = new Intent(this, BudgetsEditActivity.class);
         i.putExtra("Category", new CategoryClass());
         editLauncher.launch(i);
+    }
+
+    private void setupSwipeActions() {
+        androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new androidx.recyclerview.widget.ItemTouchHelper.SimpleCallback(0, androidx.recyclerview.widget.ItemTouchHelper.LEFT | androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+            @Override
+            public int getSwipeDirs(@androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView recyclerView, @androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder) {
+                // Disable swipe on headers
+                if (viewHolder instanceof BudgetsRowHolder) {
+                    return super.getSwipeDirs(recyclerView, viewHolder);
+                }
+                return 0;
+            }
+
+            @Override
+            public boolean onMove(@androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView recyclerView, @androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder, @androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            @Override
+            public void onSwiped(@androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder, int direction) {
+                int position = viewHolder.getBindingAdapterPosition();
+                if (position == androidx.recyclerview.widget.RecyclerView.NO_POSITION) return;
+
+                Object item = adapter.getItem(position);
+                if (item instanceof CategoryClass category) {
+                    if (direction == androidx.recyclerview.widget.ItemTouchHelper.RIGHT) {
+                        // Swipe Right -> Edit
+                        Intent anIntent = new Intent(BudgetsActivity.this, BudgetsEditActivity.class);
+                        anIntent.putExtra("Category", category);
+                        editLauncher.launch(anIntent);
+                        adapter.notifyItemChanged(position);
+                    } else if (direction == androidx.recyclerview.widget.ItemTouchHelper.LEFT) {
+                        // Swipe Left -> Delete
+                        deleteBudget(category);
+                        adapter.notifyItemChanged(position);
+                    }
+                }
+            }
+
+            @Override
+            public void onChildDraw(@androidx.annotation.NonNull android.graphics.Canvas c, @androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView recyclerView, @androidx.annotation.NonNull androidx.recyclerview.widget.RecyclerView.ViewHolder viewHolder, float dX, float dY, int actionState, boolean isCurrentlyActive) {
+                if (actionState == androidx.recyclerview.widget.ItemTouchHelper.ACTION_STATE_SWIPE) {
+                    View itemView = viewHolder.itemView;
+                    android.graphics.Paint paint = new android.graphics.Paint();
+
+                    if (dX > 0) { // Swipe Right (Edit)
+                        paint.setColor(android.graphics.Color.parseColor("#4CAF50")); // Green
+                        c.drawRect((float) itemView.getLeft(), (float) itemView.getTop(), dX, (float) itemView.getBottom(), paint);
+
+                        android.graphics.drawable.Drawable icon = androidx.core.content.ContextCompat.getDrawable(BudgetsActivity.this, R.drawable.ic_edit_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconLeft = itemView.getLeft() + iconMargin;
+                            int iconRight = iconLeft + icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+
+                        paint.setColor(android.graphics.Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        c.drawText(getString(R.string.GENERAL_EDIT), (float) itemView.getLeft() + 140, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+
+                    } else if (dX < 0) { // Swipe Left (Delete)
+                        paint.setColor(android.graphics.Color.parseColor("#F44336")); // Red
+                        c.drawRect((float) itemView.getRight() + dX, (float) itemView.getTop(), (float) itemView.getRight(), (float) itemView.getBottom(), paint);
+
+                        android.graphics.drawable.Drawable icon = androidx.core.content.ContextCompat.getDrawable(BudgetsActivity.this, R.drawable.ic_delete_white_24dp);
+                        if (icon != null) {
+                            int iconMargin = (itemView.getHeight() - icon.getIntrinsicHeight()) / 2;
+                            int iconTop = itemView.getTop() + iconMargin;
+                            int iconBottom = iconTop + icon.getIntrinsicHeight();
+                            int iconRight = itemView.getRight() - iconMargin;
+                            int iconLeft = iconRight - icon.getIntrinsicWidth();
+                            icon.setBounds(iconLeft, iconTop, iconRight, iconBottom);
+                            icon.draw(c);
+                        }
+
+                        paint.setColor(android.graphics.Color.WHITE);
+                        paint.setTextSize(40);
+                        paint.setAntiAlias(true);
+                        float textWidth = paint.measureText(getString(R.string.GENERAL_DELETE));
+                        c.drawText(getString(R.string.GENERAL_DELETE), (float) itemView.getRight() - 140 - textWidth, (float) itemView.getTop() + (itemView.getHeight() / 2f) + 15, paint);
+                    }
+                }
+                super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive);
+            }
+        };
+        new androidx.recyclerview.widget.ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(this.theList);
     }
 
     private void deleteBudget(final CategoryClass cat) {
@@ -441,42 +578,6 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
         return Enums.kBudgetsSortTypeCategory;
     }
 
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-        super.onCreateContextMenu(menu, v, menuInfo);
-        BudgetsRowHolder aHolder = (BudgetsRowHolder) v.getTag();
-        Intent i = new Intent();
-        i.putExtra("Category", aHolder.category);
-        menu.add(0, CMENU_EDIT, 0, SMMoney.getAppContext().getString(R.string.GENERAL_EDIT)).setIntent(i);
-        menu.add(0, CMENU_DELETE, 0, SMMoney.getAppContext().getString(R.string.GENERAL_DELETE)).setIntent(i);
-    }
-
-    public boolean onContextItemSelected(MenuItem item) {
-        Intent intent = item.getIntent();
-        Bundle b = (intent != null) ? intent.getExtras() : null;
-        switch (item.getItemId()) {
-            case CMENU_EDIT -> {
-                Intent anIntent = new Intent(this, BudgetsEditActivity.class);
-                if (b != null) {
-                    CategoryClass category = BundleCompat.getSerializable(b, "Category", CategoryClass.class);
-                    anIntent.putExtra("Category", category);
-                }
-                editLauncher.launch(anIntent);
-                return true;
-            }
-            case CMENU_DELETE -> {
-                if (b != null) {
-                    CategoryClass category = BundleCompat.getSerializable(b, "Category", CategoryClass.class);
-                    deleteBudget(category);
-                }
-                reloadData();
-                return true;
-            }
-            default -> {
-                return super.onContextItemSelected(item);
-            }
-        }
-    }
-
     @Override
     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
 
@@ -485,14 +586,24 @@ public class BudgetsActivity extends PocketMoneyActivity implements BudgetsPerio
     }
 
     public void openBudgetPeriodDialog() {
-        BudgetsPeriodDialog budgetsPeriodDialog = new BudgetsPeriodDialog();
-        budgetsPeriodDialog.show(getSupportFragmentManager(), "budgetsPeriodDialog");
+        BudgetScheduleDialog dialog = new BudgetScheduleDialog();
+        dialog.show(getSupportFragmentManager(), "budgetScheduleDialog");
+    }
+
+    @Override
+    public void onScheduleUpdated(int periodType) {
+        if (this.adapter != null) {
+            this.adapter.currentPeriod = periodType;
+        }
+        reloadData();
     }
 
     @Override
     public void applyPeriodType2(int periodType) {
         Prefs.setPref(Prefs.DISPLAY_BUDGETPERIOD, periodType);
-        BudgetsActivity.this.adapter.currentPeriod = periodType;
+        if (this.adapter != null) {
+            this.adapter.currentPeriod = periodType;
+        }
         BudgetsActivity.this.reloadData();
     }
 

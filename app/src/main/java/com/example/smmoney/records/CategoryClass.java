@@ -35,7 +35,6 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     public static final String XML_LISTTAG_CATEGORIES = "CATEGORIES";
     public static final String XML_RECORDTAG_CATEGORY = "CATEGORYCLASS";
     private static String catpayee_statement = null;
-    private static String query_spent_stmt = null;
     public double budget;
     private double budgetLimit;
     private int budgetPeriod;
@@ -392,27 +391,25 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         String str = includeSubcategories ? "%" : "";
         String[] bindArgs = new String[]{category + str, startTime, endTime};
         int currentViewType = Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) ? Enums.kViewAccountsAll /*0*/ : Prefs.getIntPref(Prefs.VIEWACCOUNTS);
-        if (query_spent_stmt == null) {
-            String exchangeRateLookup = "";
-            if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
-                exchangeRateLookup = " / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = (SELECT accountID FROM transactions WHERE transactionID = splits.transactionID))";
-            }
-            String transactionsLookup = switch (currentViewType) {
-                case Enums.kViewAccountsNonZero /*1*/ ->
-                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
-                case Enums.kViewAccountsTotalWorth /*2*/ ->
-                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
-                default ->
-                        "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5)";
-            };
-            String expenseTypeLookup = "(0 = (SELECT type FROM categories WHERE category LIKE ? ESCAPE '\\'))";
-            String transfersString = "(1)";
-            if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDETRANSFERS)) {
-                transfersString = "(transferToAccountID = 0 OR (((amount < 0) AND (" + expenseTypeLookup + ")) OR ((amount > 0) AND NOT (" + expenseTypeLookup + "))))";
-            }
-            query_spent_stmt = "SELECT sum(amount " + exchangeRateLookup + ") FROM splits WHERE categoryID LIKE ? ESCAPE '\\' AND (splits.transactionID IN " + transactionsLookup + ") AND " + transfersString;
+        String exchangeRateLookup = "";
+        if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
+            exchangeRateLookup = " / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = (SELECT accountID FROM transactions WHERE transactionID = splits.transactionID))";
         }
-        Cursor curs = Database.rawQuery(query_spent_stmt, bindArgs);
+        String transactionsLookup = switch (currentViewType) {
+            case Enums.kViewAccountsNonZero /*1*/ ->
+                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
+            case Enums.kViewAccountsTotalWorth /*2*/ ->
+                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
+            default ->
+                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5)";
+        };
+        String expenseTypeLookup = "(0 = (SELECT type FROM categories WHERE category LIKE ? ESCAPE '\\'))";
+        String transfersString = "(1)";
+        if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDETRANSFERS)) {
+            transfersString = "(transferToAccountID = 0 OR (((amount < 0) AND (" + expenseTypeLookup + ")) OR ((amount > 0) AND NOT (" + expenseTypeLookup + "))))";
+        }
+        String query = "SELECT sum(amount " + exchangeRateLookup + ") FROM splits WHERE categoryID LIKE ? ESCAPE '\\' AND (splits.transactionID IN " + transactionsLookup + ") AND " + transfersString;
+        Cursor curs = Database.rawQuery(query, bindArgs);
         if (curs.moveToFirst()) {
             double spentTemp = curs.getDouble(0);
             curs.close();

@@ -13,7 +13,7 @@
         <CheckBoxPreference
             android:defaultValue="false"
             android:key="prefsuselastdate"
-            android:title="@string/kLOC_PREFERENCES_USE_LAST_DATE"
+            android:title="@string/PREFERENCES_USE_LAST_DATE"
             app:singleLineTitle="false" />
         <CheckBoxPreference
             android:key="prefsmanagedlistsautofill"

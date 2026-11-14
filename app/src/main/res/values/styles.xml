@@ -28,6 +28,10 @@
         <item name="textColorAlertDialogListItem">@color/black_theme_text_alt</item>
         <item name="android:textColorAlertDialogListItem">@color/black_theme_text_alt</item>
         <item name="colorControlActivated">@color/black_theme_tint_color</item>
+        <item name="colorSurface">@color/white_theme_background_color</item>
+        <item name="colorOnSurface">@color/white_theme_text</item>
+        <item name="colorOutline">@color/common_action_bar_splitter</item>
+        <item name="colorOutlineVariant">@color/common_action_bar_splitter</item>
     </style>
 
     <!-- Base Dialog Theme for Light/Colored Themes -->
@@ -208,6 +212,10 @@
         <item name="alertDialogTheme">@style/DialogTheme.Black</item>
         <item name="preferenceTheme">@style/PreferenceTheme.Black</item>
         <item name="colorAccent">@color/black_theme_text</item>
+        <item name="colorSurface">@color/black_theme_dialog_background_color</item>
+        <item name="colorOnSurface">@color/black_theme_text</item>
+        <item name="colorOutline">@color/black_theme_highlight_color</item>
+        <item name="colorOutlineVariant">@color/black_theme_highlight_color</item>
         <item name="android:datePickerDialogTheme">@style/DatePicker.Black</item>
     </style>
 

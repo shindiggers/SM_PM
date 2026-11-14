@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <!-- Section 1: Frequency -->
+        <TextView
+            android:id="@+id/dialog_frequency_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/BUDGET_FREQUENCY_SECTION"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:textColor="#324F85" />
+
+        <RadioGroup
+            android:id="@+id/rg_frequency"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/rb_monthly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/REPEATING_FREQUENCY_MONTHLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_biweekly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGETS_BIWEEKLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_4weeks"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGETS_4WEEKS"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_weekly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/REPEATING_FREQUENCY_WEEKLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_quarterly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/REPEATING_FREQUENCY_QUARTERLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_halfyear"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGETS_HALFYEAR"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_yearly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/REPEATING_FREQUENCY_YEARLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_bimonthly"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGETS_BIMONTHLY"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_daily"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/REPEATING_FREQUENCY_DAILY"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <!-- Divider -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="12dp"
+            android:background="?android:attr/listDivider" />
+
+        <!-- Section 2: Anchor -->
+        <TextView
+            android:id="@+id/dialog_anchor_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/BUDGET_ANCHOR_SECTION"
+            android:textAllCaps="true"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            tools:textColor="#324F85" />
+
+        <RadioGroup
+            android:id="@+id/rg_anchor"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/rb_anchor_default"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGET_ANCHOR_CALENDAR_DEFAULT"
+                android:textSize="14sp" />
+
+            <RadioButton
+                android:id="@+id/rb_anchor_custom"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGET_ANCHOR_CUSTOM_DATE"
+                android:textSize="14sp" />
+        </RadioGroup>
+
+        <!-- Custom Date Selector Row -->
+        <LinearLayout
+            android:id="@+id/custom_date_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingStart="28dp"
+            android:paddingEnd="8dp"
+            android:paddingTop="6dp"
+            android:paddingBottom="6dp">
+
+            <TextView
+                android:id="@+id/tv_selected_anchor_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="25 Oct 2026" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_change_anchor_date"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/BUDGET_ANCHOR_CHOOSE_DATE"
+                android:textSize="12sp"
+                app:strokeWidth="1dp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/tv_anchor_explanation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp"
+            android:textSize="12sp"
+            android:textColor="?android:attr/textColorSecondary"
+            tools:text="Your budget cycles will align to standard calendar months." />
+
+    </LinearLayout>
+</ScrollView>

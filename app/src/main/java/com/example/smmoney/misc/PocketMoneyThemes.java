@@ -512,4 +512,95 @@ public class PocketMoneyThemes {
         // Let's stick with white for now as currentTintColor is usually a brand color.
         return new ColorStateList(states, colors);
     }
+
+    public static int cardBackgroundColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_card_background);
+            case kThemeBlue -> getColor(R.color.blue_theme_card_background);
+            case kThemeGreen -> getColor(R.color.green_theme_card_background);
+            case kThemePurple -> getColor(R.color.purple_theme_card_background);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_card_background);
+            case kThemeRuby -> getColor(R.color.ruby_theme_card_background);
+            case kThemeGray -> getColor(R.color.gray_theme_card_background);
+            default -> getColor(R.color.white_theme_card_background);
+        };
+    }
+
+    public static int cardStrokeColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_card_stroke);
+            case kThemeBlue -> getColor(R.color.blue_theme_card_stroke);
+            case kThemeGreen -> getColor(R.color.green_theme_card_stroke);
+            case kThemePurple -> getColor(R.color.purple_theme_card_stroke);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_card_stroke);
+            case kThemeRuby -> getColor(R.color.ruby_theme_card_stroke);
+            case kThemeGray -> getColor(R.color.gray_theme_card_stroke);
+            default -> getColor(R.color.white_theme_card_stroke);
+        };
+    }
+
+    public static int cardDividerColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_card_divider);
+            case kThemeBlue -> getColor(R.color.blue_theme_card_divider);
+            case kThemeGreen -> getColor(R.color.green_theme_card_divider);
+            case kThemePurple -> getColor(R.color.purple_theme_card_divider);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_card_divider);
+            case kThemeRuby -> getColor(R.color.ruby_theme_card_divider);
+            case kThemeGray -> getColor(R.color.gray_theme_card_divider);
+            default -> getColor(R.color.white_theme_card_divider);
+        };
+    }
+
+    public static int cardTextColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_card_text);
+            case kThemeBlue -> getColor(R.color.blue_theme_card_text);
+            case kThemeGreen -> getColor(R.color.green_theme_card_text);
+            case kThemePurple -> getColor(R.color.purple_theme_card_text);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_card_text);
+            case kThemeRuby -> getColor(R.color.ruby_theme_card_text);
+            case kThemeGray -> getColor(R.color.gray_theme_card_text);
+            default -> getColor(R.color.white_theme_card_text);
+        };
+    }
+
+    public static int cardTextSecondaryColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_card_text_secondary);
+            case kThemeBlue -> getColor(R.color.blue_theme_card_text_secondary);
+            case kThemeGreen -> getColor(R.color.green_theme_card_text_secondary);
+            case kThemePurple -> getColor(R.color.purple_theme_card_text_secondary);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_card_text_secondary);
+            case kThemeRuby -> getColor(R.color.ruby_theme_card_text_secondary);
+            case kThemeGray -> getColor(R.color.gray_theme_card_text_secondary);
+            default -> getColor(R.color.white_theme_card_text_secondary);
+        };
+    }
+
+    public static int budgetRowTextColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_budget_row_text);
+            case kThemeBlue -> getColor(R.color.blue_theme_budget_row_text);
+            case kThemeGreen -> getColor(R.color.green_theme_budget_row_text);
+            case kThemePurple -> getColor(R.color.purple_theme_budget_row_text);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_budget_row_text);
+            case kThemeRuby -> getColor(R.color.ruby_theme_budget_row_text);
+            case kThemeGray -> getColor(R.color.gray_theme_budget_row_text);
+            default -> getColor(R.color.white_theme_budget_row_text);
+        };
+    }
+
+    public static int budgetRowVarianceColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_budget_row_variance);
+            case kThemeBlue -> getColor(R.color.blue_theme_budget_row_variance);
+            case kThemeGreen -> getColor(R.color.green_theme_budget_row_variance);
+            case kThemePurple -> getColor(R.color.purple_theme_budget_row_variance);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_budget_row_variance);
+            case kThemeRuby -> getColor(R.color.ruby_theme_budget_row_variance);
+            case kThemeGray -> getColor(R.color.gray_theme_budget_row_variance);
+            default -> getColor(R.color.white_theme_budget_row_variance);
+        };
+    }
 }

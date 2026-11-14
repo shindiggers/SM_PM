@@ -23,14 +23,6 @@ public class Enums {
     public static final int kBalanceTypeFuture = 0;
     public static final int kBalanceTypeNone = -1;
 
-    public static final int kBudgetDisplayBeat = 1;
-    public static final int kBudgetDisplayExpenseAvailable = 0;
-    public static final int kBudgetDisplayExpenseBudgeted = 2;
-    public static final int kBudgetDisplayExpenseOver = 3;
-
-    public static final int kBudgetDisplaySaved = 0;
-    public static final int kBudgetDisplayText = 1;
-
     public static final int kBudgetPeriod4Weeks = 8;
     public static final int kBudgetPeriodBimonthly = 6;
     public static final int kBudgetPeriodBiweekly = 5;

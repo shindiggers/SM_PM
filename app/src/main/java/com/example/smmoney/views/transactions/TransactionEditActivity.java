@@ -694,13 +694,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             onCategoryEntered(selected);
         });
 
-        this.classEditText.setOnItemClickListener((parent, view, position, id) -> {
-            focusNextField(classEditText);
-        });
+        this.classEditText.setOnItemClickListener((parent, view, position, id) -> focusNextField(classEditText));
 
-        this.idEditText.setOnItemClickListener((parent, view, position, id) -> {
-            focusNextField(idEditText);
-        });
+        this.idEditText.setOnItemClickListener((parent, view, position, id) -> focusNextField(idEditText));
 
         this.payeeEditText.setOnEditorActionListener((v, actionId, event) -> {
             if (actionId == EditorInfo.IME_ACTION_NEXT) {
@@ -895,11 +891,11 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             } else if (SMMoney.getAppContext().getString(R.string.GENERAL_CATEGORY).equals(thePref)) {
                 this.categoryEditText.post(() -> this.categoryEditText.requestFocus());
             } else {
-                // Default for new transactions: auto-focus Amount and bring up the CurrencyKeyboard
+                // Default for new transactions: autofocus Amount and bring up the CurrencyKeyboard
                 this.amountEditText.post(this::amountAction);
             }
         } else {
-            // Existing transaction or repeating template: do not auto-focus any field
+            // Existing transaction or repeating template: do not autofocus any field
             getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         }
     }

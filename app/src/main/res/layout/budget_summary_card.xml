@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/budget_summary_card"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="10dp"
+    android:layout_marginEnd="10dp"
+    android:layout_marginTop="4dp"
+    android:layout_marginBottom="6dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/common_action_bar_splitter"
+    app:cardBackgroundColor="@color/white_theme_background_color">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp">
+
+        <!-- ================= ROW 1: INCOME ================= -->
+        <!-- Left: Actual Income -->
+        <LinearLayout
+            android:id="@+id/row1_actual_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/row1_variance_container"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_actual_income_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="£5,000.00" />
+
+            <TextView
+                android:id="@+id/summary_actual_income_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:text="@string/BUDGET_SUMMARY_ACTUAL_INCOME"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Actual income" />
+        </LinearLayout>
+
+        <!-- Center: Income Variance -->
+        <LinearLayout
+            android:id="@+id/row1_variance_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/row1_actual_container"
+            app:layout_constraintEnd_toStartOf="@+id/row1_budget_container"
+            app:layout_constraintTop_toTopOf="@id/row1_actual_container"
+            app:layout_constraintBottom_toBottomOf="@id/row1_actual_container"
+            app:layout_constraintHorizontal_weight="0.95">
+
+            <TextView
+                android:id="@+id/summary_income_variance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="£500 ahead"
+                tools:textColor="#2E7D32" />
+        </LinearLayout>
+
+        <!-- Right: Budgeted Income -->
+        <LinearLayout
+            android:id="@+id/row1_budget_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end"
+            app:layout_constraintStart_toEndOf="@id/row1_variance_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_budget_income_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="£4,500.00" />
+
+            <TextView
+                android:id="@+id/summary_budget_income_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:text="@string/BUDGET_SUMMARY_BUDGET_INCOME"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Budgeted income" />
+        </LinearLayout>
+
+        <!-- ================= ROW 2: EXPENSES ================= -->
+        <!-- Left: Actual Expenses -->
+        <LinearLayout
+            android:id="@+id/row2_actual_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/row2_variance_container"
+            app:layout_constraintTop_toBottomOf="@id/row1_actual_container"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_actual_expense_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="£4,400.00" />
+
+            <TextView
+                android:id="@+id/summary_actual_expense_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:text="@string/BUDGET_SUMMARY_ACTUAL_EXPENSES"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Actual expenses" />
+        </LinearLayout>
+
+        <!-- Center: Expense Variance -->
+        <LinearLayout
+            android:id="@+id/row2_variance_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/row2_actual_container"
+            app:layout_constraintEnd_toStartOf="@+id/row2_budget_container"
+            app:layout_constraintTop_toTopOf="@id/row2_actual_container"
+            app:layout_constraintBottom_toBottomOf="@id/row2_actual_container"
+            app:layout_constraintHorizontal_weight="0.95">
+
+            <TextView
+                android:id="@+id/summary_expense_variance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                tools:text="£300 behind"
+                tools:textColor="#C62828" />
+        </LinearLayout>
+
+        <!-- Right: Budgeted Expenses -->
+        <LinearLayout
+            android:id="@+id/row2_budget_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/row2_variance_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/row1_budget_container"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_budget_expense_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorPrimary"
+                tools:text="£4,100.00" />
+
+            <TextView
+                android:id="@+id/summary_budget_expense_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:text="@string/BUDGET_SUMMARY_BUDGET_EXPENSES"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Budgeted expenses" />
+        </LinearLayout>
+
+        <!-- ================= DIVIDER ================= -->
+        <View
+            android:id="@+id/summary_divider"
+            android:layout_width="match_parent"
+            android:layout_height="1.5dp"
+            android:layout_marginTop="8dp"
+            android:background="@color/common_action_bar_splitter"
+            app:layout_constraintTop_toBottomOf="@id/row2_actual_container" />
+
+        <!-- ================= ROW 3: TOTAL (SURPLUS / DEFICIT) ================= -->
+        <!-- Left: Net Actual Surplus/Deficit -->
+        <LinearLayout
+            android:id="@+id/row3_actual_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="start"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/row3_variance_container"
+            app:layout_constraintTop_toBottomOf="@id/summary_divider"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_actual_net_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="£600.00"
+                tools:textColor="#2E7D32" />
+
+            <TextView
+                android:id="@+id/summary_actual_net_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Actual surplus" />
+        </LinearLayout>
+
+        <!-- Center: Net Overall Variance -->
+        <LinearLayout
+            android:id="@+id/row3_variance_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            app:layout_constraintStart_toEndOf="@id/row3_actual_container"
+            app:layout_constraintEnd_toStartOf="@+id/row3_budget_container"
+            app:layout_constraintTop_toTopOf="@id/row3_actual_container"
+            app:layout_constraintBottom_toBottomOf="@id/row3_actual_container"
+            app:layout_constraintHorizontal_weight="0.95">
+
+            <TextView
+                android:id="@+id/summary_net_variance_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                tools:text="£200 ahead"
+                tools:textColor="#2E7D32" />
+        </LinearLayout>
+
+        <!-- Right: Budgeted Surplus/Deficit -->
+        <LinearLayout
+            android:id="@+id/row3_budget_container"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="end"
+            android:layout_marginTop="8dp"
+            app:layout_constraintStart_toEndOf="@id/row3_variance_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/summary_divider"
+            app:layout_constraintHorizontal_weight="1.15">
+
+            <TextView
+                android:id="@+id/summary_budget_net_value"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="£400.00"
+                tools:textColor="#2E7D32" />
+
+            <TextView
+                android:id="@+id/summary_budget_net_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="11sp"
+                android:textStyle="bold"
+                android:textColor="?android:attr/textColorSecondary"
+                tools:text="Budgeted surplus" />
+        </LinearLayout>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

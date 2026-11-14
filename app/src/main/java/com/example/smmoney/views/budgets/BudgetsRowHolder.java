@@ -7,6 +7,8 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
 
 import com.example.smmoney.R;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
 import com.example.smmoney.misc.Enums;
@@ -14,7 +16,7 @@ import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.CategoryClass;
 
-public class BudgetsRowHolder {
+public class BudgetsRowHolder extends RecyclerView.ViewHolder {
     public CategoryClass category;
     public final View therow;
     public final TextView spentTextView;
@@ -25,6 +27,7 @@ public class BudgetsRowHolder {
     public final View barForeground;
 
     public BudgetsRowHolder(View rowView) {
+        super(rowView);
         this.therow = rowView;
         this.spentTextView = rowView.findViewById(R.id.spent);
         this.budgetTextView = rowView.findViewById(R.id.budget);
@@ -45,8 +48,7 @@ public class BudgetsRowHolder {
         } else {
             view.setText(text);
         }
-        // Always use high-contrast text color as requested
-        view.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        view.setTextColor(PocketMoneyThemes.budgetRowTextColor());
     }
 
     public void setCategory(CategoryClass category, boolean isUnbudgeted) {
@@ -73,9 +75,10 @@ public class BudgetsRowHolder {
         }
         
         // 3. Update UI Text
+        int textColor = PocketMoneyThemes.budgetRowTextColor();
         formatAmount(this.spentTextView, spent);
         this.categoryTextView.setText(category.getCategory());
-        this.categoryTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        this.categoryTextView.setTextColor(textColor);
         formatAmount(this.budgetTextView, budget);
         
         // 4. Update Variance Label
@@ -85,7 +88,7 @@ public class BudgetsRowHolder {
         } else {
             this.varianceTextView.setText(String.format(SMMoney.getAppContext().getString(R.string.FORMAT_AHEAD), varText));
         }
-        this.varianceTextView.setTextColor(PocketMoneyThemes.balanceBarTextViewColor());
+        this.varianceTextView.setTextColor(PocketMoneyThemes.budgetRowVarianceColor());
 
         updateBars(spent, budget);
     }
@@ -122,11 +125,22 @@ public class BudgetsRowHolder {
         barBackground.setBackgroundColor(backgroundRes);
         barForeground.setBackgroundColor(foregroundRes);
 
+        therow.setBackgroundColor(PocketMoneyThemes.groupTableViewBackgroundColor());
+
         ConstraintLayout layout = (ConstraintLayout) therow;
         ConstraintSet set = new ConstraintSet();
         set.clone(layout);
         float validatedRatio = Math.max(0.001f, Math.min(0.999f, ratio));
         set.constrainPercentWidth(R.id.budget_bar_foreground, validatedRatio);
+        // Ensure progress bar stays pinned to the bottom 5dp during ConstraintSet updates
+        set.constrainHeight(R.id.budget_bar_foreground, (int) android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, 5.0f, therow.getResources().getDisplayMetrics()));
+        set.constrainHeight(R.id.budget_bar_background, (int) android.util.TypedValue.applyDimension(
+                android.util.TypedValue.COMPLEX_UNIT_DIP, 5.0f, therow.getResources().getDisplayMetrics()));
+        set.connect(R.id.budget_bar_foreground, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        set.connect(R.id.budget_bar_background, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM);
+        set.clear(R.id.budget_bar_foreground, ConstraintSet.TOP);
+        set.clear(R.id.budget_bar_background, ConstraintSet.TOP);
         set.applyTo(layout);
     }
 }

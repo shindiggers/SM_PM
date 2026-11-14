@@ -9,26 +9,24 @@
     android:clickable="true"
     android:focusable="true">
 
-    <!-- Progress Visualization (Background) -->
+    <!-- Progress Visualization (Bottom Indicator Bar ~15% height) -->
     <View
         android:id="@+id/budget_bar_foreground"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/budget_bar_background"
         app:layout_constraintHorizontal_chainStyle="packed"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintWidth_percent="0.5" />
 
     <View
         android:id="@+id/budget_bar_background"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="5dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/budget_bar_foreground"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toEndOf="@+id/budget_bar_foreground" />
 
     <!-- Left: Actual -->
     <TextView
