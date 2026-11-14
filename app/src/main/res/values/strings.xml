@@ -290,6 +290,19 @@
     <string name="BUDGET_EXPLANATION_CUSTOM_BIMONTHLY">Budget period will run in 2-month cycles starting on %1$s (e.g. %2$s).</string>
     <string name="BUDGET_EXPLANATION_CUSTOM_DAILY">Budget period will run day by day (e.g. %1$s).</string>
 
+    <string name="ACCOUNT_INCLUDE_IN_BUDGETS">Include in Budgets</string>
+    <string name="CATEGORY_INCLUDE_IN_BUDGETS">Include in Budgets</string>
+    <string name="BUDGET_ACCOUNTS_TITLE">Budget Accounts</string>
+    <string name="BUDGET_ACCOUNTS_SUMMARY">Choose which accounts count toward budgets</string>
+    <string name="BUDGET_CATEGORIES_TITLE">Budget Categories</string>
+    <string name="BUDGET_CATEGORIES_SUMMARY">Choose which categories are tracked in budgets</string>
+    <string name="SELECT_ALL">Select All</string>
+    <string name="DESELECT_ALL">Deselect All</string>
+    <string name="SEARCH_HINT">Search…</string>
+    <string name="ITEMS_INCLUDED_COUNT">%1$d of %2$d\nincluded</string>
+    <string name="BUDGET_INCLUDE_UNBUDGETED_SUMMARY">Count spending from unbudgeted categories in budget summary totals</string>
+    <string name="BUDGET_SHOW_UNBUDGETED_SUMMARY">Show non-budgeted category rows in the budget list</string>
+
     <!-- =================================================================== -->
     <!--  REPORTS                                                            -->
     <!-- =================================================================== -->

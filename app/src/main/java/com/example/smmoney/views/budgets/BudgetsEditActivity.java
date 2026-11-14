@@ -123,6 +123,9 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.budgetCell = (View) this.budgetEditText.getParent();
         this.budgetCell.setBackgroundResource(PocketMoneyThemes.alternatingRowSelector());
         ((TextView) this.outterView.findViewById(R.id.budgetlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
+        this.includeInBudgetsCheckBox = this.outterView.findViewById(R.id.includeinbudgetscheckbox);
+        CheckBoxTint.colorCheckBox(this.includeInBudgetsCheckBox);
+        ((TextView) this.outterView.findViewById(R.id.includeinbudgetslabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
         this.rolloverCheckBox = this.outterView.findViewById(R.id.rollovercheckbox);
         CheckBoxTint.colorCheckBox(this.rolloverCheckBox);
         ((TextView) this.outterView.findViewById(R.id.rolloverlabel)).setTextColor(PocketMoneyThemes.fieldLabelColor());
@@ -200,6 +203,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         BudgetsEditActivity.this.reloadData();
     };
     private CheckBox includeSubcategoriesCheckBox;
+    private CheckBox includeInBudgetsCheckBox;
     private String oldCategory;
     private TextView originalHistoryBudgetTextView;
     private View originalHistoryCell;
@@ -384,6 +388,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         if (this.category.getBudgetLimit() != 0.00) {
             this.budgetEditText.setText(CurrencyExt.amountAsCurrency(this.category.getBudgetLimit()));
         }
+        this.includeInBudgetsCheckBox.setChecked(this.category.getIncludeInBudgets());
         this.rolloverCheckBox.setChecked(this.category.getRollover());
         this.includeSubcategoriesCheckBox.setChecked(this.category.getIncludeSubcategories());
     }
@@ -393,6 +398,7 @@ public class BudgetsEditActivity extends PocketMoneyActivity {
         this.category.setTypeFromString(this.budgetTypeTextView.getText().toString());
         this.category.setPeriodFromString(this.periodTextView.getText().toString());
         this.category.setBudgetLimit(CurrencyExt.amountFromString(this.budgetEditText.getText().toString()));
+        this.category.setIncludeInBudgets(this.includeInBudgetsCheckBox.isChecked());
         this.category.setRollover(this.rolloverCheckBox.isChecked());
         this.category.setIncludeSubcategories(this.includeSubcategoriesCheckBox.isChecked());
     }

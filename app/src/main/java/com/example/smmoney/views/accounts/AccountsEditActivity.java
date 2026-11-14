@@ -105,6 +105,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private TextView notes;
     private EditText phone;
     private CheckBox totalworth;
+    private CheckBox includeInBudgets;
     private TextView type;
     private EditText website;
 
@@ -257,6 +258,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private void loadInfo() {
         this.accountName = findViewById(R.id.accountname);
         this.totalworth = findViewById(R.id.totalworthcb);
+        this.includeInBudgets = findViewById(R.id.includeinbudgetscb);
         this.type = findViewById(R.id.type);
         this.icon = findViewById(R.id.icon);
         this.expires = findViewById(R.id.expires);
@@ -295,6 +297,8 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.accountName.setText(this.account.getAccount());
         this.totalworth.setChecked(this.account.getTotalWorth());
         CheckBoxTint.colorCheckBox(this.totalworth);
+        this.includeInBudgets.setChecked(this.account.getIncludeInBudgets());
+        CheckBoxTint.colorCheckBox(this.includeInBudgets);
         this.type.setText(this.account.typeAsString());
         this.expires.setText(this.account.getExpirationDate());
         this.accountNumber.setText(this.account.getAccountNumber());
@@ -430,6 +434,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         if (!this.accountName.getText().toString().isEmpty()) {
             this.account.setAccount(this.accountName.getText().toString());
             this.account.setTotalWorth(this.totalworth.isChecked());
+            this.account.setIncludeInBudgets(this.includeInBudgets.isChecked());
             this.account.setTypeFromString(this.type.getText().toString());
             try {
                 this.account.setIconFileNameFromResourceWithContext(this.iconResourceID, this);

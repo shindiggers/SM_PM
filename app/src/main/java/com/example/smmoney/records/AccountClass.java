@@ -77,6 +77,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private String phone;
     private String routingNumber;
     private boolean totalWorth;
+    private boolean includeInBudgets = true;
     private int type;
     @SuppressWarnings("unused")
     private int uniqueID;
@@ -470,6 +471,18 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.totalWorth;
     }
 
+    public void setIncludeInBudgets(boolean value) {
+        if (this.includeInBudgets != value) {
+            this.dirty = true;
+            this.includeInBudgets = value;
+        }
+    }
+
+    public boolean getIncludeInBudgets() {
+        hydrate();
+        return this.includeInBudgets;
+    }
+
     public void setCurrencyCode(String aString) {
         if (this.currencyCode != null || aString != null) {
             if (this.currencyCode == null || !this.currencyCode.equals(aString)) {
@@ -488,6 +501,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         content.put("account", newAccount);
         content.put("exchangeRate", 1.0f);
         content.put("totalWorth", 1);
+        content.put("includeInBudgets", 1);
         content.put("noLimit", 1);
         content.put("serverID", Database.newServerID());
         content.put("timestamp", System.currentTimeMillis() / 1000);
@@ -757,7 +771,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         if (!this.hydrated) {
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
             qb.setTables(Database.ACCOUNTS_TABLE_NAME);
-            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "displayOrder", "account", "type", "accountNumber", "routingNumber", "institution", "phone", "expirationDate", "checkNumber", "notes", "iconFileName", "url", "fee", "fixedPercent", "limitAmount", "noLimit", "totalWorth", "exchangeRate", "currencyCode", "lastSyncTime", "overdraftAccountID", "serverID", "keepTheChangeAccountID", "keepChangeRoundTo", "ccStatementCycleRule", "ccDueDateRule", "ccWeekendPolicy"}, "accountID=" + this.accountID, null, null, null, null);
+            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "displayOrder", "account", "type", "accountNumber", "routingNumber", "institution", "phone", "expirationDate", "checkNumber", "notes", "iconFileName", "url", "fee", "fixedPercent", "limitAmount", "noLimit", "totalWorth", "exchangeRate", "currencyCode", "lastSyncTime", "overdraftAccountID", "serverID", "keepTheChangeAccountID", "keepChangeRoundTo", "ccStatementCycleRule", "ccDueDateRule", "ccWeekendPolicy", "includeInBudgets"}, "accountID=" + this.accountID, null, null, null, null);
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
@@ -848,6 +862,14 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 
                 str = curs.getString(col2);
                 setCcWeekendPolicy(Objects.requireNonNullElse(str, ""));
+
+                int budgetCol = curs.getColumnIndex("includeInBudgets");
+                if (budgetCol != -1) {
+                    setIncludeInBudgets(curs.getInt(budgetCol) == 1);
+                } else {
+                    setIncludeInBudgets(true);
+                }
+
                 if (!wasDirty && this.dirty) {
                     this.dirty = false;
                 }
@@ -1039,6 +1061,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             content.put("limitAmount", this.limit);
             content.put("noLimit", this.noLimit);
             content.put("totalWorth", this.totalWorth);
+            content.put("includeInBudgets", this.includeInBudgets);
             content.put("exchangeRate", this.exchangeRate);
             content.put("currencyCode", this.currencyCode);
             if (this.serverID == null || this.serverID.isEmpty()) {

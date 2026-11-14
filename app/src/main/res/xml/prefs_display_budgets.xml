@@ -3,10 +3,15 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:title="@string/GENERAL_REPORTS">
 
-    <CheckBoxPreference
-        android:defaultValue="true"
-        android:key="budgetShowAllAccounts"
-        android:title="@string/FILTERS_ALL_ACCOUNTS" />
+    <Preference
+        android:key="budgetChooseAccounts"
+        android:title="@string/BUDGET_ACCOUNTS_TITLE"
+        android:summary="@string/BUDGET_ACCOUNTS_SUMMARY" />
+
+    <Preference
+        android:key="budgetChooseCategories"
+        android:title="@string/BUDGET_CATEGORIES_TITLE"
+        android:summary="@string/BUDGET_CATEGORIES_SUMMARY" />
 
     <CheckBoxPreference
         android:defaultValue="false"
@@ -14,14 +19,16 @@
         android:title="@string/BUDGET_SHOWCENTS" />
 
     <CheckBoxPreference
-        android:defaultValue="fasle"
+        android:defaultValue="false"
         android:key="budgetShowUnbudgeted"
-        android:title="@string/BUDGET_SHOWUNBUDGETED" />
+        android:title="@string/BUDGET_SHOWUNBUDGETED"
+        android:summary="@string/BUDGET_SHOW_UNBUDGETED_SUMMARY" />
 
     <CheckBoxPreference
         android:defaultValue="false"
         android:key="budgetIncludeUnbudgeted"
-        android:title="@string/BUDGET_INCLUDEUNBUDGETED" />
+        android:title="@string/BUDGET_INCLUDEUNBUDGETED"
+        android:summary="@string/BUDGET_INCLUDE_UNBUDGETED_SUMMARY" />
 
     <CheckBoxPreference
         android:defaultValue="false"

@@ -199,6 +199,12 @@
             android:configChanges="orientation"
             android:finishOnTaskLaunch="true" />
         <activity
+            android:name="com.example.smmoney.views.budgets.BudgetAccountsSelectionActivity"
+            android:configChanges="orientation" />
+        <activity
+            android:name="com.example.smmoney.views.budgets.BudgetCategoriesSelectionActivity"
+            android:configChanges="orientation" />
+        <activity
             android:name="com.example.smmoney.views.charts.ChartsActivity"
             android:configChanges="orientation" />
         <activity

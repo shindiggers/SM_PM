@@ -43,6 +43,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
     private String currentElementValue;
     private boolean includeSubcategories;
     private boolean rollover;
+    private boolean includeInBudgets = true;
     public double spent;
     private int type;
 
@@ -91,6 +92,18 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         if (this.budgetPeriod != budgetPeriod) {
             this.dirty = true;
             this.budgetPeriod = budgetPeriod;
+        }
+    }
+
+    public boolean getIncludeInBudgets() {
+        hydrate();
+        return this.includeInBudgets;
+    }
+
+    public void setIncludeInBudgets(boolean includeInBudgets) {
+        if (this.includeInBudgets != includeInBudgets) {
+            this.dirty = true;
+            this.includeInBudgets = includeInBudgets;
         }
     }
 
@@ -390,19 +403,11 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         String endTime = Long.toString(CalExt.endOfDay(endDate).getTimeInMillis() / 1000);
         String str = includeSubcategories ? "%" : "";
         String[] bindArgs = new String[]{category + str, startTime, endTime};
-        int currentViewType = Prefs.getBooleanPref(Prefs.BUDGETSHOWALLACCOUNTS) ? Enums.kViewAccountsAll /*0*/ : Prefs.getIntPref(Prefs.VIEWACCOUNTS);
         String exchangeRateLookup = "";
         if (Prefs.getBooleanPref(Prefs.MULTIPLECURRENCIES)) {
             exchangeRateLookup = " / (SELECT CASE WHEN exchangeRate >0 THEN exchangeRate ELSE 1.0 END FROM accounts WHERE accountID = (SELECT accountID FROM transactions WHERE transactionID = splits.transactionID))";
         }
-        String transactionsLookup = switch (currentViewType) {
-            case Enums.kViewAccountsNonZero /*1*/ ->
-                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM transactions WHERE deleted=0 AND type<>5 GROUP BY accountID HAVING (sum(subTotal) < -0.005) OR (sum(subTotal) > 0.005)))";
-            case Enums.kViewAccountsTotalWorth /*2*/ ->
-                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND totalWorth=1))";
-            default ->
-                    "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5)";
-        };
+        String transactionsLookup = "(SELECT transactionID FROM transactions WHERE deleted=0 AND date >= ? AND date <= ? AND type <> 5 AND transactions.accountID IN (SELECT accountID FROM accounts WHERE deleted=0 AND includeInBudgets=1))";
         String expenseTypeLookup = "(0 = (SELECT type FROM categories WHERE category LIKE ? ESCAPE '\\'))";
         String transfersString = "(1)";
         if (Prefs.getBooleanPref(Prefs.BUDGETINCLUDETRANSFERS)) {
@@ -725,7 +730,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static List<CategoryClass> queryIncomeCategoriesWithBudgets() {
         ArrayList<CategoryClass> elements = new ArrayList<>();
-        Cursor c = Database.rawQuery("SELECT DISTINCT categoryID FROM categories c LEFT JOIN (SELECT * FROM categoryBudgets WHERE deleted=0 or deleted ISNULL) AS b ON c.category LIKE b.categoryName  WHERE c.deleted=0 AND  (c.budgetLimit <> 0 OR b.budgetLimit<>0) AND type = 1 ORDER BY UPPER(c.category)", null);
+        Cursor c = Database.rawQuery("SELECT DISTINCT categoryID FROM categories c LEFT JOIN (SELECT * FROM categoryBudgets WHERE deleted=0 or deleted ISNULL) AS b ON c.category LIKE b.categoryName  WHERE c.deleted=0 AND (c.includeInBudgets ISNULL OR c.includeInBudgets=1) AND (c.budgetLimit <> 0 OR b.budgetLimit<>0) AND type = 1 ORDER BY UPPER(c.category)", null);
         int count = c.getCount();
         c.moveToFirst();
         for (int i = 0; i < count; i++) {
@@ -738,7 +743,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static List<CategoryClass> queryExpenseCategoriesWithBudgets() {
         ArrayList<CategoryClass> elements = new ArrayList<>();
-        Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE deleted=0 AND budgetLimit <> 0  AND type <> 1 ORDER BY UPPER(category)", null);
+        Cursor c = Database.rawQuery("SELECT categoryID FROM categories WHERE deleted=0 AND (includeInBudgets ISNULL OR includeInBudgets=1) AND budgetLimit <> 0  AND type <> 1 ORDER BY UPPER(category)", null);
         int count = c.getCount();
         c.moveToFirst();
         for (int i = 0; i < count; i++) {
@@ -751,7 +756,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
 
     public static List<CategoryClass> queryNonBudgettedCategories() {
         ArrayList<CategoryClass> elements = new ArrayList<>();
-        Cursor c = Database.rawQuery("SELECT c.categoryID FROM categories c WHERE c.deleted=0 AND (type ISNULL OR type=3 OR ( (c.budgetLimit ISNULL OR c.budgetLimit=0) AND UPPER(c.category) NOT IN(SELECT UPPER(b.categoryName) FROM categoryBudgets b WHERE b.deleted=0 AND b.budgetLimit <> 0) ) )", null);
+        Cursor c = Database.rawQuery("SELECT c.categoryID FROM categories c WHERE c.deleted=0 AND (c.includeInBudgets ISNULL OR c.includeInBudgets=1) AND (type ISNULL OR type=3 OR ( (c.budgetLimit ISNULL OR c.budgetLimit=0) AND UPPER(c.category) NOT IN(SELECT UPPER(b.categoryName) FROM categoryBudgets b WHERE b.deleted=0 AND b.budgetLimit <> 0) ) )", null);
         int count = c.getCount();
         c.moveToFirst();
         for (int i = 0; i < count; i++) {
@@ -781,7 +786,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         if (!this.hydrated) {
             SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
             qb.setTables(Database.CATEGORIES_TABLE_NAME);
-            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "category", "type", Prefs.DISPLAY_BUDGETPERIOD, "budgetLimit", "includeSubcategories", "serverID", "rollover"}, "categoryID=" + this.categoryID, null, null, null, null);
+            Cursor curs = Database.query(qb, new String[]{"deleted", "timestamp", "category", "type", Prefs.DISPLAY_BUDGETPERIOD, "budgetLimit", "includeSubcategories", "serverID", "rollover", "includeInBudgets"}, "categoryID=" + this.categoryID, null, null, null, null);
             if (curs.getCount() != 0) {
                 curs.moveToFirst();
                 boolean wasDirty = this.dirty;
@@ -811,6 +816,14 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
                 }
                 setServerID(str);
                 this.rollover = curs.getInt(col2) == 1;
+
+                int budgetCol = curs.getColumnIndex("includeInBudgets");
+                if (budgetCol != -1) {
+                    this.includeInBudgets = curs.getInt(budgetCol) == 1;
+                } else {
+                    this.includeInBudgets = true;
+                }
+
                 if (!wasDirty && this.dirty) {
                     this.dirty = false;
                 }
@@ -834,6 +847,7 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
             content.put("includeSubcategories", this.includeSubcategories);
             content.put("timestamp", System.currentTimeMillis() / 1000);
             content.put("rollover", this.rollover);
+            content.put("includeInBudgets", this.includeInBudgets);
             if (this.serverID == null || this.serverID.isEmpty()) {
                 this.serverID = Database.newServerID();
             }
