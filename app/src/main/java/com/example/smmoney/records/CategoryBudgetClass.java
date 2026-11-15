@@ -81,9 +81,23 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     public void setDate(GregorianCalendar dateFromDescriptionWithISO861Date) {
-        if (this.date != dateFromDescriptionWithISO861Date) {
+        if (dateFromDescriptionWithISO861Date == null) {
+            if (this.date != null) {
+                this.dirty = true;
+                this.date = null;
+            }
+        } else if (this.date == null || this.date.getTimeInMillis() != dateFromDescriptionWithISO861Date.getTimeInMillis()) {
             this.dirty = true;
             this.date = dateFromDescriptionWithISO861Date;
+        }
+    }
+
+    public void deleteFromDatabase() {
+        if (this.categoryBudgetID != 0) {
+            ContentValues content = new ContentValues();
+            content.put("deleted", 1);
+            content.put("timestamp", System.currentTimeMillis() / 1000);
+            Database.update("categoryBudgets", content, "categoryBudgetID=" + this.categoryBudgetID, null);
         }
     }
 
@@ -171,7 +185,8 @@ public class CategoryBudgetClass extends PocketMoneyRecordClass {
     }
 
     public void saveToDataBaseAndUpdateTimeStamp(boolean updateTimeStamp) {
-        if (this.dirty) {
+        if (this.dirty || this.categoryBudgetID == 0) {
+            this.dirty = true;
             if (this.categoryBudgetID == 0) {
                 this.categoryBudgetID = insertNewBudgetItemWithCategoryNameIntoDatabase(this.categoryName);
             }

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/parent_view"
     android:fitsSystemWindows="true"
@@ -19,323 +20,469 @@
             android:id="@+id/outter_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:padding="8dp">
 
-            <LinearLayout
-                android:id="@+id/categorybutton"
+            <!-- ================= CARD 1: GENERAL SETTINGS ================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_general_settings"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_white"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                android:layout_marginBottom="12dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/common_action_bar_splitter">
 
-                <TextView
-                    android:id="@+id/category_label"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/GENERAL_CATEGORY" />
-
-                <TextView
-                    android:id="@+id/categorytextview"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:visibility="gone"
-                    tools:visibility="visible" />
+                    android:orientation="vertical"
+                    android:paddingTop="4dp"
+                    android:paddingBottom="4dp">
 
-                <AutoCompleteTextView
-                    android:id="@+id/categoryedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:focusable="true"
-                    android:focusableInTouchMode="true"
-                    android:gravity="center_vertical"
-                    android:hint="@string/GENERAL_CATEGORY"
-                    android:imeOptions="actionNone|actionSearch|actionSend|actionNext|actionDone|actionPrevious"
-                    android:inputType="textCapWords"
-                    android:singleLine="true" />
+                    <!-- Category Row -->
+                    <LinearLayout
+                        android:id="@+id/categorybutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp">
 
-            </LinearLayout>
+                        <TextView
+                            android:id="@+id/category_label"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/GENERAL_CATEGORY"
+                            android:textSize="14sp" />
 
-            <LinearLayout
-                android:id="@+id/budgettypebutton"
+                        <TextView
+                            android:id="@+id/categorytextview"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:visibility="gone"
+                            tools:visibility="visible" />
+
+                        <AutoCompleteTextView
+                            android:id="@+id/categoryedittext"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:hint="@string/GENERAL_CATEGORY"
+                            android:imeOptions="actionDone"
+                            android:inputType="textCapWords"
+                            android:singleLine="true" />
+
+                        <ImageButton
+                            android:id="@+id/category_drop_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                            android:contentDescription="@string/GENERAL_CATEGORY" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/card1_divider1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
+
+                    <!-- Budget Type Row -->
+                    <LinearLayout
+                        android:id="@+id/budgettypebutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/budgettypelabel"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/BUDGETS_TYPE"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/budgettexttextview"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:singleLine="true"
+                            android:textSize="14sp" />
+
+                        <ImageButton
+                            android:id="@+id/budget_type_drop_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                            android:clickable="false"
+                            android:contentDescription="@string/BUDGETS_TYPE" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/card1_divider2"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
+
+                    <!-- Budget Interval (Period) Row -->
+                    <LinearLayout
+                        android:id="@+id/periodbutton"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <TextView
+                            android:id="@+id/periodlabel"
+                            android:layout_width="100dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/BUDGETS_INTERVAL"
+                            android:textSize="14sp" />
+
+                        <TextView
+                            android:id="@+id/periodtextview"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.0"
+                            android:singleLine="true"
+                            android:textSize="14sp" />
+
+                        <ImageButton
+                            android:id="@+id/period_drop_down"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
+                            android:clickable="false"
+                            android:contentDescription="@string/BUDGETS_INTERVAL" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/card1_divider3"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
+
+                    <!-- Include in Budgets Toggle -->
+                    <LinearLayout
+                        android:id="@+id/include_in_budgets_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/includeinbudgetslabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/CATEGORY_INCLUDE_IN_BUDGETS"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/includeinbudgetssubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BUDGETS_INCLUDE_EXPLANATION"
+                                android:textSize="11sp"
+                                android:textColor="?android:attr/textColorSecondary" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/includeinbudgetscheckbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/card1_divider4"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
+
+                    <!-- Rollover Toggle -->
+                    <LinearLayout
+                        android:id="@+id/rollover_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/rolloverlabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BUDGETS_ROLLOVERS"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/rolloversubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BUDGETS_ROLLOVER_EXPLANATION"
+                                android:textSize="11sp"
+                                android:textColor="?android:attr/textColorSecondary" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/rollovercheckbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false" />
+                    </LinearLayout>
+
+                    <View
+                        android:id="@+id/card1_divider5"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
+
+                    <!-- Include Subcategories Toggle -->
+                    <LinearLayout
+                        android:id="@+id/subcategories_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:minHeight="54dp"
+                        android:background="@drawable/list_selector_bg_white"
+                        android:clickable="true"
+                        android:focusable="true">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/includesubcategorieslabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BUDGETS_TOTALSUBCATEGORY"
+                                android:textSize="14sp" />
+
+                            <TextView
+                                android:id="@+id/includesubcategoriessubtitle"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/BUDGETS_SUB_EXPLANATION"
+                                android:textSize="11sp"
+                                android:textColor="?android:attr/textColorSecondary" />
+                        </LinearLayout>
+
+                        <CheckBox
+                            android:id="@+id/includesubcategoriescheckbox"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:clickable="false" />
+                    </LinearLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- ================= CARD 2: BUDGET SCHEDULE ================= -->
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_budget_schedule"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_white"
-                android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                android:layout_marginBottom="16dp"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="2dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="@color/common_action_bar_splitter">
 
-                <TextView
-                    android:id="@+id/budgettypelabel"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/BUDGETS_TYPE" />
-
-                <TextView
-                    android:id="@+id/budgettexttextview"
-                    android:layout_width="0dp"
+                <LinearLayout
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:singleLine="true" />
+                    android:orientation="vertical"
+                    android:paddingTop="12dp"
+                    android:paddingBottom="12dp">
 
-                <ImageButton
-                    android:id="@+id/budget_type_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
-                    android:clickable="false"
-                    android:contentDescription="@string/BUDGETS_TYPE" />
+                    <!-- Schedule Header -->
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="12dp"
+                        android:layout_marginBottom="12dp">
 
-            </LinearLayout>
+                        <TextView
+                            android:id="@+id/schedule_title"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentStart="true"
+                            android:layout_toStartOf="@+id/add_interval_button"
+                            android:layout_centerVertical="true"
+                            android:layout_marginEnd="8dp"
+                            android:text="@string/BUDGETS_SCHEDULE_TITLE"
+                            android:textSize="16sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorPrimary" />
 
-            <LinearLayout
-                android:id="@+id/periodbutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_white"
-                android:baselineAligned="false"
-                android:focusable="true"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/add_interval_button"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:minHeight="36dp"
+                            android:layout_alignParentEnd="true"
+                            android:layout_centerVertical="true"
+                            android:gravity="center"
+                            android:insetTop="0dp"
+                            android:insetBottom="0dp"
+                            android:paddingTop="0dp"
+                            android:paddingBottom="0dp"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:text="@string/BUDGETS_ADD_INTERVAL"
+                            android:textSize="12sp"
+                            app:icon="@drawable/ic_add_circle_outline_white_24dp_svg"
+                            app:iconGravity="textStart"
+                            app:iconSize="16dp"
+                            app:iconPadding="4dp"
+                            app:cornerRadius="18dp" />
 
-                <TextView
-                    android:id="@+id/periodlabel"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/BUDGETS_PERIOD" />
+                    </RelativeLayout>
 
-                <TextView
-                    android:id="@+id/periodtextview"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:singleLine="true" />
+                    <!-- Table Column Headers -->
+                    <LinearLayout
+                        android:id="@+id/schedule_table_headers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:paddingStart="12dp"
+                        android:paddingEnd="8dp"
+                        android:paddingTop="6dp"
+                        android:paddingBottom="6dp">
 
-                <ImageButton
-                    android:id="@+id/period_drop_down"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:background="@null"
-                    android:src="@drawable/ic_outline_arrow_drop_down_circle_24"
-                    android:clickable="false"
-                    android:contentDescription="@string/BUDGETS_PERIOD" />
+                        <TextView
+                            android:id="@+id/header_from"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.1"
+                            android:text="@string/BUDGETS_FROM_HEADER"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorSecondary" />
 
-            </LinearLayout>
+                        <TextView
+                            android:id="@+id/header_to"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.1"
+                            android:text="@string/BUDGETS_TO_HEADER"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorSecondary" />
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/list_selector_bg_white"
-                android:baselineAligned="false"
-                android:gravity="center_vertical"
-                android:orientation="horizontal"
-                android:padding="0dp">
+                        <TextView
+                            android:id="@+id/header_amount"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1.2"
+                            android:gravity="end"
+                            android:text="@string/BUDGETS_AMOUNT_HEADER"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorSecondary" />
 
-                <TextView
-                    android:id="@+id/budgetlabel"
-                    android:layout_width="70dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/BUDGETS_AMOUNT" />
+                        <TextView
+                            android:id="@+id/header_reset"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="0.6"
+                            android:gravity="center"
+                            android:text="@string/BUDGETS_ROLLOVER_RESET"
+                            android:textSize="12sp"
+                            android:textStyle="bold"
+                            android:textColor="?android:attr/textColorSecondary"
+                            android:layout_marginStart="4dp" />
 
-                <EditText
-                    android:id="@+id/budgetedittext"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:layout_weight="1.0"
-                    android:gravity="center_vertical"
-                    android:hint="@string/GENERAL_AMOUNT"
-                    android:importantForAutofill="no"
-                    android:inputType="numberDecimal"
-                    android:singleLine="true" />
+                        <!-- Placeholder spacer matching delete button in row -->
+                        <View
+                            android:layout_width="36dp"
+                            android:layout_height="1dp" />
 
-            </LinearLayout>
+                    </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                    <View
+                        android:id="@+id/schedule_table_header_divider"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/common_action_bar_splitter" />
 
-                <TextView
-                    android:id="@+id/includeinbudgetslabel"
-                    android:layout_width="200dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/CATEGORY_INCLUDE_IN_BUDGETS" />
+                    <!-- Schedule Interval Rows Container -->
+                    <LinearLayout
+                        android:id="@+id/schedule_intervals_container"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical" />
 
-                <CheckBox
-                    android:id="@+id/includeinbudgetscheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp" />
+                    <!-- Empty Schedule State -->
+                    <TextView
+                        android:id="@+id/schedule_empty_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="20dp"
+                        android:gravity="center"
+                        android:text="@string/BUDGETS_INACTIVE_GAP"
+                        android:textColor="?android:attr/textColorSecondary"
+                        android:textSize="13sp"
+                        android:visibility="gone" />
 
-            </RelativeLayout>
+                </LinearLayout>
 
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/rolloverlabel"
-                    android:layout_width="200dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/BUDGETS_ROLLOVERS" />
-
-                <CheckBox
-                    android:id="@+id/rollovercheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp" />
-
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/includesubcategorieslabel"
-                    android:layout_width="200dp"
-                    android:layout_height="58dp"
-                    android:layout_marginStart="6dp"
-                    android:layout_marginEnd="10dp"
-                    android:gravity="start|center_vertical"
-                    android:text="@string/BUDGETS_TOTALSUBCATEGORY" />
-
-                <CheckBox
-                    android:id="@+id/includesubcategoriescheckbox"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="10dp" />
-
-            </RelativeLayout>
-
-            <View
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/black_theme_text" />
-
-            <Button
-                android:id="@+id/enablevariablebutton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginEnd="10dp"
-                android:text="@string/BUDGET_ENABLE_VARIABLE" />
-
-            <FrameLayout
-                android:id="@+id/addbudgetcell"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="50dp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:id="@+id/addnewbudgettextview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|end"
-                    android:layout_marginEnd="50dp"
-                    android:text="@string/BUDGETS_NEW" />
-
-                <ImageView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="50dp"
-                    android:contentDescription="@string/BUDGETS_NEW"
-                    android:src="@drawable/ic_add_circle_outline_white_24dp_svg" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/originalhistorycell"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:minHeight="50dp"
-                android:visibility="gone"
-                tools:visibility="visible">
-
-                <TextView
-                    android:id="@+id/originalhistorydate"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start|center_vertical"
-                    android:layout_marginStart="50dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/GENERAL_DATE"
-                    tools:visibility="visible" />
-
-                <TextView
-                    android:id="@+id/originalhistorybudget"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="end|center_vertical"
-                    android:layout_marginEnd="50dp"
-                    android:gravity="center_vertical"
-                    android:text="@string/BUDGETS_AMOUNT"
-                    tools:visibility="visible" />
-
-            </FrameLayout>
-
-            <FrameLayout
-                android:id="@+id/keyboard_spacer_view"
-                android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:visibility="gone"
-                tools:visibility="visible" />
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
 
     </ScrollView>
-
-    <com.example.smmoney.views.CurrencyKeyboard
-        android:id="@+id/keyboardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:focusable="false"
-        android:focusableInTouchMode="false"
-        android:visibility="gone" />
 
 </LinearLayout>

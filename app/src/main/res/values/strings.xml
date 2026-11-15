@@ -598,9 +598,31 @@
     <!--  budget_edit.xml, budget_header_row.xml                             -->
     <!-- =================================================================== -->
     <string name="BUDGETS_TYPE">Budget Type</string>
+    <string name="BUDGETS_INTERVAL">Budget Interval</string>
+    <string name="BUDGETS_SCHEDULE_TITLE">Budget Schedule</string>
+    <string name="BUDGETS_ADD_INTERVAL">Add Interval</string>
+    <string name="BUDGETS_EDIT_INTERVAL">Edit Interval</string>
+    <string name="BUDGETS_FROM_HEADER">From</string>
+    <string name="BUDGETS_TO_HEADER">To</string>
+    <string name="BUDGETS_AMOUNT_HEADER">Amount</string>
+    <string name="BUDGETS_ONGOING">Ongoing</string>
+    <string name="BUDGETS_INACTIVE_GAP">No budget set</string>
+    <string name="BUDGETS_ROLLOVER_RESET">Reset</string>
+    <string name="BUDGETS_ROLLOVER_RESET_LABEL">Reset Rollover from this date</string>
+    <string name="BUDGETS_ROLLOVER_EXPLANATION">Carries forward unspent or overspent funds from interval to interval</string>
+    <string name="BUDGETS_SUB_EXPLANATION">Include transactions in sub-categories under this budget</string>
+    <string name="BUDGETS_INCLUDE_EXPLANATION">Include this category in overall budget calculations</string>
+    <string name="BUDGETS_OVERLAP_CONFIRM_TITLE">Adjust Budget Schedule?</string>
+    <string name="BUDGETS_OVERLAP_PROMPT_HEADER">Applying this interval (%1$s – %2$s) will make the following adjustments to your schedule:</string>
+    <string name="BUDGETS_OVERLAP_ITEM_REMOVED">&#8226; Removed: %1$s – %2$s (%3$s) - superseded</string>
+    <string name="BUDGETS_OVERLAP_ITEM_SHIFTED">&#8226; Shifted: %1$s budget will now start on %2$s (was %3$s)</string>
+    <string name="BUDGETS_OVERLAP_ITEM_PRECEDING">&#8226; Prior budget (%1$s) will now end on %2$s (was %3$s)</string>
+    <string name="BUDGETS_OVERLAP_PROMPT_FOOTER">Do you want to proceed?</string>
+    <string name="BUDGETS_ONGOING_CHECKBOX">Ongoing (No end date)</string>
+    <string name="BUDGETS_START_DATE">Start Date</string>
+    <string name="BUDGETS_END_DATE">End Date</string>
     <string name="BUDGETS_TOTALSUBCATEGORY">Include subcategories</string>
     <string name="BUDGETS_ROLLOVERS">Rollover budgets</string>
-    <string name="BUDGET_ENABLE_VARIABLE">Enable Variable Budget For Category</string>
     <string name="BUDGET_LBL_ACTUAL">Actual</string>
 
     <!-- =================================================================== -->

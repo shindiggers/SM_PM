@@ -67,6 +67,8 @@ public class PocketMoneyRecordClass extends DefaultHandler implements Serializab
         Log.i(SMMoney.TAG, "saveToDataBaseAndUpdateTimeStamp notOverriden");
     }
 
+    // Retained as part of the base record contract for polymorphic record operations.
+    @SuppressWarnings("unused")
     public void deleteFromDatabase() {
         Log.i(SMMoney.TAG, "deleteFromDatabase notOverriden");
     }

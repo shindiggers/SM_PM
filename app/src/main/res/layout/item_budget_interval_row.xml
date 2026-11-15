@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:minHeight="48dp"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="8dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:background="@drawable/list_selector_bg_white">
+
+    <!-- From Date -->
+    <TextView
+        android:id="@+id/interval_from_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.1"
+        android:textSize="13sp"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="01/01/2026" />
+
+    <!-- To Date -->
+    <TextView
+        android:id="@+id/interval_to_date"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.1"
+        android:textSize="13sp"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="Ongoing" />
+
+    <!-- Amount -->
+    <TextView
+        android:id="@+id/interval_amount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:gravity="end"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        android:textColor="?android:attr/textColorPrimary"
+        tools:text="£5,000.00" />
+
+    <!-- Rollover reset indicator / icon -->
+    <FrameLayout
+        android:id="@+id/interval_reset_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.6"
+        android:layout_marginStart="4dp">
+
+        <ImageView
+            android:id="@+id/interval_reset_tag"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:contentDescription="@string/BUDGETS_ROLLOVER_RESET"
+            android:src="@drawable/ic_check_circle_24dp"
+            android:visibility="gone"
+            tools:visibility="visible" />
+    </FrameLayout>
+
+    <!-- Delete button -->
+    <ImageButton
+        android:id="@+id/interval_delete_button"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:background="?android:attr/selectableItemBackgroundBorderless"
+        android:contentDescription="@string/GENERAL_DELETE"
+        android:src="@drawable/ic_delete_white_24dp"
+        android:scaleType="centerInside" />
+
+</LinearLayout>
