@@ -48,7 +48,12 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private final ActivityResultLauncher<Intent> typeLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (result.getResultCode() != 0 && result.getData() != null) {
             String selection = result.getData().getStringExtra("selection");
-            this.type.setText(selection);
+            if (selection != null) {
+                this.type.setText(selection);
+                this.account.setTypeFromString(selection);
+                updateLimitLabel();
+                setupCreditCardSpinners();
+            }
         }
     });
 
@@ -102,6 +107,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private Spinner ccDueOffsetSpinner;
     private FrameLayout keyboardToolbar;
     private EditText limit;
+    private TextView limitLabel;
     private TextView notes;
     private EditText phone;
     private CheckBox totalworth;
@@ -270,6 +276,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.fee = findViewById(R.id.fee);
         this.feeTypeSpinner = findViewById(R.id.fee_type_spinner);
         this.limit = findViewById(R.id.limit);
+        this.limitLabel = findViewById(R.id.account_limit_label);
         this.checkNumber = findViewById(R.id.checknumber);
         this.notes = findViewById(R.id.notestextview);
         this.currency = findViewById(R.id.currency_edit_text);
@@ -321,6 +328,17 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         
         this.iconResourceID = this.account.getIconFileNameResourceIDUsingContext(this);
         this.icon.setImageResource(this.iconResourceID);
+        updateLimitLabel();
+    }
+
+    private void updateLimitLabel() {
+        if (this.limitLabel != null) {
+            if (this.account.isCreditType()) {
+                this.limitLabel.setText(R.string.ACCOUNT_CREDITLIMIT_LABEL);
+            } else {
+                this.limitLabel.setText(R.string.ACCOUNT_MINBALANCE_LABEL);
+            }
+        }
     }
 
     private void setupFeeTypeSpinner() {

@@ -138,14 +138,6 @@ public class Enums {
 
     public static final int kFilterCurrentAccountID = -2;
 
-    public static final int kModifyEitherEnd = 2;
-    public static final int kModifyOtherEndOnly = 0;
-    public static final int kModifyThisEndOnly = 1;
-
-    public static final int kReportDisplayAmount = 0;
-    public static final int kReportDisplayCount = 2;
-    public static final int kReportDisplayPercentage = 1;
-
     public static final int kReportPeriodAll = 5;
     public static final int kReportPeriodOneMonth = 0;
     public static final int kReportPeriodOneYear = 4;

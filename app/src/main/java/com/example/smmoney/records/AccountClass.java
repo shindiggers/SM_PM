@@ -663,7 +663,12 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         };
     }
 
-    private boolean hasLimit() {
+    public boolean isCreditType() {
+        int t = getType();
+        return t == Enums.kAccountTypeCreditCard || t == Enums.kAccountTypeCreditLine || t == Enums.kAccountTypeLiability;
+    }
+
+    public boolean hasLimit() {
         return !getNoLimit();
     }
 

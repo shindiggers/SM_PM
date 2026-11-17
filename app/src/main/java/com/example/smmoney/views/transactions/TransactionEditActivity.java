@@ -939,10 +939,52 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         if (transaction.getAccount() == null || transaction.getAccount().isEmpty()) {
             showNeedAccountDialog();
         } else if (!transaction.isRepeatingTransaction || repeatingTransaction.isRepeating()) {
-            checkRepeatingSeriesChangeBeforeSave();
+            checkBalanceLimitBeforeSave();
         } else {
             showNeedRepeatingDialog();
         }
+    }
+
+    private void checkBalanceLimitBeforeSave() {
+        if (!this.isEditingRepeatingTemplate && !this.transaction.isRepeatingTransaction && this.transaction.getType() != Enums.kTransactionTypeRepeating) {
+            AccountClass acct = AccountDB.recordFor(this.transaction.getAccount());
+            if (acct != null && acct.hasLimit()) {
+                double projectedBal = calculateProjectedAccountBalance(acct);
+                if (acct.balanceExceedsLimitWithRunningBalance(projectedBal)) {
+                    String title;
+                    String message;
+                    String formattedLimit = acct.limitAsString();
+                    if (acct.isCreditType()) {
+                        title = getString(R.string.OVERLIMIT_ALERT_TITLE);
+                        message = getString(R.string.OVERLIMIT_ALERT_BODY, formattedLimit, acct.getAccount());
+                    } else {
+                        title = getString(R.string.OVERDRAWN_ALERT_TITLE);
+                        message = getString(R.string.OVERDRAWN_ALERT_BODY, acct.getAccount(), formattedLimit);
+                    }
+                    new androidx.appcompat.app.AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                            .setTitle(title)
+                            .setMessage(message)
+                            .setPositiveButton(R.string.GENERAL_SAVE, (dialog, which) -> checkRepeatingSeriesChangeBeforeSave())
+                            .setNegativeButton(R.string.GENERAL_CANCEL, null)
+                            .show();
+                    return;
+                }
+            }
+        }
+        checkRepeatingSeriesChangeBeforeSave();
+    }
+
+    private double calculateProjectedAccountBalance(@NonNull AccountClass acct) {
+        double currentBal = acct.balanceAsOfDate(new GregorianCalendar());
+        double originalSubTotal = 0.0d;
+        if (this.transaction.getTransactionID() != 0) {
+            TransactionClass original = new TransactionClass(this.transaction.getTransactionID());
+            original.hydrate();
+            if (Objects.equals(original.getAccount(), this.transaction.getAccount())) {
+                originalSubTotal = original.getSubTotal();
+            }
+        }
+        return currentBal - originalSubTotal + this.transaction.getSubTotal();
     }
 
     private void checkRepeatingSeriesChangeBeforeSave() {

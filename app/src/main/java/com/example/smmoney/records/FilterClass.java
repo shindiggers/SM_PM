@@ -522,7 +522,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
                 if (accountVal != null && !accountVal.isEmpty()) {
                     try {
                         int acctID = Integer.parseInt(accountVal);
-                        if (acctID == -2) {
+                        if (acctID == Enums.kFilterCurrentAccountID) {
                             setAccount(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT));
                         } else {
                             setAccount(AccountClass.accountForID(acctID));
@@ -658,7 +658,7 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
             } else {
                 int acctID = AccountClass.idForAccount(this.account);
                 if (this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT))) {
-                    acctID = -2;
+                    acctID = Enums.kFilterCurrentAccountID;
                 }
                 content.put("accountID", acctID);
             }
