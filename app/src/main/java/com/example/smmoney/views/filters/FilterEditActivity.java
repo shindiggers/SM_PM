@@ -235,8 +235,8 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.classesTextView = findViewById(R.id.filtereditclasses);
         this.keyboardToolbar = findViewById(R.id.keyboard_toolbar);
         this.filterNameEditText.setText(this.filter.getFilterName());
-        this.payeeEditText.setText(this.filter.getPayee());
-        this.idEditText.setText(this.filter.getCheckNumber());
+        this.payeeEditText.setText((this.filter.getPayee() == null || this.filter.getPayee().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES) : this.filter.getPayee());
+        this.idEditText.setText((this.filter.getCheckNumber() == null || this.filter.getCheckNumber().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS) : this.filter.getCheckNumber());
         this.transactionTypeTextView.setText(this.filter.typeAsString());
         TextView textView = this.accountsTextView;
         CharSequence account = (this.filter.getAccount() == null || this.filter.getAccount().isEmpty()) ? SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS) : this.filter.getAccount();
@@ -260,6 +260,12 @@ public class FilterEditActivity extends PocketMoneyActivity {
         this.filter.setClearedFromString(this.clearedTextView.getText().toString());
         this.filter.setCategory(this.categoriesTextView.getText().toString());
         this.filter.setClassName(this.classesTextView.getText().toString());
+        if (this.filter.getPayee().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES))) {
+            this.filter.setPayee("");
+        }
+        if (this.filter.getCheckNumber().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS))) {
+            this.filter.setCheckNumber("");
+        }
         if (this.filter.getCategory().equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
             this.filter.setCategory("");
         }

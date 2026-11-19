@@ -186,7 +186,8 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_DAILY),
                 SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_WEEKLY),
                 SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_MONTHLY),
-                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY)
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARLY),
+                SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_ONCE)
         };
     }
 

@@ -27,6 +27,7 @@ import androidx.core.os.ConfigurationCompat;
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.CurrencyPickerDialog;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
@@ -176,14 +177,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         v = findViewById(R.id.notes_row);
         v.setTag(3);
         v.setOnClickListener(getBtnClickListener());
-        findViewById(R.id.currency_row).setOnClickListener(v1 -> {
-            final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-            new AlertDialog.Builder(AccountsEditActivity.this, PocketMoneyThemes.dialogTheme()).setItems(currencyCodes, (dialog, item) -> {
-                AccountsEditActivity.this.currency.setText(currencyCodes[item].substring(0, 3));
-                dialog.dismiss();
-                new Thread(() -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCodes[item].substring(0, 3), Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).start();
-            }).show();
-        });
+        findViewById(R.id.currency_row).setOnClickListener(v1 ->
+            CurrencyPickerDialog.show(getSupportFragmentManager(), (currencyCode, displayText) -> {
+                AccountsEditActivity.this.currency.setText(currencyCode);
+                AccountsEditActivity.this.account.setCurrencyCode(currencyCode);
+                updateCurrencyDependentFields();
+                new Thread(() -> new ExchangeRateClass(false, AccountsEditActivity.this).lookupExchangeRate(currencyCode, Prefs.getStringPref(Prefs.HOMECURRENCYCODE), null)).start();
+            })
+        );
 
         this.keyboardToolbar.setBackgroundResource(PocketMoneyThemes.currentTintDrawable());
         ScrollView sv = findViewById(R.id.scroll_view);
@@ -367,6 +368,49 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         });
     }
 
+    private void updateCurrencyDependentFields() {
+        // 1. Fee field & hint
+        boolean isPercent = this.feeTypeSpinner != null && this.feeTypeSpinner.getSelectedItemPosition() == 1;
+        if (this.feeTypeSpinner != null) {
+            this.account.setFixedPercent(isPercent ? Enums.kFeeTypePercent : Enums.kFeeTypeFixed);
+        }
+        updateFeeHintAndDisplay(isPercent);
+
+        // 2. Round To field & hint
+        if (this.keepTheChangeRoundToEditText != null) {
+            String currentRoundText = this.keepTheChangeRoundToEditText.getText().toString().trim();
+            double roundVal = this.account.getKeepChangeRoundTo();
+            if (!currentRoundText.isEmpty()) {
+                double parsed = CurrencyExt.amountFromString(currentRoundText);
+                if (parsed != 0.0d) {
+                    roundVal = parsed;
+                }
+            }
+            this.account.setKeepChangeRoundTo(roundVal);
+            this.keepTheChangeRoundToEditText.setHint(this.account.formatAmountAsCurrency(0.0d));
+            if (!currentRoundText.isEmpty() && roundVal != 0.0d) {
+                this.keepTheChangeRoundToEditText.setText(this.account.formatAmountAsCurrency(roundVal));
+            }
+        }
+
+        // 3. Limit field & hint
+        if (this.limit != null && !this.account.getNoLimit()) {
+            String currentLimitText = this.limit.getText().toString().trim();
+            double limitVal = this.account.getLimit();
+            if (!currentLimitText.isEmpty()) {
+                double parsed = CurrencyExt.amountFromString(currentLimitText);
+                if (parsed != 0.0d) {
+                    limitVal = parsed;
+                }
+            }
+            this.account.setLimit(limitVal);
+            this.limit.setHint(this.account.formatAmountAsCurrency(0.0d));
+            if (!currentLimitText.isEmpty() && limitVal != 0.0d) {
+                this.limit.setText(this.account.formatAmountAsCurrency(limitVal));
+            }
+        }
+    }
+
     private void updateFeeHintAndDisplay(boolean isPercent) {
         String currentText = this.fee.getText().toString().trim();
         if (isPercent) {
@@ -383,11 +427,16 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             }
         } else {
             this.fee.setHint(this.account.formatAmountAsCurrency(0.0d));
+            double val = this.account.getFee();
             if (!currentText.isEmpty()) {
-                double val = CurrencyExt.amountFromString(currentText);
-                if (val != 0.0d) {
-                    this.fee.setText(this.account.formatAmountAsCurrency(val));
+                double parsed = CurrencyExt.amountFromString(currentText);
+                if (parsed != 0.0d) {
+                    val = parsed;
                 }
+            }
+            this.account.setFeeFromString(this.account.formatAmountAsCurrency(val));
+            if (val != 0.0d || !currentText.isEmpty()) {
+                this.fee.setText(this.account.formatAmountAsCurrency(val));
             }
         }
     }

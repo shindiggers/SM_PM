@@ -34,6 +34,7 @@ import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.records.AccountClass;
+import com.example.smmoney.records.CategoryBudgetClass;
 import com.example.smmoney.records.CategoryClass;
 import com.example.smmoney.records.ClassNameClass;
 import com.example.smmoney.records.FilterClass;
@@ -256,6 +257,8 @@ public class LookupsListActivity extends PocketMoneyActivity {
         return item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS)) ||
                item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES)) ||
                item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES)) ||
+               item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES)) ||
+               item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS)) ||
                item.equals(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT));
     }
 
@@ -282,8 +285,11 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 this.theStrings = ClassNameClass.allClassNamesInDatabase();
                 break;
             case ID_LOOKUP /*7*/:
+                this.theStrings = IDClass.allCategoriesInDatabase();
+                break;
             case FILTER_IDS /*12*/:
                 this.theStrings = IDClass.allCategoriesInDatabase();
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS));
                 break;
             case FILTER_TRANSACTION_TYPE /*8*/:
                 this.theStrings = FilterClass.transactionTypes();
@@ -301,7 +307,9 @@ public class LookupsListActivity extends PocketMoneyActivity {
                 }
                 break;
             case FILTER_PAYEES /*11*/:
+                alphabetList = true;
                 this.theStrings = PayeeClass.allPayeesInDatabase();
+                this.theStrings.add(0, SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES));
                 break;
             case FILTER_CLEARED /*13*/:
                 this.theStrings = FilterClass.clearedTypes();
@@ -435,7 +443,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
             return this.isMultiSelect;
         }
         int MENU_ADD = 1;
-        menu.add(0, MENU_ADD, 0, R.string.TRANSACTION_NEW).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+        menu.add(0, MENU_ADD, 0, R.string.LOOKUPS_NEW_ITEM).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg).setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
 
@@ -459,7 +467,7 @@ public class LookupsListActivity extends PocketMoneyActivity {
         final int theItem = this.currentType;
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
         final EditText input = new EditText(this);
-        alert.setTitle(R.string.TRANSACTION_NEW);
+        alert.setTitle(R.string.LOOKUPS_NEW_ITEM);
         alert.setView(input);
         alert.setPositiveButton(R.string.GENERAL_OK, (dialog, whichButton) -> {
             String value = input.getText().toString().trim();
@@ -566,6 +574,23 @@ public class LookupsListActivity extends PocketMoneyActivity {
 
     private void deleteItem(int position) {
         String value = this.theStrings.get(position);
+        if (this.currentType == CATEGORY_LOOKUP) {
+            CategoryClass category = new CategoryClass(CategoryClass.idForCategory(value));
+            if (category.hasBudget()) {
+                new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
+                        .setTitle(R.string.GENERAL_DELETE)
+                        .setMessage(R.string.CATEGORY_DELETE_HAS_BUDGET_BODY)
+                        .setPositiveButton(R.string.GENERAL_DELETE, (dialog, which) -> {
+                            category.deleteFromDatabase();
+                            CategoryBudgetClass.deleteCategoryBudgetItemsForCateory(value);
+                            reloadData();
+                        })
+                        .setNegativeButton(R.string.GENERAL_CANCEL, null)
+                        .show();
+                return;
+            }
+        }
+
         new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
                 .setTitle(R.string.GENERAL_DELETE)
                 .setMessage((R.string.GENERAL_DELETE) + " '" + value + "'?")

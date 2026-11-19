@@ -160,6 +160,14 @@ public class CategoryClass extends PocketMoneyRecordClass implements Serializabl
         return this.budgetLimit;
     }
 
+    public boolean hasBudget() {
+        hydrate();
+        if (this.budgetLimit != 0.0d) {
+            return true;
+        }
+        return !CategoryBudgetClass.budgetItemsForCategory(this.category).isEmpty();
+    }
+
     public void setBudgetLimit(double budgetLimit) {
         if (this.budgetLimit != budgetLimit) {
             this.dirty = true;

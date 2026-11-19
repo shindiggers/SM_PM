@@ -321,6 +321,9 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
             case Enums.repeatYearly /*4*/:
                 this.suffix = SMMoney.getAppContext().getString(R.string.REPEATING_FREQUENCY_YEARS);
                 break;
+            case Enums.repeatingOnce /*5*/:
+                this.suffix = "";
+                break;
         }
         this.suffixTextView.setText(this.suffix);
         this.endOnTextView.setText(this.repeatingTransaction.getEndDate() != null ? CalExt.descriptionWithMediumDate(this.repeatingTransaction.getEndDate()) : SMMoney.getAppContext().getString(R.string.EDIT_REPEATING_ENDONNONE));
@@ -341,8 +344,10 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
         switch (this.repeatingTransaction.getType()) {
             case Enums.repeatDaily /*1*/:
             case Enums.repeatYearly /*4*/:
+            case Enums.repeatingOnce /*5*/:
                 break;
             case Enums.repeatWeekly /*2*/:
+                this.repeatOnTextView.setText(R.string.EDIT_REPEATING_WEEKLYREPEATON);
                 saturday = View.VISIBLE /*0*/;
                 friday = View.VISIBLE /*0*/;
                 thursday = View.VISIBLE /*0*/;
@@ -353,6 +358,8 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                 repeaton = View.VISIBLE /*0*/;
                 break;
             case Enums.repeatMonthly /*3*/:
+                this.repeatOnTextView.setText(R.string.EDIT_REPEATING_MONTHLYREPEATON);
+                repeaton = View.VISIBLE /*0*/;
                 View check = null;
                 boolean alreadyChecked = false;
                 //every = View.VISIBLE /*0*/; TEMP CODED OUT AS JETBRAINS SAYS NOT NEEDED
@@ -396,8 +403,13 @@ public class RepeatingEditActivity extends PocketMoneyActivity {
                     break;
                 }
         }
-        every = View.VISIBLE /*0*/;
-        endon = View.VISIBLE /*0*/;
+        if (this.repeatingTransaction.getType() == Enums.repeatingOnce /*5*/) {
+            every = View.GONE;
+            endon = View.GONE;
+        } else {
+            every = View.VISIBLE /*0*/;
+            endon = View.VISIBLE /*0*/;
+        }
         notify = View.VISIBLE /*0*/;
         findViewById(R.id.row_notify).setVisibility(notify);
         findViewById(R.id.row_every).setVisibility(every);

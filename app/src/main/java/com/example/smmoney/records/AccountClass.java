@@ -306,7 +306,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.url;
     }
 
-    private void setFee(double amount) {
+    public void setFee(double amount) {
         if (this.fee != amount) {
             this.dirty = true;
             this.fee = amount;
@@ -337,7 +337,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.keepChangeRoundTo;
     }
 
-    private void setKeepChangeRoundTo(double aKeepChangeRoundTo) {
+    public void setKeepChangeRoundTo(double aKeepChangeRoundTo) {
         if (this.keepChangeRoundTo != aKeepChangeRoundTo) {
             this.dirty = true;
             this.keepChangeRoundTo = aKeepChangeRoundTo;

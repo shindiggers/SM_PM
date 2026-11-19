@@ -17,6 +17,7 @@ import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.PMGlobal;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
@@ -322,6 +323,32 @@ public class AccountRecyclerViewAdapter extends RecyclerView.Adapter<RecyclerVie
 
             selected.setOnCheckedChangeListener((buttonView, isChecked) -> {
                 if (!PMGlobal.programaticUpdate) {
+                    if (!isChecked && Prefs.getIntPref(Prefs.VIEWACCOUNTS) == Enums.kViewAccountsTotalWorth) {
+                        new androidx.appcompat.app.AlertDialog.Builder(mContext, PocketMoneyThemes.dialogTheme())
+                                .setMessage(R.string.ACCOUNTS_TOGGLE_TOTALWORTH_OFF)
+                                .setPositiveButton(R.string.GENERAL_OK, (dialog, which) -> {
+                                    account.setTotalWorth(false);
+                                    account.saveToDatabase();
+                                    if (mContext instanceof AccountsActivity) {
+                                        ((AccountsActivity) mContext).clearBalanceCache();
+                                        ((AccountsActivity) mContext).reloadBalanceBar();
+                                        ((AccountsActivity) mContext).reloadCharts();
+                                        ((AccountsActivity) mContext).reloadData();
+                                    }
+                                })
+                                .setNegativeButton(R.string.GENERAL_CANCEL, (dialog, which) -> {
+                                    PMGlobal.programaticUpdate = true;
+                                    buttonView.setChecked(true);
+                                    PMGlobal.programaticUpdate = false;
+                                })
+                                .setOnCancelListener(dialog -> {
+                                    PMGlobal.programaticUpdate = true;
+                                    buttonView.setChecked(true);
+                                    PMGlobal.programaticUpdate = false;
+                                })
+                                .show();
+                        return;
+                    }
                     account.setTotalWorth(isChecked);
                     account.saveToDatabase();
                     if (mContext instanceof AccountsActivity) {

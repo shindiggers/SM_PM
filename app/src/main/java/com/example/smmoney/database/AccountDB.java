@@ -125,16 +125,4 @@ public class AccountDB {
             }
         }
     }
-
-    public static String[] usedCurrencyCodes() {
-        ArrayList<String> codes = new ArrayList<>();
-        Cursor c = Database.rawQuery("SELECT DISTINCT currencyCode FROM splits UNION SELECT DISTINCT currencyCode FROM accounts", null);
-        while (c.moveToNext()) {
-            codes.add(c.getString(0));
-        }
-        String[] retVal = new String[codes.size()];
-        codes.toArray(retVal);
-        c.close();
-        return retVal;
-    }
 }

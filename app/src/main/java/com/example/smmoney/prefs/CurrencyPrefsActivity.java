@@ -2,26 +2,19 @@ package com.example.smmoney.prefs;
 
 import android.os.Bundle;
 
-import android.util.Log;
-
 import androidx.preference.CheckBoxPreference;
-import androidx.preference.ListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.Database;
-import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.CurrencyPickerDialog;
 import com.example.smmoney.misc.PocketMoneyThemes;
 import com.example.smmoney.misc.Prefs;
 import com.example.smmoney.views.PocketMoneyPreferenceActivity;
 
-import java.util.ArrayList;
-import java.util.Currency;
-
 public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
-    private ListPreference listPref;
     private CheckBoxPreference multipleCurrencyPref;
 
     @Override
@@ -39,36 +32,28 @@ public class CurrencyPrefsActivity extends PocketMoneyPreferenceActivity {
     }
 
     private void setupPrefs(PreferenceFragmentCompat fragment) {
-        String[] codeList = CurrencyExt.getCurrencies();
-        ArrayList<String> nameList = new ArrayList<>();
-        ArrayList<String> codeNameList = new ArrayList<>();
-        this.listPref = fragment.findPreference(Prefs.HOMECURRENCYCODE);
+        Preference homeCurrencyPref = fragment.findPreference(Prefs.HOMECURRENCYCODE);
         this.multipleCurrencyPref = fragment.findPreference(Prefs.MULTIPLECURRENCIES);
         if (this.multipleCurrencyPref != null) {
             this.multipleCurrencyPref.setOnPreferenceChangeListener(getChangeListener());
         }
-        for (String loc : codeList) {
-            try {
-                nameList.add(Currency.getInstance(loc).getCurrencyCode() + " - " + Currency.getInstance(loc).getSymbol());
-                codeNameList.add(Currency.getInstance(loc).getCurrencyCode());
-            } catch (IllegalArgumentException e) {
-                Log.e(com.example.smmoney.SMMoney.TAG, "IllegalArgumentException in setupPrefs for loc: " + loc, e);
-            }
-        }
-        if (this.listPref != null) {
-            this.listPref.setEntries(nameList.toArray(new String[1]));
-            this.listPref.setEntryValues(codeNameList.toArray(new String[1]));
-            this.listPref.setOnPreferenceChangeListener(getChangeListener());
-            this.listPref.setSummary(this.listPref.getValue());
+        if (homeCurrencyPref != null) {
+            String currentHomeCurrency = Prefs.getStringPref(Prefs.HOMECURRENCYCODE);
+            homeCurrencyPref.setSummary(currentHomeCurrency.trim().isEmpty() ? "USD" : currentHomeCurrency);
+            homeCurrencyPref.setOnPreferenceClickListener(preference -> {
+                CurrencyPickerDialog.show(getSupportFragmentManager(), (currencyCode, displayText) -> {
+                    Prefs.setPref(Prefs.HOMECURRENCYCODE, currencyCode);
+                    Database.setHomeCurrency(currencyCode);
+                    preference.setSummary(currencyCode);
+                });
+                return true;
+            });
         }
     }
 
     private Preference.OnPreferenceChangeListener getChangeListener() {
         return (preference, newValue) -> {
-            if (preference.equals(CurrencyPrefsActivity.this.listPref)) {
-                Database.setHomeCurrency((String) newValue);
-                preference.setSummary((String) newValue);
-            } else if (preference.equals(CurrencyPrefsActivity.this.multipleCurrencyPref)) {
+            if (preference.equals(CurrencyPrefsActivity.this.multipleCurrencyPref)) {
                 Database.setMultipleCurrencies((Boolean) newValue);
             }
             return true;

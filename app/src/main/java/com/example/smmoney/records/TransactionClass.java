@@ -825,7 +825,8 @@ public class TransactionClass extends PocketMoneyRecordClass implements Serializ
             long currentTimeMillis = (updateTimeStamp || this.timestamp == null) ? System.currentTimeMillis() / 1000 : this.timestamp.getTimeInMillis() / 1000;
             content.put(str, currentTimeMillis);
             content.put("type", this.type);
-            content.put("date", this.date.getTimeInMillis() / 1000);
+            long dateSeconds = this.date != null ? this.date.getTimeInMillis() / 1000 : System.currentTimeMillis() / 1000;
+            content.put("date", dateSeconds);
             content.put("cleared", this.cleared);
             content.put("accountID", id);
             content.put("payee", this.payee != null ? this.payee : "");

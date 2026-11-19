@@ -35,10 +35,22 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             if (holder != null && holder.repeatingTransaction != null) {
                 holder.repeatingTransaction.hydrated = false;
                 if (holder.repeatingTransaction.getTransaction() != null) {
+                    // Determine the date to post
+                    GregorianCalendar postDate = null;
+                    if (holder.repeatingTransaction.lastProcessedDate != null) {
+                        postDate = holder.repeatingTransaction.getNextTransactionDateAfter(holder.repeatingTransaction.lastProcessedDate);
+                    }
+                    if (postDate == null) {
+                        postDate = holder.repeatingTransaction.getTransaction().getDate();
+                    }
+                    if (postDate == null) {
+                        postDate = new GregorianCalendar();
+                    }
+
                     // Post the transaction immediately
                     holder.repeatingTransaction.postAndAdvanceTransaction(
                             holder.repeatingTransaction.getTransaction().getSubTotal(),
-                            holder.repeatingTransaction.getNextTransactionDateAfter(holder.repeatingTransaction.lastProcessedDate)
+                            postDate
                     );
                     holder.repeatingTransaction.saveToDatabase();
                     
@@ -65,11 +77,23 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
         this.elements.sort((object1, object2) -> {
             RepeatingTransactionClass rt1 = new RepeatingTransactionClass(object1);
             rt1.hydrate();
-            GregorianCalendar next1 = rt1.getNextTransactionDateAfter(rt1.lastProcessedDate);
+            GregorianCalendar next1 = null;
+            if (rt1.lastProcessedDate != null) {
+                next1 = rt1.getNextTransactionDateAfter(rt1.lastProcessedDate);
+            }
+            if (next1 == null) {
+                next1 = object1.getDate();
+            }
 
             RepeatingTransactionClass rt2 = new RepeatingTransactionClass(object2);
             rt2.hydrate();
-            GregorianCalendar next2 = rt2.getNextTransactionDateAfter(rt2.lastProcessedDate);
+            GregorianCalendar next2 = null;
+            if (rt2.lastProcessedDate != null) {
+                next2 = rt2.getNextTransactionDateAfter(rt2.lastProcessedDate);
+            }
+            if (next2 == null) {
+                next2 = object2.getDate();
+            }
 
             if (next1 == null && next2 == null) return 0;
             if (next1 == null) return 1;
@@ -146,7 +170,17 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             this.repeatingTransaction = new RepeatingTransactionClass(this.transaction);
             this.repeatingTransaction.hydrate();
 
-            GregorianCalendar dateOfNextRepeat = this.repeatingTransaction.getNextTransactionDateAfter(this.repeatingTransaction.lastProcessedDate);
+            GregorianCalendar dateOfNextRepeat = null;
+            if (this.repeatingTransaction.lastProcessedDate != null) {
+                dateOfNextRepeat = this.repeatingTransaction.getNextTransactionDateAfter(this.repeatingTransaction.lastProcessedDate);
+            }
+            if (dateOfNextRepeat == null) {
+                dateOfNextRepeat = this.transaction.getDate();
+            }
+            if (dateOfNextRepeat == null) {
+                dateOfNextRepeat = new GregorianCalendar();
+            }
+
             GregorianCalendar today = CalExt.beginningOfToday();
             GregorianCalendar cutoff7Days = CalExt.endOfDay(CalExt.addDays((GregorianCalendar) today.clone(), 7));
 

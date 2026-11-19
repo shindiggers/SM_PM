@@ -449,7 +449,7 @@ public class AccountsActivity extends PocketMoneyActivity implements
     }
 
     @SuppressLint("NotifyDataSetChanged")
-    private void reloadData() {
+    public void reloadData() {
         this.adapter.setElements(AccountDB.queryOnViewType(Prefs.getIntPref(Prefs.VIEWACCOUNTS)));
         // notifyDataSetChanged is appropriate here as queryOnViewType re-queries and replaces
         // the entire list of accounts from the database (e.g. on view filter, balance update, or preference change).
@@ -1225,8 +1225,8 @@ public class AccountsActivity extends PocketMoneyActivity implements
 
     private void backupToSD() {
         AlertDialog.Builder alert = new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme());
-        alert.setTitle(SMMoney.getAppContext().getString(R.string.TOOLS_BACKUP_SD));
-        alert.setMessage("This will backup your database to Downloads/PocketMoneyBackup/SMMoneyDB.sql");
+        alert.setTitle(R.string.TOOLS_BACKUP_SD);
+        alert.setMessage(R.string.TRANSFERS_BACKUPFILE_INFO);
         alert.setPositiveButton(SMMoney.getAppContext().getString(R.string.GENERAL_OK), (dialog, whichButton) -> {
             String pmExternalPath = SMMoney.getExternalPocketMoneyDirectory();
             File src = new File(Environment.getDataDirectory() + "/data/" + getPackageName() + "/databases/SMMoneyDB.sql");

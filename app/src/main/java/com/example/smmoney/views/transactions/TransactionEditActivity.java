@@ -399,9 +399,12 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         this.transaction.dirty = false;
         
         if (getSupportActionBar() != null) {
-            int titleRes = this.isEditingRepeatingTemplate
-                    ? R.string.EDIT_REPEATING_TITLE
-                    : R.string.EDIT_TRANSACTION_TITLE;
+            int titleRes;
+            if (this.isEditingRepeatingTemplate) {
+                titleRes = isNew ? R.string.REPEATING_NEW_TITLE : R.string.EDIT_REPEATING_TITLE;
+            } else {
+                titleRes = isNew ? R.string.TRANSACTION_NEW : R.string.EDIT_TRANSACTION_TITLE;
+            }
             getSupportActionBar().setTitle(titleRes);
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -1072,6 +1075,13 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
 
     private void saveAction(boolean updateSeries, boolean cascadeSubsequent) {
+        if (this.isEditingRepeatingTemplate || (this.repeatingTransaction != null && this.repeatingTransaction.getType() == Enums.repeatingOnce)) {
+            // When editing/creating a template directly from the RT screen, or when configured as Repeat Once,
+            // we do NOT save a live transaction to the ledger. We only save the scheduled repeating template.
+            saveRepeatingTransaction();
+            return;
+        }
+
         TransactionClass originalRecord = new TransactionClass(this.transaction.getTransactionID());
 
         // Always save the current transaction to the register first.
@@ -1450,7 +1460,7 @@ public class TransactionEditActivity extends PocketMoneyActivity {
 
     private void showNeedRepeatingDialog() {
         new Builder(this, PocketMoneyThemes.dialogTheme())
-                .setMessage("How often this transaction repeats must be entered before you can save a repeating transaction.")
+                .setMessage(R.string.EDIT_TRANSACTION_MISSINGREPEATING)
                 .setPositiveButton(R.string.GENERAL_OK, null).show();
     }
 
@@ -1516,8 +1526,15 @@ public class TransactionEditActivity extends PocketMoneyActivity {
         boolean isNewSeries = (this.repeatingTransaction.repeatingID == 0);
         
         if (isNewSeries) {
-            // NEW SERIES: Mark today's date as processed so the engine starts in the future
-            this.repeatingTransaction.setLastProcessedDate(this.transaction.getDate());
+            if (this.isEditingRepeatingTemplate || this.repeatingTransaction.getType() == Enums.repeatingOnce) {
+                // Scheduled template: the occurrence has NOT yet been posted to the ledger,
+                // so do not mark today/target date as processed.
+                this.repeatingTransaction.setLastProcessedDate(null);
+            } else {
+                // Created from regular transaction register: this occurrence was saved to the ledger just now,
+                // so mark it as processed so recurrence starts in the future.
+                this.repeatingTransaction.setLastProcessedDate(this.transaction.getDate());
+            }
         } else {
             ((NotificationManager) getSystemService(NOTIFICATION_SERVICE)).cancel(this.repeatingTransaction.repeatingID);
         }
@@ -1567,7 +1584,9 @@ public class TransactionEditActivity extends PocketMoneyActivity {
             this.repeatingTransaction.saveToDatabase();
             this.repeatingTransaction.setupNotification(getApplicationContext());
 
-            if (isNewSeries) {
+            // Only run automatic background posting if creating from regular register,
+            // or if not Repeat Once (so we don't immediately consume a newly created unposted RT).
+            if (isNewSeries && !this.isEditingRepeatingTemplate && this.repeatingTransaction.getType() != Enums.repeatingOnce) {
                 TransactionDB.addRepeatingTransactions();
             }
         }

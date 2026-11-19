@@ -88,6 +88,7 @@ public class Prefs {
     private static final String HINT_VIDEOS = "hC"; // whether this hint shows? Type: Likely boolean
     public static final String HINT_WELCOME = "h1"; // whether this hint shows? Type: Likely boolean
     public static final String HOMECURRENCYCODE = "prefscurrencyhomecurrency"; // Home curr code (3 digit). Type: String
+    public static final String RECENT_CURRENCY_CODES = "prefscurrencyrecentcurrencies"; // Comma-separated recently used currency codes
     public static final String LASTFULLEXPORT = "lastFllExport";
     public static final String LAST_UPGRADE_DIALOG = "lastupgradedialog";
     public static final String MULTIPLECURRENCIES = "prefscurrencymultiplecurrencies"; // multi curr. Tpye: boolean

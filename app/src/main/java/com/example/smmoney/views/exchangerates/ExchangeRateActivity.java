@@ -15,13 +15,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.OnBackPressedCallback;
-import androidx.appcompat.app.AlertDialog;
 import androidx.transition.TransitionManager;
 
 import com.example.smmoney.R;
 import com.example.smmoney.SMMoney;
 import com.example.smmoney.database.AccountDB;
 import com.example.smmoney.misc.CurrencyExt;
+import com.example.smmoney.misc.CurrencyPickerDialog;
 import com.example.smmoney.misc.Enums;
 import com.example.smmoney.misc.ExchangeRateCallbackInterface;
 import com.example.smmoney.misc.ExchangeRateClass;
@@ -320,13 +320,11 @@ public class ExchangeRateActivity extends PocketMoneyActivity implements Exchang
     }
 
     private void openCurrencyPicker() {
-        final String[] currencyCodes = CurrencyExt.getCurrenciesWithSymbols();
-        new AlertDialog.Builder(this, PocketMoneyThemes.dialogTheme())
-                .setItems(currencyCodes, (dialog, item) -> {
-                    this.foreignCurrency = currencyCodes[item].substring(0, 3);
-                    loadCells(); // Update labels immediately
-                    if (currentCalculatedField != CalculatedField.RATE) fetchHistoricalRate();
-                }).show();
+        CurrencyPickerDialog.show(getSupportFragmentManager(), (currencyCode, displayText) -> {
+            this.foreignCurrency = currencyCode;
+            loadCells(); // Update labels immediately
+            if (currentCalculatedField != CalculatedField.RATE) fetchHistoricalRate();
+        });
     }
 
     private void fetchHistoricalRate() {
