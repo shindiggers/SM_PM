@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="snooze_duration_entries">
+        <item>1 Hour</item>
+        <item>2 Hours</item>
+        <item>4 Hours</item>
+        <item>8 Hours</item>
+        <item>1 Day</item>
+        <item>2 Days</item>
+    </string-array>
+
+    <string-array name="snooze_duration_values">
+        <item>1</item>
+        <item>2</item>
+        <item>4</item>
+        <item>8</item>
+        <item>24</item>
+        <item>48</item>
+    </string-array>
+
+    <string-array name="overdue_freq_entries">
+        <item>Daily</item>
+        <item>Every 2 Days</item>
+        <item>Weekly</item>
+    </string-array>
+
+    <string-array name="overdue_freq_values">
+        <item>1</item>
+        <item>2</item>
+        <item>7</item>
+    </string-array>
+
+    <string-array name="lookahead_window_entries">
+        <item>3 Days</item>
+        <item>5 Days</item>
+        <item>7 Days</item>
+        <item>14 Days</item>
+        <item>30 Days</item>
+    </string-array>
+
+    <string-array name="lookahead_window_values">
+        <item>3</item>
+        <item>5</item>
+        <item>7</item>
+        <item>14</item>
+        <item>30</item>
+    </string-array>
+
+    <string-array name="time_of_day_entries">
+        <item>07:00 AM</item>
+        <item>08:00 AM</item>
+        <item>09:00 AM</item>
+        <item>10:00 AM</item>
+        <item>12:00 PM</item>
+        <item>06:00 PM</item>
+        <item>08:00 PM</item>
+        <item>09:00 PM</item>
+    </string-array>
+
+    <string-array name="time_of_day_values">
+        <item>07:00</item>
+        <item>08:00</item>
+        <item>09:00</item>
+        <item>10:00</item>
+        <item>12:00</item>
+        <item>18:00</item>
+        <item>20:00</item>
+        <item>21:00</item>
+    </string-array>
+</resources>

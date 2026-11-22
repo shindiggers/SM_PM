@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        android:title="@string/PREF_NOTIF_REPEATING_CATEGORY"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="notif_repeating_enabled"
+            android:summary="@string/PREF_NOTIF_REPEATING_ENABLED_SUMMARY"
+            android:title="@string/PREF_NOTIF_REPEATING_ENABLED_TITLE"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="09:00"
+            android:dependency="notif_repeating_enabled"
+            android:entries="@array/time_of_day_entries"
+            android:entryValues="@array/time_of_day_values"
+            android:key="notif_preferred_alert_time"
+            android:summary="@string/PREF_NOTIF_REMINDER_TIME_SUMMARY"
+            android:title="@string/PREF_NOTIF_REMINDER_TIME_TITLE"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+        <ListPreference
+            android:defaultValue="24"
+            android:dependency="notif_repeating_enabled"
+            android:entries="@array/snooze_duration_entries"
+            android:entryValues="@array/snooze_duration_values"
+            android:key="notif_default_snooze_hours"
+            android:summary="@string/PREF_NOTIF_DEFAULT_SNOOZE_SUMMARY"
+            android:title="@string/PREF_NOTIF_DEFAULT_SNOOZE_TITLE"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/PREF_NOTIF_OVERDUE_CATEGORY"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="notif_overdue_digest_enabled"
+            android:summary="@string/PREF_NOTIF_OVERDUE_ENABLED_SUMMARY"
+            android:title="@string/PREF_NOTIF_OVERDUE_ENABLED_TITLE"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="1"
+            android:dependency="notif_overdue_digest_enabled"
+            android:entries="@array/overdue_freq_entries"
+            android:entryValues="@array/overdue_freq_values"
+            android:key="notif_overdue_digest_freq_days"
+            android:summary="@string/PREF_NOTIF_OVERDUE_FREQ_SUMMARY"
+            android:title="@string/PREF_NOTIF_OVERDUE_FREQ_TITLE"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/PREF_NOTIF_LIMIT_CATEGORY"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="true"
+            android:key="notif_limit_warnings_enabled"
+            android:summary="@string/PREF_NOTIF_LIMIT_ENABLED_SUMMARY"
+            android:title="@string/PREF_NOTIF_LIMIT_ENABLED_TITLE"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="7"
+            android:dependency="notif_limit_warnings_enabled"
+            android:entries="@array/lookahead_window_entries"
+            android:entryValues="@array/lookahead_window_values"
+            android:key="notif_limit_lookahead_days"
+            android:summary="@string/PREF_NOTIF_LIMIT_LOOKAHEAD_SUMMARY"
+            android:title="@string/PREF_NOTIF_LIMIT_LOOKAHEAD_TITLE"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/PREF_NOTIF_DAILY_CATEGORY"
+        app:iconSpaceReserved="false">
+
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="notif_daily_prompt_enabled"
+            android:summary="@string/PREF_NOTIF_DAILY_ENABLED_SUMMARY"
+            android:title="@string/PREF_NOTIF_DAILY_ENABLED_TITLE"
+            app:iconSpaceReserved="false" />
+
+        <ListPreference
+            android:defaultValue="20:00"
+            android:dependency="notif_daily_prompt_enabled"
+            android:entries="@array/time_of_day_entries"
+            android:entryValues="@array/time_of_day_values"
+            android:key="notif_daily_prompt_time"
+            android:summary="@string/PREF_NOTIF_DAILY_TIME_SUMMARY"
+            android:title="@string/PREF_NOTIF_DAILY_TIME_TITLE"
+            app:iconSpaceReserved="false"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

@@ -12,7 +12,7 @@ public class BootCompletedReceiver extends BroadcastReceiver {
         String action = intent.getAction();
         if (Intent.ACTION_BOOT_COMPLETED.equals(action) || Intent.ACTION_MY_PACKAGE_REPLACED.equals(action)) {
             Log.d("NOTIFY", "Rescheduling notifications after boot/update");
-            new Thread(() -> LocalNotificationAlertActivitiy.updateLocalNotifications(context.getApplicationContext())).start();
+            new Thread(com.example.smmoney.database.TransactionDB::setupNotifications).start();
         }
     }
 }

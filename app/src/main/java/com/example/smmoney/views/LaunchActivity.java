@@ -35,7 +35,8 @@ public class LaunchActivity extends AppCompatActivity {
         Prefs.initialize();
         Log.d("LAUNCHACTIVITY", "Prefs.initialize() has just been called");
 
-        new Thread(() -> com.example.smmoney.views.repeating.LocalNotificationAlertActivitiy.updateLocalNotifications(getApplicationContext())).start();
+        new Thread(com.example.smmoney.database.TransactionDB::setupNotifications).start();
+        com.example.smmoney.notifications.NotificationWorkManagerHelper.scheduleAllWork(getApplicationContext());
     }
 
     private boolean alreadyLaunched = false;

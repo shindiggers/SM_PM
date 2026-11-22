@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
     <uses-permission android:name="com.android.vending.CHECK_LICENSE" />
 
     <!-- Storage permissions for older devices -->
@@ -178,6 +179,9 @@
             android:configChanges="orientation"
             android:finishOnTaskLaunch="true" />
         <activity
+            android:name="com.example.smmoney.prefs.NotificationPrefsActivity"
+            android:configChanges="orientation" />
+        <activity
             android:name="com.example.smmoney.views.repeating.RepeatingActivity"
             android:configChanges="orientation" />
         <activity
@@ -210,10 +214,6 @@
         <activity
             android:name="com.example.smmoney.views.reports.ReportsPlaceholderActivity"
             android:configChanges="orientation" />
-        <activity
-            android:name="com.example.smmoney.views.repeating.LocalNotificationAlertActivitiy"
-            android:configChanges="orientation"
-            android:finishOnTaskLaunch="true" />
 
         <receiver
             android:name="com.example.smmoney.views.repeating.BootCompletedReceiver"
@@ -226,6 +226,10 @@
 
         <receiver
             android:name="com.example.smmoney.views.repeating.LocalNotificationRepeatingReciever"
+            android:exported="false" />
+
+        <receiver
+            android:name="com.example.smmoney.notifications.NotificationActionReceiver"
             android:exported="false" />
     </application>
 </manifest>

@@ -299,7 +299,17 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
         if (getTransaction() == null) {
             return false;
         }
-        return CalExt.endOfDay(getTransaction().getDate()).before(aDate);
+        GregorianCalendar nextDate = null;
+        if (getLastProcessedDate() != null) {
+            nextDate = getNextTransactionDateAfter(getLastProcessedDate());
+        }
+        if (nextDate == null) {
+            nextDate = getTransaction().getDate();
+        }
+        if (nextDate == null) {
+            return false;
+        }
+        return CalExt.endOfDay(nextDate).before(aDate);
     }
 
     public boolean isOverdue() {
@@ -544,6 +554,25 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 if (getNotifyDaysInAdance() > 0) {
                     newDate = CalExt.subtractDays(newDate, getNotifyDaysInAdance());
                 }
+
+                // Apply preferred alert time of day from Notification Preferences (default: 09:00 AM)
+                android.content.SharedPreferences prefs = androidx.preference.PreferenceManager.getDefaultSharedPreferences(context);
+                String preferredTime = prefs.getString("notif_preferred_alert_time", "09:00");
+                try {
+                    String[] parts = preferredTime.split(":");
+                    int hour = Integer.parseInt(parts[0]);
+                    int minute = Integer.parseInt(parts[1]);
+                    newDate.set(java.util.Calendar.HOUR_OF_DAY, hour);
+                    newDate.set(java.util.Calendar.MINUTE, minute);
+                    newDate.set(java.util.Calendar.SECOND, 0);
+                    newDate.set(java.util.Calendar.MILLISECOND, 0);
+                } catch (Exception e) {
+                    newDate.set(java.util.Calendar.HOUR_OF_DAY, 9);
+                    newDate.set(java.util.Calendar.MINUTE, 0);
+                    newDate.set(java.util.Calendar.SECOND, 0);
+                    newDate.set(java.util.Calendar.MILLISECOND, 0);
+                }
+
                 String amountStr = getTransaction().subTotalAsABSString();
                 String newBody = CalExt.descriptionWithMediumDate(getTransaction().getDate()) + " " + getTransaction().getAccount() + "->" + (getTransaction().isTransfer() ? getTransaction().getTransferToAccount() : getTransaction().getPayee()) + " (" + amountStr + ")";
                 intent.putExtra("repeatingID", this.repeatingID);
@@ -559,7 +588,11 @@ public class RepeatingTransactionClass extends PocketMoneyRecordClass implements
                 PendingIntent pIntent = PendingIntent.getBroadcast(context, this.repeatingID, intent, flags);
                 AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
                 if (am != null) {
-                    am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S && am.canScheduleExactAlarms()) {
+                        am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
+                    } else {
+                        am.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, newDate.getTimeInMillis(), pIntent);
+                    }
                 }
             }
         } else {

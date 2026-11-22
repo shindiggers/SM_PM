@@ -173,8 +173,6 @@
     <!--  REPEATING TRANSACTIONS                                             -->
     <!-- =================================================================== -->
     <string name="REPEATING_TRANSACTIONS">Repeating Transactions</string>
-    <string name="REPEATING_ONE_DAY">1 Day</string> // Used in LocalNotificationAlertActivity
-    <string name="REPEATING_TWO_DAYS">2 Days</string> // Used in LocalNotificationAlertActivity
     <string name="REPEATING_FREQUENCY_DAILY">Daily</string>
     <string name="REPEATING_FREQUENCY_DAYS">Day(s)</string>
     <string name="REPEATING_FREQUENCY_WEEKLY">Weekly</string>
@@ -188,8 +186,6 @@
     <string name="REPEATING_MONTHLYDAY">The ^w ^d of the month</string>
     <string name="REPEATING_MONTHLYDATE">The ^x of the month</string>
     <string name="EDIT_REPEATING_ENDONNONE">No end date</string>
-    <string name="REPEATING_NOTIFY_DUE">%1$sRepeating Transaction due\n%2$s %3$s&#10142;%4$s</string>
-    <string name="REPEATING_OVERDUE">**OVERDUE**\n</string>
     <string name="REPEATING_PROCESSTODATE">Process to Date</string>
     <string name="REPEATING_OVERDUE_LABEL">Overdue</string>
     <string name="REPEATING_NOTIFICATION_TITLE">Repeating Transaction Due</string>
@@ -203,11 +199,10 @@
     <string name="EDIT_REPEATING_MONTHLYREPEATON">Monthly Repeat On</string>
     <string name="EDIT_TRANSACTION_MISSINGREPEATING">How often this transaction repeats must be entered before you can save a repeating transaction.\n\nTap the blue circle to the right of the Date to configure the repeating info for this transaction.</string>
     <string name="EDIT_REPEATING_ENDON">End On</string>
-    <string name="REPEATING_NOTIFY_SNOOZE">Snooze</string>
-    <string name="REPEATING_NOTIFY_POST">Post</string>
     <string name="REPEATING_DELETE_CONFIRM">Are you sure you want to delete this repeating transaction?</string>
     <string name="REPEATING_TOAST_POSTED">Transaction posted</string>
     <string name="REPEATING_TOAST_PROCESSED_TO_DATE">Process to date completed</string>
+    <string name="notification_bell_description">Reminder enabled</string>
 
     <!-- =================================================================== -->
     <!--  SPLITS                                                             -->
@@ -366,6 +361,8 @@
     <string name="OVERDRAWN_ALERT_BODY">Warning! Your %1$s account is below your specified minimum balance of %2$s.</string>
     <string name="ACCOUNT_MINBALANCE_LABEL">Minimum Balance</string>
     <string name="ACCOUNT_CREDITLIMIT_LABEL">Credit Limit</string>
+    <string name="ACCOUNT_LIMIT_LOOKAHEAD_LABEL">Warning Lookahead</string>
+    <string name="ACCOUNT_LIMIT_LOOKAHEAD_HINT">Days (0 = default)</string>
 
     <!-- =================================================================== -->
     <!--  PREFERENCES & SETTINGS                                             -->
@@ -858,10 +855,6 @@
 
     <!-- STRINGS TO SORT -->
 
-    <!-- Repeating strings to sort out -->
-    <string name="kLOC_REPEATING_NOTIFY_SKIP">Skip</string>
-    <string name="kLOC_REPEATING_POST_MESSAGE">Post this transaction?\n%1$s %2$s&#10142;%3$s</string>
-
     <!-- Icon grid - incorporate these strings when we get on to allowing users to add custom icons (and therefore the ability to delete icons) -->
     <string name="kLOC_ICON_DELETE">Delete Icon</string>
     <string name="kLOC_ICON_DELETE_MSG">Are you sure you want to delete %1$s?</string>
@@ -896,6 +889,56 @@
     <string name="kLOC_TIP_REPORT">Did I really spend that much on X?\n\nReports give you a handy way to analyze what you\'ve spent money on. The report defaults to a list view. Anything checked will be included in the Expenses total and included in the pie chart.\n\nIf you want to a break-down of an expense line, press it, and it will show you a list of transactions.\n\nA very handy trick is to choose a Category Report, pick an expense for example Food, then look at the Payee Report based on Food to show you a break-down of where you spent your money on Food.</string>
     <string name="kLOC_TIP_ONLINE_BODY">The account type for this account is set to \'Online\'. \'Online\' account types will open the website you specify in the website field of the Account Info screen for this account. The url must start with http:// or https://.</string>
     <string name="kLOC_TIP_PMSYNC">Two things are needed to sync your data together a client and a server.\n\nThe server can be another iOS device running PocketMoney or the desktop version of PocketMoney (OS X, Windows, or Linux).\n\n1. Start up the Server. If you are syncing between two iOS devices, then you will need to purchase PocketMoney Sync Server which is available through the in-app-purchase process.\n\n2. On the client enter the server ip address and port, then tap Sync. \n\n* The first sync could take a while depending on how much data you have and is best done when you are on a Wi-Fi network. After the initial sync, future syncs will happen fairly quickly.\n\nRepeating Transactions:\nIf you use repeating transactions, then you need to decide which device is going to be your main device. This device should be considered your &quot;server&quot;. When the sync is complete the Post Scheduled Transaction will be turned OFF because having multiple copies of PocketMoney all processing all the repeating transactions will be messy.\n\nRestore from</string>
+
+    <!-- Notification Preferences -->
+    <string name="PREFERENCES_NOTIFICATIONS_TITLE">Notifications</string>
+    <string name="PREF_NOTIF_REMINDER_TIME_TITLE">Preferred Reminder Time</string>
+    <string name="PREF_NOTIF_REMINDER_TIME_SUMMARY">Time of day to alert for scheduled transactions (%s)</string>
+    <string name="PREF_NOTIF_DEFAULT_SNOOZE_TITLE">Default Snooze Duration</string>
+    <string name="PREF_NOTIF_DEFAULT_SNOOZE_SUMMARY">Duration to delay reminder when snoozed (%s)</string>
+    <string name="PREF_NOTIF_REPEATING_CATEGORY">Repeating Reminders</string>
+    <string name="PREF_NOTIF_REPEATING_ENABLED_TITLE">Enable Repeating Reminders</string>
+    <string name="PREF_NOTIF_REPEATING_ENABLED_SUMMARY">Show alerts for scheduled recurring transactions</string>
+
+    <string name="PREF_NOTIF_DAILY_CATEGORY">Daily Entry Check-In</string>
+    <string name="PREF_NOTIF_DAILY_ENABLED_TITLE">Daily Transaction Prompt</string>
+    <string name="PREF_NOTIF_DAILY_ENABLED_SUMMARY">Prompt to record today\'s transactions</string>
+    <string name="PREF_NOTIF_DAILY_TIME_TITLE">Daily Prompt Time</string>
+    <string name="PREF_NOTIF_DAILY_TIME_SUMMARY">Time to send the daily check-in prompt (%s)</string>
+
+    <string name="PREF_NOTIF_OVERDUE_CATEGORY">Overdue Transactions</string>
+    <string name="PREF_NOTIF_OVERDUE_ENABLED_TITLE">Overdue Digest Alerts</string>
+    <string name="PREF_NOTIF_OVERDUE_ENABLED_SUMMARY">Notify about recurring transactions that are overdue</string>
+    <string name="PREF_NOTIF_OVERDUE_FREQ_TITLE">Overdue Digest Frequency</string>
+    <string name="PREF_NOTIF_OVERDUE_FREQ_SUMMARY">How often to check for overdue transactions (%s)</string>
+
+    <string name="PREF_NOTIF_LIMIT_CATEGORY">Balance &amp; Credit Limits</string>
+    <string name="PREF_NOTIF_LIMIT_ENABLED_TITLE">Limit Breach Warnings</string>
+    <string name="PREF_NOTIF_LIMIT_ENABLED_SUMMARY">Predict when upcoming payments will breach credit limits or minimum balances</string>
+    <string name="PREF_NOTIF_LIMIT_LOOKAHEAD_TITLE">Default Lookahead Window</string>
+    <string name="PREF_NOTIF_LIMIT_LOOKAHEAD_SUMMARY">Days in advance to project balance (%s days)</string>
+
+    <!-- Notification Actions & Messages -->
+    <string name="NOTIFICATION_ACTION_POST">Post Now</string>
+    <string name="NOTIFICATION_ACTION_SNOOZE">Snooze</string>
+    <string name="NOTIFICATION_ACTION_SKIP">Skip</string>
+    <string name="NOTIFICATION_ACTION_UNDO">Undo</string>
+    <string name="NOTIFICATION_POSTED_TOAST">Posted: %1$s (%2$s)</string>
+    <string name="NOTIFICATION_SKIPPED_TOAST">Skipped: %1$s</string>
+    <string name="NOTIFICATION_SNOOZED_TOAST">Snoozed for %1$s</string>
+    <string name="NOTIFICATION_TRANSFER_BODY">Transfer %1$s from %2$s to %3$s</string>
+    <string name="NOTIFICATION_STANDARD_BODY">%1$s • %2$s (%3$s)</string>
+    <string name="NOTIFICATION_LIMIT_WARNING_TITLE">Limit Warning: %1$s</string>
+    <string name="NOTIFICATION_LIMIT_BREACH_BODY">Projected to breach limit on %1$s by %2$s due to %3$s.</string>
+    <string name="NOTIFICATION_MIN_BALANCE_BODY">Projected to drop below minimum balance on %1$s by %2$s due to %3$s.</string>
+    <string name="NOTIFICATION_OVERDUE_DIGEST_TITLE">Overdue Recurring Payments</string>
+    <plurals name="notification_overdue_digest_body">
+        <item quantity="one">You have %1$d recurring transaction overdue.</item>
+        <item quantity="other">You have %1$d recurring transactions overdue.</item>
+    </plurals>
+    <string name="NOTIFICATION_DAILY_PROMPT_TITLE">Record Today\'s Transactions</string>
+    <string name="NOTIFICATION_DAILY_PROMPT_BODY">Have you entered all your expenses and receipts for today?</string>
+
 
 
 </resources>

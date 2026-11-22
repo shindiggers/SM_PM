@@ -108,6 +108,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
     private Spinner ccDueOffsetSpinner;
     private FrameLayout keyboardToolbar;
     private EditText limit;
+    private EditText limitLookahead;
     private TextView limitLabel;
     private TextView notes;
     private EditText phone;
@@ -278,6 +279,7 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.feeTypeSpinner = findViewById(R.id.fee_type_spinner);
         this.limit = findViewById(R.id.limit);
         this.limitLabel = findViewById(R.id.account_limit_label);
+        this.limitLookahead = findViewById(R.id.limit_lookahead);
         this.checkNumber = findViewById(R.id.checknumber);
         this.notes = findViewById(R.id.notestextview);
         this.currency = findViewById(R.id.currency_edit_text);
@@ -317,6 +319,10 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
         this.fee.setText(this.account.feeAsString());
         setupFeeTypeSpinner();
         this.limit.setText(this.account.limitAsString());
+        if (this.limitLookahead != null) {
+            int lookahead = this.account.getLimitLookaheadDays();
+            this.limitLookahead.setText(lookahead > 0 ? String.valueOf(lookahead) : "");
+        }
         this.checkNumber.setText(this.account.getCheckNumber());
         setNotesText(this.account.getNotes());
         this.currency.setText(this.account.getCurrencyCode());
@@ -519,6 +525,14 @@ public class AccountsEditActivity extends PocketMoneyActivity implements Exchang
             }
             this.account.setFeeFromString(this.fee.getText().toString());
             this.account.setLimitFromString(this.limit.getText().toString());
+            if (this.limitLookahead != null) {
+                String lookaheadText = this.limitLookahead.getText().toString().trim();
+                try {
+                    this.account.setLimitLookaheadDays(lookaheadText.isEmpty() ? 0 : Integer.parseInt(lookaheadText));
+                } catch (NumberFormatException e) {
+                    this.account.setLimitLookaheadDays(0);
+                }
+            }
             this.account.setCheckNumber(this.checkNumber.getText().toString());
             this.account.setNotes(this.notes.getText().toString());
             this.account.setCurrencyCode(this.currency.getText().toString());

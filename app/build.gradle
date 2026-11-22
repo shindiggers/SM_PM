@@ -69,5 +69,5 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment:2.10.2' // use -ktx for Kotlin
     implementation 'androidx.navigation:navigation-ui:2.10.2' // use -ktx for Kotlin
     implementation "androidx.exifinterface:exifinterface:1.4.2"
-
+    implementation 'androidx.work:work-runtime:2.12.0'
 }

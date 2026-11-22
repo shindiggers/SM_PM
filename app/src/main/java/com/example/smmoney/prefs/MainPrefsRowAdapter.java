@@ -91,6 +91,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
         this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, DisplayOptionsPrefsActivity.class)));
         this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, ManagedListsPrefsActivity.class)));
         this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, RepeatingTransactionPrefsActivity.class)));
+        this.listenerList.add(v -> MainPrefsRowAdapter.this.context.startActivity(new Intent(MainPrefsRowAdapter.this.context, NotificationPrefsActivity.class)));
         this.listenerList.add(v -> Prefs.resetHints());
         if (AccountsActivity.IS_GOOGLE_MARKET) {
             this.listenerList.add(v -> new Builder(MainPrefsRowAdapter.this.context, PocketMoneyThemes.dialogTheme()).setTitle("Restore Purchases").setMessage("This will restore your in-app-purchases. Please ensure that you are connected to the internet.").setPositiveButton(context.getString(R.string.GENERAL_OK), (dialog, which) -> dialog.dismiss()).setNegativeButton(context.getString(R.string.GENERAL_CANCEL), (dialog, which) -> dialog.dismiss()).show());
@@ -106,9 +107,10 @@ class MainPrefsRowAdapter extends BaseAdapter {
                     context.getString(R.string.PREFS_VIEWOPTIONS),
                     context.getString(R.string.PREFS_MANAGEDLISTS),
                     context.getString(R.string.REPEATING_TRANSACTIONS),
+                    context.getString(R.string.PREFERENCES_NOTIFICATIONS_TITLE),
                     context.getString(R.string.PREFERENCES_TIPS_TITLE)
             };
-            int[] atemp = new int[10];
+            int[] atemp = new int[11];
             atemp[0] = R.drawable.abouticon;
             atemp[1] = R.drawable.helpicon;
             atemp[2] = R.drawable.savings;
@@ -118,20 +120,22 @@ class MainPrefsRowAdapter extends BaseAdapter {
             atemp[6] = R.drawable.viewprefs;
             atemp[7] = R.drawable.managedlistsicon;
             atemp[8] = R.drawable.repeatingicon;
+            atemp[9] = R.drawable.notificationicon;
             this.imageList = atemp;
             return;
         }
         this.nameList = new String[]{
                 context.getString(R.string.PREFERENCES_ABOUT_TITLE),
-                        context.getString(R.string.PREFERENCES_HELP_TITLE),
+                context.getString(R.string.PREFERENCES_HELP_TITLE),
                 context.getString(R.string.PREFS_SECURITY),
                 context.getString(R.string.ACCOUNT_CURRENCY_LABEL),
                 context.getString(R.string.PREFS_DATATRANFER),
                 context.getString(R.string.PREFS_VIEWOPTIONS),
                 context.getString(R.string.PREFS_MANAGEDLISTS),
                 context.getString(R.string.REPEATING_TRANSACTIONS),
+                context.getString(R.string.PREFERENCES_NOTIFICATIONS_TITLE),
                 context.getString(R.string.PREFERENCES_TIPS_TITLE)};
-        int[] atemp = new int[9];
+        int[] atemp = new int[10];
         atemp[0] = R.drawable.abouticon;
         atemp[1] = R.drawable.helpicon;
         atemp[2] = R.drawable.securityicon;
@@ -140,6 +144,7 @@ class MainPrefsRowAdapter extends BaseAdapter {
         atemp[5] = R.drawable.viewprefs;
         atemp[6] = R.drawable.managedlistsicon;
         atemp[7] = R.drawable.repeatingicon;
+        atemp[8] = R.drawable.notificationicon;
         this.imageList = atemp;
     }
 

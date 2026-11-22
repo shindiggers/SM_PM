@@ -782,12 +782,9 @@ public class TransactionDB {
      * - Resyncing alarms when global notification settings or permissions are toggled.
      * - Restoring notifications following database import/restore.
      */
-    @SuppressWarnings("unused")
     public static void setupNotifications() {
-        for (RepeatingTransactionClass repeatingTrans : queryAllRepeatingTransactions()) {
-            if (repeatingTrans.getSendLocalNotifications()) {
-                repeatingTrans.setupNotification(SMMoney.getAppContext());
-            }
+        for (RepeatingTransactionClass repeatingTrans : queryAllRepeatingTransactionsWithLocalNotifications()) {
+            repeatingTrans.setupNotification(SMMoney.getAppContext());
         }
     }
 

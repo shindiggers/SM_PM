@@ -78,6 +78,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
     private String routingNumber;
     private boolean totalWorth;
     private boolean includeInBudgets = true;
+    private int limitLookaheadDays = 0; // 0 means use global preference
     private int type;
     @SuppressWarnings("unused")
     private int uniqueID;
@@ -459,6 +460,18 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         return this.noLimit;
     }
 
+    public int getLimitLookaheadDays() {
+        hydrate();
+        return this.limitLookaheadDays;
+    }
+
+    public void setLimitLookaheadDays(int days) {
+        if (this.limitLookaheadDays != days) {
+            this.dirty = true;
+            this.limitLookaheadDays = days;
+        }
+    }
+
     public void setTotalWorth(boolean value) {
         if (this.totalWorth != value) {
             this.dirty = true;
@@ -502,6 +515,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
         content.put("exchangeRate", 1.0f);
         content.put("totalWorth", 1);
         content.put("includeInBudgets", 1);
+        content.put("limitLookaheadDays", 0);
         content.put("noLimit", 1);
         content.put("serverID", Database.newServerID());
         content.put("timestamp", System.currentTimeMillis() / 1000);
@@ -871,6 +885,11 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
                 int budgetCol = curs.getColumnIndex("includeInBudgets");
                 if (budgetCol != -1) {
                     setIncludeInBudgets(curs.getInt(budgetCol) == 1);
+                }
+
+                int lookaheadCol = curs.getColumnIndex("limitLookaheadDays");
+                if (lookaheadCol != -1) {
+                    setLimitLookaheadDays(curs.getInt(lookaheadCol));
                 } else {
                     setIncludeInBudgets(true);
                 }
@@ -1067,6 +1086,7 @@ public class AccountClass extends PocketMoneyRecordClass implements Serializable
             content.put("noLimit", this.noLimit);
             content.put("totalWorth", this.totalWorth);
             content.put("includeInBudgets", this.includeInBudgets);
+            content.put("limitLookaheadDays", this.limitLookaheadDays);
             content.put("exchangeRate", this.exchangeRate);
             content.put("currencyCode", this.currencyCode);
             if (this.serverID == null || this.serverID.isEmpty()) {

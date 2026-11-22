@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -137,6 +138,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
         final TextView category;
         final TextView account;
         final MaterialButton postButton;
+        final ImageView bellIcon;
         final View therow;
 
         RepeatingViewHolder(View v) {
@@ -149,6 +151,7 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             category = v.findViewById(R.id.categorytextview);
             account = v.findViewById(R.id.runningtotaltextview);
             postButton = v.findViewById(R.id.postbutton);
+            bellIcon = v.findViewById(R.id.bell_icon);
 
             therow.setOnClickListener(v1 -> {
                 Intent i = new Intent(mContext, TransactionEditActivity.class);
@@ -198,6 +201,15 @@ public class RepeatingRecyclerViewAdapter extends RecyclerView.Adapter<Repeating
             String dateText = CalExt.descriptionWithShortDate(dateOfNextRepeat).replaceFirst("198", "8").replaceFirst("199", "9").replaceFirst("200", "0").replaceFirst("201", "1").replaceFirst("202", "2").replaceFirst("203", "3").replaceFirst("204", "4");
             this.date.setText(dateText);
             this.frequency.setText(this.repeatingTransaction.typeEveryAsString());
+
+            if (this.bellIcon != null) {
+                if (this.repeatingTransaction.getSendLocalNotifications()) {
+                    this.bellIcon.setVisibility(View.VISIBLE);
+                    this.bellIcon.setImageTintList(android.content.res.ColorStateList.valueOf(PocketMoneyThemes.currentTintColor()));
+                } else {
+                    this.bellIcon.setVisibility(View.GONE);
+                }
+            }
             
             if (this.transaction.isTransfer()) {
                 this.payee.setText(String.format("%s <%s>", this.transaction.getPayee(), this.transaction.getTransferToAccount()));
