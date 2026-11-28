@@ -32,6 +32,7 @@ import android.view.SubMenu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,7 +79,7 @@ import com.example.smmoney.views.HandlerActivity;
 import com.example.smmoney.views.PocketMoneyActivity;
 import com.example.smmoney.views.PocketMoneyProgressDialog;
 import com.example.smmoney.views.accounts.AccountsActivity;
-import com.example.smmoney.views.filters.FiltersMainActivity;
+import com.example.smmoney.views.filters.FilterEditActivity;
 import com.example.smmoney.views.reports.AccountsReportDataSource;
 import com.example.smmoney.views.reports.CategoryReportDataSource;
 import com.example.smmoney.views.reports.ClassReportDataSource;
@@ -97,6 +98,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int EMAIL_QIF = 0;
     private final int EMAIL_TDF = 1;
     private final int MENU_FILTER = 4;
+    private final int MENU_SAVED_FILTERS = 26;
+    private final int MENU_RESET_FILTER = 27;
     private final int MENU_NEW = 1;
     private final int MENU_REPORTS_ACCOUNT = 6;
     private final int MENU_REPORTS_CATEGORY = 7;
@@ -111,6 +114,8 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
     private final int MENU_SORT = 25;
     private Context context;
     private FilterClass _filter;
+    private FilterClass initialFilter;
+    private boolean isDirectFilterLaunch = false;
     private TransactionRecyclerViewAdapter adapter;
     private final OnDateSetListener mDateSetListener = (view, year, monthOfYear, dayOfMonth) -> {
         GregorianCalendar targetDate = new GregorianCalendar(year, monthOfYear, dayOfMonth);
@@ -178,11 +183,9 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
                     }
                     
                     if (this._filter != null) {
-                        String title = this._filter.customFilter() ?
-                                (this._filter.getFilterName().isEmpty() ? context.getString(R.string.TOOLS_FILTER) : this._filter.getFilterName()) :
-                                (this._filter.getAccount().isEmpty() ? context.getString(R.string.ALL_TRANSACTIONS) : this._filter.getAccount());
-
-                        Objects.requireNonNull(getSupportActionBar()).setTitle(title);
+                        updateTitle();
+                        updateFilterBanner();
+                        invalidateOptionsMenu();
                         reloadData();
                     }
                 }
@@ -224,22 +227,135 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         setContentView(layout);
 
         this.firstOpenOfView = true;
-
-        String title = getIntent().getStringExtra("title");
-        if (title == null) {
-            title = this._filter.customFilter() ?
-                    (this._filter.getFilterName().isEmpty() ? context.getString(R.string.TOOLS_FILTER) : this._filter.getFilterName()) :
-                    (this._filter.getAccount().isEmpty() ? context.getString(R.string.ALL_TRANSACTIONS) : this._filter.getAccount());
+        if (this._filter != null) {
+            this.initialFilter = this._filter.copy();
         }
+        this.isDirectFilterLaunch = getIntent().hasExtra("FROM_SAVED_FILTERS") || getIntent().hasExtra("ONLY SAVED");
 
+        updateTitle();
+        updateFilterBanner();
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle(title);
             String subtitle = getIntent().getStringExtra("subtitle");
             if (subtitle != null) {
                 getSupportActionBar().setSubtitle(subtitle);
             }
             getSupportActionBar().setBackgroundDrawable(new ColorDrawable(PocketMoneyThemes.actionBarColor()));
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
+
+        getOnBackPressedDispatcher().addCallback(this, new androidx.activity.OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                // If launched directly from Saved Filters (or Home screen shortcut), Back always exits back to where the user came from
+                if (isDirectFilterLaunch) {
+                    finish();
+                    return;
+                }
+
+                if (isFilterActive()) {
+                    resetFilter();
+                } else {
+                    finish();
+                }
+            }
+        });
+    }
+
+    private boolean isFilterActive() {
+        if (this._filter == null) return false;
+        // If launched directly from Saved Filters, a filter is active if it has criteria or a filter name
+        if (this.isDirectFilterLaunch) {
+            return !this._filter.isDefaultFilter() || 
+                   (!this._filter.getFilterName().isEmpty() && !this._filter.getFilterName().equals(this._filter.getAccount()));
+        }
+        if (!this._filter.isDefaultFilter()) return true;
+        if (this.initialFilter != null) {
+            return !Objects.equals(this._filter.getAccount(), this.initialFilter.getAccount()) ||
+                   !this._filter.isDefaultFilter();
+        }
+        return false;
+    }
+
+    private void resetFilter() {
+        if (this.isDirectFilterLaunch) {
+            finish();
+            return;
+        }
+        if (this.initialFilter != null) {
+            this._filter = this.initialFilter.copy();
+        } else if (this._filter != null) {
+            String currentAccount = this._filter.getAccount();
+            this._filter = new FilterClass();
+            this._filter.setAccount(currentAccount);
+            this._filter.setFilterName(currentAccount);
+        }
+        updateTitle();
+        updateFilterBanner();
+        invalidateOptionsMenu();
+        reloadData();
+    }
+
+    private void updateTitle() {
+        if (getSupportActionBar() == null) return;
+        if (this._filter == null) {
+            getSupportActionBar().setTitle("");
+            return;
+        }
+
+        // Title is always clean: the Account name or All Transactions
+        String baseName = this._filter.getAccount();
+        if (baseName == null || baseName.isEmpty() || baseName.equals(context.getString(R.string.FILTERS_ALL_ACCOUNTS))) {
+            baseName = context.getString(R.string.ALL_TRANSACTIONS);
+        }
+
+        // If launched directly from Saved Filters, use the Filter's name
+        if (this.isDirectFilterLaunch && !this._filter.getFilterName().isEmpty()) {
+            getSupportActionBar().setTitle(this._filter.getFilterName());
+        } else {
+            getSupportActionBar().setTitle(baseName);
+        }
+    }
+
+    private void updateFilterBanner() {
+        View banner = findViewById(R.id.filter_banner);
+        if (banner == null) return;
+
+        if (isFilterActive()) {
+            banner.setVisibility(View.VISIBLE);
+            banner.setBackgroundColor(PocketMoneyThemes.cardBackgroundColor());
+
+            ImageView icon = banner.findViewById(R.id.filter_banner_icon);
+            TextView title = banner.findViewById(R.id.filter_banner_title);
+            TextView subtitle = banner.findViewById(R.id.filter_banner_subtitle);
+            ImageView clearBtn = banner.findViewById(R.id.filter_banner_clear);
+
+            int tintColor = PocketMoneyThemes.currentTintColor();
+            icon.setColorFilter(tintColor, android.graphics.PorterDuff.Mode.SRC_IN);
+            clearBtn.setColorFilter(PocketMoneyThemes.fieldLabelColor(), android.graphics.PorterDuff.Mode.SRC_IN);
+
+            title.setTextColor(PocketMoneyThemes.primaryCellTextColor());
+            subtitle.setTextColor(PocketMoneyThemes.cardTextSecondaryColor());
+
+            String filterName = this._filter.getFilterName();
+            if (filterName != null && !filterName.isEmpty() && !filterName.equals(this._filter.getAccount())) {
+                title.setText(filterName);
+            } else {
+                title.setText(R.string.TOOLS_FILTER);
+            }
+
+            subtitle.setText(this._filter.generateSummaryString());
+
+            // Tapping the banner body opens Quick Filter (FilterEditActivity)
+            banner.setOnClickListener(v -> {
+                Intent i = new Intent(TransactionsActivity.this, FilterEditActivity.class);
+                i.putExtra("Filter", TransactionsActivity.this._filter);
+                filterLauncher.launch(i);
+            });
+
+            // Tapping the clear (X) icon clears the filter
+            clearBtn.setOnClickListener(v -> resetFilter());
+        } else {
+            banner.setVisibility(View.GONE);
         }
     }
 
@@ -742,7 +858,16 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
         toolsMenu.add(0, MENU_TOOLS_ADJUSTBALANCE, 0, context.getString(R.string.TOOLS_RECONCILE));
         toolsMenu.add(0, MENU_TOOLS_MARKASCLEAR, 0, context.getString(R.string.TOOLS_MARKCLEARED));
         toolsMenu.add(0, MENU_TOOLS_ROLLUP, 0, context.getString(R.string.TOOLS_ROLLUP));
-        menu.add(0, MENU_FILTER, 0, context.getString(R.string.TOOLS_FILTERS)).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
+
+        if (isFilterActive()) {
+            MenuItem resetItem = menu.add(0, MENU_RESET_FILTER, 0, R.string.action_reset_filter);
+            resetItem.setIcon(R.drawable.ic_restart_alt_white_24dp);
+            resetItem.setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+        }
+
+        menu.add(0, MENU_FILTER, 0, context.getString(R.string.FILTERS_QUICK_FILTER)).setIcon(R.drawable.ic_add_circle_outline_white_24dp_svg);
+        menu.add(0, MENU_SAVED_FILTERS, 0, context.getString(R.string.FILTERS_SAVED)).setIcon(R.drawable.ic_bookmarks_white_24dp);
+
         SubMenu reportsMenu = menu.addSubMenu(context.getString(R.string.GENERAL_REPORTS));
         reportsMenu.add(0, MENU_REPORTS_ACCOUNT, 0, context.getString(R.string.TOOLS_ACCOUNTREPORT));
         reportsMenu.add(0, MENU_REPORTS_CATEGORY, 0, context.getString(R.string.TOOLS_CATEGORYREPORT));
@@ -760,12 +885,24 @@ public class TransactionsActivity extends PocketMoneyActivity implements Handler
             case MENU_SORT /*25*/:
                 showSortDialog();
                 return true;
-            case MENU_FILTER /*4*/:
+            case MENU_RESET_FILTER /*27*/:
+                resetFilter();
+                return true;
+            case MENU_FILTER /*4*/: // Quick Filter
                 if (AccountsActivity.isLite(this)) {
                     AccountsActivity.displayLiteDialog(this);
                     return true;
                 }
-                i = new Intent(this, FiltersMainActivity.class);
+                i = new Intent(this, FilterEditActivity.class);
+                i.putExtra("Filter", this._filter);
+                filterLauncher.launch(i);
+                return true;
+            case MENU_SAVED_FILTERS /*26*/: // Saved Filters Library
+                if (AccountsActivity.isLite(this)) {
+                    AccountsActivity.displayLiteDialog(this);
+                    return true;
+                }
+                i = new Intent(this, com.example.smmoney.views.filters.FiltersMainActivity.class);
                 i.putExtra("Filter", this._filter);
                 filterLauncher.launch(i);
                 return true;

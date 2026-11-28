@@ -447,14 +447,137 @@ public class FilterClass extends PocketMoneyRecordClass implements Serializable 
         return this.spotlight;
     }
 
+    public static ArrayList<String> parseItems(String commaOrSemicolonSeparated) {
+        ArrayList<String> list = new ArrayList<>();
+        if (commaOrSemicolonSeparated != null && !commaOrSemicolonSeparated.trim().isEmpty()) {
+            String[] parts = commaOrSemicolonSeparated.split("[,;]");
+            for (String part : parts) {
+                String trimmed = part.trim();
+                if (!trimmed.isEmpty()) {
+                    list.add(trimmed);
+                }
+            }
+        }
+        return list;
+    }
+
+    public boolean isDefaultFilter() {
+        hydrate();
+        boolean defaultType = (this.type == Enums.kTransactionTypeAll);
+        boolean defaultCleared = (this.cleared == Enums.kClearedDoesntMatter);
+        boolean defaultDate = (this.date == null || this.date.isEmpty() || this.date.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL)));
+        boolean defaultCategory = (this.category == null || this.category.isEmpty() || this.category.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES)));
+        boolean defaultPayee = (this.payee == null || this.payee.isEmpty() || this.payee.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES)));
+        boolean defaultClass = (this.className == null || this.className.isEmpty() || this.className.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES)));
+        boolean defaultId = (this.checkNumber == null || this.checkNumber.isEmpty() || this.checkNumber.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS)));
+        boolean defaultSpotlight = (this.spotlight == null || this.spotlight.isEmpty());
+        return defaultType && defaultCleared && defaultDate && defaultCategory && defaultPayee && defaultClass && defaultId && defaultSpotlight;
+    }
+
+    public String generateSummaryString() {
+        hydrate();
+        ArrayList<String> parts = new ArrayList<>();
+
+        // Date
+        if (this.date != null && !this.date.isEmpty() && !this.date.equals(SMMoney.getAppContext().getString(R.string.FILTER_DATES_ALL))) {
+            if (isCustomDate()) {
+                parts.add(customDateString());
+            } else {
+                parts.add(this.date);
+            }
+        }
+
+        // Transaction Type
+        if (this.type != Enums.kTransactionTypeAll) {
+            switch (this.type) {
+                case Enums.kTransactionTypeWithdrawal -> parts.add(SMMoney.getAppContext().getString(R.string.GENERAL_WITHDRAWAL));
+                case Enums.kTransactionTypeDeposit -> parts.add(SMMoney.getAppContext().getString(R.string.GENERAL_DEPOSIT));
+                case Enums.kTransactionTypeTransferTo, Enums.kTransactionTypeTransferFrom -> parts.add(SMMoney.getAppContext().getString(R.string.GENERAL_TRANSFER));
+            }
+        }
+
+        // Cleared status
+        if (this.cleared != Enums.kClearedDoesntMatter) {
+            if (this.cleared == Enums.kClearedCleared) {
+                parts.add(SMMoney.getAppContext().getString(R.string.GENERAL_CLEARED));
+            } else if (this.cleared == Enums.kClearedUncleared) {
+                parts.add(SMMoney.getAppContext().getString(R.string.FILTER_UNCLEARED));
+            }
+        }
+
+        // Accounts
+        if (this.account != null && !this.account.isEmpty() && !this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_ACCOUNTS)) && !this.account.equals(SMMoney.getAppContext().getString(R.string.FILTERS_CURRENT_ACCOUNT))) {
+            ArrayList<String> items = parseItems(this.account);
+            if (items.size() == 1) {
+                parts.add(items.get(0));
+            } else if (items.size() > 1) {
+                parts.add(items.size() + " Accounts");
+            }
+        }
+
+        // Categories
+        if (this.category != null && !this.category.isEmpty() && !this.category.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CATEGORIES))) {
+            ArrayList<String> items = parseItems(this.category);
+            if (items.size() == 1) {
+                parts.add(items.get(0));
+            } else if (items.size() > 1) {
+                parts.add(items.size() + " Categories");
+            }
+        }
+
+        // Payees
+        if (this.payee != null && !this.payee.isEmpty() && !this.payee.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_PAYEES))) {
+            ArrayList<String> items = parseItems(this.payee);
+            if (items.size() == 1) {
+                parts.add(items.get(0));
+            } else if (items.size() > 1) {
+                parts.add(items.size() + " Payees");
+            }
+        }
+
+        // Classes
+        if (this.className != null && !this.className.isEmpty() && !this.className.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_CLASSES))) {
+            ArrayList<String> items = parseItems(this.className);
+            if (items.size() == 1) {
+                parts.add(items.get(0));
+            } else if (items.size() > 1) {
+                parts.add(items.size() + " Classes");
+            }
+        }
+
+        // IDs
+        if (this.checkNumber != null && !this.checkNumber.isEmpty() && !this.checkNumber.equals(SMMoney.getAppContext().getString(R.string.FILTERS_ALL_IDS))) {
+            ArrayList<String> items = parseItems(this.checkNumber);
+            if (items.size() == 1) {
+                parts.add(items.get(0));
+            } else if (items.size() > 1) {
+                parts.add(items.size() + " IDs");
+            }
+        }
+
+        if (parts.isEmpty()) {
+            return SMMoney.getAppContext().getString(R.string.FILTERS_DISPLAY_ALL_TRANS);
+        }
+
+        return String.join(" • ", parts);
+    }
+
     public FilterClass copy() {
         FilterClass dup = new FilterClass();
-        dup.timestamp = (GregorianCalendar) this.timestamp.clone();
+        if (this.timestamp != null) {
+            dup.timestamp = (GregorianCalendar) this.timestamp.clone();
+        } else {
+            dup.timestamp = new GregorianCalendar();
+        }
         dup.setFilterName(getFilterName());
         dup.setType(getType());
         dup.setDate(getDate());
-        dup.setDateFrom(getDateFrom());
-        dup.setDateTo(getDateTo());
+        if (getDateFrom() != null) {
+            dup.setDateFrom((GregorianCalendar) getDateFrom().clone());
+        }
+        if (getDateTo() != null) {
+            dup.setDateTo((GregorianCalendar) getDateTo().clone());
+        }
         dup.setAccount(getAccount());
         dup.currentAccount = this.currentAccount;
         dup.setCategory(getCategory());

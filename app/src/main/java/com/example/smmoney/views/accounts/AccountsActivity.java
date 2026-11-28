@@ -28,8 +28,6 @@ import android.os.PowerManager.WakeLock;
 import android.provider.Settings;
 import android.text.Spanned;
 import android.util.Log;
-import android.view.ContextMenu;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -1458,13 +1456,6 @@ public class AccountsActivity extends PocketMoneyActivity implements
                 default:
             }
         }).show();
-    }
-
-    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenuInfo menuInfo) {
-    }
-
-    public boolean onContextItemSelected(@NonNull MenuItem item) {
-        return false;
     }
 
     public Handler getHandler() {

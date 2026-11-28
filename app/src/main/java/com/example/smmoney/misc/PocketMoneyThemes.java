@@ -603,4 +603,43 @@ public class PocketMoneyThemes {
             default -> getColor(R.color.white_theme_budget_row_variance);
         };
     }
+
+    public static int chipBackgroundColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_chip_background);
+            case kThemeBlue -> getColor(R.color.blue_theme_chip_background);
+            case kThemeGreen -> getColor(R.color.green_theme_chip_background);
+            case kThemePurple -> getColor(R.color.purple_theme_chip_background);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_chip_background);
+            case kThemeRuby -> getColor(R.color.ruby_theme_chip_background);
+            case kThemeGray -> getColor(R.color.gray_theme_chip_background);
+            default -> getColor(R.color.white_theme_chip_background);
+        };
+    }
+
+    public static int chipStrokeColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_chip_stroke);
+            case kThemeBlue -> getColor(R.color.blue_theme_chip_stroke);
+            case kThemeGreen -> getColor(R.color.green_theme_chip_stroke);
+            case kThemePurple -> getColor(R.color.purple_theme_chip_stroke);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_chip_stroke);
+            case kThemeRuby -> getColor(R.color.ruby_theme_chip_stroke);
+            case kThemeGray -> getColor(R.color.gray_theme_chip_stroke);
+            default -> getColor(R.color.white_theme_chip_stroke);
+        };
+    }
+
+    public static int chipTextColor() {
+        return switch (getTheme()) {
+            case kThemeBlack -> getColor(R.color.black_theme_chip_text);
+            case kThemeBlue -> getColor(R.color.blue_theme_chip_text);
+            case kThemeGreen -> getColor(R.color.green_theme_chip_text);
+            case kThemePurple -> getColor(R.color.purple_theme_chip_text);
+            case kThemeCoffee -> getColor(R.color.coffee_theme_chip_text);
+            case kThemeRuby -> getColor(R.color.ruby_theme_chip_text);
+            case kThemeGray -> getColor(R.color.gray_theme_chip_text);
+            default -> getColor(R.color.white_theme_chip_text);
+        };
+    }
 }

@@ -203,6 +203,39 @@
     <color name="gray_theme_budget_row_text">#212121</color>
     <color name="gray_theme_budget_row_variance">#616161</color>
 
+    <!-- Filter Chip Colors per theme -->
+    <color name="black_theme_chip_background">#333333</color>
+    <color name="black_theme_chip_stroke">#4D4D4D</color>
+    <color name="black_theme_chip_text">#E6E6E6</color>
+
+    <color name="white_theme_chip_background">#E2E6EB</color>
+    <color name="white_theme_chip_stroke">#BCC5CE</color>
+    <color name="white_theme_chip_text">#1A1A1A</color>
+
+    <color name="blue_theme_chip_background">#D0DDEB</color>
+    <color name="blue_theme_chip_stroke">#9EB4CC</color>
+    <color name="blue_theme_chip_text">#12233D</color>
+
+    <color name="green_theme_chip_background">#DCE8D0</color>
+    <color name="green_theme_chip_stroke">#ADC698</color>
+    <color name="green_theme_chip_text">#1A2E0C</color>
+
+    <color name="purple_theme_chip_background">#E8D2DF</color>
+    <color name="purple_theme_chip_stroke">#C7A3B9</color>
+    <color name="purple_theme_chip_text">#310D20</color>
+
+    <color name="coffee_theme_chip_background">#E5D9BD</color>
+    <color name="coffee_theme_chip_stroke">#C2AF84</color>
+    <color name="coffee_theme_chip_text">#2E1A04</color>
+
+    <color name="ruby_theme_chip_background">#F0C4D3</color>
+    <color name="ruby_theme_chip_stroke">#D98AA5</color>
+    <color name="ruby_theme_chip_text">#380414</color>
+
+    <color name="gray_theme_chip_background">#D0D0D0</color>
+    <color name="gray_theme_chip_stroke">#AEAEAE</color>
+    <color name="gray_theme_chip_text">#1A1A1A</color>
+
     <!-- Budget Progress Beam Colors -->
     <color name="budget_beam_cyan">#00B0FF</color>
     <color name="budget_beam_deep_teal">#00796B</color>

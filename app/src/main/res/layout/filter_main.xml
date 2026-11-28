@@ -1,84 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:fitsSystemWindows="true"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
-    <FrameLayout
-        android:id="@+id/filterreset"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:background="@drawable/list_selector_bg_blue_alt">
-
-        <TextView
-            android:id="@+id/reset_filter_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="10dp"
-            android:gravity="start|center_vertical"
-            android:minHeight="58dp"
-            android:text="@string/FILTERS_RESET" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:id="@+id/filtercurrent"
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:background="@drawable/list_selector_bg_blue_alt">
-
-        <TextView
-            android:id="@+id/current_filter_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="10dp"
-            android:gravity="start|center_vertical"
-            android:minHeight="40dp"
-            android:text="@string/FILTERS_CURRENT" />
-
-        <ImageView
-            android:id="@+id/filtercurrentedit"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end|center_vertical"
-            android:layout_marginEnd="10dp"
-            android:clickable="true"
-            android:contentDescription="@string/content_desctiption_select_filter"
-            android:focusable="true"
-            android:src="@drawable/ic_outline_arrow_drop_down_circle_24" />
-
-    </FrameLayout>
-
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="58dp"
-        android:background="@color/blue_theme_background_color">
-
-        <TextView
-            android:id="@+id/user_defined_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="start|center_vertical"
-            android:layout_marginStart="10dp"
-            android:gravity="start|center_vertical"
-            android:text="@string/FILTERS_USERDEFINED" />
-
-    </FrameLayout>
-
-    <View
-        android:id="@+id/filter_separator"
-        android:layout_width="match_parent"
-        android:layout_height="2dp"
-        android:background="@color/black_theme_background_color" />
-
-    <ListView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/filterlist"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
         tools:listitem="@layout/filter_row" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
